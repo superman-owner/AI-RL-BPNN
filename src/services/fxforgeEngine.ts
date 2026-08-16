@@ -55,6 +55,8 @@ export class FXForgeEngine {
   private totalTrades: number = 0;
   private currentEpisode: number = 0;
   private totalReward: number = 0;
+  private initialPrice: number = 65420.0;
+  private history: { episode: string; cumulativeReward: number; rewardMa10: number; marketReturn: number }[] = [];
 
   // Base price generator parameters (GBM + Jump Diffusion)
   private currentPrice: number = 65420.0;
@@ -77,6 +79,15 @@ export class FXForgeEngine {
     this.currentEpisode = 0;
     this.totalReward = 0;
     this.currentPrice = 65420.0;
+    this.initialPrice = 65420.0;
+    this.history = [
+      {
+        episode: 'Ep 0',
+        cumulativeReward: 0,
+        rewardMa10: 0,
+        marketReturn: 0,
+      },
+    ];
 
     // Seed 30 initial warm-up prices
     for (let i = 0; i < 30; i++) {
@@ -220,6 +231,23 @@ export class FXForgeEngine {
 
     this.currentPosition = targetPos;
 
+    // Record dynamic reward trajectory point
+    const mktReturn = ((nextPrice - this.initialPrice) / this.initialPrice) * 100;
+    const recentRewards = this.history.slice(-9).map((h) => h.cumulativeReward);
+    recentRewards.push(Number(this.totalReward.toFixed(2)));
+    const ma10 = recentRewards.reduce((a, b) => a + b, 0) / recentRewards.length;
+
+    this.history.push({
+      episode: `Ep ${this.currentEpisode}`,
+      cumulativeReward: Number(this.totalReward.toFixed(2)),
+      rewardMa10: Number(ma10.toFixed(2)),
+      marketReturn: Number(mktReturn.toFixed(2)),
+    });
+
+    if (this.history.length > 80) {
+      this.history.shift();
+    }
+
     return {
       state,
       action,
@@ -234,6 +262,10 @@ export class FXForgeEngine {
       drawdown,
       cumulativeReturn,
     };
+  }
+
+  public getRewardHistory() {
+    return [...this.history];
   }
 
   public getTelemetry(): QuantTelemetry {

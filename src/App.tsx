@@ -767,6 +767,8 @@ const FlowCanvas: React.FC = () => {
           <AnalyticsDrawer
             logs={logs}
             isRunning={rlStatus === 'running'}
+            rlTelemetry={rlTelemetry}
+            latestStep={rlLatestStep}
             onClearLogs={() => setLogs(['[SYSTEM] Console cleared.'])}
           />
         </>

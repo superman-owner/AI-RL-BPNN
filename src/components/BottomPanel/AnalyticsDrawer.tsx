@@ -14,16 +14,18 @@ import {
   CartesianGrid,
 } from 'recharts';
 import {
-  MOCK_METRICS,
-  generateRLRewardData,
   generateLossData,
   FEATURE_IMPORTANCE,
 } from '../../data/mockAnalytics';
+import type { QuantTelemetry, RLEnvironmentStep } from '../../services/fxforgeEngine';
+import { fxforgeEngine } from '../../services/fxforgeEngine';
 
 interface AnalyticsDrawerProps {
   logs: string[];
   isRunning: boolean;
   onClearLogs: () => void;
+  rlTelemetry?: QuantTelemetry | null;
+  latestStep?: RLEnvironmentStep | null;
 }
 
 //  Adaptive Automotive Radial Instrument Dial (Seamless Normal/Maximized Scaling)
@@ -151,12 +153,14 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
   logs,
   isRunning,
   onClearLogs,
+  rlTelemetry,
+  latestStep,
 }) => {
   const [activeTab, setActiveTab] = useState<'equity' | 'loss' | 'features' | 'logs'>('equity');
   const [isMinimized, setIsMinimized] = useState(true); // Default minimized so it never overlaps DAG canvas
   const isMaximized = false;
-  const [rewardData, setRewardData] = useState(generateRLRewardData());
-  const [lossData, setLossData] = useState(generateLossData());
+  const [rewardData, setRewardData] = useState(() => fxforgeEngine.getRewardHistory());
+  const [lossData] = useState(generateLossData());
   const logEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -165,15 +169,26 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
     }
   }, [logs, activeTab]);
 
+  // Sync real-time reward curve with BPNN & engine
   useEffect(() => {
-    if (isRunning) {
-      const interval = setInterval(() => {
-        setRewardData(generateRLRewardData());
-        setLossData(generateLossData());
-      }, 2500);
-      return () => clearInterval(interval);
-    }
-  }, [isRunning]);
+    setRewardData(fxforgeEngine.getRewardHistory());
+  }, [rlTelemetry, latestStep]);
+
+  const currentTelemetry = rlTelemetry || fxforgeEngine.getTelemetry();
+  const totalReturnPct =
+    ((currentTelemetry.currentEquity - currentTelemetry.initialCapital) / currentTelemetry.initialCapital) * 100;
+  const winRateVal = currentTelemetry.winRate;
+  const sharpeVal = currentTelemetry.annualizedSharpe;
+  const maxDdVal = currentTelemetry.maxDrawdown;
+  const sortinoVal = currentTelemetry.annualizedSortino;
+  const totalTradesVal = currentTelemetry.totalTrades;
+  const totalRewardVal = currentTelemetry.totalReward;
+  const profitFactorVal =
+    currentTelemetry.losingTrades > 0
+      ? ((currentTelemetry.winningTrades * 1.5) / currentTelemetry.losingTrades).toFixed(2)
+      : currentTelemetry.winningTrades > 0
+      ? '3.50'
+      : '1.00';
 
   return (
     <div
@@ -322,11 +337,11 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                         }`}
                         style={{ fontFamily: 'var(--font-sans)' }}
                       >
-                        +{MOCK_METRICS.totalReturn}
+                        {totalReturnPct >= 0 ? `+${totalReturnPct.toFixed(1)}` : totalReturnPct.toFixed(1)}
                         <span
-                          className={`font-bold text-[#30d158] ml-0.5 ${
-                            isMaximized ? 'text-2xl' : 'text-base'
-                          }`}
+                          className={`font-bold ml-0.5 ${
+                            totalReturnPct >= 0 ? 'text-[#30d158]' : 'text-[#ff453a]'
+                          } ${isMaximized ? 'text-2xl' : 'text-base'}`}
                         >
                           %
                         </span>
@@ -348,9 +363,11 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                       style={{ fontFamily: 'var(--font-sans)' }}
                     >
                       <LucideIcons.TrendingUp size={isMaximized ? 13 : 11} />
-                      <span>PF {MOCK_METRICS.profitFactor}x</span>
+                      <span>PF {profitFactorVal}x</span>
                       <span className="text-white/30">•</span>
-                      <span className="text-[#00c7be]">+248.6 R Reward</span>
+                      <span className="text-[#00c7be]">
+                        {totalRewardVal >= 0 ? `+${totalRewardVal.toFixed(1)}` : totalRewardVal.toFixed(1)} R Reward
+                      </span>
                     </div>
                   </div>
 
@@ -405,7 +422,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                         stroke="url(#audiSpeedoGrad)"
                         strokeWidth={isMaximized ? 7.5 : 6.5}
                         strokeDasharray="125.6"
-                        strokeDashoffset={125.6 * (1 - MOCK_METRICS.winRate / 100)}
+                        strokeDashoffset={125.6 * (1 - Math.min(100, Math.max(0, winRateVal)) / 100)}
                         strokeLinecap="round"
                         style={{
                           filter: 'drop-shadow(0 0 7px rgba(48, 209, 88, 0.7))',
@@ -422,7 +439,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                         fontSize={isMaximized ? 15 : 13}
                         fontWeight="bold"
                       >
-                        {MOCK_METRICS.winRate}%
+                        {winRateVal.toFixed(1)}%
                       </text>
                       <text
                         x="55"
@@ -444,9 +461,9 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                   {/* Sharpe Gauge */}
                   <MiniRadialGauge
                     label="Sharpe"
-                    value={MOCK_METRICS.sharpeRatio}
+                    value={sharpeVal.toFixed(2)}
                     sublabel="Tier 1 Institutional"
-                    percentage={Math.min(100, (MOCK_METRICS.sharpeRatio / 4.0) * 100)}
+                    percentage={Math.min(100, Math.max(0, (sharpeVal / 4.0) * 100))}
                     color="#30d158"
                     glowColor="rgba(48, 209, 88, 0.6)"
                     icon={<LucideIcons.TrendingUp size={isMaximized ? 22 : 15} strokeWidth={2.5} />}
@@ -456,9 +473,9 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                   {/* Max Drawdown Gauge */}
                   <MiniRadialGauge
                     label="Max DD"
-                    value={`-${MOCK_METRICS.maxDrawdown}%`}
+                    value={`-${maxDdVal.toFixed(1)}%`}
                     sublabel="Safety Limit"
-                    percentage={Math.min(100, (MOCK_METRICS.maxDrawdown / 25.0) * 100)}
+                    percentage={Math.min(100, Math.max(0, (maxDdVal / 25.0) * 100))}
                     color="#ff453a"
                     glowColor="rgba(255, 69, 58, 0.6)"
                     icon={<LucideIcons.ShieldAlert size={isMaximized ? 22 : 15} strokeWidth={2.5} />}
@@ -468,9 +485,9 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                   {/* Sortino Gauge */}
                   <MiniRadialGauge
                     label="Sortino"
-                    value={MOCK_METRICS.sortinoRatio}
+                    value={sortinoVal.toFixed(2)}
                     sublabel="Downside Alpha"
-                    percentage={Math.min(100, (MOCK_METRICS.sortinoRatio / 5.0) * 100)}
+                    percentage={Math.min(100, Math.max(0, (sortinoVal / 5.0) * 100))}
                     color="#00c7be"
                     glowColor="rgba(0, 199, 190, 0.6)"
                     icon={<LucideIcons.Zap size={isMaximized ? 22 : 15} strokeWidth={2.5} />}
@@ -480,9 +497,9 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                   {/* Trades Gauge */}
                   <MiniRadialGauge
                     label="Trades"
-                    value={MOCK_METRICS.totalTrades}
-                    sublabel="217W / 125L (63%)"
-                    percentage={63}
+                    value={totalTradesVal}
+                    sublabel={`${currentTelemetry.winningTrades}W / ${currentTelemetry.losingTrades}L (${winRateVal.toFixed(0)}%)`}
+                    percentage={Math.min(100, Math.max(0, winRateVal))}
                     color="#bf5af2"
                     glowColor="rgba(191, 90, 242, 0.6)"
                     icon={<LucideIcons.Activity size={isMaximized ? 22 : 15} strokeWidth={2.5} />}
@@ -510,7 +527,8 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                   </span>
                   <div className="flex items-center gap-4 text-[#86868b]">
                     <span className="text-[#30d158] font-semibold flex items-center gap-1.5">
-                      <span className="w-2 h-0.5 bg-[#30d158]" /> Cumulative Reward (+248.6 R)
+                      <span className="w-2 h-0.5 bg-[#30d158]" /> Cumulative Reward (
+                      {totalRewardVal >= 0 ? `+${totalRewardVal.toFixed(1)}` : totalRewardVal.toFixed(1)} R)
                     </span>
                     <span className="text-[#00c7be] font-medium flex items-center gap-1.5">
                       <span className="w-2 h-0.5 bg-[#00c7be]" /> 10-Ep MA
