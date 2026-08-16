@@ -20,6 +20,21 @@ interface TopNavProps {
   onResetCamera?: () => void;
 }
 
+const formatEpisodes = (ep: number | string): string => {
+  const num = typeof ep === 'string' ? parseInt(ep, 10) : ep;
+  if (isNaN(num)) return `${ep}`;
+  if (num >= 1_000_000) {
+    return `${(num / 1_000_000).toFixed(1)}M`;
+  }
+  if (num >= 100_000) {
+    return `${Math.floor(num / 1_000)}K`;
+  }
+  if (num >= 10_000) {
+    return `${(num / 1_000).toFixed(1)}K`;
+  }
+  return `${num}`;
+};
+
 export const TopNav: React.FC<TopNavProps> = ({
   activeView,
   onViewChange,
@@ -99,9 +114,9 @@ export const TopNav: React.FC<TopNavProps> = ({
         {/* Live Telemetry Stats (Numbers tight to labels, Header start positions locked) */}
         {rlTelemetry && (
           <div className="flex items-center gap-3 text-[11px] text-[#86868b] select-none">
-            <div className="w-[74px] inline-flex items-center gap-1 flex-shrink-0">
+            <div className="w-[82px] inline-flex items-center gap-1 flex-shrink-0">
               <span className="text-[#86868b]">Episodes:</span>
-              <strong className="text-white tabular-nums">{rlTelemetry.episodes}</strong>
+              <strong className="text-white tabular-nums">{formatEpisodes(rlTelemetry.episodes)}</strong>
             </div>
 
             <div className="w-[88px] inline-flex items-center gap-1 flex-shrink-0">
