@@ -510,25 +510,27 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
 
           return (
             <div key={group.id}>
-              {/*  Section Header (Solid Apple Typography, Zero Hover Effect, Fold/Open Indicators) */}
+              {/*  Section Header (Clean Minimalist Header, Zero Border, Subtle Text Highlight on Hover) */}
               <div
                 onClick={() => toggleGroup(group.id)}
                 style={{ cursor: 'var(--mac-cursor-default)' }}
-                className="py-1.5 px-2 -mx-2 rounded-lg flex items-center justify-between select-none"
+                className={`group py-1 px-1 rounded-md flex items-center justify-between select-none transition-colors duration-150 ${
+                  isLight
+                    ? 'hover:text-[#111827] text-[#4b5563]'
+                    : 'hover:text-white text-[#9ca3af]'
+                }`}
               >
-                <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                <div className="flex items-center gap-2 min-w-0 flex-1">
                   {/* SF Symbol on Main Header */}
                   <GroupIcon
-                    size={16}
+                    size={15}
                     style={{ color: group.color }}
                     className="flex-shrink-0"
                   />
 
                   {/* Section Label */}
                   <span
-                    className={`text-[12px] font-bold uppercase tracking-wider truncate ${
-                      isLight ? 'text-[#1f2937]' : 'text-[#e5e7eb]'
-                    }`}
+                    className="text-[12px] font-bold uppercase tracking-wider truncate"
                     style={{ letterSpacing: '0.03em' }}
                   >
                     {group.label}
@@ -536,29 +538,27 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                 </div>
 
                 {/*  Fold / Open Arrow Indicator: ChevronDown when collapsed (พับ), ChevronRight (>) when open (เปิด) */}
-                <div className="flex items-center justify-center flex-shrink-0 ml-1.5">
+                <div className="flex items-center justify-center flex-shrink-0 ml-1.5 opacity-60 group-hover:opacity-100 transition-opacity">
                   {isExpanded ? (
                     <ChevronRight
-                      size={14}
+                      size={13}
                       strokeWidth={2.4}
-                      className={isLight ? 'text-black/50' : 'text-white/50'}
                     />
                   ) : (
                     <ChevronDown
-                      size={14}
+                      size={13}
                       strokeWidth={2.4}
-                      className={isLight ? 'text-black/50' : 'text-white/50'}
                     />
                   )}
                 </div>
               </div>
 
-              {/*  Child Items (Large & Crisp Text 13.5px font-medium with Generous Breathing Room) */}
+              {/*  Child Items (Gray Text, White Card Highlight in Light, Electric Blue Highlight in Dark) */}
               {isExpanded && (
                 <div
                   style={{
-                    paddingLeft: '6px',
-                    marginTop: '4px',
+                    paddingLeft: '4px',
+                    marginTop: '3px',
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '2px',
@@ -578,38 +578,39 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'space-between',
-                          minHeight: '32px',
-                          paddingLeft: '16px',
-                          paddingRight: '14px',
-                          paddingTop: '6px',
-                          paddingBottom: '6px',
-                          borderRadius: '8px',
+                          minHeight: '30px',
+                          paddingLeft: '14px',
+                          paddingRight: '12px',
+                          paddingTop: '5px',
+                          paddingBottom: '5px',
+                          borderRadius: '6px',
                           cursor: 'var(--mac-cursor-grab)',
                           userSelect: 'none',
-                          transition: 'background-color 0.15s ease, color 0.15s ease',
+                          transition: 'background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease',
                           backgroundColor: isNodeHovered
-                            ? (isLight ? 'rgba(0, 0, 0, 0.06)' : 'rgba(255, 255, 255, 0.12)')
+                            ? (isLight ? '#ffffff' : 'rgba(10, 132, 255, 0.12)')
                             : 'transparent',
+                          boxShadow: isNodeHovered && isLight ? '0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 1px rgba(0, 0, 0, 0.04)' : 'none',
                           color: isNodeHovered
-                            ? (isLight ? '#0071e3' : '#ffffff')
-                            : (isLight ? '#111827' : '#e5e7eb'),
+                            ? (isLight ? '#111827' : '#0a84ff')
+                            : (isLight ? '#6b7280' : '#9ca3af'),
                         }}
                       >
-                        {/* Left: Crisp Solid Bullet Point with 16px Capsule Clearance */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0, flex: 1 }}>
+                        {/* Left: Crisp Solid Bullet Point with 14px Capsule Clearance */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '9px', minWidth: 0, flex: 1 }}>
                           <span
                             style={{
-                              width: '6px',
-                              height: '6px',
+                              width: '5.5px',
+                              height: '5.5px',
                               borderRadius: '50%',
                               flexShrink: 0,
-                              backgroundColor: isNodeHovered ? (isLight ? '#0071e3' : '#ffffff') : group.color,
+                              backgroundColor: isNodeHovered ? (isLight ? '#0071e3' : '#0a84ff') : group.color,
                               transition: 'background-color 0.15s ease',
                             }}
                           />
                           <span
                             style={{
-                              fontSize: '13px',
+                              fontSize: '12.5px',
                               fontWeight: isNodeHovered ? 600 : 500,
                               letterSpacing: '-0.01em',
                               overflow: 'hidden',
@@ -622,14 +623,14 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                           </span>
                         </div>
 
-                        {/* Right: Subtle Add Indicator with 14px Capsule Clearance */}
+                        {/* Right: Subtle Add Indicator with 12px Capsule Clearance */}
                         <Plus
                           size={13}
                           style={{
                             flexShrink: 0,
-                            marginLeft: '8px',
+                            marginLeft: '6px',
                             opacity: isNodeHovered ? 1 : 0,
-                            color: isLight ? '#0071e3' : '#ffffff',
+                            color: isLight ? '#0071e3' : '#0a84ff',
                             transition: 'opacity 0.15s ease',
                           }}
                         />
