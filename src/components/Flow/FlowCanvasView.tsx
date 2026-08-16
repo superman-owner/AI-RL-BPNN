@@ -158,10 +158,12 @@ const INITIAL_EDGES: Edge[] = [
   },
 ];
 
+import NodePalette from '../Sidebar/NodePalette';
+
 const FlowContent: React.FC = () => {
-  const [nodes, , onNodesChange] = useNodesState(INITIAL_NODES);
+  const [nodes, setNodes, onNodesChange] = useNodesState(INITIAL_NODES);
   const [edges, setEdges, onEdgesChange] = useEdgesState(INITIAL_EDGES);
-  const { fitView } = useReactFlow();
+  const { fitView, screenToFlowPosition } = useReactFlow();
 
   const onConnect = useCallback(
     (params: Connection) =>
@@ -178,42 +180,81 @@ const FlowContent: React.FC = () => {
     [setEdges]
   );
 
-  return (
-    <div className="w-full h-full relative bg-[#040407]">
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        nodeTypes={nodeTypes}
-        fitView
-        fitViewOptions={{ padding: 0.15 }}
-        minZoom={0.2}
-        maxZoom={2.0}
-        proOptions={{ hideAttribution: true }}
-      >
-        <Background variant={BackgroundVariant.Dots} gap={20} size={1.2} color="rgba(255,255,255,0.06)" />
-        <Controls
-          className="bg-[#0f0f18] border border-white/[0.08] text-white fill-white rounded-lg shadow-xl"
-          showInteractive={false}
-        />
-      </ReactFlow>
+  const onDragOver = useCallback((event: React.DragEvent) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+  }, []);
 
-      {/* Floating Controls Bar */}
-      <div className="absolute top-4 right-4 z-10 flex items-center gap-2 bg-[#0c0c14]/90 backdrop-blur-md border border-white/[0.08] px-3 py-1.5 rounded-lg shadow-2xl text-xs">
-        <button
-          onClick={() => fitView({ duration: 400, padding: 0.15 })}
-          className="text-[#86868b] hover:text-white flex items-center gap-1 font-medium transition-colors cursor-pointer"
+  const onDrop = useCallback(
+    (event: React.DragEvent) => {
+      event.preventDefault();
+      const nodeType = event.dataTransfer.getData('application/fxforge-node');
+      if (!nodeType) return;
+
+      const position = screenToFlowPosition({
+        x: event.clientX,
+        y: event.clientY,
+      });
+
+      const newNode: Node = {
+        id: `node-${Date.now()}`,
+        type: 'nodeCard',
+        position,
+        data: {
+          nodeType,
+          execution: { status: 'queued', detail: 'Ready for training' },
+        },
+      };
+
+      setNodes((nds) => nds.concat(newNode));
+    },
+    [screenToFlowPosition, setNodes]
+  );
+
+  return (
+    <div className="w-full h-full flex overflow-hidden relative bg-[#040407]">
+      {/* AI Node Palette Sidebar */}
+      <NodePalette />
+
+      {/* Main ReactFlow Canvas */}
+      <div className="flex-1 h-full relative">
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          onDrop={onDrop}
+          onDragOver={onDragOver}
+          nodeTypes={nodeTypes}
+          fitView
+          fitViewOptions={{ padding: 0.15 }}
+          minZoom={0.2}
+          maxZoom={2.0}
+          proOptions={{ hideAttribution: true }}
         >
-          <LucideIcons.Maximize size={12} />
-          <span>Fit View</span>
-        </button>
-        <span className="text-white/20">|</span>
-        <span className="text-[#30d158] font-mono text-[11px] flex items-center gap-1 font-semibold">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#30d158] animate-pulse" />
-          7 Nodes Connected
-        </span>
+          <Background variant={BackgroundVariant.Dots} gap={20} size={1.2} color="rgba(255,255,255,0.06)" />
+          <Controls
+            className="bg-[#0f0f18] border border-white/[0.08] text-white fill-white rounded-lg shadow-xl"
+            showInteractive={false}
+          />
+        </ReactFlow>
+
+        {/* Floating Controls Bar */}
+        <div className="absolute top-4 right-4 z-10 flex items-center gap-2 bg-[#0c0c14]/90 backdrop-blur-md border border-white/[0.08] px-3 py-1.5 rounded-lg shadow-2xl text-xs">
+          <button
+            onClick={() => fitView({ duration: 400, padding: 0.15 })}
+            className="text-[#86868b] hover:text-white flex items-center gap-1 font-medium transition-colors cursor-pointer"
+          >
+            <LucideIcons.Maximize size={12} />
+            <span>Fit View</span>
+          </button>
+          <span className="text-white/20">|</span>
+          <span className="text-[#30d158] font-mono text-[11px] flex items-center gap-1 font-semibold">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#30d158] animate-pulse" />
+            {nodes.length} Nodes in Flow
+          </span>
+        </div>
       </div>
     </div>
   );
