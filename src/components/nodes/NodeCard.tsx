@@ -53,7 +53,8 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
   const group = groupById[def.group] || { label: 'NODE', color: '#38bdf8' };
   const accent = group.color;
   const execution = data.execution;
-  const statusColor = STATUS_COLOR[execution?.status];
+  const isConnected = data.isConnected !== false;
+  const statusColor = isConnected ? (STATUS_COLOR[execution?.status] || 'var(--accent-green, #5fd390)') : null;
   const executionMode = data.executionMode || 'on';
   const GroupIcon = GROUP_ICONS[def.group] || Layers;
 
@@ -63,14 +64,14 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
         minWidth: 215,
         position: 'relative',
         background: '#121218',
-        opacity: executionMode === 'off' ? 0.55 : 1,
-        border: `1.5px solid ${accent}`,
+        opacity: executionMode === 'off' ? 0.55 : (isConnected ? 1 : 0.82),
+        border: `1.5px solid ${selected ? accent : (isConnected ? accent : `${accent}77`)}`,
         borderRadius: '10px',
         boxShadow: selected
           ? `0 0 0 1px ${accent}, 0 0 22px 2px ${accent}66, 0 8px 24px rgba(0,0,0,0.6)`
           : '0 4px 16px rgba(0,0,0,0.45)',
         fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, sans-serif',
-        transition: 'border 0.15s ease, box-shadow 0.15s ease',
+        transition: 'border 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease',
       }}
     >
       {/* Node Header */}
@@ -86,14 +87,14 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
           borderTopRightRadius: '9px',
         }}
       >
-        <GroupIcon size={14} color={accent} />
+        <GroupIcon size={14} color={isConnected ? accent : `${accent}99`} />
         <div style={{ flex: 1, minWidth: 0 }}>
           <div
             style={{
               fontSize: 9.5,
               fontWeight: 700,
               letterSpacing: '0.08em',
-              color: accent,
+              color: isConnected ? accent : `${accent}aa`,
               textTransform: 'uppercase',
               lineHeight: 1.2,
             }}
@@ -105,7 +106,7 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
               fontSize: 13,
               fontWeight: 600,
               letterSpacing: '-0.015em',
-              color: '#ffffff',
+              color: isConnected ? '#ffffff' : '#a1a1aa',
               whiteSpace: 'nowrap',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
@@ -116,19 +117,18 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
           </div>
         </div>
 
-        {/* Execution Status Badge */}
-        {statusColor && (
-          <span
-            style={{
-              width: 8,
-              height: 8,
-              borderRadius: '50%',
-              background: statusColor,
-              boxShadow: `0 0 8px ${statusColor}`,
-            }}
-            title={execution?.detail}
-          />
-        )}
+        {/* Execution Status Badge: Only lit green when isConnected is true */}
+        <span
+          style={{
+            width: 8,
+            height: 8,
+            borderRadius: '50%',
+            background: isConnected && statusColor ? statusColor : '#3f3f46',
+            boxShadow: isConnected && statusColor ? `0 0 8px ${statusColor}` : 'none',
+            opacity: isConnected ? 1 : 0.45,
+          }}
+          title={isConnected ? (execution?.detail || 'Connected & Active') : 'Disconnected / Standby (Not Active)'}
+        />
       </div>
 
       {/* Node Body (พารามิเตอร์ย่อ) */}

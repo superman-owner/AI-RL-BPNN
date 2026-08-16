@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState, useEffect } from 'react';
+import React, { useCallback, useRef, useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import {
   ReactFlow,
@@ -790,10 +790,39 @@ const FlowContent: React.FC = () => {
     [screenToFlowPosition, setNodes]
   );
 
+  // Calculate connected node IDs dynamically in real-time
+  const connectedNodeIds = useMemo(() => {
+    const ids = new Set<string>();
+    edges.forEach((edge) => {
+      ids.add(edge.source);
+      ids.add(edge.target);
+    });
+    return ids;
+  }, [edges]);
+
+  // Inject isConnected into nodes data for NodeCard rendering
+  const augmentedNodes = useMemo(() => {
+    return nodes.map((node) => {
+      const isConnected = connectedNodeIds.has(node.id);
+      if (node.data?.isConnected === isConnected) return node;
+      return {
+        ...node,
+        data: {
+          ...node.data,
+          isConnected,
+        },
+      };
+    });
+  }, [nodes, connectedNodeIds]);
+
+  const activeNodesCount = useMemo(() => {
+    return nodes.filter((n) => connectedNodeIds.has(n.id)).length;
+  }, [nodes, connectedNodeIds]);
+
   return (
     <div className="w-full h-full relative overflow-hidden bg-[#040407]" onMouseMove={onMouseMove}>
       <ReactFlow
-        nodes={nodes}
+        nodes={augmentedNodes}
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
@@ -827,8 +856,13 @@ const FlowContent: React.FC = () => {
       <div className="absolute top-4 right-4 z-10 flex items-center gap-2 bg-[#0c0c14]/90 backdrop-blur-md border border-white/[0.08] px-3 py-1.5 rounded-lg shadow-2xl text-xs select-none">
         <span className="text-[#30d158] font-mono text-[11px] flex items-center gap-1.5 font-semibold">
           <span className="w-1.5 h-1.5 rounded-full bg-[#30d158] animate-pulse" />
-          {nodes.length} Nodes Active
+          {activeNodesCount} Nodes Active
         </span>
+        {nodes.length > activeNodesCount && (
+          <span className="text-[#86868b] font-mono text-[10.5px]">
+            ({nodes.length - activeNodesCount} Idle)
+          </span>
+        )}
       </div>
 
       {/* Floating Right-Click Context Menu */}
