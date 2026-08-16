@@ -260,20 +260,20 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
         </div>
 
         {/* Right HUD Controls */}
-        <div className="flex items-center gap-3.5">
-          {/* Training Progress HUD */}
-          <div className="hidden sm:flex items-center gap-2.5 bg-white/[0.04] border border-white/[0.08] px-3 py-1 rounded-full text-xs shadow-[0_2px_8px_rgba(0,0,0,0.3)] select-none">
+        <div className="flex items-center gap-4">
+          {/* Pure Frameless Training Progress HUD */}
+          <div className="hidden sm:flex items-center gap-2.5 text-xs select-none">
             <div className="flex items-center gap-1.5 text-[11px] font-medium text-[#86868b] whitespace-nowrap">
               <span
                 className={`w-1.5 h-1.5 rounded-full ${
                   isRunning ? 'bg-[#30d158] shadow-[0_0_6px_#30d158] animate-pulse' : 'bg-[#ffd60a]'
                 }`}
               />
-              <span className="text-[#d1d1d6] font-semibold">Training Progress:</span>
+              <span className="text-[#86868b]">Training Progress:</span>
             </div>
 
-            {/* Glowing Gradient Progress Bar */}
-            <div className="w-28 h-1.5 bg-white/[0.08] rounded-full overflow-hidden relative">
+            {/* Frameless Sleek Progress Track */}
+            <div className="w-24 h-1 bg-white/10 rounded-full overflow-hidden relative">
               <div
                 className="h-full bg-gradient-to-r from-[#007aff] via-[#30d158] to-[#00c7be] rounded-full transition-all duration-300"
                 style={{
@@ -283,17 +283,19 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
               />
             </div>
 
-            <span className="text-[11px] font-mono font-bold text-[#30d158] whitespace-nowrap">
+            <strong className="text-[11px] font-mono font-bold text-[#30d158] whitespace-nowrap drop-shadow-[0_0_6px_rgba(48,209,88,0.4)]">
               {((((currentTelemetry.episodes || 0) % 1000) / 1000) * 100).toFixed(1)}%
-            </span>
+            </strong>
 
-            <span className="text-[10px] font-mono text-[#86868b] whitespace-nowrap">
+            <span className="text-[11px] font-mono text-[#86868b] whitespace-nowrap">
               ({currentTelemetry.episodes >= 10000
                 ? `${(currentTelemetry.episodes / 1000).toFixed(1)}K`
                 : currentTelemetry.episodes}{' '}
               Ep)
             </span>
           </div>
+
+          <div className="h-3.5 w-[1px] bg-white/10 flex-shrink-0" />
 
           {isRunning && (
             <span className="text-[10px] font-mono text-emerald-400 flex items-center gap-1.5 font-medium whitespace-nowrap">
