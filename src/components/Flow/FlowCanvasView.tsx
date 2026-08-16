@@ -539,9 +539,9 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
         </button>
       </div>
 
-      {/* 📝 BODY: Parameter Inputs */}
+      {/* 📝 BODY: Parameter Inputs (10px Spacing) */}
       <div
-        className="space-y-3 max-h-[300px] overflow-y-auto custom-scrollbar pr-1 nodrag nopan"
+        className="space-y-[10px] max-h-[300px] overflow-y-auto custom-scrollbar pr-1 nodrag nopan"
         style={{ pointerEvents: 'all' }}
         onPointerDown={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
@@ -562,12 +562,12 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
         })}
       </div>
 
-      {/* 🟢 FOOTER: Clean Apple Action Buttons */}
+      {/* 🟢 FOOTER: Clean Apple Action Buttons (No Inner Divider Line, 10px Spacing) */}
       <div
         style={{
-          marginTop: '12px',
-          paddingTop: '10px',
-          borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+          marginTop: '10px',
+          paddingTop: '4px',
+          borderTop: 'none',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -589,9 +589,9 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
             fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
             pointerEvents: 'all',
           }}
-          className="text-[12px] text-[#30d158] hover:text-[#5ee387] flex items-center gap-1.5 font-medium transition-colors cursor-pointer pointer-events-auto nodrag nopan"
+          className="text-[12px] text-[#0a84ff] hover:text-[#409cff] flex items-center gap-1.5 font-medium transition-colors cursor-pointer pointer-events-auto nodrag nopan px-2 py-1 rounded-md hover:bg-white/[0.06]"
         >
-          <LucideIcons.Check size={13} className="text-[#30d158]" />
+          <LucideIcons.Check size={13} />
           <span>Update</span>
         </button>
         <button
@@ -606,9 +606,9 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
             fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
             pointerEvents: 'all',
           }}
-          className="text-[12px] text-[#ff453a] hover:text-[#ff6961] flex items-center gap-1.5 font-medium transition-colors cursor-pointer pointer-events-auto nodrag nopan"
+          className="text-[12px] text-[#ff453a] hover:text-[#ff6961] flex items-center gap-1.5 font-medium transition-colors cursor-pointer pointer-events-auto nodrag nopan px-2 py-1 rounded-md hover:bg-[#ff453a]/10"
         >
-          <LucideIcons.Trash2 size={13} className="text-[#ff453a]" />
+          <LucideIcons.Trash2 size={13} />
           <span>Delete Node</span>
         </button>
       </div>
