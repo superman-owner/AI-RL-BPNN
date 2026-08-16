@@ -459,30 +459,44 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
         ctx.arc(proj.px, proj.py, radius * 0.85, 0, Math.PI * 2);
         ctx.stroke();
 
-        // Elegant Apple Typography Labels for Input & Output
+        // Elegant Apple Typography Labels for Input & Output (Smooth Subpixel Matrix Scaling)
         if (isOutput || isInput) {
-          const fontSize = Math.max(9, Math.min(13, Math.floor(10.5 * proj.scale)));
-          ctx.font = `600 ${fontSize}px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif`;
-          ctx.textAlign = isInput ? 'right' : 'left';
+          ctx.save();
+          const baseFontSize = 11;
+          ctx.font = `600 ${baseFontSize}px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif`;
           ctx.textBaseline = 'middle';
-          const textX = isInput ? proj.px - radius - 8 * proj.scale : proj.px + radius + 8 * proj.scale;
-          const textY = proj.py;
+
+          const textOffset = (radius + 8 * proj.scale) * (isInput ? -1 : 1);
+          const anchorX = proj.px + textOffset;
+          const anchorY = proj.py;
+
+          ctx.translate(anchorX, anchorY);
+          
+          // Continuous floating-point scale (No integer font snapping)
+          const smoothScale = Math.max(0.75, Math.min(1.25, proj.scale));
+          ctx.scale(smoothScale, smoothScale);
+
+          ctx.textAlign = isInput ? 'right' : 'left';
+
+          // Smooth Depth-based Alpha
+          const depthAlpha = Math.max(0.3, Math.min(1.0, 1 - (proj.depth - 400) / 600));
 
           if (isOutput) {
             if (isSelectedAction) {
               ctx.fillStyle = coreColor;
               ctx.shadowColor = coreColor;
-              ctx.shadowBlur = 5;
-              ctx.fillText(n.label, textX, textY);
+              ctx.shadowBlur = 6;
+              ctx.fillText(n.label, 0, 0);
               ctx.shadowBlur = 0;
             } else {
-              ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
-              ctx.fillText(n.label, textX, textY);
+              ctx.fillStyle = `rgba(255, 255, 255, ${0.38 * depthAlpha})`;
+              ctx.fillText(n.label, 0, 0);
             }
           } else {
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
-            ctx.fillText(n.label, textX, textY);
+            ctx.fillStyle = `rgba(255, 255, 255, ${0.45 * depthAlpha})`;
+            ctx.fillText(n.label, 0, 0);
           }
+          ctx.restore();
         }
       });
 
