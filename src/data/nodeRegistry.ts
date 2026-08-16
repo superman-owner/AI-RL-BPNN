@@ -91,7 +91,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
         options: ['Standard Deviation %', 'ATR Normalized', 'Bollinger %B'],
       },
     ],
-    hasInput: true,
+    hasInput: false,
     hasOutput: true,
   },
   position_feedback: {
@@ -109,7 +109,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
         ],
       },
     ],
-    hasInput: true,
+    hasInput: false,
     hasOutput: true,
   },
 

@@ -177,8 +177,8 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
             width: 9,                           // ขนาดกว้าง 9px
             height: 9,                          // ขนาดสูง 9px
             borderRadius: '50%',                // วงกลมมน
-            background: '#141416',              // 🟢 ไส้ในสีดำด้าน
-            border: `2px solid ${accent}`,      // 🟢 ขอบสีตาม Node
+            background: accent,                 // 🟢 สีเต็มจุดเชื่อม ชัดเจน สว่างสดใส
+            border: '2px solid #ffffff',        // 🟢 ขอบขาวสว่าง คมชัด
             cursor: 'crosshair',
           }}
         />

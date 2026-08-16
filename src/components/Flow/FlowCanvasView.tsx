@@ -28,7 +28,7 @@ const INITIAL_NODES: Node[] = [
   {
     id: 'node-1',
     type: 'nodeCard',
-    position: { x: 40, y: 160 },
+    position: { x: 40, y: 80 },
     data: {
       nodeType: 'strategy_preset_return',
       preset: 'Standard Quant',
@@ -41,7 +41,7 @@ const INITIAL_NODES: Node[] = [
   {
     id: 'node-2',
     type: 'nodeCard',
-    position: { x: 340, y: 160 },
+    position: { x: 40, y: 280 },
     data: {
       nodeType: 'volatility_indicator',
       vol_window: 10,
@@ -53,7 +53,7 @@ const INITIAL_NODES: Node[] = [
   {
     id: 'node-3',
     type: 'nodeCard',
-    position: { x: 640, y: 160 },
+    position: { x: 380, y: 160 },
     data: {
       nodeType: 'fc1_dense_expansion',
       units: '64',
@@ -66,7 +66,7 @@ const INITIAL_NODES: Node[] = [
   {
     id: 'node-4',
     type: 'nodeCard',
-    position: { x: 940, y: 160 },
+    position: { x: 680, y: 160 },
     data: {
       nodeType: 'spatial_dropout',
       rate: 0.15,
@@ -77,7 +77,7 @@ const INITIAL_NODES: Node[] = [
   {
     id: 'node-5',
     type: 'nodeCard',
-    position: { x: 1240, y: 160 },
+    position: { x: 980, y: 160 },
     data: {
       nodeType: 'fc2_bottleneck_synthesizer',
       units: '32',
@@ -89,7 +89,7 @@ const INITIAL_NODES: Node[] = [
   {
     id: 'node-6',
     type: 'nodeCard',
-    position: { x: 1540, y: 160 },
+    position: { x: 1280, y: 160 },
     data: {
       nodeType: 'friction_spread_cost',
       spread_pip: 0.15,
@@ -100,7 +100,7 @@ const INITIAL_NODES: Node[] = [
   {
     id: 'node-7',
     type: 'nodeCard',
-    position: { x: 1840, y: 160 },
+    position: { x: 1580, y: 160 },
     data: {
       nodeType: 'fc3_policy_action_head',
       classes: '3 (BUY, HOLD, SELL)',
@@ -111,7 +111,7 @@ const INITIAL_NODES: Node[] = [
   {
     id: 'node-8',
     type: 'nodeCard',
-    position: { x: 2140, y: 160 },
+    position: { x: 1880, y: 160 },
     data: {
       nodeType: 'onnx_mt5_compiler',
       export_mode: 'TorchScript Standalone (.onnx)',
@@ -124,13 +124,13 @@ const INITIAL_NODES: Node[] = [
 
 const INITIAL_EDGES: Edge[] = [
   {
-    id: 'e1-2',
+    id: 'e1-3',
     source: 'node-1',
-    target: 'node-2',
+    target: 'node-3',
     type: 'smoothstep',
     animated: true,
-    style: { stroke: '#38bdf8', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(56,189,248,0.55))' },
-    markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: '#38bdf8' },
+    style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' },
+    markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: '#0a84ff' },
   },
   {
     id: 'e2-3',
@@ -138,8 +138,8 @@ const INITIAL_EDGES: Edge[] = [
     target: 'node-3',
     type: 'smoothstep',
     animated: true,
-    style: { stroke: '#ff9f0a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,159,10,0.55))' },
-    markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: '#ff9f0a' },
+    style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' },
+    markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: '#0a84ff' },
   },
   {
     id: 'e3-4',
@@ -165,8 +165,8 @@ const INITIAL_EDGES: Edge[] = [
     target: 'node-6',
     type: 'smoothstep',
     animated: true,
-    style: { stroke: '#f59e0b', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(245,158,11,0.55))' },
-    markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: '#f59e0b' },
+    style: { stroke: '#ffd60a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,214,10,0.55))' },
+    markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: '#ffd60a' },
   },
   {
     id: 'e6-7',
