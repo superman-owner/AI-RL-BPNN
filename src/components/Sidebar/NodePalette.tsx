@@ -87,13 +87,14 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
         </div>
 
         {/*  macOS Spotlight-style Search Field */}
-        <div className="relative">
-          <Search size={12} className="absolute left-2.5 top-2 text-[#86868b]" />
+        <div className="relative flex items-center">
+          <Search size={13} className="absolute left-2.5 text-[#86868b] pointer-events-none z-10" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search parameters & modules..."
-            className="w-full bg-white/[0.05] border border-white/[0.08] hover:border-white/20 focus:border-[#0a84ff] rounded-md text-xs text-white placeholder-[#86868b] pl-7 pr-2.5 py-1.5 outline-none transition-colors"
+            style={{ paddingLeft: '32px' }}
+            className="w-full bg-white/[0.05] border border-white/[0.08] hover:border-white/20 focus:border-[#0a84ff] rounded-md text-xs text-white placeholder-[#71717a] pr-2.5 py-1.5 outline-none transition-colors"
           />
         </div>
       </div>
