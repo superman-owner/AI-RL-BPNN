@@ -28,7 +28,7 @@ export const TopNav: React.FC<TopNavProps> = ({
 }) => {
   return (
     <header className="h-12 w-full vision-glass apple-specular border-b border-white/[0.08] px-4 flex items-center gap-4 text-slate-200 z-30 select-none overflow-x-auto no-scrollbar">
-      {/* Left: macOS Traffic Lights + Brand + View Switcher */}
+      {/* Left: macOS Traffic Lights + Brand */}
       <div className="flex items-center gap-4 flex-shrink-0">
         <div className="flex items-center gap-1.5 pr-2">
           <div className="w-3 h-3 rounded-full bg-[#ff5f56] border border-[#e0443e]/50 cursor-pointer hover:opacity-80 transition-opacity" />
@@ -41,9 +41,10 @@ export const TopNav: React.FC<TopNavProps> = ({
             FXFORGE <span className="text-[#007aff]">LAB</span>
           </span>
         </div>
+      </div>
 
-        <div className="h-3.5 w-[1px] bg-white/10" />
-
+      {/* Main Suite (Shifted 80px to the Right): View Switcher, Controls, Telemetry, Actions */}
+      <div className="flex items-center gap-4 flex-shrink-0" style={{ marginLeft: '80px' }}>
         {/*  Pure Frameless Glowing View Switcher */}
         {onViewChange && (
           <div className="flex items-center gap-4">
@@ -71,12 +72,11 @@ export const TopNav: React.FC<TopNavProps> = ({
             </button>
           </div>
         )}
-      </div>
 
-      <div className="h-3.5 w-[1px] bg-white/10 flex-shrink-0" />
+        <div className="h-3.5 w-[1px] bg-white/10 flex-shrink-0" />
 
-      {/* Controls: Shared START / PAUSE Slot + STOP Button (Locked Widths, Zero Jitter) */}
-      <div className="flex items-center gap-3.5 text-xs flex-shrink-0">
+        {/* Controls: Shared START / PAUSE Slot + STOP Button (Locked Widths, Zero Jitter) */}
+        <div className="flex items-center gap-3.5 text-xs flex-shrink-0">
         <div className="flex items-center gap-2.5 font-bold flex-shrink-0">
           {/* Combined START / PAUSE Button (Shared Same Position) */}
           {rlStatus === 'running' ? (
@@ -199,6 +199,7 @@ export const TopNav: React.FC<TopNavProps> = ({
           <span className="text-[#d1d1d6] font-medium">MT5 Connected</span>
         </div>
       </div>
-    </header>
-  );
+    </div>
+  </header>
+);
 };
