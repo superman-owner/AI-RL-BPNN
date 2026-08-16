@@ -391,11 +391,11 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                 </div>
               </div>
 
-              {/*  Child Items (Large & Crisp Text 13.5px font-medium with Expanded Hover Capsule) */}
+              {/*  Child Items (Large & Crisp Text 13.5px font-medium with Generous Breathing Room) */}
               {isExpanded && (
                 <div
-                  className="mt-1.5 space-y-1"
-                  style={{ paddingLeft: '14px' }}
+                  className="mt-1 space-y-0.5"
+                  style={{ paddingLeft: '8px' }}
                 >
                   {matchingNodes.map((node) => {
                     const isNodeHovered = hoveredNode === node.type;
@@ -408,18 +408,18 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                         onMouseEnter={() => setHoveredNode(node.type)}
                         onMouseLeave={() => setHoveredNode(null)}
                         title="Drag onto canvas to add module"
-                        className={`py-1 min-h-[28px] -mx-[5px] px-[13px] rounded-lg flex items-center justify-between cursor-grab transition-all select-none ${
+                        className={`py-1.5 min-h-[30px] px-3.5 rounded-lg flex items-center justify-between cursor-grab transition-all select-none ${
                           isNodeHovered
                             ? isLight
                               ? 'bg-black/[0.06] text-[#0071e3]'
-                              : 'bg-white/[0.10] text-white'
+                              : 'bg-white/[0.12] text-white'
                             : isLight
                             ? 'text-[#111827]'
                             : 'text-[#e5e7eb]'
                         }`}
                       >
-                        {/* Left: Crisp Solid Bullet Point */}
-                        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                        {/* Left: Crisp Solid Bullet Point with 14px Capsule Clearance */}
+                        <div className="flex items-center gap-3 min-w-0 flex-1">
                           <span
                             style={{ backgroundColor: isNodeHovered ? (isLight ? '#0071e3' : '#ffffff') : group.color }}
                             className="w-1.5 h-1.5 rounded-full transition-all flex-shrink-0"
@@ -435,10 +435,10 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                           </span>
                         </div>
 
-                        {/* Right: Subtle Add Indicator */}
+                        {/* Right: Subtle Add Indicator with 14px Capsule Clearance */}
                         <Plus
                           size={13}
-                          className={`flex-shrink-0 transition-colors ${
+                          className={`flex-shrink-0 transition-colors ml-2 ${
                             isNodeHovered ? (isLight ? 'text-[#0071e3]' : 'text-white') : 'text-transparent'
                           }`}
                         />
