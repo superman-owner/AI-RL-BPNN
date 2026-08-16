@@ -1115,6 +1115,41 @@ const FlowContent: React.FC = () => {
   // Drag-and-Drop from Palette onto Canvas
   const [isDragOverCanvas, setIsDragOverCanvas] = useState(false);
 
+  // Listen to custom Pointer-based Drag & Drop for 100% Theme-locked Mac Cursors
+  useEffect(() => {
+    const handleCustomDrop = (e: Event) => {
+      const customEvent = e as CustomEvent<{ nodeType: string; clientX: number; clientY: number }>;
+      if (!customEvent.detail) return;
+      const { nodeType, clientX, clientY } = customEvent.detail;
+      const position = screenToFlowPosition({ x: clientX, y: clientY });
+      const newNode: Node = {
+        id: `node-${Date.now()}`,
+        type: 'nodeCard',
+        position,
+        data: {
+          nodeType,
+          execution: { status: 'queued', detail: 'Ready for execution' },
+        },
+      };
+      setNodes((nds) => nds.concat(newNode));
+      setIsDragOverCanvas(false);
+    };
+
+    const handleCustomHover = (e: Event) => {
+      const customEvent = e as CustomEvent<{ isOver: boolean }>;
+      if (customEvent.detail) {
+        setIsDragOverCanvas(Boolean(customEvent.detail.isOver));
+      }
+    };
+
+    window.addEventListener('fxforge-drop-node', handleCustomDrop);
+    window.addEventListener('fxforge-drag-hover', handleCustomHover);
+    return () => {
+      window.removeEventListener('fxforge-drop-node', handleCustomDrop);
+      window.removeEventListener('fxforge-drag-hover', handleCustomHover);
+    };
+  }, [screenToFlowPosition, setNodes]);
+
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = 'move';

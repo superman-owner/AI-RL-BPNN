@@ -232,6 +232,118 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
     );
   }
 
+  //  Pointer-based Drag Handler (100% Guaranteed Mac Closed Fist Cursor during entire drag)
+  const handleItemPointerDown = (e: React.PointerEvent, nodeType: string, label: string, color: string) => {
+    if (e.button !== 0) return;
+
+    const startX = e.clientX;
+    const startY = e.clientY;
+    let isDragging = false;
+    let ghostEl: HTMLDivElement | null = null;
+
+    const onPointerMove = (moveEvent: PointerEvent) => {
+      const dist = Math.hypot(moveEvent.clientX - startX, moveEvent.clientY - startY);
+      if (!isDragging && dist > 3) {
+        isDragging = true;
+        document.body.classList.add('is-dragging-node');
+        document.body.style.cursor = 'var(--mac-cursor-grabbing)';
+
+        ghostEl = document.createElement('div');
+        ghostEl.style.position = 'fixed';
+        ghostEl.style.top = '0px';
+        ghostEl.style.left = '0px';
+        ghostEl.style.pointerEvents = 'none';
+        ghostEl.style.zIndex = '9999999';
+        ghostEl.style.padding = '7px 12px 7px 10px';
+        ghostEl.style.borderRadius = '12px';
+        ghostEl.style.backgroundColor = isLight ? '#ffffff' : '#14141c';
+        ghostEl.style.color = isLight ? '#111827' : '#ffffff';
+        ghostEl.style.border = isLight ? '1.5px solid #0071e3' : '1.5px solid rgba(0, 122, 255, 0.6)';
+        ghostEl.style.boxShadow = isLight
+          ? '0 12px 36px rgba(0, 113, 227, 0.25), 0 2px 8px rgba(0,0,0,0.08)'
+          : '0 16px 40px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 122, 255, 0.4)';
+        ghostEl.style.fontFamily = '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif';
+        ghostEl.style.fontSize = '12.5px';
+        ghostEl.style.fontWeight = '600';
+        ghostEl.style.display = 'flex';
+        ghostEl.style.alignItems = 'center';
+        ghostEl.style.gap = '7px';
+        ghostEl.style.transform = `translate3d(${moveEvent.clientX + 14}px, ${moveEvent.clientY + 14}px, 0)`;
+
+        const dot = document.createElement('span');
+        dot.style.width = '7px';
+        dot.style.height = '7px';
+        dot.style.borderRadius = '50%';
+        dot.style.backgroundColor = color || '#0071e3';
+        dot.style.boxShadow = `0 0 6px ${color || '#0071e3'}`;
+        ghostEl.appendChild(dot);
+
+        const text = document.createElement('span');
+        text.textContent = label;
+        text.style.marginRight = '3px';
+        ghostEl.appendChild(text);
+
+        const addBadge = document.createElement('span');
+        addBadge.textContent = '+';
+        addBadge.style.width = '16px';
+        addBadge.style.height = '16px';
+        addBadge.style.borderRadius = '50%';
+        addBadge.style.backgroundColor = '#34c759';
+        addBadge.style.color = '#ffffff';
+        addBadge.style.fontSize = '12px';
+        addBadge.style.fontWeight = 'bold';
+        addBadge.style.display = 'flex';
+        addBadge.style.alignItems = 'center';
+        addBadge.style.justifyContent = 'center';
+        addBadge.style.boxShadow = '0 2px 6px rgba(52, 199, 89, 0.4)';
+        ghostEl.appendChild(addBadge);
+
+        document.body.appendChild(ghostEl);
+      }
+
+      if (isDragging && ghostEl) {
+        ghostEl.style.transform = `translate3d(${moveEvent.clientX + 14}px, ${moveEvent.clientY + 14}px, 0)`;
+
+        const elUnder = document.elementFromPoint(moveEvent.clientX, moveEvent.clientY);
+        const isOverCanvas = Boolean(elUnder?.closest('.react-flow'));
+        window.dispatchEvent(new CustomEvent('fxforge-drag-hover', { detail: { isOver: isOverCanvas } }));
+      }
+    };
+
+    const onPointerUp = (upEvent: PointerEvent) => {
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerup', onPointerUp);
+
+      document.body.classList.remove('is-dragging-node');
+      document.body.style.cursor = '';
+
+      if (ghostEl && document.body.contains(ghostEl)) {
+        document.body.removeChild(ghostEl);
+        ghostEl = null;
+      }
+
+      if (isDragging) {
+        window.dispatchEvent(new CustomEvent('fxforge-drag-hover', { detail: { isOver: false } }));
+        const elUnder = document.elementFromPoint(upEvent.clientX, upEvent.clientY);
+        const flowEl = elUnder?.closest('.react-flow');
+        if (flowEl) {
+          window.dispatchEvent(
+            new CustomEvent('fxforge-drop-node', {
+              detail: {
+                nodeType,
+                clientX: upEvent.clientX,
+                clientY: upEvent.clientY,
+              },
+            })
+          );
+        }
+      }
+    };
+
+    window.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointerup', onPointerUp);
+  };
+
   //  2. Full Expanded Sidebar Mode
   return (
     <aside
@@ -441,6 +553,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                     return (
                       <div
                         key={node.type}
+                        onPointerDown={(e) => handleItemPointerDown(e, node.type, node.label, group.color)}
                         draggable
                         onDragStart={(e) => onDragStartNode(e, node.type, node.label, group.color, isLight)}
                         onDragEnd={() => {
