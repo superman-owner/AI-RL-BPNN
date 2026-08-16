@@ -60,17 +60,17 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
   return (
     <div
       style={{
-        minWidth: 210,
+        minWidth: 215,
         position: 'relative',
-        background: 'var(--bg-node, #141416)',
+        background: '#121218',
         opacity: executionMode === 'off' ? 0.55 : 1,
-        border: `1.5px solid ${selected ? '#ffffff' : accent}`,
-        borderRadius: '8px',
+        border: `1.5px solid ${accent}`,
+        borderRadius: '10px',
         boxShadow: selected
-          ? `0 0 0 1.5px ${accent}, 0 0 20px 3px ${accent}88`
-          : '0 4px 14px rgba(0,0,0,0.45)',
-        fontFamily: 'Inter, -apple-system, sans-serif',
-        transition: 'all 0.15s ease',
+          ? `0 0 0 1px ${accent}, 0 0 22px 2px ${accent}66, 0 8px 24px rgba(0,0,0,0.6)`
+          : '0 4px 16px rgba(0,0,0,0.45)',
+        fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, sans-serif',
+        transition: 'border 0.15s ease, box-shadow 0.15s ease',
       }}
     >
       {/* Node Header */}
@@ -78,27 +78,38 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: 7,
-          padding: '7px 10px',
-          background: 'rgba(255,255,255,0.03)',
-          borderBottom: '1px solid rgba(255,255,255,0.08)',
-          borderTopLeftRadius: '7px',
-          borderTopRightRadius: '7px',
+          gap: 8,
+          padding: '8px 11px',
+          background: 'rgba(255,255,255,0.025)',
+          borderBottom: '1px solid rgba(255,255,255,0.07)',
+          borderTopLeftRadius: '9px',
+          borderTopRightRadius: '9px',
         }}
       >
         <GroupIcon size={14} color={accent} />
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 8.5, fontWeight: 700, letterSpacing: '0.06em', color: accent }}>
-            {group.label.toUpperCase()}
+          <div
+            style={{
+              fontSize: 9.5,
+              fontWeight: 700,
+              letterSpacing: '0.08em',
+              color: accent,
+              textTransform: 'uppercase',
+              lineHeight: 1.2,
+            }}
+          >
+            {group.label}
           </div>
           <div
             style={{
-              fontSize: 12,
+              fontSize: 13,
               fontWeight: 600,
+              letterSpacing: '-0.015em',
               color: '#ffffff',
               whiteSpace: 'nowrap',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
+              lineHeight: 1.35,
             }}
           >
             {def.label}
@@ -121,13 +132,27 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
       </div>
 
       {/* Node Body (พารามิเตอร์ย่อ) */}
-      <div style={{ padding: '8px 10px', display: 'flex', flexDirection: 'column', gap: 4 }}>
+      <div style={{ padding: '9px 11px', display: 'flex', flexDirection: 'column', gap: 5 }}>
         {def.fields.slice(0, 3).map((f) => {
           const val = data[f.key] ?? f.default;
           return (
-            <div key={f.key} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10.5 }}>
-              <span style={{ color: '#71717a' }}>{f.label}:</span>
-              <span style={{ color: '#e4e4e7', fontWeight: 500, fontFamily: 'monospace' }}>
+            <div
+              key={f.key}
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                fontSize: 11,
+                letterSpacing: '-0.01em',
+              }}
+            >
+              <span style={{ color: '#86868b', fontWeight: 400 }}>{f.label}:</span>
+              <span
+                style={{
+                  color: '#f5f5f7',
+                  fontWeight: 500,
+                  fontFamily: 'SFMono-Regular, Menlo, Monaco, Consolas, monospace',
+                }}
+              >
                 {String(val)}
               </span>
             </div>
@@ -146,7 +171,7 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
             width: 8,
             height: 8,
             borderRadius: '50%',
-            background: '#141416',
+            background: '#08080c',
             border: `1.5px solid ${accent}`,
           }}
         />
@@ -164,7 +189,7 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
             height: 8,
             borderRadius: '50%',
             background: accent,
-            border: '1.5px solid #ffffff',
+            border: '1.5px solid #08080c',
           }}
         />
       )}
