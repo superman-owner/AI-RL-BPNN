@@ -391,11 +391,11 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                 </div>
               </div>
 
-              {/*  Child Items (Large & Crisp Text 13.5px font-medium with Mac UI Capsule Frame) */}
+              {/*  Child Items (Large & Crisp Text 13.5px font-medium with Expanded Hover Capsule) */}
               {isExpanded && (
                 <div
                   className="mt-1.5 space-y-1"
-                  style={{ paddingLeft: '9px' }}
+                  style={{ paddingLeft: '14px' }}
                 >
                   {matchingNodes.map((node) => {
                     const isNodeHovered = hoveredNode === node.type;
@@ -408,7 +408,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                         onMouseEnter={() => setHoveredNode(node.type)}
                         onMouseLeave={() => setHoveredNode(null)}
                         title="Drag onto canvas to add module"
-                        className={`py-1.5 min-h-[30px] px-3 -mr-[5px] rounded-lg flex items-center justify-between cursor-grab transition-all select-none ${
+                        className={`py-1 min-h-[28px] -mx-[5px] px-[13px] rounded-lg flex items-center justify-between cursor-grab transition-all select-none ${
                           isNodeHovered
                             ? isLight
                               ? 'bg-black/[0.06] text-[#0071e3]'
