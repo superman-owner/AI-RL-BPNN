@@ -24,21 +24,6 @@ interface TopNavProps {
   onResetCamera?: () => void;
 }
 
-const formatEpisodes = (ep: number | string): string => {
-  const num = typeof ep === 'string' ? parseInt(ep, 10) : ep;
-  if (isNaN(num)) return `${ep}`;
-  if (num >= 1_000_000) {
-    return `${(num / 1_000_000).toFixed(1)}M`;
-  }
-  if (num >= 100_000) {
-    return `${Math.floor(num / 1_000)}K`;
-  }
-  if (num >= 10_000) {
-    return `${(num / 1_000).toFixed(1)}K`;
-  }
-  return `${num}`;
-};
-
 export const TopNav: React.FC<TopNavProps> = ({
   activeView,
   onViewChange,
@@ -141,11 +126,6 @@ export const TopNav: React.FC<TopNavProps> = ({
         {/* Live Telemetry Stats (Locked start positions, Zero wrapping, Number close to label) */}
         {rlTelemetry && (
           <div className="flex items-center gap-3 text-[11px] text-[#86868b] select-none flex-shrink-0">
-            <div className="w-[82px] inline-flex items-center gap-1 flex-shrink-0 whitespace-nowrap">
-              <span className="text-[#86868b]">Episodes:</span>
-              <strong className="text-white tabular-nums">{formatEpisodes(rlTelemetry.episodes)}</strong>
-            </div>
-
             <div className="w-[98px] inline-flex items-center gap-1 flex-shrink-0 whitespace-nowrap">
               <span className="text-[#86868b] whitespace-nowrap">Win Rate:</span>
               <strong className="text-[#30d158] tabular-nums whitespace-nowrap drop-shadow-[0_0_6px_rgba(48,209,88,0.5)]">

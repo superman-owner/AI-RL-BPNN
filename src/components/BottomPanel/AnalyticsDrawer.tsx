@@ -309,12 +309,16 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
               {((((currentTelemetry.episodes || 0) % 1000) / 1000) * 100).toFixed(1)}%
             </strong>
 
-            <span className="text-[11px] font-mono text-[#86868b] whitespace-nowrap">
-              ({currentTelemetry.episodes >= 10000
-                ? `${(currentTelemetry.episodes / 1000).toFixed(1)}K`
-                : currentTelemetry.episodes}{' '}
-              Ep)
-            </span>
+            <span className="text-white/30">·</span>
+
+            <div className="flex items-center gap-1 text-[11px] whitespace-nowrap">
+              <span className="text-[#86868b]">Episodes:</span>
+              <strong className="text-white font-mono tabular-nums font-bold">
+                {currentTelemetry.episodes >= 10000
+                  ? `${(currentTelemetry.episodes / 1000).toFixed(1)}K`
+                  : currentTelemetry.episodes.toLocaleString()}
+              </strong>
+            </div>
           </div>
 
           <div className="h-3.5 w-[1px] bg-white/10 flex-shrink-0" />

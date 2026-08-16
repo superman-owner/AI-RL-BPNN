@@ -335,9 +335,10 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
 
       spawnSignals();
 
-      // Draw Synapses (Hairline Optical Fiber Filaments)
+      // Draw Synapses (Crisp Optical Neural Filaments with Dynamic Action Flow)
       const neurons = neuronsRef.current;
       const synapses = synapsesRef.current;
+      const currentStep = latestStepRef.current;
 
       synapses.forEach((syn) => {
         const src = neurons.find((n) => n.layerIdx === syn.sourceLayer && n.neuronIdx === syn.sourceIdx);
@@ -347,13 +348,38 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
         const p1 = project(src.x, src.y, src.z);
         const p2 = project(tgt.x, tgt.y, tgt.z);
 
-        const alpha = 0.05 + Math.abs(syn.weight) * 0.08;
-        ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
-        ctx.lineWidth = 0.65;
-        ctx.beginPath();
-        ctx.moveTo(p1.px, p1.py);
-        ctx.lineTo(p2.px, p2.py);
-        ctx.stroke();
+        const avgScale = Math.max(0.65, (p1.scale + p2.scale) / 2);
+        const isLeadingToChosenAction =
+          tgt.layerIdx === 3 && currentStep !== null && currentStep.action === tgt.neuronIdx;
+
+        if (isLeadingToChosenAction) {
+          // Vibrantly illuminated active decision path
+          const actionColor =
+            currentStep.action === 0
+              ? 'rgba(48, 209, 88, 0.75)'
+              : currentStep.action === 1
+              ? 'rgba(255, 214, 10, 0.75)'
+              : 'rgba(255, 69, 58, 0.75)';
+
+          ctx.strokeStyle = actionColor;
+          ctx.lineWidth = 1.35 * avgScale;
+          ctx.beginPath();
+          ctx.moveTo(p1.px, p1.py);
+          ctx.lineTo(p2.px, p2.py);
+          ctx.stroke();
+        } else {
+          // Crisp, high-contrast synaptic fiber
+          const alpha = Math.min(0.55, 0.22 + Math.abs(syn.weight) * 0.28);
+          ctx.strokeStyle =
+            syn.weight > 0
+              ? `rgba(160, 210, 255, ${alpha})`
+              : `rgba(220, 225, 245, ${alpha * 0.85})`;
+          ctx.lineWidth = (0.9 + Math.abs(syn.weight) * 0.3) * avgScale;
+          ctx.beginPath();
+          ctx.moveTo(p1.px, p1.py);
+          ctx.lineTo(p2.px, p2.py);
+          ctx.stroke();
+        }
       });
 
       // Draw Signal Pulses (Crisp Light Photons)
@@ -382,8 +408,6 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
       }
 
       // Draw Soma Orbs (Apple Frosted Glass & Specular Photonic Aura)
-      const currentStep = latestStepRef.current;
-
       neurons.forEach((n) => {
         // Decay pulse
         if (n.pulse > 0) {
