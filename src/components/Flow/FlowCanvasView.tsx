@@ -344,7 +344,10 @@ const InspectorTextField: React.FC<{
       {/* Label above */}
       <label
         className={`text-[11px] font-medium select-none tracking-tight ${isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}`}
-        style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif' }}
+        style={{
+          fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
+          cursor: 'var(--mac-cursor-default)',
+        }}
       >
         {label}
       </label>
