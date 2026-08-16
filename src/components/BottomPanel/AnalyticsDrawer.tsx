@@ -792,19 +792,8 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                 <div className="w-[160px] px-4 border-r border-white/[0.08] flex items-center">
                   <span>Source</span>
                 </div>
-                <div className="flex-1 px-4 flex items-center justify-between">
+                <div className="flex-1 px-4 flex items-center">
                   <span>Message</span>
-                  <div className="flex items-center gap-3 text-[10px] text-[#636366] pr-4">
-                    <span className="flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#30d158]" /> Real-time IPC
-                    </span>
-                    <button
-                      onClick={onClearLogs}
-                      className="hover:text-white transition-colors cursor-pointer text-[10px] text-[#86868b] underline"
-                    >
-                      Clear
-                    </button>
-                  </div>
                 </div>
               </div>
 
