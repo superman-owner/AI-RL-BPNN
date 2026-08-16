@@ -23,9 +23,7 @@ interface TopNavProps {
 export const TopNav: React.FC<TopNavProps> = ({
   activeView,
   onViewChange,
-  onOpenExportModal,
   onFitView,
-  onClearFlow,
   isRLTraining = true,
   onToggleRLTraining,
   rlTelemetry,
@@ -168,7 +166,7 @@ export const TopNav: React.FC<TopNavProps> = ({
         </div>
       </div>
 
-      {/* Right: Actions (Deploy MT5 on both views + View-specific Tools) */}
+      {/* Right: Actions (Identical on Both Views: Deploy MT5 ONNX + Reset + MT5 Connected) */}
       <div className="flex items-center gap-4">
         {/* Deploy MT5 ONNX (Available on both pages) */}
         <button
@@ -179,49 +177,22 @@ export const TopNav: React.FC<TopNavProps> = ({
           <span>Deploy MT5 ONNX</span>
         </button>
 
-        {activeView === 'studio' ? (
-          <>
-            <button
-              onClick={onOpenExportModal}
-              className="flex items-center gap-1.5 text-xs font-medium text-white/70 hover:text-white hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.5)] transition-all cursor-pointer"
-              title="Export Python DAG Code"
-            >
-              <LucideIcons.FileCode size={13} className="text-[#007aff]" />
-              <span>Export Python</span>
-            </button>
-
-            <button
-              onClick={onFitView}
-              title="Fit Flow to Screen (Ctrl+1)"
-              className="p-1 text-[#86868b] hover:text-white hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.6)] transition-all cursor-pointer"
-            >
-              <LucideIcons.Maximize2 size={13} />
-            </button>
-
-            <button
-              onClick={onClearFlow}
-              title="Reset Flow"
-              className="p-1 text-[#86868b] hover:text-[#ff453a] hover:drop-shadow-[0_0_6px_rgba(255,69,58,0.5)] transition-colors cursor-pointer"
-            >
-              <LucideIcons.Trash2 size={13} />
-            </button>
-          </>
-        ) : (
-          <button
-            onClick={onResetCamera}
-            title="Reset Camera Angle"
-            className="p-1 text-[#86868b] hover:text-white hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.7)] transition-colors cursor-pointer"
-          >
-            <LucideIcons.RotateCcw size={13} />
-          </button>
-        )}
+        {/* Reset View Button */}
+        <button
+          onClick={activeView === 'studio' ? onFitView : onResetCamera}
+          title={activeView === 'studio' ? 'Reset Canvas View' : 'Reset Camera Angle'}
+          className="p-1 text-[#86868b] hover:text-white hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.7)] transition-colors cursor-pointer"
+        >
+          <LucideIcons.RotateCcw size={13} />
+        </button>
 
         <div className="h-3.5 w-[1px] bg-white/10" />
 
+        {/* MT5 Connected Status Indicator */}
         <div className="flex items-center gap-3 text-[11px] text-[#86868b]">
           <div className="flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-[#30d158] shadow-[0_0_6px_#30d158]" />
-            <span className="text-[#d1d1d6]">Neural Engine</span>
+            <span className="text-[#d1d1d6] font-medium">MT5 Connected</span>
           </div>
         </div>
       </div>
