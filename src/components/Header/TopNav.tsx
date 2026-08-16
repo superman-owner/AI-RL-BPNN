@@ -123,73 +123,94 @@ export const TopNav: React.FC<TopNavProps> = ({
           </button>
         </div>
       ) : (
-        /*  Live 3D BPNN Controls & Telemetry: Pure Frameless Glowing (No Capsules) */
+        /*  Live 3D BPNN Controls & Telemetry: Locked Fixed Column Widths (Zero Shifting) */
         <div className="flex items-center gap-5 text-xs">
           <button
             onClick={onToggleRLTraining}
-            className={`flex items-center gap-1.5 text-xs font-bold transition-all cursor-pointer ${
+            className={`w-[135px] inline-flex items-center gap-1.5 text-xs font-bold transition-all cursor-pointer flex-shrink-0 ${
               isRLTraining
                 ? 'text-[#007aff] hover:text-[#389bff] drop-shadow-[0_0_8px_rgba(0,122,255,0.8)]'
                 : 'text-[#86868b] hover:text-white'
             }`}
           >
             {isRLTraining ? (
-              <LucideIcons.Pause size={13} className="fill-[#007aff] text-[#007aff]" />
+              <LucideIcons.Pause size={13} className="fill-[#007aff] text-[#007aff] flex-shrink-0" />
             ) : (
-              <LucideIcons.Play size={13} className="fill-[#86868b] text-[#86868b]" />
+              <LucideIcons.Play size={13} className="fill-[#86868b] text-[#86868b] flex-shrink-0" />
             )}
-            <span>{isRLTraining ? 'RL Training Active' : 'Paused'}</span>
+            <span className="truncate">{isRLTraining ? 'RL Training Active' : 'Paused'}</span>
           </button>
 
-          <div className="h-3.5 w-[1px] bg-white/10" />
+          <div className="h-3.5 w-[1px] bg-white/10 flex-shrink-0" />
 
-          {/* Live Telemetry Stats */}
+          {/* Live Telemetry Stats (Locked Label Positions & Right-Aligned Tabular Values) */}
           {rlTelemetry && (
-            <div className="flex items-center gap-4 text-[11px] text-[#86868b]">
-              <span>
-                Episodes: <strong className="text-white tabular-nums">{rlTelemetry.episodes}</strong>
-              </span>
-              <span>
-                Win Rate: <strong className="text-[#30d158] tabular-nums drop-shadow-[0_0_6px_rgba(48,209,88,0.5)]">{rlTelemetry.winRate}%</strong>
-              </span>
-              <span>
-                Sharpe: <strong className="text-[#00c7be] tabular-nums drop-shadow-[0_0_6px_rgba(0,199,190,0.5)]">{rlTelemetry.annualizedSharpe}</strong>
-              </span>
-              <span>
-                Reward: <strong className="text-[#ffd60a] tabular-nums drop-shadow-[0_0_6px_rgba(255,214,10,0.5)]">{rlTelemetry.totalReward}</strong>
-              </span>
+            <div className="flex items-center gap-5 text-[11px] text-[#86868b] select-none">
+              <div className="w-[84px] inline-flex items-center justify-between flex-shrink-0">
+                <span className="text-[#86868b]">Episodes:</span>
+                <strong className="text-white tabular-nums">{rlTelemetry.episodes}</strong>
+              </div>
+
+              <div className="w-[104px] inline-flex items-center justify-between flex-shrink-0">
+                <span className="text-[#86868b]">Win Rate:</span>
+                <strong className="text-[#30d158] tabular-nums drop-shadow-[0_0_6px_rgba(48,209,88,0.5)]">
+                  {typeof rlTelemetry.winRate === 'number' ? rlTelemetry.winRate.toFixed(1) : rlTelemetry.winRate}%
+                </strong>
+              </div>
+
+              <div className="w-[86px] inline-flex items-center justify-between flex-shrink-0">
+                <span className="text-[#86868b]">Sharpe:</span>
+                <strong className="text-[#00c7be] tabular-nums drop-shadow-[0_0_6px_rgba(0,199,190,0.5)]">
+                  {typeof rlTelemetry.annualizedSharpe === 'number'
+                    ? rlTelemetry.annualizedSharpe.toFixed(2)
+                    : rlTelemetry.annualizedSharpe}
+                </strong>
+              </div>
+
+              <div className="w-[126px] inline-flex items-center justify-between flex-shrink-0">
+                <span className="text-[#86868b]">Reward:</span>
+                <strong className="text-[#ffd60a] tabular-nums drop-shadow-[0_0_6px_rgba(255,214,10,0.5)]">
+                  {typeof rlTelemetry.totalReward === 'number'
+                    ? rlTelemetry.totalReward > 0
+                      ? `+${rlTelemetry.totalReward.toFixed(4)}`
+                      : rlTelemetry.totalReward.toFixed(4)
+                    : rlTelemetry.totalReward}
+                </strong>
+              </div>
             </div>
           )}
 
-          {/* Action Probability Indicator: Frameless Glowing Text */}
-          {rlLatestStep && (
-            <div className="flex items-center gap-1.5 text-xs font-bold tabular-nums">
-              <span
-                className={`w-1.5 h-1.5 rounded-full ${
-                  rlLatestStep.action === 0
-                    ? 'bg-[#30d158] shadow-[0_0_8px_#30d158]'
+          {/* Action Probability Indicator: Locked 105px Fixed Width */}
+          <div className="w-[105px] inline-flex items-center gap-1.5 text-xs font-bold tabular-nums flex-shrink-0">
+            {rlLatestStep && (
+              <>
+                <span
+                  className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${
+                    rlLatestStep.action === 0
+                      ? 'bg-[#30d158] shadow-[0_0_8px_#30d158]'
+                      : rlLatestStep.action === 2
+                      ? 'bg-[#ff453a] shadow-[0_0_8px_#ff453a]'
+                      : 'bg-[#ffd60a] shadow-[0_0_8px_#ffd60a]'
+                  }`}
+                />
+                <span
+                  className={`truncate ${
+                    rlLatestStep.action === 0
+                      ? 'text-[#30d158] drop-shadow-[0_0_8px_rgba(48,209,88,0.8)]'
+                      : rlLatestStep.action === 2
+                      ? 'text-[#ff453a] drop-shadow-[0_0_8px_rgba(255,69,58,0.8)]'
+                      : 'text-[#ffd60a] drop-shadow-[0_0_8px_rgba(255,214,10,0.8)]'
+                  }`}
+                >
+                  {rlLatestStep.action === 0
+                    ? 'BUY (LONG)'
                     : rlLatestStep.action === 2
-                    ? 'bg-[#ff453a] shadow-[0_0_8px_#ff453a]'
-                    : 'bg-[#ffd60a] shadow-[0_0_8px_#ffd60a]'
-                }`}
-              />
-              <span
-                className={`${
-                  rlLatestStep.action === 0
-                    ? 'text-[#30d158] drop-shadow-[0_0_8px_rgba(48,209,88,0.8)]'
-                    : rlLatestStep.action === 2
-                    ? 'text-[#ff453a] drop-shadow-[0_0_8px_rgba(255,69,58,0.8)]'
-                    : 'text-[#ffd60a] drop-shadow-[0_0_8px_rgba(255,214,10,0.8)]'
-                }`}
-              >
-                {rlLatestStep.action === 0
-                  ? 'BUY (LONG)'
-                  : rlLatestStep.action === 2
-                  ? 'SELL (SHORT)'
-                  : 'HOLD (FLAT)'}
-              </span>
-            </div>
-          )}
+                    ? 'SELL (SHORT)'
+                    : 'HOLD (FLAT)'}
+                </span>
+              </>
+            )}
+          </div>
         </div>
       )}
 
