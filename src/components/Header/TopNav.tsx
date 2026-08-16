@@ -74,11 +74,11 @@ export const TopNav: React.FC<TopNavProps> = ({
         </div>
       </div>
 
-      {/* Center + Actions: Controls & Telemetry & MT5 ONNX & MT5 Connected unified seamlessly */}
-      <div className="flex items-center gap-5 text-xs mr-6">
+      {/* Center + Actions: Compact & Optimized spacing so it never overflows or collides with the screen edge */}
+      <div className="flex items-center gap-3.5 text-xs pr-6">
         <button
           onClick={onToggleRLTraining}
-          className={`w-[135px] inline-flex items-center gap-1.5 text-xs font-bold transition-all cursor-pointer flex-shrink-0 ${
+          className={`w-[125px] inline-flex items-center gap-1.5 text-xs font-bold transition-all cursor-pointer flex-shrink-0 ${
             isRLTraining
               ? 'text-[#007aff] hover:text-[#389bff] drop-shadow-[0_0_8px_rgba(0,122,255,0.8)]'
               : 'text-[#86868b] hover:text-white'
@@ -96,20 +96,20 @@ export const TopNav: React.FC<TopNavProps> = ({
 
         {/* Live Telemetry Stats (Numbers tight to labels, Header start positions locked) */}
         {rlTelemetry && (
-          <div className="flex items-center gap-4 text-[11px] text-[#86868b] select-none">
-            <div className="w-[82px] inline-flex items-center gap-1.5 flex-shrink-0">
+          <div className="flex items-center gap-3 text-[11px] text-[#86868b] select-none">
+            <div className="w-[74px] inline-flex items-center gap-1 flex-shrink-0">
               <span className="text-[#86868b]">Episodes:</span>
               <strong className="text-white tabular-nums">{rlTelemetry.episodes}</strong>
             </div>
 
-            <div className="w-[102px] inline-flex items-center gap-1.5 flex-shrink-0">
+            <div className="w-[88px] inline-flex items-center gap-1 flex-shrink-0">
               <span className="text-[#86868b]">Win Rate:</span>
               <strong className="text-[#30d158] tabular-nums drop-shadow-[0_0_6px_rgba(48,209,88,0.5)]">
                 {typeof rlTelemetry.winRate === 'number' ? rlTelemetry.winRate.toFixed(1) : rlTelemetry.winRate}%
               </strong>
             </div>
 
-            <div className="w-[84px] inline-flex items-center gap-1.5 flex-shrink-0">
+            <div className="w-[72px] inline-flex items-center gap-1 flex-shrink-0">
               <span className="text-[#86868b]">Sharpe:</span>
               <strong className="text-[#00c7be] tabular-nums drop-shadow-[0_0_6px_rgba(0,199,190,0.5)]">
                 {typeof rlTelemetry.annualizedSharpe === 'number'
@@ -118,7 +118,7 @@ export const TopNav: React.FC<TopNavProps> = ({
               </strong>
             </div>
 
-            <div className="w-[124px] inline-flex items-center gap-1.5 flex-shrink-0">
+            <div className="w-[110px] inline-flex items-center gap-1 flex-shrink-0">
               <span className="text-[#86868b]">Reward:</span>
               <strong className="text-[#ffd60a] tabular-nums drop-shadow-[0_0_6px_rgba(255,214,10,0.5)]">
                 {typeof rlTelemetry.totalReward === 'number'
@@ -131,8 +131,8 @@ export const TopNav: React.FC<TopNavProps> = ({
           </div>
         )}
 
-        {/* Action Probability Indicator: Locked 105px Fixed Width */}
-        <div className="w-[105px] inline-flex items-center gap-1.5 text-xs font-bold tabular-nums flex-shrink-0">
+        {/* Action Probability Indicator: Locked 92px Fixed Width */}
+        <div className="w-[94px] inline-flex items-center gap-1.5 text-xs font-bold tabular-nums flex-shrink-0">
           {rlLatestStep && (
             <>
               <span
@@ -177,7 +177,7 @@ export const TopNav: React.FC<TopNavProps> = ({
         <div className="h-3.5 w-[1px] bg-white/10 flex-shrink-0" />
 
         {/* MT5 Connected */}
-        <div className="flex items-center gap-1.5 text-[11px] text-[#86868b] flex-shrink-0 pr-4">
+        <div className="flex items-center gap-1.5 text-[11px] text-[#86868b] flex-shrink-0">
           <span className="w-1.5 h-1.5 rounded-full bg-[#30d158] shadow-[0_0_6px_#30d158]" />
           <span className="text-[#d1d1d6] font-medium">MT5 Connected</span>
         </div>
