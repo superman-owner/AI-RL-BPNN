@@ -110,6 +110,7 @@ export const NodeInspector: React.FC<NodeInspectorProps> = ({
     /*  Outer Window Chassis: 450px Wide with 32px Insets */
     <div
       key={selectedNode.id}
+      style={{ cursor: 'var(--mac-cursor-default)' }}
       className="absolute right-6 top-6 w-[450px] max-h-[calc(100%-48px)] z-30 flex flex-col bg-[#0d0d16]/96 backdrop-blur-3xl rounded-[32px] overflow-hidden animate-ios-app-launch select-none shadow-[0_30px_90px_rgba(0,0,0,0.95)] border border-white/[0.14]"
     >
       {/*  1. Window App Header (Generous 32px Insets) */}

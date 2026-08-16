@@ -22,6 +22,8 @@
 
   --mac-cursor-grabbing: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cfilter id='s' x='-20%25' y='-20%25' width='140%25' height='140%25'%3E%3CfeDropShadow dx='1' dy='2' stdDeviation='1.2' flood-color='%23000000' flood-opacity='0.35'/%3E%3C/filter%3E%3Cg filter='url(%23s)'%3E%3Cpath d='M8 13 L 8 9 A 2 2 0 0 1 10 7 L 18 7 A 2 2 0 0 1 20 9 L 20 13 A 4 4 0 0 1 24 17 L 24 18 A 6 6 0 0 1 18 24 L 10 24 A 6 6 0 0 1 4 18 L 4 15 A 4 4 0 0 1 8 13 Z' fill='%23ffffff' stroke='%23000000' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/g%3E%3C/svg%3E") 14 14, grabbing;
 
+  --mac-cursor-text: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M12 6 h8 M16 6 v20 M12 26 h8' fill='none' stroke='%23000000' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M12 6 h8 M16 6 v20 M12 26 h8' fill='none' stroke='%23ffffff' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") 16 16, text;
+
   --mac-cursor-crosshair: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M12 2v6m0 8v6M2 12h6m8 0h6' stroke='%23000000' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M12 2v6m0 8v6M2 12h6m8 0h6' stroke='%23ffffff' stroke-width='1.25' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='12' r='1.5' fill='%23000000'/%3E%3C/svg%3E") 12 12, crosshair;
 }
 
@@ -35,7 +37,7 @@
   font-feature-settings: "tnum" 1, "cv01" 1, "cv02" 1;
 }
 
-html, body, #root {
+html, body, #root, .cursor-default, [data-cursor="default"] {
   width: 100vw;
   height: 100vh;
   margin: 0;
@@ -47,11 +49,15 @@ html, body, #root {
   color: #ffffff;
   letter-spacing: -0.015em;
   font-variant-numeric: tabular-nums;
-  cursor: var(--mac-cursor-default);
+  cursor: var(--mac-cursor-default) !important;
 }
 
-button, a, [role="button"], .cursor-pointer, [onclick] {
+button, a, [role="button"], .cursor-pointer, [onclick], input[type="checkbox"], input[type="radio"], select {
   cursor: var(--mac-cursor-pointer) !important;
+}
+
+input[type="text"], input[type="number"], input[type="password"], input[type="search"], textarea, [contenteditable="true"], .cursor-text {
+  cursor: var(--mac-cursor-text) !important;
 }
 
 .cursor-grab {

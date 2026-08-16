@@ -593,6 +593,7 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
         zIndex: 9999,
         padding: '12px 14px 10px 14px',
         pointerEvents: 'all',
+        cursor: 'var(--mac-cursor-default)',
         boxShadow: isLight
           ? '0 20px 50px rgba(0, 0, 0, 0.12), 0 1px 0 rgba(255, 255, 255, 0.8) inset'
           : '0 24px 48px rgba(0, 0, 0, 0.6), 0 1px 0 rgba(255, 255, 255, 0.08) inset',
@@ -600,7 +601,7 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
         MozOsxFontSmoothing: 'grayscale',
         textRendering: 'geometricPrecision',
       }}
-      className={`border rounded-2xl text-xs select-none nodrag nopan cursor-default pointer-events-auto transition-colors duration-150 ${
+      className={`border rounded-2xl text-xs select-none nodrag nopan pointer-events-auto transition-colors duration-150 ${
         isLight ? 'border-black/[0.12] text-[#1d1d1f]' : 'border-white/[0.12] text-slate-200'
       }`}
       onPointerDown={(e) => e.stopPropagation()}
@@ -615,7 +616,7 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
           alignItems: 'center',
           justifyContent: 'space-between',
           marginBottom: '10px',
-          cursor: isDragging ? 'grabbing' : 'grab',
+          cursor: isDragging ? 'var(--mac-cursor-grabbing)' : 'var(--mac-cursor-grab)',
           userSelect: 'none',
           borderBottom: 'none',
           pointerEvents: 'all',
@@ -660,8 +661,8 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
           }}
           onPointerDown={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
-          style={{ pointerEvents: 'all' }}
-          className={`transition-colors duration-150 cursor-pointer pointer-events-auto nodrag nopan flex-shrink-0 ${
+          style={{ pointerEvents: 'all', cursor: 'var(--mac-cursor-pointer)' }}
+          className={`transition-colors duration-150 pointer-events-auto nodrag nopan flex-shrink-0 ${
             isLight ? 'text-black/40 hover:text-[#1d1d1f]' : 'text-white/40 hover:text-white'
           }`}
         >
@@ -679,6 +680,7 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
           overflowY: 'auto',
           paddingRight: '4px',
           pointerEvents: 'all',
+          cursor: 'var(--mac-cursor-default)',
         }}
         className="custom-scrollbar nodrag nopan"
         onPointerDown={(e) => e.stopPropagation()}
@@ -711,6 +713,7 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
           justifyContent: 'center',
           gap: '20px',
           pointerEvents: 'all',
+          cursor: 'var(--mac-cursor-default)',
         }}
         className="nodrag nopan pointer-events-auto px-1 select-none"
         onPointerDown={(e) => e.stopPropagation()}
@@ -730,8 +733,9 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
             background: 'transparent',
             border: 'none',
             padding: 0,
+            cursor: 'var(--mac-cursor-pointer)',
           }}
-          className="text-[12px] text-[#0a84ff] hover:text-[#409cff] flex items-center gap-1.5 font-medium transition-colors duration-150 cursor-pointer pointer-events-auto nodrag nopan select-none group"
+          className="text-[12px] text-[#0a84ff] hover:text-[#409cff] flex items-center gap-1.5 font-medium transition-colors duration-150 pointer-events-auto nodrag nopan select-none group"
         >
           <LucideIcons.Check size={13} className="text-[#0a84ff] group-hover:text-[#409cff] transition-colors duration-150" />
           <span>Update</span>
@@ -750,8 +754,9 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
             background: 'transparent',
             border: 'none',
             padding: 0,
+            cursor: 'var(--mac-cursor-pointer)',
           }}
-          className="text-[12px] text-[#ff453a] hover:text-[#ff6961] flex items-center gap-1.5 font-medium transition-colors duration-150 cursor-pointer pointer-events-auto nodrag nopan select-none group"
+          className="text-[12px] text-[#ff453a] hover:text-[#ff6961] flex items-center gap-1.5 font-medium transition-colors duration-150 pointer-events-auto nodrag nopan select-none group"
         >
           <LucideIcons.Trash2 size={13} className="text-[#ff453a] group-hover:text-[#ff6961] transition-colors duration-150" />
           <span>Delete Node</span>
