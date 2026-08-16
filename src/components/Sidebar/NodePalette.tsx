@@ -19,6 +19,7 @@ import {
   Radio,
   FileCode,
   Sparkles,
+  PanelLeftClose,
 } from 'lucide-react';
 
 // Apple SF Symbols Icon Mapping (Clean, authentic Apple Blue & System Colors)
@@ -47,9 +48,15 @@ function onDragStartNode(event: React.DragEvent, nodeType: string) {
 
 interface NodePaletteProps {
   onOpenSettings?: () => void;
+  isCollapsed?: boolean;
+  onToggleCollapse?: () => void;
 }
 
-export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
+export const NodePalette: React.FC<NodePaletteProps> = ({
+  onOpenSettings,
+  isCollapsed = false,
+  onToggleCollapse,
+}) => {
   const [query, setQuery] = useState('');
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(() =>
@@ -70,7 +77,15 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
   return (
     <aside
       onWheel={(e) => e.stopPropagation()}
-      className="w-[290px] h-full flex flex-col flex-shrink-0 bg-[#08080c]/98 border-r border-white/[0.08] text-[#c7c7cc] select-none z-20 font-sans"
+      style={{
+        width: isCollapsed ? 0 : 290,
+        minWidth: isCollapsed ? 0 : 290,
+        opacity: isCollapsed ? 0 : 1,
+        pointerEvents: isCollapsed ? 'none' : 'auto',
+        transition: 'width 0.25s cubic-bezier(0.16, 1, 0.3, 1), min-width 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease',
+        overflow: 'hidden',
+      }}
+      className="h-full flex flex-col flex-shrink-0 bg-[#08080c]/98 border-r border-white/[0.08] text-[#c7c7cc] select-none z-20 font-sans"
     >
       {/* 1.  Apple macOS Header & Spotlight Search (Exact 10px Spacing, Seamless Background) */}
       <div
@@ -106,23 +121,46 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
             </span>
           </div>
 
-          <button
-            onClick={toggleAll}
-            style={{
-              fontSize: '11px',
-              fontWeight: 500,
-              color: '#86868b',
-              background: 'transparent',
-              border: 'none',
-              cursor: 'pointer',
-              padding: '2px 4px',
-              transition: 'color 0.15s ease',
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = '#86868b')}
-          >
-            {Object.values(expandedGroups).every(Boolean) ? 'Collapse All' : 'Expand All'}
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <button
+              onClick={toggleAll}
+              style={{
+                fontSize: '11px',
+                fontWeight: 500,
+                color: '#86868b',
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '2px 4px',
+                transition: 'color 0.15s ease',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = '#86868b')}
+            >
+              {Object.values(expandedGroups).every(Boolean) ? 'Collapse' : 'Expand'}
+            </button>
+
+            {onToggleCollapse && (
+              <button
+                onClick={onToggleCollapse}
+                title="Collapse Sidebar (พับแถบข้าง)"
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#86868b',
+                  cursor: 'pointer',
+                  padding: '2px 3px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  transition: 'color 0.15s ease',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = '#86868b')}
+              >
+                <PanelLeftClose size={14} />
+              </button>
+            )}
+          </div>
         </div>
 
         {/*  macOS Spotlight-style Search Field (h-34px) */}

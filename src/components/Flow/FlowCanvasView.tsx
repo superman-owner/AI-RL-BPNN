@@ -14,7 +14,6 @@ import {
 import '@xyflow/react/dist/style.css';
 import type { Connection, Edge, Node } from '@xyflow/react';
 import NodeCard from '../nodes/NodeCard';
-import NodePalette from '../Sidebar/NodePalette';
 import { NODE_DEFS, GROUPS } from '../../data/nodeRegistry';
 import * as LucideIcons from 'lucide-react';
 
@@ -502,24 +501,19 @@ const FlowContent: React.FC = () => {
   );
 
   return (
-    <div className="w-full h-full flex overflow-hidden relative bg-[#040407]" onMouseMove={onMouseMove}>
-      {/* AI Node Palette Sidebar (RL Hyperparameters) */}
-      <NodePalette />
-
-      {/* Main ReactFlow Canvas */}
-      <div className="flex-1 h-full relative">
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          onDrop={onDrop}
-          onDragOver={onDragOver}
-          onNodeDoubleClick={onNodeDoubleClick}
-          onNodeContextMenu={onNodeContextMenu}
-          onPaneContextMenu={onPaneContextMenu}
-          nodeTypes={nodeTypes}
+    <div className="w-full h-full relative overflow-hidden bg-[#040407]" onMouseMove={onMouseMove}>
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        onDrop={onDrop}
+        onDragOver={onDragOver}
+        onNodeDoubleClick={onNodeDoubleClick}
+        onNodeContextMenu={onNodeContextMenu}
+        onPaneContextMenu={onPaneContextMenu}
+        nodeTypes={nodeTypes}
           selectionOnDrag={true}
           selectionMode={SelectionMode.Partial}
           panOnDrag={[1, 2]}
@@ -772,7 +766,6 @@ const FlowContent: React.FC = () => {
           );
         })}
       </div>
-    </div>
   );
 };
 
