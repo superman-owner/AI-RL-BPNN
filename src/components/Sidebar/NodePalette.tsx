@@ -69,33 +69,88 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
       onWheel={(e) => e.stopPropagation()}
       className="w-[290px] h-full flex flex-col flex-shrink-0 bg-[#08080c]/98 border-r border-white/[0.08] text-[#c7c7cc] select-none z-20 font-sans"
     >
-      {/* 1.  Apple macOS Header & Spotlight Search (Exact 30px Spacing) */}
-      <div className="px-4.5 pt-[30px] pb-[30px] border-b border-white/[0.06] bg-[#0c0c14]/90 flex-shrink-0">
-        <div className="flex justify-between items-center mb-[30px] px-0.5">
-          <div className="flex items-center gap-2.5">
-            <Sliders size={15} className="text-[#86868b] hover:text-white transition-colors" />
-            <span className="text-[13.5px] font-bold text-white tracking-tight">
+      {/* 1.  Apple macOS Header & Spotlight Search (Generous Spacing) */}
+      <div
+        style={{
+          paddingTop: '36px',
+          paddingBottom: '24px',
+          paddingLeft: '18px',
+          paddingRight: '18px',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          backgroundColor: '#0c0c14',
+          flexShrink: 0,
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '28px',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <Sliders size={16} className="text-[#86868b] hover:text-white transition-colors" />
+            <span
+              style={{
+                fontSize: '14px',
+                fontWeight: 700,
+                color: '#ffffff',
+                letterSpacing: '-0.01em',
+              }}
+            >
               RL Hyperparameters
             </span>
           </div>
 
           <button
             onClick={toggleAll}
-            className="text-[11px] font-medium text-[#86868b] hover:text-white transition-colors cursor-pointer"
+            style={{
+              fontSize: '11px',
+              fontWeight: 500,
+              color: '#86868b',
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              padding: '2px 4px',
+              transition: 'color 0.15s ease',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = '#86868b')}
           >
             {Object.values(expandedGroups).every(Boolean) ? 'Collapse All' : 'Expand All'}
           </button>
         </div>
 
         {/*  macOS Spotlight-style Search Field (h-34px rounded-8) */}
-        <div className="relative flex items-center">
-          <Search size={13} className="absolute left-3 text-[#86868b] pointer-events-none z-10" />
+        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', width: '100%' }}>
+          <Search
+            size={13}
+            style={{
+              position: 'absolute',
+              left: '12px',
+              color: '#86868b',
+              pointerEvents: 'none',
+              zIndex: 10,
+            }}
+          />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search parameters & modules..."
-            style={{ paddingLeft: '32px' }}
-            className="w-full h-[34px] bg-white/[0.05] border border-white/[0.08] hover:border-white/20 focus:border-[#0a84ff] rounded-[8px] text-[12px] text-white placeholder-[#71717a] pr-3 py-1 outline-none transition-colors"
+            style={{
+              width: '100%',
+              height: '34px',
+              paddingLeft: '34px',
+              paddingRight: '12px',
+              backgroundColor: 'rgba(255, 255, 255, 0.05)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              borderRadius: '8px',
+              fontSize: '12px',
+              color: '#ffffff',
+              outline: 'none',
+              boxSizing: 'border-box',
+            }}
           />
         </div>
       </div>
