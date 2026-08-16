@@ -1302,6 +1302,15 @@ const FlowContent: React.FC = () => {
           document.documentElement.classList.remove('is-dragging-node');
           document.body.classList.remove('is-dragging-node');
         }}
+        onSelectionStart={() => {
+          if (canvasHoldTimerRef.current) clearTimeout(canvasHoldTimerRef.current);
+          document.documentElement.classList.add('is-selecting-canvas');
+          document.body.classList.add('is-selecting-canvas');
+        }}
+        onSelectionEnd={() => {
+          document.documentElement.classList.remove('is-selecting-canvas');
+          document.body.classList.remove('is-selecting-canvas');
+        }}
         onNodeDoubleClick={onNodeDoubleClick}
         onNodeContextMenu={onNodeContextMenu}
         onPaneContextMenu={onPaneContextMenu}

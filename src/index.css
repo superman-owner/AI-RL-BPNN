@@ -459,12 +459,14 @@ input[type='number'] {
 
 /*  Official Apple macOS Cursors for ReactFlow */
 .react-flow__pane {
-  cursor: var(--mac-cursor-grab) !important;
+  cursor: var(--mac-cursor-crosshair) !important;
 }
 .react-flow__pane.dragging {
   cursor: var(--mac-cursor-grabbing) !important;
 }
-.react-flow__pane.selection {
+.react-flow__pane.selection,
+.react-flow__selection,
+.react-flow__nodesselection-rect {
   cursor: var(--mac-cursor-crosshair) !important;
 }
 .react-flow__node {
@@ -480,14 +482,37 @@ input[type='number'] {
   cursor: var(--mac-cursor-crosshair) !important;
 }
 
-/*  Seamless Edge Cursor: Matches Canvas to eliminate jitter/flickering near wire boundaries */
+/*  Seamless Edge Cursor: Matches Canvas Selection/Crosshair so touching edges never flickers */
 .react-flow__edge,
 .react-flow__edge *,
 .react-flow__edge-path,
 .react-flow__edge-interaction,
 .react-flow__connection-path,
 .react-flow__edges {
-  cursor: var(--mac-cursor-grab) !important;
+  cursor: var(--mac-cursor-crosshair) !important;
+}
+
+/*  Active Canvas Selection State (คลุม Canvas) - 100% Crosshair across everything */
+html.is-selecting-canvas,
+html.is-selecting-canvas *,
+body.is-selecting-canvas,
+body.is-selecting-canvas *,
+body.is-selecting-canvas .react-flow,
+body.is-selecting-canvas .react-flow *,
+body.is-selecting-canvas .react-flow__pane,
+body.is-selecting-canvas .react-flow__pane *,
+body.is-selecting-canvas .react-flow__node,
+body.is-selecting-canvas .react-flow__node *,
+body.is-selecting-canvas .react-flow__edge,
+body.is-selecting-canvas .react-flow__edge *,
+body.is-selecting-canvas .react-flow__edge-path,
+body.is-selecting-canvas .react-flow__edge-interaction,
+body.is-selecting-canvas .react-flow__handle,
+body.is-selecting-canvas .react-flow__selection,
+body.is-selecting-canvas .react-flow__selection *,
+body.is-selecting-canvas .react-flow__viewport,
+body.is-selecting-canvas .react-flow__viewport * {
+  cursor: var(--mac-cursor-crosshair) !important;
 }
 
 /*  Absolute Highest Specificity: Global Dragging State across Entire Window (Grabbing Fist) */
