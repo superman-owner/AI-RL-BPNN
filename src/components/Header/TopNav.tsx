@@ -27,7 +27,10 @@ export const TopNav: React.FC<TopNavProps> = ({
   onOpenMT5Deploy,
 }) => {
   return (
-    <header className="h-12 w-full vision-glass apple-specular border-b border-white/[0.08] px-4 flex items-center gap-4 text-slate-200 z-30 select-none overflow-x-auto no-scrollbar">
+    <header
+      style={{ paddingLeft: '16px', paddingRight: '20px' }}
+      className="h-12 w-full vision-glass apple-specular border-b border-white/[0.08] flex items-center justify-between text-slate-200 z-30 select-none overflow-x-auto no-scrollbar"
+    >
       {/* Left: macOS Traffic Lights + Brand */}
       <div className="flex items-center gap-4 flex-shrink-0">
         <div className="flex items-center gap-1.5 pr-2">
@@ -43,8 +46,8 @@ export const TopNav: React.FC<TopNavProps> = ({
         </div>
       </div>
 
-      {/* Main Suite (Shifted 80px to the Right): View Switcher, Controls, Telemetry, Actions */}
-      <div className="flex items-center gap-4 flex-shrink-0" style={{ marginLeft: '80px' }}>
+      {/* Main Suite (Shifted to the Right: 'Connected' letter 'd' ends exactly 20px from right edge) */}
+      <div className="flex items-center gap-4 flex-shrink-0 ml-auto">
         {/*  Pure Frameless Glowing View Switcher */}
         {onViewChange && (
           <div className="flex items-center gap-4">
