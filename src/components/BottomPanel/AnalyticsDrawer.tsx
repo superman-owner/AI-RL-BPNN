@@ -322,7 +322,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                     }`}
                   />
 
-                  {/* Left Specs */}
+                  {/* Left Specs: Total Return & Profit Factor */}
                   <div className="z-10 flex flex-col justify-center">
                     <div className="flex items-center gap-1.5 text-[#86868b]">
                       <LucideIcons.Gauge size={isMaximized ? 14 : 12} className="text-[#30d158]" />
@@ -331,17 +331,18 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                           isMaximized ? 'text-[11px]' : 'text-[9px]'
                         }`}
                       >
-                        Master Alpha Tachometer
+                        Master RL Alpha Tachometer
                       </span>
                     </div>
 
                     <div className={`flex items-baseline gap-2 ${isMaximized ? 'mt-2' : 'mt-1'}`}>
                       <div
-                        className={`font-extrabold tracking-tight text-white leading-none ${
+                        className={`font-black tracking-tight text-white leading-none ${
                           isMaximized ? 'text-4xl' : 'text-2xl'
                         }`}
+                        style={{ fontFamily: 'var(--font-sans)' }}
                       >
-                        {MOCK_METRICS.winRate}
+                        +{MOCK_METRICS.totalReturn}
                         <span
                           className={`font-bold text-[#30d158] ml-0.5 ${
                             isMaximized ? 'text-2xl' : 'text-base'
@@ -354,18 +355,22 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                         className={`font-semibold text-[#86868b] ${
                           isMaximized ? 'text-xs' : 'text-[10px]'
                         }`}
+                        style={{ fontFamily: 'var(--font-sans)' }}
                       >
-                        Win Rate
+                        Total Return
                       </span>
                     </div>
 
                     <div
-                      className={`flex items-center gap-1.5 font-bold text-[#30d158] ${
+                      className={`flex items-center gap-2 font-semibold text-[#30d158] ${
                         isMaximized ? 'mt-2 text-xs' : 'mt-1 text-[11px]'
                       }`}
+                      style={{ fontFamily: 'var(--font-sans)' }}
                     >
                       <LucideIcons.TrendingUp size={isMaximized ? 13 : 11} />
-                      <span>+184.2% Return</span>
+                      <span>PF {MOCK_METRICS.profitFactor}x</span>
+                      <span className="text-white/30">•</span>
+                      <span className="text-[#00c7be]">+248.6 R Reward</span>
                     </div>
                   </div>
 
