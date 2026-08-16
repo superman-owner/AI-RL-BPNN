@@ -115,36 +115,38 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
 
           return (
             <div key={group.id} className="space-y-1">
-              {/*  Section Header (SF Symbol on Header) */}
+              {/*  Section Header (Muted Gray -> Pure White on Hover, No Frame) */}
               <div
                 onClick={() => toggleGroup(group.id)}
-                className="px-2 py-1.5 flex items-center justify-between cursor-pointer rounded-[6px] hover:bg-white/[0.04] transition-colors"
+                className="group px-1 py-1.5 flex items-center justify-between cursor-pointer transition-colors"
               >
-                <div className="flex items-center gap-2 min-w-0 flex-1">
+                <div className="flex items-center gap-2.5 min-w-0 flex-1">
                   {/* Rotating Chevron */}
                   <ChevronRight
                     size={11}
-                    className={`text-[#86868b] transition-transform duration-150 flex-shrink-0 ${
-                      isExpanded ? 'rotate-90 text-white' : ''
+                    className={`transition-all duration-150 flex-shrink-0 ${
+                      isExpanded
+                        ? 'rotate-90 text-[#86868b] group-hover:text-white'
+                        : 'text-[#86868b] group-hover:text-white'
                     }`}
                   />
 
-                  {/* SF Symbol on Main Header */}
+                  {/* SF Symbol on Main Header (Gray -> White) */}
                   <GroupIcon
                     size={14}
-                    className="text-[#0a84ff] flex-shrink-0"
+                    className="text-[#86868b] group-hover:text-white transition-colors flex-shrink-0"
                   />
 
-                  {/* Section Label */}
-                  <span className="text-[11.5px] font-bold text-[#e5e5ea] uppercase tracking-wider truncate">
+                  {/* Section Label (Gray -> White) */}
+                  <span className="text-[11.5px] font-bold text-[#86868b] group-hover:text-white uppercase tracking-wider truncate transition-colors">
                     {group.label}
                   </span>
                 </div>
               </div>
 
-              {/*  Child Items (Mid Dot for Draggable Nodes) */}
+              {/*  Child Items (Frameless Gray -> White on Hover) */}
               {isExpanded && (
-                <div className="space-y-0.5 pl-3.5">
+                <div className="space-y-0.5 pl-4">
                   {matchingNodes.map((node) => {
                     const isNodeHovered = hoveredNode === node.type;
 
@@ -156,24 +158,20 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
                         onMouseEnter={() => setHoveredNode(node.type)}
                         onMouseLeave={() => setHoveredNode(null)}
                         title="Drag onto canvas to add module"
-                        className={`h-[30px] px-2.5 rounded-[6px] flex items-center justify-between cursor-grab transition-all ${
-                          isNodeHovered
-                            ? 'bg-white/[0.08] text-white shadow-sm'
-                            : 'text-[#d1d1d6] hover:bg-white/[0.04]'
-                        }`}
+                        className="h-[28px] px-1 flex items-center justify-between cursor-grab transition-colors"
                       >
                         {/* Left: Mid Dot (·) + Label */}
                         <div className="flex items-center gap-2.5 min-w-0 flex-1">
                           <span
                             className={`text-[17px] font-bold leading-none select-none transition-colors flex-shrink-0 ${
-                              isNodeHovered ? 'text-[#0a84ff]' : 'text-[#71717a]'
+                              isNodeHovered ? 'text-white' : 'text-[#71717a]'
                             }`}
                           >
                             ·
                           </span>
                           <span
-                            className={`text-[13px] tracking-tight truncate leading-tight ${
-                              isNodeHovered ? 'font-medium text-white' : 'font-normal text-[#d1d1d6]'
+                            className={`text-[13px] tracking-tight truncate leading-tight transition-colors ${
+                              isNodeHovered ? 'font-medium text-white' : 'font-normal text-[#8e8e93]'
                             }`}
                           >
                             {node.label}
@@ -183,8 +181,8 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
                         {/* Right: Subtle Add Indicator */}
                         <Plus
                           size={12}
-                          className={`flex-shrink-0 transition-opacity ${
-                            isNodeHovered ? 'opacity-100 text-white' : 'opacity-0'
+                          className={`flex-shrink-0 transition-colors ${
+                            isNodeHovered ? 'text-white' : 'text-transparent'
                           }`}
                         />
                       </div>
