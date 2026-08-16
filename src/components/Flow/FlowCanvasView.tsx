@@ -1166,6 +1166,13 @@ const FlowContent: React.FC = () => {
       event.preventDefault();
       setIsDragOverCanvas(false);
       document.body.classList.remove('is-dragging-node');
+
+      // Strict Boundary Check: Must cross divider line into Canvas
+      const sidebarEl = document.querySelector('aside');
+      const sidebarRect = sidebarEl?.getBoundingClientRect();
+      const hasCrossedDivider = sidebarRect ? event.clientX > sidebarRect.right : true;
+      if (!hasCrossedDivider) return;
+
       const nodeType = event.dataTransfer.getData('application/fxforge-node');
       if (!nodeType) return;
 

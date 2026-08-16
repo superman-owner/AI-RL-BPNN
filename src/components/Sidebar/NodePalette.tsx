@@ -304,8 +304,12 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
       if (isDragging && ghostEl) {
         ghostEl.style.transform = `translate3d(${moveEvent.clientX + 14}px, ${moveEvent.clientY + 14}px, 0)`;
 
+        const sidebarEl = document.querySelector('aside');
+        const sidebarRect = sidebarEl?.getBoundingClientRect();
+        const hasCrossedDivider = sidebarRect ? moveEvent.clientX > sidebarRect.right : moveEvent.clientX > 345;
+
         const elUnder = document.elementFromPoint(moveEvent.clientX, moveEvent.clientY);
-        const isOverCanvas = Boolean(elUnder?.closest('.react-flow'));
+        const isOverCanvas = hasCrossedDivider && Boolean(elUnder?.closest('.react-flow'));
         window.dispatchEvent(new CustomEvent('fxforge-drag-hover', { detail: { isOver: isOverCanvas } }));
       }
     };
@@ -324,18 +328,26 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
 
       if (isDragging) {
         window.dispatchEvent(new CustomEvent('fxforge-drag-hover', { detail: { isOver: false } }));
-        const elUnder = document.elementFromPoint(upEvent.clientX, upEvent.clientY);
-        const flowEl = elUnder?.closest('.react-flow');
-        if (flowEl) {
-          window.dispatchEvent(
-            new CustomEvent('fxforge-drop-node', {
-              detail: {
-                nodeType,
-                clientX: upEvent.clientX,
-                clientY: upEvent.clientY,
-              },
-            })
-          );
+
+        //  Strict Boundary Check: Must cross divider line into Canvas to allow Drop
+        const sidebarEl = document.querySelector('aside');
+        const sidebarRect = sidebarEl?.getBoundingClientRect();
+        const hasCrossedDivider = sidebarRect ? upEvent.clientX > sidebarRect.right : upEvent.clientX > 345;
+
+        if (hasCrossedDivider) {
+          const elUnder = document.elementFromPoint(upEvent.clientX, upEvent.clientY);
+          const flowEl = elUnder?.closest('.react-flow');
+          if (flowEl) {
+            window.dispatchEvent(
+              new CustomEvent('fxforge-drop-node', {
+                detail: {
+                  nodeType,
+                  clientX: upEvent.clientX,
+                  clientY: upEvent.clientY,
+                },
+              })
+            );
+          }
         }
       }
     };
