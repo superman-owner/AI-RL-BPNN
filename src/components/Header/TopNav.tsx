@@ -12,6 +12,10 @@ interface TopNavProps {
   onFitView?: () => void;
   onClearFlow?: () => void;
   nodeCount?: number;
+  rlStatus?: 'running' | 'paused' | 'stopped';
+  onStartRL?: () => void;
+  onPauseRL?: () => void;
+  onStopRL?: () => void;
   isRLTraining?: boolean;
   onToggleRLTraining?: () => void;
   rlTelemetry?: QuantTelemetry | null;
@@ -38,8 +42,10 @@ const formatEpisodes = (ep: number | string): string => {
 export const TopNav: React.FC<TopNavProps> = ({
   activeView,
   onViewChange,
-  isRLTraining = true,
-  onToggleRLTraining,
+  rlStatus = 'running',
+  onStartRL,
+  onPauseRL,
+  onStopRL,
   rlTelemetry,
   rlLatestStep,
   onOpenMT5Deploy,
@@ -91,23 +97,51 @@ export const TopNav: React.FC<TopNavProps> = ({
 
       <div className="h-3.5 w-[1px] bg-white/10 flex-shrink-0" />
 
-      {/* Controls & Telemetry & MT5 ONNX & MT5 Connected Attached Right Next to View Switcher */}
+      {/* Controls: START / PAUSE / STOP Cluster */}
       <div className="flex items-center gap-3.5 text-xs flex-shrink-0">
-        <button
-          onClick={onToggleRLTraining}
-          className={`w-[125px] inline-flex items-center gap-1.5 text-xs font-bold transition-all cursor-pointer flex-shrink-0 ${
-            isRLTraining
-              ? 'text-[#007aff] hover:text-[#389bff] drop-shadow-[0_0_8px_rgba(0,122,255,0.8)]'
-              : 'text-[#86868b] hover:text-white'
-          }`}
-        >
-          {isRLTraining ? (
-            <LucideIcons.Pause size={13} className="fill-[#007aff] text-[#007aff] flex-shrink-0" />
-          ) : (
-            <LucideIcons.Play size={13} className="fill-[#86868b] text-[#86868b] flex-shrink-0" />
-          )}
-          <span className="truncate">{isRLTraining ? 'RL Training Active' : 'Paused'}</span>
-        </button>
+        <div className="flex items-center gap-3 font-bold">
+          {/* START Button */}
+          <button
+            onClick={onStartRL}
+            className={`flex items-center gap-1 transition-all cursor-pointer ${
+              rlStatus === 'running'
+                ? 'text-[#30d158] drop-shadow-[0_0_8px_rgba(48,209,88,0.85)]'
+                : 'text-white/40 hover:text-[#30d158]'
+            }`}
+            title="Start / Resume Deep RL Simulation"
+          >
+            <LucideIcons.Play size={11} className={rlStatus === 'running' ? 'fill-[#30d158]' : ''} />
+            <span>START</span>
+          </button>
+
+          {/* PAUSE Button */}
+          <button
+            onClick={onPauseRL}
+            className={`flex items-center gap-1 transition-all cursor-pointer ${
+              rlStatus === 'paused'
+                ? 'text-[#ffd60a] drop-shadow-[0_0_8px_rgba(255,214,10,0.85)]'
+                : 'text-white/40 hover:text-[#ffd60a]'
+            }`}
+            title="Pause Simulation"
+          >
+            <LucideIcons.Pause size={11} className={rlStatus === 'paused' ? 'fill-[#ffd60a]' : ''} />
+            <span>PAUSE</span>
+          </button>
+
+          {/* STOP Button */}
+          <button
+            onClick={onStopRL}
+            className={`flex items-center gap-1 transition-all cursor-pointer ${
+              rlStatus === 'stopped'
+                ? 'text-[#ff453a] drop-shadow-[0_0_8px_rgba(255,69,58,0.85)]'
+                : 'text-white/40 hover:text-[#ff453a]'
+            }`}
+            title="Stop & Reset Simulation"
+          >
+            <LucideIcons.Square size={11} className={rlStatus === 'stopped' ? 'fill-[#ff453a]' : ''} />
+            <span>STOP</span>
+          </button>
+        </div>
 
         <div className="h-3.5 w-[1px] bg-white/10 flex-shrink-0" />
 

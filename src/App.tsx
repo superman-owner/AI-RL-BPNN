@@ -51,8 +51,8 @@ const FlowCanvas: React.FC = () => {
   const [isExportOpen, setIsExportOpen] = useState(false);
   const [isClearModalOpen, setIsClearModalOpen] = useState(false);
 
-  // RL Live Telemetry State for TopNav integration
-  const [isRLTraining, setIsRLTraining] = useState(true);
+  // RL Live Telemetry & Control State (START, PAUSE, STOP)
+  const [rlStatus, setRlStatus] = useState<'running' | 'paused' | 'stopped'>('running');
   const [rlTelemetry, setRlTelemetry] = useState<QuantTelemetry>(() => fxforgeEngine.getTelemetry());
   const [rlLatestStep, setRlLatestStep] = useState<RLEnvironmentStep | null>(null);
   const [isMT5DeployOpen, setIsMT5DeployOpen] = useState(false);
@@ -60,7 +60,7 @@ const FlowCanvas: React.FC = () => {
 
   // Global Real-time Deep RL Simulation Loop (Active on both Flow DAG & Live 3D BPNN views)
   useEffect(() => {
-    if (!isRLTraining) return;
+    if (rlStatus !== 'running') return;
 
     const interval = setInterval(() => {
       const stepResult = fxforgeEngine.step();
@@ -70,7 +70,25 @@ const FlowCanvas: React.FC = () => {
     }, 450);
 
     return () => clearInterval(interval);
-  }, [isRLTraining]);
+  }, [rlStatus]);
+
+  const handleStartRL = useCallback(() => {
+    setRlStatus('running');
+    setLogs((prev) => [...prev, `[RL ENGINE] Training started/resumed.`]);
+  }, []);
+
+  const handlePauseRL = useCallback(() => {
+    setRlStatus('paused');
+    setLogs((prev) => [...prev, `[RL ENGINE] Training paused.`]);
+  }, []);
+
+  const handleStopRL = useCallback(() => {
+    setRlStatus('stopped');
+    fxforgeEngine.reset();
+    setRlTelemetry(fxforgeEngine.getTelemetry());
+    setRlLatestStep(null);
+    setLogs((prev) => [...prev, `[RL ENGINE] Training stopped and environment reset.`]);
+  }, []);
 
   // Clipboard & History State
   const [clipboard, setClipboard] = useState<{ nodes: Node[]; edges: Edge[] } | null>(null);
@@ -662,8 +680,10 @@ const FlowCanvas: React.FC = () => {
         onFitView={() => fitView({ padding: 0.25, duration: 400 })}
         onClearFlow={() => setIsClearModalOpen(true)}
         nodeCount={nodes.length}
-        isRLTraining={isRLTraining}
-        onToggleRLTraining={() => setIsRLTraining((prev) => !prev)}
+        rlStatus={rlStatus}
+        onStartRL={handleStartRL}
+        onPauseRL={handlePauseRL}
+        onStopRL={handleStopRL}
         rlTelemetry={rlTelemetry}
         rlLatestStep={rlLatestStep}
         onOpenMT5Deploy={() => setIsMT5DeployOpen(true)}
@@ -674,7 +694,7 @@ const FlowCanvas: React.FC = () => {
       {activeView === 'bpnn' ? (
         <div className="flex-1 h-full relative bg-[#08080c]">
           <LiveNeuralLink
-            isTraining={isRLTraining}
+            isTraining={rlStatus === 'running'}
             latestStep={rlLatestStep}
             cameraResetTrigger={cameraResetTrigger}
           />
@@ -746,7 +766,7 @@ const FlowCanvas: React.FC = () => {
           {/* Bottom: Apple Analytics Drawer */}
           <AnalyticsDrawer
             logs={logs}
-            isRunning={isRLTraining}
+            isRunning={rlStatus === 'running'}
             onClearLogs={() => setLogs(['[SYSTEM] Console cleared.'])}
           />
         </>
