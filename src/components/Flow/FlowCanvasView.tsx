@@ -702,11 +702,15 @@ const FlowContent: React.FC = () => {
     [screenToFlowPosition]
   );
 
-  // Close context menu on click elsewhere
+  // Close context menu on click elsewhere or zoom/wheel scroll
   useEffect(() => {
-    const handleClick = () => setContextMenu(null);
-    window.addEventListener('click', handleClick);
-    return () => window.removeEventListener('click', handleClick);
+    const handleDismiss = () => setContextMenu(null);
+    window.addEventListener('click', handleDismiss);
+    window.addEventListener('wheel', handleDismiss, { passive: true });
+    return () => {
+      window.removeEventListener('click', handleDismiss);
+      window.removeEventListener('wheel', handleDismiss);
+    };
   }, []);
 
   // Track Mouse Movement for Cursor-based Pasting
@@ -799,76 +803,63 @@ const FlowContent: React.FC = () => {
         onNodeDoubleClick={onNodeDoubleClick}
         onNodeContextMenu={onNodeContextMenu}
         onPaneContextMenu={onPaneContextMenu}
+        onMoveStart={() => setContextMenu(null)}
+        onPaneClick={() => setContextMenu(null)}
+        onPaneScroll={() => setContextMenu(null)}
         nodeTypes={nodeTypes}
-          selectionOnDrag={true}
-          selectionMode={SelectionMode.Partial}
-          panOnDrag={[1, 2]}
-          minZoom={0.3}
-          maxZoom={1.6}
-          fitView
-          fitViewOptions={{ padding: 0.15 }}
-          proOptions={{ hideAttribution: true }}
+        selectionOnDrag={true}
+        selectionMode={SelectionMode.Partial}
+        panOnDrag={[1, 2]}
+        minZoom={0.3}
+        maxZoom={1.6}
+        fitView
+        fitViewOptions={{ padding: 0.15 }}
+        proOptions={{ hideAttribution: true }}
+      >
+        <Background variant={BackgroundVariant.Dots} gap={20} size={1.2} color="rgba(255,255,255,0.06)" />
+        <Controls
+          className="bg-[#0f0f18] border border-white/[0.08] text-white fill-white rounded-lg shadow-xl"
+          showInteractive={false}
+        />
+      </ReactFlow>
+
+      {/* Status Indicator */}
+      <div className="absolute top-4 right-4 z-10 flex items-center gap-2 bg-[#0c0c14]/90 backdrop-blur-md border border-white/[0.08] px-3 py-1.5 rounded-lg shadow-2xl text-xs select-none">
+        <span className="text-[#30d158] font-mono text-[11px] flex items-center gap-1.5 font-semibold">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#30d158] animate-pulse" />
+          {nodes.length} Nodes Active
+        </span>
+      </div>
+
+      {/* Floating Right-Click Context Menu */}
+      {contextMenu && (
+        <div
+          style={{
+            position: 'fixed',
+            top: Math.min(contextMenu.y, window.innerHeight - 240),
+            left: Math.min(contextMenu.x, window.innerWidth - 240),
+            zIndex: 100,
+            minWidth: '220px',
+            padding: '6px',
+          }}
+          className="bg-[#12121c]/95 backdrop-blur-2xl border border-white/[0.14] rounded-xl shadow-2xl text-xs text-slate-200 select-none animate-in fade-in zoom-in-95 duration-100 flex flex-col gap-0.5"
+          onClick={(e) => e.stopPropagation()}
         >
-          <Background variant={BackgroundVariant.Dots} gap={20} size={1.2} color="rgba(255,255,255,0.06)" />
-          <Controls
-            className="bg-[#0f0f18] border border-white/[0.08] text-white fill-white rounded-lg shadow-xl"
-            showInteractive={false}
-          />
-        </ReactFlow>
-
-        {/* Status Indicator */}
-        <div className="absolute top-4 right-4 z-10 flex items-center gap-2 bg-[#0c0c14]/90 backdrop-blur-md border border-white/[0.08] px-3 py-1.5 rounded-lg shadow-2xl text-xs select-none">
-          <span className="text-[#30d158] font-mono text-[11px] flex items-center gap-1.5 font-semibold">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#30d158] animate-pulse" />
-            {nodes.length} Nodes Active
-          </span>
-        </div>
-
-        {/* Floating Right-Click Context Menu */}
-        {contextMenu && (
-          <div
-            style={{
-              position: 'fixed',
-              top: Math.min(contextMenu.y, window.innerHeight - 240),
-              left: Math.min(contextMenu.x, window.innerWidth - 240),
-              zIndex: 100,
-              minWidth: '220px',
-              padding: '6px',
-            }}
-            className="bg-[#12121c]/95 backdrop-blur-2xl border border-white/[0.14] rounded-xl shadow-2xl text-xs text-slate-200 select-none animate-in fade-in zoom-in-95 duration-100 flex flex-col gap-0.5"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {contextMenu.targetNodeId ? (
-              <>
-                <button
-                  onClick={() => {
-                    const node = nodes.find((n) => n.id === contextMenu.targetNodeId);
-                    if (node) {
-                      openInspectorForNode(node);
-                    }
-                    setContextMenu(null);
-                  }}
-                  className="w-full px-3 py-2 rounded-lg flex items-center justify-between hover:bg-white/[0.08] hover:text-white transition-all cursor-pointer text-left"
-                >
-                  <span className="flex items-center gap-2.5 text-[12px] font-medium">
-                    <LucideIcons.Sliders size={13} className="text-[#007aff] flex-shrink-0" />
-                    <span>Inspect Parameters</span>
-                  </span>
-                  <span className="text-[11px] text-white/45 font-mono pl-4 flex-shrink-0">2×Click</span>
-                </button>
-                <button
-                  onClick={() => {
-                    duplicateNodes();
-                    setContextMenu(null);
-                  }}
-                  className="w-full px-3 py-2 rounded-lg flex items-center justify-between hover:bg-white/[0.08] hover:text-white transition-all cursor-pointer text-left"
-                >
-                  <span className="flex items-center gap-2.5 text-[12px] font-medium">
-                    <LucideIcons.CopyPlus size={13} className="text-[#ffd60a] flex-shrink-0" />
-                    <span>Duplicate</span>
-                  </span>
-                  <span className="text-[11px] text-white/45 font-mono pl-4 flex-shrink-0">Ctrl+D</span>
-                </button>
+          {contextMenu.targetNodeId ? (
+            <>
+              <button
+                onClick={() => {
+                  duplicateNodes();
+                  setContextMenu(null);
+                }}
+                className="w-full px-3 py-2 rounded-lg flex items-center justify-between hover:bg-white/[0.08] hover:text-white transition-all cursor-pointer text-left"
+              >
+                <span className="flex items-center gap-2.5 text-[12px] font-medium">
+                  <LucideIcons.CopyPlus size={13} className="text-[#ffd60a] flex-shrink-0" />
+                  <span>Duplicate</span>
+                </span>
+                <span className="text-[11px] text-white/45 font-mono pl-4 flex-shrink-0">Ctrl+D</span>
+              </button>
                 <button
                   onClick={() => {
                     copyNodes();
