@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { GROUPS, nodesByGroup } from '../../data/nodeRegistry';
+import { useTheme } from '../../context/ThemeContext';
 import {
   Search,
   Plus,
@@ -44,6 +45,9 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
   isCollapsed = false,
   onToggleCollapse,
 }) => {
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
+
   const [query, setQuery] = useState('');
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(() =>
@@ -71,7 +75,9 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
           minWidth: '56px',
           transition: 'width 0.22s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
-        className="h-full flex flex-col items-center justify-between bg-[#08080c] border-r border-white/[0.08] text-[#c7c7cc] select-none z-20 py-3 flex-shrink-0"
+        className={`h-full flex flex-col items-center justify-between border-r select-none z-20 py-3 flex-shrink-0 transition-colors duration-200 ${
+          isLight ? 'bg-[#f5f5f7] border-black/[0.08] text-[#1d1d1f]' : 'bg-[#08080c] border-white/[0.08] text-[#c7c7cc]'
+        }`}
       >
         {/* Top: Expand Toggle Button & Search Quick-Action */}
         <div className="flex flex-col items-center gap-2.5 w-full">
@@ -79,7 +85,9 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
             <button
               onClick={onToggleCollapse}
               title="Expand Sidebar (ขยายแถบข้าง)"
-              className="w-9 h-9 rounded-lg flex items-center justify-center text-[#86868b] hover:text-white hover:bg-white/[0.06] transition-all cursor-pointer"
+              className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all cursor-pointer ${
+                isLight ? 'text-[#6e6e73] hover:text-[#1d1d1f] hover:bg-black/[0.05]' : 'text-[#86868b] hover:text-white hover:bg-white/[0.06]'
+              }`}
             >
               <PanelLeftOpen size={16} />
             </button>
@@ -89,7 +97,11 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
           <button
             onClick={onToggleCollapse}
             title="Search parameters & modules"
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-[#86868b] hover:text-white hover:bg-white/[0.06] border border-white/[0.06] transition-all cursor-pointer"
+            className={`w-8 h-8 rounded-lg flex items-center justify-center border transition-all cursor-pointer ${
+              isLight
+                ? 'text-[#6e6e73] hover:text-[#1d1d1f] hover:bg-black/[0.05] border-black/[0.08]'
+                : 'text-[#86868b] hover:text-white hover:bg-white/[0.06] border-white/[0.06]'
+            }`}
           >
             <Search size={13} />
           </button>
@@ -108,7 +120,9 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                     if (onToggleCollapse) onToggleCollapse();
                   }}
                   title={group.label}
-                  className="w-9 h-8 rounded-md flex items-center justify-center hover:bg-white/[0.08] transition-all cursor-pointer relative"
+                  className={`w-9 h-8 rounded-md flex items-center justify-center transition-all cursor-pointer relative ${
+                    isLight ? 'hover:bg-black/[0.06]' : 'hover:bg-white/[0.08]'
+                  }`}
                 >
                   <GroupIcon
                     size={15}
@@ -118,7 +132,11 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                 </button>
 
                 {/* Apple macOS Floating Tooltip */}
-                <div className="absolute left-[54px] px-2.5 py-1 bg-[#161622] border border-white/[0.12] rounded-md shadow-2xl text-[11px] font-medium text-white whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                <div
+                  className={`absolute left-[54px] px-2.5 py-1 rounded-md text-[11px] font-medium whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50 shadow-xl border ${
+                    isLight ? 'bg-white border-black/[0.12] text-[#1d1d1f]' : 'bg-[#161622] border-white/[0.12] text-white'
+                  }`}
+                >
                   {group.label}
                 </div>
               </div>
@@ -131,7 +149,9 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
           <button
             onClick={onOpenSettings}
             title="Settings"
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-[#86868b] hover:text-white hover:bg-white/[0.06] transition-colors cursor-pointer"
+            className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors cursor-pointer ${
+              isLight ? 'text-[#6e6e73] hover:text-[#1d1d1f] hover:bg-black/[0.05]' : 'text-[#86868b] hover:text-white hover:bg-white/[0.06]'
+            }`}
           >
             <Settings size={15} />
           </button>
@@ -149,7 +169,9 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
         minWidth: '335px',
         transition: 'width 0.22s cubic-bezier(0.16, 1, 0.3, 1)',
       }}
-      className="h-full flex flex-col flex-shrink-0 bg-[#08080c] border-r border-white/[0.08] text-[#c7c7cc] select-none z-20 font-sans"
+      className={`h-full flex flex-col flex-shrink-0 border-r select-none z-20 font-sans transition-colors duration-200 ${
+        isLight ? 'bg-[#f5f5f7] border-black/[0.08] text-[#1d1d1f]' : 'bg-[#08080c] border-white/[0.08] text-[#c7c7cc]'
+      }`}
     >
       {/* 1.  Apple macOS Header & Spotlight Search */}
       <div
@@ -172,12 +194,12 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
-            <Sliders size={16} className="text-[#86868b] hover:text-white transition-colors flex-shrink-0" />
+            <Sliders size={16} className={`transition-colors flex-shrink-0 ${isLight ? 'text-[#6e6e73] hover:text-[#1d1d1f]' : 'text-[#86868b] hover:text-white'}`} />
             <span
               style={{
                 fontSize: '13.5px',
                 fontWeight: 700,
-                color: '#ffffff',
+                color: isLight ? '#1d1d1f' : '#ffffff',
                 letterSpacing: '-0.01em',
                 whiteSpace: 'nowrap',
               }}
@@ -192,7 +214,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
               style={{
                 fontSize: '11px',
                 fontWeight: 500,
-                color: '#86868b',
+                color: isLight ? '#6e6e73' : '#86868b',
                 background: 'transparent',
                 border: 'none',
                 cursor: 'pointer',
@@ -200,8 +222,8 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                 transition: 'color 0.15s ease',
                 whiteSpace: 'nowrap',
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = '#86868b')}
+              onMouseEnter={(e) => (e.currentTarget.style.color = isLight ? '#1d1d1f' : '#ffffff')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = isLight ? '#6e6e73' : '#86868b')}
             >
               {Object.values(expandedGroups).every(Boolean) ? 'Collapse' : 'Expand'}
             </button>
@@ -213,15 +235,15 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                 style={{
                   background: 'transparent',
                   border: 'none',
-                  color: '#86868b',
+                  color: isLight ? '#6e6e73' : '#86868b',
                   cursor: 'pointer',
                   padding: '2px 3px',
                   display: 'flex',
                   alignItems: 'center',
                   transition: 'color 0.15s ease',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
-                onMouseLeave={(e) => (e.currentTarget.style.color = '#86868b')}
+                onMouseEnter={(e) => (e.currentTarget.style.color = isLight ? '#1d1d1f' : '#ffffff')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = isLight ? '#6e6e73' : '#86868b')}
               >
                 <PanelLeftClose size={15} />
               </button>
@@ -236,7 +258,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
             style={{
               position: 'absolute',
               left: '10px',
-              color: '#86868b',
+              color: isLight ? '#6e6e73' : '#86868b',
               pointerEvents: 'none',
               zIndex: 10,
             }}
@@ -250,11 +272,11 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
               height: '34px',
               paddingLeft: '32px',
               paddingRight: '10px',
-              backgroundColor: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              backgroundColor: isLight ? '#ffffff' : 'rgba(255, 255, 255, 0.05)',
+              border: isLight ? '1px solid rgba(0, 0, 0, 0.1)' : '1px solid rgba(255, 255, 255, 0.08)',
               borderRadius: '8px',
               fontSize: '12px',
-              color: '#ffffff',
+              color: isLight ? '#1d1d1f' : '#ffffff',
               outline: 'none',
               boxSizing: 'border-box',
             }}
@@ -298,8 +320,12 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                     className="flex-shrink-0 transition-transform duration-150 group-hover:scale-110"
                   />
 
-                  {/* Section Label (Gray -> White) */}
-                  <span className="text-[11.5px] font-bold text-[#86868b] group-hover:text-white uppercase tracking-wider truncate transition-colors">
+                  {/* Section Label */}
+                  <span
+                    className={`text-[11.5px] font-bold uppercase tracking-wider truncate transition-colors ${
+                      isLight ? 'text-[#6e6e73] group-hover:text-[#1d1d1f]' : 'text-[#86868b] group-hover:text-white'
+                    }`}
+                  >
                     {group.label}
                   </span>
                 </div>
@@ -327,14 +353,20 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                         {/* Left: Mid Dot (·) */}
                         <div className="flex items-center gap-2 min-w-0 flex-1">
                           <span
-                            style={{ color: isNodeHovered ? '#ffffff' : group.color }}
+                            style={{ color: isNodeHovered ? (isLight ? '#0071e3' : '#ffffff') : group.color }}
                             className="text-[14px] font-bold leading-none select-none transition-colors flex-shrink-0"
                           >
                             ·
                           </span>
                           <span
                             className={`text-[12.5px] tracking-tight truncate leading-normal transition-colors ${
-                              isNodeHovered ? 'font-medium text-white' : 'font-normal text-[#8e8e93]'
+                              isLight
+                                ? isNodeHovered
+                                  ? 'font-medium text-[#0071e3]'
+                                  : 'font-normal text-[#1d1d1f]'
+                                : isNodeHovered
+                                ? 'font-medium text-white'
+                                : 'font-normal text-[#8e8e93]'
                             }`}
                           >
                             {node.label}
@@ -345,7 +377,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                         <Plus
                           size={11}
                           className={`flex-shrink-0 transition-colors ${
-                            isNodeHovered ? 'text-white' : 'text-transparent'
+                            isNodeHovered ? (isLight ? 'text-[#0071e3]' : 'text-white') : 'text-transparent'
                           }`}
                         />
                       </div>
@@ -372,17 +404,19 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
           justifyContent: 'space-between',
           flexShrink: 0,
         }}
-        className="text-xs text-[#86868b]"
+        className={`text-xs ${isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}`}
       >
         <button
           onClick={onOpenSettings}
           title="Open System & Quant Settings"
-          className="flex items-center gap-2 hover:text-white transition-colors cursor-pointer text-[12px] font-medium"
+          className={`flex items-center gap-2 transition-colors cursor-pointer text-[12px] font-medium ${
+            isLight ? 'hover:text-[#1d1d1f]' : 'hover:text-white'
+          }`}
         >
           <Settings size={13} />
           <span>Settings</span>
         </button>
-        <span className="text-[11px] text-[#30d158] font-mono font-medium">
+        <span className={`text-[11px] font-mono font-medium ${isLight ? 'text-[#28cd41]' : 'text-[#30d158]'}`}>
           v2.0 Quant AI
         </span>
       </div>

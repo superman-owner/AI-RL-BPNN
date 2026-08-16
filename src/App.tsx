@@ -8,8 +8,11 @@ import { NodePalette } from './components/Sidebar/NodePalette';
 import { INITIAL_LOGS } from './data/mockAnalytics';
 import { fxforgeEngine } from './services/fxforgeEngine';
 import type { QuantTelemetry, RLEnvironmentStep } from './services/fxforgeEngine';
+import { ThemeProvider, useTheme } from './context/ThemeContext';
 
-export function App() {
+function AppContent() {
+  const { theme } = useTheme();
+
   // Dual View Mode: 'studio' (Flow DAG) vs 'bpnn' (Live 3D BPNN)
   const [activeView, setActiveView] = useState<'studio' | 'bpnn'>('studio');
 
@@ -59,7 +62,11 @@ export function App() {
   }, []);
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-[#040407] text-slate-100 overflow-hidden font-sans select-none antialiased">
+    <div
+      className={`h-screen w-screen flex flex-col overflow-hidden font-sans select-none antialiased transition-colors duration-200 ${
+        theme === 'light' ? 'bg-[#f5f5f7] text-[#1d1d1f]' : 'bg-[#040407] text-slate-100'
+      }`}
+    >
       {/*  Top Navigation Bar */}
       <TopNav
         activeView={activeView}
@@ -82,7 +89,11 @@ export function App() {
           onToggleCollapse={() => setIsSidebarCollapsed((prev) => !prev)}
         />
 
-        <main className="flex-1 h-full relative overflow-hidden bg-[#040407]">
+        <main
+          className={`flex-1 h-full relative overflow-hidden transition-colors duration-200 ${
+            theme === 'light' ? 'bg-[#f5f5f7]' : 'bg-[#040407]'
+          }`}
+        >
           {activeView === 'studio' ? (
             <FlowCanvasView />
           ) : (
@@ -109,6 +120,14 @@ export function App() {
         onClose={() => setIsMT5DeployOpen(false)}
       />
     </div>
+  );
+}
+
+export function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
   );
 }
 

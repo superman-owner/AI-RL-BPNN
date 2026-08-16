@@ -1,6 +1,7 @@
 import React from 'react';
 import { Handle, Position } from '@xyflow/react';
 import { GROUPS, NODE_DEFS } from '../../data/nodeRegistry';
+import { useTheme } from '../../context/ThemeContext';
 import {
   Zap,
   Send,
@@ -31,6 +32,9 @@ const GROUP_ICONS: Record<string, React.ComponentType<{ size?: number; color?: s
 };
 
 export default function NodeCard({ data, selected }: { data: any; selected?: boolean }) {
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
+
   const def = NODE_DEFS[data.nodeType] || {
     group: 'stage1',
     label: data.label || data.nodeType || 'Node',
@@ -53,19 +57,21 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
         minWidth: 240,
         maxWidth: 270,
         position: 'relative',
-        background: '#14141a',
+        background: isLight ? '#ffffff' : '#14141a',
         opacity: executionMode === 'off' ? 0.55 : (isConnected ? 1 : 0.8),
         border: selected
           ? `1.5px solid ${accent}`
-          : (isConnected ? '1px solid rgba(255,255,255,0.12)' : '1px solid rgba(255,255,255,0.06)'),
+          : (isConnected
+            ? (isLight ? '1px solid rgba(0,0,0,0.1)' : '1px solid rgba(255,255,255,0.12)')
+            : (isLight ? '1px solid rgba(0,0,0,0.05)' : '1px solid rgba(255,255,255,0.06)')),
         borderRadius: '10px',
         boxShadow: selected
-          ? `0 0 0 1px ${accent}, 0 8px 24px rgba(0,0,0,0.6)`
-          : '0 4px 16px rgba(0,0,0,0.45)',
+          ? (isLight ? `0 0 0 1px ${accent}, 0 8px 24px rgba(0,0,0,0.12)` : `0 0 0 1px ${accent}, 0 8px 24px rgba(0,0,0,0.6)`)
+          : (isLight ? '0 4px 20px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04)' : '0 4px 16px rgba(0,0,0,0.45)'),
         fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, -apple-system, sans-serif',
         WebkitFontSmoothing: 'antialiased',
         MozOsxFontSmoothing: 'grayscale',
-        transition: 'border 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease',
+        transition: 'border 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease, background 0.15s ease',
       }}
     >
       {/* Node Header (Reduced height, perfectly fitted single line) */}
@@ -75,20 +81,20 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
           alignItems: 'center',
           gap: 7,
           padding: '7px 10px',
-          background: 'rgba(255,255,255,0.025)',
-          borderBottom: '1px solid rgba(255,255,255,0.07)',
+          background: isLight ? 'rgba(0,0,0,0.02)' : 'rgba(255,255,255,0.025)',
+          borderBottom: isLight ? '1px solid rgba(0,0,0,0.06)' : '1px solid rgba(255,255,255,0.07)',
           borderTopLeftRadius: '9px',
           borderTopRightRadius: '9px',
         }}
       >
-        <GroupIcon size={14} color={isConnected ? accent : '#86868b'} />
+        <GroupIcon size={14} color={isConnected ? accent : (isLight ? '#6e6e73' : '#86868b')} />
         <div style={{ flex: 1, minWidth: 0 }}>
           <div
             style={{
               fontSize: 9,
               fontWeight: 700,
               letterSpacing: '0.06em',
-              color: isConnected ? accent : '#86868b',
+              color: isConnected ? accent : (isLight ? '#6e6e73' : '#86868b'),
               textTransform: 'uppercase',
               lineHeight: 1.2,
               whiteSpace: 'nowrap',
@@ -104,7 +110,7 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
               fontSize: 12,
               fontWeight: 600,
               letterSpacing: '-0.015em',
-              color: isConnected ? '#ffffff' : '#a1a1aa',
+              color: isConnected ? (isLight ? '#1d1d1f' : '#ffffff') : (isLight ? '#6e6e73' : '#a1a1aa'),
               whiteSpace: 'nowrap',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
@@ -122,7 +128,7 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
             width: 7,
             height: 7,
             borderRadius: '50%',
-            background: isConnected && statusColor ? statusColor : '#3f3f46',
+            background: isConnected && statusColor ? statusColor : (isLight ? '#d1d1d6' : '#3f3f46'),
             boxShadow: isConnected && statusColor ? `0 0 6px ${statusColor}` : 'none',
             opacity: isConnected ? 1 : 0.4,
           }}
@@ -147,10 +153,10 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
                 fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
               }}
             >
-              <span style={{ color: '#86868b', fontWeight: 400, flexShrink: 0 }}>{f.label}:</span>
+              <span style={{ color: isLight ? '#6e6e73' : '#86868b', fontWeight: 400, flexShrink: 0 }}>{f.label}:</span>
               <span
                 style={{
-                  color: '#f5f5f7',
+                  color: isLight ? '#1d1d1f' : '#f5f5f7',
                   fontWeight: 500,
                   textAlign: 'right',
                   overflow: 'hidden',

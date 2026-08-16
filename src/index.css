@@ -408,3 +408,96 @@ input[type='number']::-webkit-inner-spin-button {
 input[type='number'] {
   -moz-appearance: textfield;
 }
+
+/* ==========================================================================
+    Authentic macOS Light Mode Theme Styles & Tokens
+   ========================================================================== */
+
+.theme-light {
+  color-scheme: light;
+  background-color: #f5f5f7 !important;
+  color: #1d1d1f !important;
+}
+
+.theme-light html,
+.theme-light body,
+.theme-light #root {
+  background-color: #f5f5f7 !important;
+  color: #1d1d1f !important;
+}
+
+/*  Light Mode React Flow Canvas */
+.theme-light .react-flow__background {
+  background-color: #f5f5f7 !important;
+  background-image: radial-gradient(circle at 50% 30%, rgba(0, 113, 227, 0.04), transparent 70%) !important;
+}
+
+/*  Light Mode Flow Edge Cables */
+.theme-light .react-flow__edge-path {
+  stroke-width: 2px !important;
+  stroke: rgba(0, 0, 0, 0.22) !important;
+}
+
+.theme-light .react-flow__edge:hover .react-flow__edge-path {
+  stroke: rgba(0, 0, 0, 0.6) !important;
+  stroke-width: 2.5px !important;
+}
+
+.theme-light .react-flow__edge.selected .react-flow__edge-path {
+  stroke: #0071e3 !important;
+  stroke-width: 2.5px !important;
+  filter: drop-shadow(0 0 6px rgba(0, 113, 227, 0.5));
+}
+
+.theme-light .react-flow__edge.animated .react-flow__edge-path {
+  stroke: #0071e3 !important;
+  stroke-dasharray: 6 5;
+  animation: appleCablePulse 0.8s linear infinite;
+  filter: drop-shadow(0 0 6px rgba(0, 113, 227, 0.4));
+}
+
+/*  Light Mode React Flow Controls */
+.theme-light .react-flow__controls,
+.theme-light .react-flow__minimap {
+  background: rgba(255, 255, 255, 0.88) !important;
+  backdrop-filter: blur(30px) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
+}
+
+.theme-light .react-flow__controls-button {
+  fill: #6e6e73 !important;
+  color: #6e6e73 !important;
+}
+.theme-light .react-flow__controls-button:hover {
+  background: rgba(0, 0, 0, 0.05) !important;
+  fill: #1d1d1f !important;
+}
+
+/*  Light Mode Scrollbars */
+.theme-light *::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.16);
+}
+.theme-light *::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.28);
+}
+.theme-light * {
+  scrollbar-color: rgba(0, 0, 0, 0.16) transparent;
+}
+
+/*  Light Mode Context Menu */
+.theme-light .context-menu-container {
+  background-color: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.12) !important;
+}
+
+.theme-light .context-menu-item {
+  color: #1d1d1f !important;
+}
+
+.theme-light .context-menu-item:hover {
+  background-color: rgba(0, 0, 0, 0.06) !important;
+  color: #0071e3 !important;
+}
+

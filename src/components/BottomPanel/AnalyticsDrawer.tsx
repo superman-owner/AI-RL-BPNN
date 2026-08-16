@@ -19,6 +19,7 @@ import {
 } from '../../data/mockAnalytics';
 import type { QuantTelemetry, RLEnvironmentStep } from '../../services/fxforgeEngine';
 import { fxforgeEngine } from '../../services/fxforgeEngine';
+import { useTheme } from '../../context/ThemeContext';
 
 interface AnalyticsDrawerProps {
   logs: string[];
@@ -50,6 +51,9 @@ const MiniRadialGauge: React.FC<MiniRadialGaugeProps> = ({
   icon,
   isMaximized,
 }) => {
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
+
   const radius = isMaximized ? 30 : 18;
   const circumference = 2 * Math.PI * radius;
   // 240 degree sweep
@@ -58,16 +62,18 @@ const MiniRadialGauge: React.FC<MiniRadialGaugeProps> = ({
 
   return (
     <div
-      className={`bg-gradient-to-b from-[#161624]/95 to-[#0d0d14]/95 border border-white/[0.08] flex flex-col items-center justify-center text-center relative overflow-hidden shadow-[0_8px_20px_rgba(0,0,0,0.5)] min-h-0 transition-all duration-200 ${
-        isMaximized ? 'rounded-3xl' : 'rounded-2xl'
-      }`}
+      className={`border flex flex-col items-center justify-center text-center relative overflow-hidden min-h-0 transition-all duration-200 ${
+        isLight
+          ? 'bg-white border-black/[0.08] shadow-[0_4px_16px_rgba(0,0,0,0.06)]'
+          : 'bg-gradient-to-b from-[#161624]/95 to-[#0d0d14]/95 border-white/[0.08] shadow-[0_8px_20px_rgba(0,0,0,0.5)]'
+      } ${isMaximized ? 'rounded-3xl' : 'rounded-2xl'}`}
       style={{ padding: isMaximized ? '18px 16px' : '8px 10px' }}
     >
       {/* Background Ambient Glow */}
       <div
-        className={`absolute top-2 left-1/2 -translate-x-1/2 rounded-full blur-xl opacity-20 pointer-events-none ${
-          isMaximized ? 'w-24 h-24' : 'w-14 h-14'
-        }`}
+        className={`absolute top-2 left-1/2 -translate-x-1/2 rounded-full blur-xl pointer-events-none ${
+          isLight ? 'opacity-10' : 'opacity-20'
+        } ${isMaximized ? 'w-24 h-24' : 'w-14 h-14'}`}
         style={{ backgroundColor: color }}
       />
 
@@ -87,7 +93,7 @@ const MiniRadialGauge: React.FC<MiniRadialGaugeProps> = ({
             cy={isMaximized ? '37' : '24'}
             r={radius}
             fill="none"
-            stroke="rgba(255, 255, 255, 0.08)"
+            stroke={isLight ? 'rgba(0, 0, 0, 0.08)' : 'rgba(255, 255, 255, 0.08)'}
             strokeWidth={isMaximized ? 4.5 : 3.5}
             strokeDasharray={arcLength}
             strokeDashoffset={0}
@@ -106,14 +112,14 @@ const MiniRadialGauge: React.FC<MiniRadialGaugeProps> = ({
             strokeDashoffset={strokeDashoffset}
             strokeLinecap="round"
             style={{
-              filter: `drop-shadow(0 0 6px ${glowColor})`,
+              filter: isLight ? 'none' : `drop-shadow(0 0 6px ${glowColor})`,
               transition: 'stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
             }}
           />
         </svg>
 
         {/* Center Icon */}
-        <div className="absolute inset-0 flex items-center justify-center text-white/90 z-20">
+        <div className={`absolute inset-0 flex items-center justify-center z-20 ${isLight ? 'text-[#1d1d1f]' : 'text-white/90'}`}>
           {icon}
         </div>
       </div>
@@ -129,18 +135,18 @@ const MiniRadialGauge: React.FC<MiniRadialGaugeProps> = ({
       </div>
 
       <div
-        className={`font-bold uppercase tracking-wider text-[#86868b] z-10 leading-tight ${
-          isMaximized ? 'text-xs mb-0.5' : 'text-[9px] mb-0.5'
-        }`}
+        className={`font-bold uppercase tracking-wider z-10 leading-tight ${
+          isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'
+        } ${isMaximized ? 'text-xs mb-0.5' : 'text-[9px] mb-0.5'}`}
         style={{ fontFamily: 'var(--font-sans)' }}
       >
         {label}
       </div>
 
       <div
-        className={`font-medium text-[#636366] z-10 truncate max-w-full px-1 leading-tight ${
-          isMaximized ? 'text-[11px]' : 'text-[9px]'
-        }`}
+        className={`font-medium z-10 truncate max-w-full px-1 leading-tight ${
+          isLight ? 'text-[#8e8e93]' : 'text-[#636366]'
+        } ${isMaximized ? 'text-[11px]' : 'text-[9px]'}`}
         style={{ fontFamily: 'var(--font-sans)' }}
       >
         {sublabel}
@@ -155,6 +161,9 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
   rlTelemetry,
   latestStep,
 }) => {
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
+
   const [activeTab, setActiveTab] = useState<'equity' | 'loss' | 'features' | 'logs'>('equity');
   const [isMinimized, setIsMinimized] = useState(true); // Default minimized so it never overlaps DAG canvas
   const isMaximized = false;
@@ -201,13 +210,15 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
 
   return (
     <div
-      className={`border-t border-white/[0.08] bg-[#07070b] transition-all duration-200 flex flex-col z-20 ${
-        isMinimized ? 'h-10' : isMaximized ? 'h-[590px]' : 'h-[365px]'
-      }`}
+      className={`border-t transition-all duration-200 flex flex-col z-20 ${
+        isLight ? 'border-black/[0.08] bg-[#f5f5f7]' : 'border-white/[0.08] bg-[#07070b]'
+      } ${isMinimized ? 'h-10' : isMaximized ? 'h-[590px]' : 'h-[365px]'}`}
     >
-      {/*  Top Segmented HUD Navigation Bar (Seamless borderless glass) */}
+      {/*  Top Segmented HUD Navigation Bar */}
       <div
-        className="h-10 bg-[#07070b] flex items-center justify-between select-none flex-shrink-0 transition-all duration-200"
+        className={`h-10 flex items-center justify-between select-none flex-shrink-0 transition-all duration-200 ${
+          isLight ? 'bg-[#f5f5f7]' : 'bg-[#07070b]'
+        }`}
         style={{ paddingLeft: isMaximized ? '42px' : '36px', paddingRight: '24px' }}
       >
         <div className="flex items-center gap-6 h-full">
@@ -218,7 +229,11 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
             }}
             className={`h-full flex items-center text-xs transition-all cursor-pointer ${
               activeTab === 'equity' && !isMinimized
-                ? 'text-[#007aff] font-bold drop-shadow-[0_0_8px_rgba(0,122,255,0.7)]'
+                ? isLight
+                  ? 'text-[#0071e3] font-bold'
+                  : 'text-[#007aff] font-bold drop-shadow-[0_0_8px_rgba(0,122,255,0.7)]'
+                : isLight
+                ? 'text-[#6e6e73] hover:text-[#1d1d1f] font-medium'
                 : 'text-white/50 hover:text-white font-medium'
             }`}
           >
@@ -232,7 +247,11 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
             }}
             className={`h-full flex items-center text-xs transition-all cursor-pointer ${
               activeTab === 'loss' && !isMinimized
-                ? 'text-[#007aff] font-bold drop-shadow-[0_0_8px_rgba(0,122,255,0.7)]'
+                ? isLight
+                  ? 'text-[#0071e3] font-bold'
+                  : 'text-[#007aff] font-bold drop-shadow-[0_0_8px_rgba(0,122,255,0.7)]'
+                : isLight
+                ? 'text-[#6e6e73] hover:text-[#1d1d1f] font-medium'
                 : 'text-white/50 hover:text-white font-medium'
             }`}
           >
@@ -246,7 +265,11 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
             }}
             className={`h-full flex items-center text-xs transition-all cursor-pointer ${
               activeTab === 'features' && !isMinimized
-                ? 'text-[#007aff] font-bold drop-shadow-[0_0_8px_rgba(0,122,255,0.7)]'
+                ? isLight
+                  ? 'text-[#0071e3] font-bold'
+                  : 'text-[#007aff] font-bold drop-shadow-[0_0_8px_rgba(0,122,255,0.7)]'
+                : isLight
+                ? 'text-[#6e6e73] hover:text-[#1d1d1f] font-medium'
                 : 'text-white/50 hover:text-white font-medium'
             }`}
           >
@@ -260,7 +283,11 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
             }}
             className={`h-full flex items-center text-xs transition-all cursor-pointer ${
               activeTab === 'logs' && !isMinimized
-                ? 'text-[#007aff] font-bold drop-shadow-[0_0_8px_rgba(0,122,255,0.7)]'
+                ? isLight
+                  ? 'text-[#0071e3] font-bold'
+                  : 'text-[#007aff] font-bold drop-shadow-[0_0_8px_rgba(0,122,255,0.7)]'
+                : isLight
+                ? 'text-[#6e6e73] hover:text-[#1d1d1f] font-medium'
                 : 'text-white/50 hover:text-white font-medium'
             }`}
           >
@@ -271,68 +298,78 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
         {/* Right HUD Controls */}
         <div className="flex items-center gap-4">
           {/* Policy Probabilities Indicator */}
-          <div className="hidden lg:flex items-center gap-1.5 text-xs text-[#0a84ff] font-medium select-none whitespace-nowrap">
-            <span className="text-[#86868b]">Policy:</span>
+          <div
+            className={`hidden lg:flex items-center gap-1.5 text-xs font-medium select-none whitespace-nowrap ${
+              isLight ? 'text-[#0071e3]' : 'text-[#0a84ff]'
+            }`}
+          >
+            <span className={isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}>Policy:</span>
             <span>
               BUY <span className="font-mono tabular-nums">{buyPct}%</span>
             </span>
-            <span className="text-white/30">·</span>
+            <span className={isLight ? 'text-black/20' : 'text-white/30'}>·</span>
             <span>
               HOLD <span className="font-mono tabular-nums">{holdPct}%</span>
             </span>
-            <span className="text-white/30">·</span>
+            <span className={isLight ? 'text-black/20' : 'text-white/30'}>·</span>
             <span>
               SELL <span className="font-mono tabular-nums">{sellPct}%</span>
             </span>
           </div>
 
-          <div className="hidden lg:block h-3.5 w-[1px] bg-white/10 flex-shrink-0" />
+          <div className={`hidden lg:block h-3.5 w-[1px] flex-shrink-0 ${isLight ? 'bg-black/10' : 'bg-white/10'}`} />
 
           {/* Pure Frameless Training Progress HUD */}
           <div className="hidden sm:flex items-center gap-2.5 text-xs select-none">
-            <div className="flex items-center gap-1.5 text-[11px] font-medium text-[#86868b] whitespace-nowrap">
+            <div className="flex items-center gap-1.5 text-[11px] font-medium whitespace-nowrap">
               <span
                 className={`w-1.5 h-1.5 rounded-full ${
-                  isRunning ? 'bg-[#30d158] shadow-[0_0_6px_#30d158] animate-pulse' : 'bg-[#ffd60a]'
+                  isRunning ? (isLight ? 'bg-[#28cd41] shadow-[0_0_6px_#28cd41] animate-pulse' : 'bg-[#30d158] shadow-[0_0_6px_#30d158] animate-pulse') : 'bg-[#ffd60a]'
                 }`}
               />
-              <span className="text-[#86868b]">Training Progress:</span>
+              <span className={isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}>Training Progress:</span>
             </div>
 
             {/* Frameless Sleek Progress Track */}
-            <div className="w-24 h-1 bg-white/10 rounded-full overflow-hidden relative">
+            <div className={`w-24 h-1 rounded-full overflow-hidden relative ${isLight ? 'bg-black/10' : 'bg-white/10'}`}>
               <div
                 className="h-full bg-gradient-to-r from-[#007aff] via-[#30d158] to-[#00c7be] rounded-full transition-all duration-300"
                 style={{
                   width: `${Math.min(100, Math.max(3, Number(progressPct)))}%`,
-                  boxShadow: '0 0 8px rgba(48, 209, 88, 0.5)',
+                  boxShadow: isLight ? 'none' : '0 0 8px rgba(48, 209, 88, 0.5)',
                 }}
               />
             </div>
 
-            <strong className="text-[11px] font-mono font-bold text-[#30d158] whitespace-nowrap drop-shadow-[0_0_6px_rgba(48,209,88,0.4)]">
+            <strong
+              className={`text-[11px] font-mono font-bold whitespace-nowrap ${
+                isLight ? 'text-[#28cd41]' : 'text-[#30d158] drop-shadow-[0_0_6px_rgba(48,209,88,0.4)]'
+              }`}
+            >
               {progressPct}%
             </strong>
 
-            <span className="text-white/30">·</span>
+            <span className={isLight ? 'text-black/20' : 'text-white/30'}>·</span>
 
             <div className="flex items-center gap-1 text-[11px] whitespace-nowrap">
-              <span className="text-[#86868b]">Episodes:</span>
-              <strong className="text-white font-mono tabular-nums font-bold">
+              <span className={isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}>Episodes:</span>
+              <strong className={`font-mono tabular-nums font-bold ${isLight ? 'text-[#1d1d1f]' : 'text-white'}`}>
                 {currentTelemetry.episodes.toLocaleString()}
               </strong>
-              <span className="text-white/40 font-mono">/</span>
-              <span className="text-[#86868b] font-mono">
+              <span className={`font-mono ${isLight ? 'text-black/30' : 'text-white/40'}`}>/</span>
+              <span className={`font-mono ${isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}`}>
                 {totalEpisodesTarget.toLocaleString()}
               </span>
             </div>
           </div>
 
-          <div className="h-3.5 w-[1px] bg-white/10 flex-shrink-0" />
+          <div className={`h-3.5 w-[1px] flex-shrink-0 ${isLight ? 'bg-black/10' : 'bg-white/10'}`} />
 
           <button
             onClick={() => setIsMinimized(!isMinimized)}
-            className="p-1 rounded-lg hover:bg-white/[0.08] text-[#86868b] hover:text-white cursor-pointer"
+            className={`p-1 rounded-lg transition-colors cursor-pointer ${
+              isLight ? 'hover:bg-black/[0.06] text-[#6e6e73] hover:text-[#1d1d1f]' : 'hover:bg-white/[0.08] text-[#86868b] hover:text-white'
+            }`}
             title={isMinimized ? 'Expand Drawer' : 'Collapse Drawer'}
           >
             <LucideIcons.ChevronDown
@@ -346,12 +383,12 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
       {/*  Drawer Full-Width Inset Area */}
       {!isMinimized && (
         <div
-          className="flex-1 overflow-hidden bg-black/60 min-h-0"
+          className={`flex-1 overflow-hidden min-h-0 ${isLight ? 'bg-[#ececee]' : 'bg-black/60'}`}
           style={{
             paddingLeft: '14px',
             paddingRight: '14px',
             paddingTop: '6px',
-            paddingBottom: '16px', // Generous 16px bottom padding (+10px) so metrics and chart x-axis are never clipped
+            paddingBottom: '16px',
           }}
         >
           {/* TAB 1: HUD TELEMETRY & GAUGES */}
@@ -365,22 +402,24 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
               >
                 {/* 1. Master Tachometer Speedometer Arch */}
                 <div
-                  className={`bg-gradient-to-b from-[#181826]/95 to-[#0e0e16]/95 border border-white/[0.08] relative overflow-hidden shadow-[0_10px_25px_rgba(0,0,0,0.6)] flex items-center justify-between flex-shrink-0 transition-all duration-200 ${
-                    isMaximized ? 'rounded-3xl' : 'rounded-2xl'
-                  }`}
+                  className={`border relative overflow-hidden flex items-center justify-between flex-shrink-0 transition-all duration-200 ${
+                    isLight
+                      ? 'bg-white border-black/[0.08] shadow-[0_4px_20px_rgba(0,0,0,0.06)]'
+                      : 'bg-gradient-to-b from-[#181826]/95 to-[#0e0e16]/95 border-white/[0.08] shadow-[0_10px_25px_rgba(0,0,0,0.6)]'
+                  } ${isMaximized ? 'rounded-3xl' : 'rounded-2xl'}`}
                   style={{ padding: isMaximized ? '18px 28px' : '12px 22px' }}
                 >
                   {/* Background Radial Glow */}
                   <div
                     className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-[#007aff]/15 via-[#30d158]/20 to-[#af52de]/15 blur-2xl rounded-full pointer-events-none ${
-                      isMaximized ? 'w-56 h-28' : 'w-36 h-20'
-                    }`}
+                      isLight ? 'opacity-10' : 'opacity-100'
+                    } ${isMaximized ? 'w-56 h-28' : 'w-36 h-20'}`}
                   />
 
                   {/* Left Specs: Total Return & Profit Factor */}
                   <div className="z-10 flex flex-col justify-center">
-                    <div className="flex items-center gap-1.5 text-[#86868b]">
-                      <LucideIcons.Gauge size={isMaximized ? 14 : 12} className="text-[#30d158]" />
+                    <div className={`flex items-center gap-1.5 ${isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}`}>
+                      <LucideIcons.Gauge size={isMaximized ? 14 : 12} className={isLight ? 'text-[#28cd41]' : 'text-[#30d158]'} />
                       <span
                         className={`font-bold tracking-widest uppercase ${
                           isMaximized ? 'text-[11px]' : 'text-[9px]'
@@ -392,7 +431,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
 
                     <div className={`flex items-baseline gap-2 ${isMaximized ? 'mt-2' : 'mt-1'}`}>
                       <div
-                        className={`font-black tracking-tight text-white leading-none ${
+                        className={`font-black tracking-tight leading-none ${isLight ? 'text-[#1d1d1f]' : 'text-white'} ${
                           isMaximized ? 'text-4xl' : 'text-2xl'
                         }`}
                         style={{ fontFamily: 'var(--font-sans)' }}
@@ -400,14 +439,14 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                         {totalReturnPct >= 0 ? `+${totalReturnPct.toFixed(1)}` : totalReturnPct.toFixed(1)}
                         <span
                           className={`font-bold ml-0.5 ${
-                            totalReturnPct >= 0 ? 'text-[#30d158]' : 'text-[#ff453a]'
+                            totalReturnPct >= 0 ? (isLight ? 'text-[#28cd41]' : 'text-[#30d158]') : 'text-[#ff453a]'
                           } ${isMaximized ? 'text-2xl' : 'text-base'}`}
                         >
                           %
                         </span>
                       </div>
                       <span
-                        className={`font-semibold text-[#86868b] ${
+                        className={`font-semibold ${isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'} ${
                           isMaximized ? 'text-xs' : 'text-[10px]'
                         }`}
                         style={{ fontFamily: 'var(--font-sans)' }}
@@ -417,14 +456,14 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                     </div>
 
                     <div
-                      className={`flex items-center gap-2 font-semibold text-[#30d158] ${
+                      className={`flex items-center gap-2 font-semibold ${isLight ? 'text-[#28cd41]' : 'text-[#30d158]'} ${
                         isMaximized ? 'mt-2 text-xs' : 'mt-1 text-[11px]'
                       }`}
                       style={{ fontFamily: 'var(--font-sans)' }}
                     >
                       <LucideIcons.TrendingUp size={isMaximized ? 13 : 11} />
                       <span>PF {profitFactorVal}x</span>
-                      <span className="text-white/30">•</span>
+                      <span className={isLight ? 'text-black/20' : 'text-white/30'}>•</span>
                       <span className="text-[#00c7be]">
                         {totalRewardVal >= 0 ? `+${totalRewardVal.toFixed(1)}` : totalRewardVal.toFixed(1)} R Reward
                       </span>
@@ -460,7 +499,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                             y1={y1}
                             x2={x2}
                             y2={y2}
-                            stroke="rgba(255, 255, 255, 0.25)"
+                            stroke={isLight ? 'rgba(0, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.25)'}
                             strokeWidth={isMaximized ? 1.8 : 1.5}
                           />
                         );
@@ -470,7 +509,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                       <path
                         d="M 15 58 A 40 40 0 0 1 95 58"
                         fill="none"
-                        stroke="rgba(255, 255, 255, 0.08)"
+                        stroke={isLight ? 'rgba(0, 0, 0, 0.08)' : 'rgba(255, 255, 255, 0.08)'}
                         strokeWidth={isMaximized ? 6.5 : 5.5}
                         strokeLinecap="round"
                       />
@@ -485,7 +524,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                         strokeDashoffset={125.6 * (1 - Math.min(100, Math.max(0, winRateVal)) / 100)}
                         strokeLinecap="round"
                         style={{
-                          filter: 'drop-shadow(0 0 7px rgba(48, 209, 88, 0.7))',
+                          filter: isLight ? 'none' : 'drop-shadow(0 0 7px rgba(48, 209, 88, 0.7))',
                           transition: 'stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
                         }}
                       />
@@ -495,7 +534,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                         x="55"
                         y="52"
                         textAnchor="middle"
-                        fill="#ffffff"
+                        fill={isLight ? '#1d1d1f' : '#ffffff'}
                         fontSize={isMaximized ? 15 : 13}
                         fontWeight="bold"
                       >
@@ -505,7 +544,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                         x="55"
                         y="63"
                         textAnchor="middle"
-                        fill="#86868b"
+                        fill={isLight ? '#6e6e73' : '#86868b'}
                         fontSize={isMaximized ? 7.5 : 6.5}
                         fontWeight="bold"
                         letterSpacing="0.05em"
@@ -570,9 +609,11 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
 
               {/*  Right Cluster: RL Cumulative Reward Curve & Policy Telemetry */}
               <div
-                className={`flex-1 h-full min-h-0 bg-gradient-to-b from-[#14141d]/95 to-[#0c0c12]/95 border border-white/[0.08] flex flex-col shadow-[0_10px_25px_rgba(0,0,0,0.6)] relative overflow-hidden transition-all duration-200 ${
-                  isMaximized ? 'rounded-3xl' : 'rounded-2xl'
-                }`}
+                className={`flex-1 h-full min-h-0 border flex flex-col relative overflow-hidden transition-all duration-200 ${
+                  isLight
+                    ? 'bg-white border-black/[0.08] shadow-[0_4px_20px_rgba(0,0,0,0.06)]'
+                    : 'bg-gradient-to-b from-[#14141d]/95 to-[#0c0c12]/95 border-white/[0.08] shadow-[0_10px_25px_rgba(0,0,0,0.6)]'
+                } ${isMaximized ? 'rounded-3xl' : 'rounded-2xl'}`}
                 style={{ padding: isMaximized ? '22px 28px 16px 28px' : '16px 22px 10px 22px' }}
               >
                 {/* Header Legend */}
@@ -581,7 +622,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                     isMaximized ? 'text-xs mb-3' : 'text-[11px] mb-2'
                   }`}
                 >
-                  <span className="font-bold text-white flex items-center gap-2">
+                  <span className={`font-bold flex items-center gap-2 ${isLight ? 'text-[#1d1d1f]' : 'text-white'}`}>
                     <span className="relative flex h-2 w-2 items-center justify-center">
                       {isRunning && (
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#30d158] opacity-75" />
@@ -590,7 +631,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                     </span>
                     RL Reward Curve & Telemetry
                   </span>
-                  <div className="flex items-center gap-4 text-[#86868b]">
+                  <div className={`flex items-center gap-4 ${isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}`}>
                     <span className="text-[#30d158] font-semibold flex items-center gap-1.5">
                       <span className="w-2 h-0.5 bg-[#30d158]" /> Cumulative Reward (
                       {totalRewardVal >= 0 ? `+${totalRewardVal.toFixed(1)}` : totalRewardVal.toFixed(1)} R)
@@ -598,8 +639,8 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                     <span className="text-[#00c7be] font-medium flex items-center gap-1.5">
                       <span className="w-2 h-0.5 bg-[#00c7be]" /> 10-Ep MA
                     </span>
-                    <span className="text-[#636366] font-medium flex items-center gap-1.5">
-                      <span className="w-2 h-0.5 bg-[#636366]" /> Market Baseline
+                    <span className={`font-medium flex items-center gap-1.5 ${isLight ? 'text-[#8e8e93]' : 'text-[#636366]'}`}>
+                      <span className={`w-2 h-0.5 ${isLight ? 'bg-[#8e8e93]' : 'bg-[#636366]'}`} /> Market Baseline
                     </span>
                   </div>
                 </div>
@@ -615,16 +656,17 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                           <stop offset="95%" stopColor="#30d158" stopOpacity={0} />
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-                      <XAxis dataKey="episode" stroke="#636366" tick={{ fontSize: isMaximized ? 11 : 9 }} />
-                      <YAxis stroke="#636366" tick={{ fontSize: isMaximized ? 11 : 9 }} domain={['auto', 'auto']} />
+                      <CartesianGrid strokeDasharray="3 3" stroke={isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.04)'} />
+                      <XAxis dataKey="episode" stroke={isLight ? '#6e6e73' : '#636366'} tick={{ fontSize: isMaximized ? 11 : 9 }} />
+                      <YAxis stroke={isLight ? '#6e6e73' : '#636366'} tick={{ fontSize: isMaximized ? 11 : 9 }} domain={['auto', 'auto']} />
                       <Tooltip
                         contentStyle={{
-                          backgroundColor: 'rgba(14, 14, 20, 0.95)',
-                          borderColor: 'rgba(255,255,255,0.12)',
+                          backgroundColor: isLight ? 'rgba(255, 255, 255, 0.96)' : 'rgba(14, 14, 20, 0.95)',
+                          borderColor: isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.12)',
+                          color: isLight ? '#1d1d1f' : '#ffffff',
                           fontSize: isMaximized ? '12px' : '11px',
                           borderRadius: '16px',
-                          boxShadow: '0 10px 25px rgba(0,0,0,0.8)',
+                          boxShadow: isLight ? '0 8px 24px rgba(0,0,0,0.12)' : '0 10px 25px rgba(0,0,0,0.8)',
                           backdropFilter: 'blur(25px)',
                         }}
                         formatter={(val: any, name: any) => [
@@ -644,7 +686,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                         strokeWidth={isMaximized ? 3 : 2}
                         fillOpacity={1}
                         fill="url(#hudEquityGrad)"
-                        style={{ filter: 'drop-shadow(0 0 8px rgba(48, 209, 88, 0.35))' }}
+                        style={{ filter: isLight ? 'none' : 'drop-shadow(0 0 8px rgba(48, 209, 88, 0.35))' }}
                       />
                       <Line
                         type="monotone"
@@ -658,7 +700,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                         type="monotone"
                         dataKey="marketBaseline"
                         name="marketBaseline"
-                        stroke="#636366"
+                        stroke={isLight ? '#8e8e93' : '#636366'}
                         strokeWidth={1.5}
                         strokeDasharray="4 4"
                         dot={false}
@@ -673,13 +715,15 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
           {/* TAB 2: LOSS */}
           {activeTab === 'loss' && (
             <div
-              className={`h-full bg-gradient-to-b from-[#14141d]/90 to-[#0c0c12]/90 border border-white/[0.08] flex flex-col shadow-inner min-h-0 ${
-                isMaximized ? 'rounded-3xl' : 'rounded-2xl'
-              }`}
+              className={`h-full border flex flex-col shadow-inner min-h-0 ${
+                isLight
+                  ? 'bg-white border-black/[0.08]'
+                  : 'bg-gradient-to-b from-[#14141d]/90 to-[#0c0c12]/90 border-white/[0.08]'
+              } ${isMaximized ? 'rounded-3xl' : 'rounded-2xl'}`}
               style={{ padding: isMaximized ? '22px 28px 16px 28px' : '16px 22px 10px 22px' }}
             >
-              <div className="flex items-center justify-between px-1 mb-2 text-xs text-[#86868b] flex-shrink-0">
-                <span className="font-bold text-white">Loss & Validation AUC Telemetry</span>
+              <div className={`flex items-center justify-between px-1 mb-2 text-xs flex-shrink-0 ${isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}`}>
+                <span className={`font-bold ${isLight ? 'text-[#1d1d1f]' : 'text-white'}`}>Loss & Validation AUC Telemetry</span>
                 <div className="flex items-center gap-4 text-xs">
                   <span className="text-[#00c7be]">● Train Loss</span>
                   <span className="text-[#af52de]">● Val Loss</span>
@@ -690,9 +734,9 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
               <div className="flex-1 w-full min-h-0">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={lossData} margin={{ top: 8, right: 10, left: -20, bottom: 6 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-                    <XAxis dataKey="epoch" stroke="#636366" tick={{ fontSize: isMaximized ? 11 : 9 }} />
-                    <YAxis yAxisId="left" stroke="#636366" tick={{ fontSize: isMaximized ? 11 : 9 }} />
+                    <CartesianGrid strokeDasharray="3 3" stroke={isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.04)'} />
+                    <XAxis dataKey="epoch" stroke={isLight ? '#6e6e73' : '#636366'} tick={{ fontSize: isMaximized ? 11 : 9 }} />
+                    <YAxis yAxisId="left" stroke={isLight ? '#6e6e73' : '#636366'} tick={{ fontSize: isMaximized ? 11 : 9 }} />
                     <YAxis
                       yAxisId="right"
                       orientation="right"
@@ -702,8 +746,9 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                     />
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: 'rgba(14, 14, 20, 0.95)',
-                        borderColor: 'rgba(255,255,255,0.12)',
+                        backgroundColor: isLight ? 'rgba(255, 255, 255, 0.96)' : 'rgba(14, 14, 20, 0.95)',
+                        borderColor: isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.12)',
+                        color: isLight ? '#1d1d1f' : '#ffffff',
                         fontSize: isMaximized ? '12px' : '11px',
                         borderRadius: '16px',
                       }}
@@ -741,12 +786,14 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
           {/* TAB 3: FEATURES */}
           {activeTab === 'features' && (
             <div
-              className={`h-full bg-gradient-to-b from-[#14141d]/90 to-[#0c0c12]/90 border border-white/[0.08] flex flex-col shadow-inner min-h-0 ${
-                isMaximized ? 'rounded-3xl' : 'rounded-2xl'
-              }`}
+              className={`h-full border flex flex-col shadow-inner min-h-0 ${
+                isLight
+                  ? 'bg-white border-black/[0.08]'
+                  : 'bg-gradient-to-b from-[#14141d]/90 to-[#0c0c12]/90 border-white/[0.08]'
+              } ${isMaximized ? 'rounded-3xl' : 'rounded-2xl'}`}
               style={{ padding: isMaximized ? '22px 28px 16px 28px' : '16px 22px 10px 22px' }}
             >
-              <div className="px-1 mb-2 text-xs font-bold text-white flex-shrink-0">
+              <div className={`px-1 mb-2 text-xs font-bold flex-shrink-0 ${isLight ? 'text-[#1d1d1f]' : 'text-white'}`}>
                 Relative Feature Gain Importance Matrix
               </div>
               <div className="flex-1 w-full min-h-0">
@@ -756,19 +803,20 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                     layout="vertical"
                     margin={{ top: 8, right: 20, left: 60, bottom: 6 }}
                   >
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-                    <XAxis type="number" stroke="#636366" tick={{ fontSize: isMaximized ? 11 : 9 }} />
+                    <CartesianGrid strokeDasharray="3 3" stroke={isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.04)'} />
+                    <XAxis type="number" stroke={isLight ? '#6e6e73' : '#636366'} tick={{ fontSize: isMaximized ? 11 : 9 }} />
                     <YAxis
                       type="category"
                       dataKey="feature"
-                      stroke="#d1d1d6"
+                      stroke={isLight ? '#1d1d1f' : '#d1d1d6'}
                       tick={{ fontSize: isMaximized ? 11 : 9 }}
                       width={120}
                     />
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: 'rgba(14, 14, 20, 0.95)',
-                        borderColor: 'rgba(255,255,255,0.12)',
+                        backgroundColor: isLight ? 'rgba(255, 255, 255, 0.96)' : 'rgba(14, 14, 20, 0.95)',
+                        borderColor: isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.12)',
+                        color: isLight ? '#1d1d1f' : '#ffffff',
                         fontSize: isMaximized ? '12px' : '11px',
                         borderRadius: '16px',
                       }}
@@ -784,19 +832,23 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
           {/* TAB 4: MT5 EXPERTS JOURNAL */}
           {activeTab === 'logs' && (
             <div
-              className={`h-full bg-[#0a0a0f] border border-white/[0.08] flex flex-col shadow-inner min-h-0 overflow-hidden ${
-                isMaximized ? 'rounded-3xl' : 'rounded-2xl'
-              }`}
+              className={`h-full border flex flex-col shadow-inner min-h-0 overflow-hidden ${
+                isLight ? 'bg-white border-black/[0.08]' : 'bg-[#0a0a0f] border-white/[0.08]'
+              } ${isMaximized ? 'rounded-3xl' : 'rounded-2xl'}`}
             >
               {/* MT5 Table Header */}
-              <div className="h-8 bg-[#13131b] border-b border-white/[0.08] flex items-center text-xs font-semibold text-[#86868b] select-none flex-shrink-0">
+              <div
+                className={`h-8 border-b flex items-center text-xs font-semibold select-none flex-shrink-0 ${
+                  isLight ? 'bg-[#f0f0f2] border-black/[0.08] text-[#6e6e73]' : 'bg-[#13131b] border-white/[0.08] text-[#86868b]'
+                }`}
+              >
                 <div
-                  className="w-[220px] pr-4 border-r border-white/[0.08] flex items-center"
+                  className={`w-[220px] pr-4 border-r flex items-center ${isLight ? 'border-black/[0.08]' : 'border-white/[0.08]'}`}
                   style={{ paddingLeft: isMaximized ? '27px' : '21px' }}
                 >
                   <span>Time</span>
                 </div>
-                <div className="w-[160px] px-4 border-r border-white/[0.08] flex items-center">
+                <div className={`w-[160px] px-4 border-r flex items-center ${isLight ? 'border-black/[0.08]' : 'border-white/[0.08]'}`}>
                   <span>Source</span>
                 </div>
                 <div className="flex-1 px-4 flex items-center">
@@ -805,7 +857,11 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
               </div>
 
               {/* MT5 Table Body Rows */}
-              <div className="flex-1 overflow-y-auto custom-scrollbar font-mono text-[11px] select-text divide-y divide-white/[0.04]">
+              <div
+                className={`flex-1 overflow-y-auto custom-scrollbar font-mono text-[11px] select-text divide-y ${
+                  isLight ? 'divide-black/[0.05]' : 'divide-white/[0.04]'
+                }`}
+              >
                 {logs.map((log, index) => {
                   const now = new Date();
                   const timeStr = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(
@@ -818,7 +874,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
 
                   let source = 'Tester';
                   let message = log;
-                  let msgColor = 'text-white/90';
+                  let msgColor = isLight ? 'text-[#1d1d1f]' : 'text-white/90';
 
                   if (log.includes('[SYSTEM]')) {
                     source = 'Terminal';
@@ -836,32 +892,40 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                   } else if (log.includes('[TRAIN]') || log.includes('[ONNX]')) {
                     source = 'ONNX Policy';
                     message = log.replace(/\[TRAIN\]|\[ONNX\]/g, '').trim();
-                    msgColor = 'text-[#ffd60a]';
+                    msgColor = isLight ? 'text-[#b25e00]' : 'text-[#ffd60a]';
                   } else if (log.includes('[BACKTEST]') || log.includes('[TRADE]') || log.includes('[READY]')) {
                     source = 'FXForge Expert';
                     message = log.replace(/\[BACKTEST\]|\[TRADE\]|\[READY\]/g, '').trim();
-                    msgColor = 'text-[#30d158] font-semibold';
+                    msgColor = isLight ? 'text-[#28cd41] font-semibold' : 'text-[#30d158] font-semibold';
                   } else if (log.includes('[ERROR]')) {
                     source = 'Expert';
                     message = log.replace('[ERROR]', '').trim();
-                    msgColor = 'text-[#ff453a] font-semibold';
+                    msgColor = isLight ? 'text-[#d70015] font-semibold' : 'text-[#ff453a] font-semibold';
                   }
 
                   return (
                     <div
                       key={index}
-                      className="flex items-center min-h-[26px] py-1 hover:bg-white/[0.04] transition-colors"
+                      className={`flex items-center min-h-[26px] py-1 transition-colors ${
+                        isLight ? 'hover:bg-black/[0.03]' : 'hover:bg-white/[0.04]'
+                      }`}
                     >
                       {/* Time Column */}
                       <div
-                        className="w-[220px] pr-4 border-r border-white/[0.06] text-[#d1d1d6] flex items-center flex-shrink-0"
+                        className={`w-[220px] pr-4 border-r flex items-center flex-shrink-0 ${
+                          isLight ? 'border-black/[0.06] text-[#1d1d1f]' : 'border-white/[0.06] text-[#d1d1d6]'
+                        }`}
                         style={{ paddingLeft: isMaximized ? '27px' : '21px' }}
                       >
                         <span>{timeStr}</span>
                       </div>
 
                       {/* Source Column */}
-                      <div className="w-[160px] px-4 border-r border-white/[0.06] text-[#a1a1aa] flex-shrink-0 truncate font-medium">
+                      <div
+                        className={`w-[160px] px-4 border-r flex-shrink-0 truncate font-medium ${
+                          isLight ? 'border-black/[0.06] text-[#6e6e73]' : 'border-white/[0.06] text-[#a1a1aa]'
+                        }`}
+                      >
                         {source}
                       </div>
 

@@ -18,6 +18,7 @@ import type { Connection, Edge, Node } from '@xyflow/react';
 import NodeCard from '../nodes/NodeCard';
 import { NODE_DEFS, GROUPS } from '../../data/nodeRegistry';
 import * as LucideIcons from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
 
 const nodeTypes = {
   nodeCard: NodeCard,
@@ -209,28 +210,19 @@ interface InspectorState {
   y: number;
 }
 
-//  Apple Design System: State-driven Text & Dropdown Field (Default, Focus, Filled, Error)
-interface InspectorTextFieldProps {
+const InspectorTextField: React.FC<{
   label: string;
   value: string | number | boolean;
-  defaultValue: string | number | boolean;
-  type?: 'string' | 'number' | 'boolean' | 'select';
+  defaultValue?: string | number | boolean;
+  type?: 'string' | 'text' | 'number' | 'select' | 'boolean';
   options?: string[];
-  onChange: (val: string | number | boolean) => void;
+  onChange: (val: any) => void;
   isOpen?: boolean;
   onToggleOpen?: (open: boolean) => void;
-}
+}> = ({ label, value, defaultValue, type, options, onChange, isOpen = false, onToggleOpen }) => {
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
 
-const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
-  label,
-  value,
-  defaultValue,
-  type,
-  options,
-  onChange,
-  isOpen = false,
-  onToggleOpen,
-}) => {
   const [isFocused, setIsFocused] = useState(false);
   const triggerButtonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -238,7 +230,7 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
 
   const isBoolean = type === 'boolean' || typeof defaultValue === 'boolean';
   const isSelect = !isBoolean && (type === 'select' || (options && options.length > 0));
-  const isNumber = !isBoolean && !isSelect && typeof defaultValue === 'number';
+  const isNumber = !isBoolean && !isSelect && (type === 'number' || typeof defaultValue === 'number');
 
   // Calculate portal position on open
   const updateMenuPosition = useCallback(() => {
@@ -253,18 +245,20 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
       top: openUpwards ? Math.max(10, rect.top - estimatedHeight - 4) : rect.bottom + 4,
       left: rect.left,
       width: rect.width,
-      backgroundColor: 'rgba(28, 28, 34, 0.98)',
+      backgroundColor: isLight ? 'rgba(255, 255, 255, 0.98)' : 'rgba(28, 28, 34, 0.98)',
       backdropFilter: 'blur(28px)',
       WebkitBackdropFilter: 'blur(28px)',
       borderRadius: '8px',
-      border: '1px solid rgba(255, 255, 255, 0.16)',
-      boxShadow: '0 20px 48px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(0, 0, 0, 0.4)',
+      border: isLight ? '1px solid rgba(0, 0, 0, 0.12)' : '1px solid rgba(255, 255, 255, 0.16)',
+      boxShadow: isLight
+        ? '0 16px 40px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.05)'
+        : '0 20px 48px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(0, 0, 0, 0.4)',
       padding: '4px',
       zIndex: 999999,
       maxHeight: `${estimatedHeight}px`,
       overflowY: 'auto',
     });
-  }, [options]);
+  }, [options, isLight]);
 
   const toggleDropdown = () => {
     if (!isOpen) {
@@ -311,7 +305,7 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
         onMouseDown={(e) => e.stopPropagation()}
       >
         <span
-          className="text-[12px] font-medium text-[#f5f5f7] tracking-tight"
+          className={`text-[12px] font-medium tracking-tight ${isLight ? 'text-[#1d1d1f]' : 'text-[#f5f5f7]'}`}
           style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif' }}
         >
           {label}
@@ -322,14 +316,16 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
           onPointerDown={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
           className={`w-9 h-5 rounded-full transition-colors relative cursor-pointer nodrag nopan pointer-events-auto flex-shrink-0 ${
-            isChecked ? 'bg-[#30d158]' : 'bg-[#3a3a44]'
+            isChecked
+              ? isLight ? 'bg-[#28cd41]' : 'bg-[#30d158]'
+              : isLight ? 'bg-[#d1d1d6]' : 'bg-[#3a3a44]'
           }`}
         >
           <span
             className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${
               isChecked ? 'left-[18px]' : 'left-0.5'
             }`}
-            style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.4)' }}
+            style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}
           />
         </button>
       </div>
@@ -347,7 +343,7 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
     <div className="flex flex-col gap-1.5 group nodrag nopan relative" style={{ pointerEvents: 'all' }}>
       {/* Label above */}
       <label
-        className="text-[11px] font-medium text-[#86868b] select-none tracking-tight"
+        className={`text-[11px] font-medium select-none tracking-tight ${isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}`}
         style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif' }}
       >
         {label}
@@ -371,19 +367,23 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
               paddingLeft: '10px',
               paddingRight: '10px',
             }}
-            className={`w-full h-[25px] rounded-[6px] flex items-center justify-between transition-all bg-white/[0.07] hover:bg-white/[0.11] active:bg-white/[0.14] border text-left cursor-pointer nodrag nopan pointer-events-auto select-none ${
-              isOpen
+            className={`w-full h-[25px] rounded-[6px] flex items-center justify-between transition-all border text-left cursor-pointer nodrag nopan pointer-events-auto select-none ${
+              isLight
+                ? isOpen
+                  ? 'border-[#0071e3] ring-2 ring-[#0071e3]/20 bg-[#e8e8ed]'
+                  : 'bg-[#f0f0f2] hover:bg-[#e8e8ed] border-black/[0.08] hover:border-black/[0.16]'
+                : isOpen
                 ? 'border-[#0a84ff] ring-2 ring-[#0a84ff]/25 bg-white/[0.12]'
-                : 'border-white/[0.14] hover:border-white/[0.22]'
+                : 'bg-white/[0.07] hover:bg-white/[0.11] border-white/[0.14] hover:border-white/[0.22]'
             }`}
           >
-            <span className="text-[12px] font-medium text-[#f5f5f7] truncate">
+            <span className={`text-[12px] font-medium truncate ${isLight ? 'text-[#1d1d1f]' : 'text-[#f5f5f7]'}`}>
               {strVal || selectOptions[0]}
             </span>
-            <LucideIcons.ChevronsUpDown size={12} className="text-white/50 flex-shrink-0 ml-1.5" />
+            <LucideIcons.ChevronsUpDown size={12} className={`flex-shrink-0 ml-1.5 ${isLight ? 'text-black/40' : 'text-white/50'}`} />
           </button>
 
-          {/*  macOS Floating Dark Glass Menu Portal (Instant Single Click) */}
+          {/*  macOS Floating Dark/Light Glass Menu Portal */}
           {isOpen &&
             createPortal(
               <div
@@ -410,8 +410,8 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
                       }}
                       className={`flex items-center gap-2 rounded-[5px] text-[12px] cursor-pointer transition-colors select-none ${
                         isSelected
-                          ? 'bg-[#0a84ff] text-white font-medium shadow-sm'
-                          : 'text-[#e5e5ea] hover:bg-white/[0.08] hover:text-white font-normal'
+                          ? isLight ? 'bg-[#0071e3] text-white font-medium shadow-sm' : 'bg-[#0a84ff] text-white font-medium shadow-sm'
+                          : isLight ? 'text-[#1d1d1f] hover:bg-black/[0.05] hover:text-[#0071e3] font-normal' : 'text-[#e5e5ea] hover:bg-white/[0.08] hover:text-white font-normal'
                       }`}
                     >
                       <span className="w-3.5 flex items-center justify-center flex-shrink-0">
@@ -426,19 +426,19 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
             )}
         </div>
       ) : (
-        /* Text / Number Input Container (Reduced 5px to h-[25px], 10px Left Padding) */
+        /* Text / Number Input Container */
         <div
           style={{ pointerEvents: 'all', paddingLeft: '10px', paddingRight: '10px' }}
           onPointerDown={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
-          className={`h-[25px] w-full rounded-[6px] flex items-center transition-all duration-150 bg-white/[0.05] pointer-events-auto relative ${
+          className={`h-[25px] w-full rounded-[6px] flex items-center transition-all duration-150 pointer-events-auto relative ${
             isError
-              ? 'border border-[#ff453a] ring-2 ring-[#ff453a]/25 bg-[#261c1e]'
+              ? isLight ? 'border border-[#d70015] ring-2 ring-[#d70015]/20 bg-[#ffeff0]' : 'border border-[#ff453a] ring-2 ring-[#ff453a]/25 bg-[#261c1e]'
               : isFocused
-              ? 'border border-[#0a84ff] ring-2 ring-[#0a84ff]/25 bg-white/[0.09]'
+              ? isLight ? 'border border-[#0071e3] ring-2 ring-[#0071e3]/20 bg-[#ffffff]' : 'border border-[#0a84ff] ring-2 ring-[#0a84ff]/25 bg-white/[0.09]'
               : isFilled
-              ? 'border border-white/[0.14] hover:border-white/[0.22]'
-              : 'border border-white/[0.10] hover:border-white/[0.18]'
+              ? isLight ? 'bg-[#f0f0f2] border border-black/[0.12] hover:border-black/[0.2]' : 'bg-white/[0.05] border border-white/[0.14] hover:border-white/[0.22]'
+              : isLight ? 'bg-[#f0f0f2] border border-black/[0.08] hover:border-black/[0.16]' : 'bg-white/[0.05] border border-white/[0.10] hover:border-white/[0.18]'
           }`}
         >
           <input
@@ -464,7 +464,9 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
                 : '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
               pointerEvents: 'all',
             }}
-            className="w-full bg-transparent text-[#f5f5f7] text-[12px] font-medium focus:outline-none placeholder:text-[#71717a] nodrag nopan pointer-events-auto cursor-text px-0"
+            className={`w-full bg-transparent text-[12px] font-medium focus:outline-none nodrag nopan pointer-events-auto cursor-text px-0 ${
+              isLight ? 'text-[#1d1d1f] placeholder:text-[#8e8e93]' : 'text-[#f5f5f7] placeholder:text-[#71717a]'
+            }`}
           />
         </div>
       )}
@@ -502,6 +504,9 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
   updateNodeData,
   deleteNode,
 }) => {
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
+
   const containerRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{ dx: number; dy: number } | null>(null);
   const currentPosRef = useRef(position);
@@ -518,8 +523,7 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
   }, [position.x, position.y]);
 
   const onHeaderPointerDown = (e: React.PointerEvent) => {
-    // Don't trigger drag if clicking buttons or inputs
-    if ((e.target as HTMLElement).closest('button') || (e.target as HTMLElement).closest('input')) {
+    if ((e.target as HTMLElement).closest('button, input, select, textarea')) {
       return;
     }
     e.preventDefault();
@@ -583,18 +587,22 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
         left: `${position.x}px`,
         top: `${position.y}px`,
         width: 265,
-        backgroundColor: 'rgba(22, 22, 28, 0.96)',
+        backgroundColor: isLight ? 'rgba(255, 255, 255, 0.96)' : 'rgba(22, 22, 28, 0.96)',
         backdropFilter: 'blur(24px)',
         WebkitBackdropFilter: 'blur(24px)',
         zIndex: 9999,
         padding: '12px 14px 10px 14px',
         pointerEvents: 'all',
-        boxShadow: '0 24px 48px rgba(0, 0, 0, 0.6), 0 1px 0 rgba(255, 255, 255, 0.08) inset',
+        boxShadow: isLight
+          ? '0 20px 50px rgba(0, 0, 0, 0.12), 0 1px 0 rgba(255, 255, 255, 0.8) inset'
+          : '0 24px 48px rgba(0, 0, 0, 0.6), 0 1px 0 rgba(255, 255, 255, 0.08) inset',
         WebkitFontSmoothing: 'antialiased',
         MozOsxFontSmoothing: 'grayscale',
         textRendering: 'geometricPrecision',
       }}
-      className="border border-white/[0.12] rounded-2xl text-xs select-none nodrag nopan cursor-default pointer-events-auto"
+      className={`border rounded-2xl text-xs select-none nodrag nopan cursor-default pointer-events-auto transition-colors duration-150 ${
+        isLight ? 'border-black/[0.12] text-[#1d1d1f]' : 'border-white/[0.12] text-slate-200'
+      }`}
       onPointerDown={(e) => e.stopPropagation()}
       onMouseDown={(e) => e.stopPropagation()}
       onClick={(e) => e.stopPropagation()}
@@ -631,7 +639,7 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
               {group.label}
             </span>
             <span
-              className="text-[12px] font-semibold text-white block truncate"
+              className={`text-[12px] font-semibold block truncate ${isLight ? 'text-[#1d1d1f]' : 'text-white'}`}
               style={{
                 fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif',
                 letterSpacing: '-0.015em',
@@ -653,7 +661,9 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
           onPointerDown={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
           style={{ pointerEvents: 'all' }}
-          className="text-white/40 hover:text-white transition-colors duration-150 cursor-pointer pointer-events-auto nodrag nopan flex-shrink-0"
+          className={`transition-colors duration-150 cursor-pointer pointer-events-auto nodrag nopan flex-shrink-0 ${
+            isLight ? 'text-black/40 hover:text-[#1d1d1f]' : 'text-white/40 hover:text-white'
+          }`}
         >
           <LucideIcons.X size={13} />
         </button>
@@ -752,6 +762,9 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
 });
 
 const FlowContent: React.FC = () => {
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
+
   const [nodes, setNodes, onNodesChange] = useNodesState(INITIAL_NODES);
   const [edges, setEdges, onEdgesChange] = useEdgesState(INITIAL_EDGES);
   const { screenToFlowPosition } = useReactFlow();
@@ -1194,9 +1207,18 @@ const FlowContent: React.FC = () => {
         fitViewOptions={{ padding: 0.15 }}
         proOptions={{ hideAttribution: true }}
       >
-        <Background variant={BackgroundVariant.Dots} gap={20} size={1.2} color="rgba(255,255,255,0.06)" />
+        <Background
+          variant={BackgroundVariant.Dots}
+          gap={20}
+          size={1.2}
+          color={isLight ? 'rgba(0, 0, 0, 0.08)' : 'rgba(255, 255, 255, 0.06)'}
+        />
         <Controls
-          className="bg-[#0f0f18] border border-white/[0.08] text-white fill-white rounded-lg shadow-xl"
+          className={
+            isLight
+              ? 'bg-white/90 border border-black/[0.08] text-[#1d1d1f] fill-[#1d1d1f] rounded-lg shadow-lg'
+              : 'bg-[#0f0f18] border border-white/[0.08] text-white fill-white rounded-lg shadow-xl'
+          }
           showInteractive={false}
         />
       </ReactFlow>
@@ -1204,15 +1226,17 @@ const FlowContent: React.FC = () => {
       {/* Status Indicator (Frameless, Bottom-Right) */}
       <div className="absolute bottom-4 right-4 z-10 flex items-center gap-2 select-none pointer-events-none">
         <span
-          className="text-[#30d158] text-[11.5px] flex items-center gap-1.5 font-medium tracking-tight"
+          className={`text-[11.5px] flex items-center gap-1.5 font-medium tracking-tight ${
+            isLight ? 'text-[#28cd41]' : 'text-[#30d158]'
+          }`}
           style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif' }}
         >
-          <span className="w-1.5 h-1.5 rounded-full bg-[#30d158] animate-pulse" />
+          <span className={`w-1.5 h-1.5 rounded-full ${isLight ? 'bg-[#28cd41]' : 'bg-[#30d158]'} animate-pulse`} />
           {activeNodesCount} Nodes Active
         </span>
         {nodes.length > activeNodesCount && (
           <span
-            className="text-[#86868b] text-[11px]"
+            className={`text-[11px] ${isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}`}
             style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif' }}
           >
             ({nodes.length - activeNodesCount} Idle)
@@ -1229,10 +1253,12 @@ const FlowContent: React.FC = () => {
             left: Math.min(contextMenu.x, window.innerWidth - 240),
             zIndex: 100,
             minWidth: '220px',
-            backgroundColor: '#08080c',
+            backgroundColor: isLight ? '#ffffff' : '#08080c',
             padding: '8px 6px',
           }}
-          className="border border-white/[0.14] rounded-xl shadow-2xl text-xs text-slate-200 select-none animate-in fade-in zoom-in-95 duration-100 flex flex-col gap-1"
+          className={`rounded-xl shadow-2xl text-xs select-none animate-in fade-in zoom-in-95 duration-100 flex flex-col gap-1 ${
+            isLight ? 'border border-black/[0.12] text-[#1d1d1f]' : 'border border-white/[0.14] text-slate-200'
+          }`}
           onClick={(e) => e.stopPropagation()}
         >
           {contextMenu.targetNodeId ? (
