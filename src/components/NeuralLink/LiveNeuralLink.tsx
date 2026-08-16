@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useCallback } from 'react';
-import { fxforgeEngine, type RLEnvironmentStep, type QuantTelemetry } from '../../services/fxforgeEngine';
+import type { RLEnvironmentStep } from '../../services/fxforgeEngine';
 
 interface BPNeuron {
   id: string;
@@ -38,114 +38,94 @@ interface SignalParticle {
 
 interface LiveNeuralLinkProps {
   isTraining?: boolean;
-  onTelemetryUpdate?: (telemetry: QuantTelemetry, latestStep: RLEnvironmentStep) => void;
+  latestStep?: RLEnvironmentStep | null;
   cameraResetTrigger?: number;
 }
 
 export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
   isTraining = true,
-  onTelemetryUpdate,
+  latestStep = null,
   cameraResetTrigger = 0,
 }) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // 3D Orbital Camera Matrix
-  const cameraRef = useRef({
-    rotX: 0.14,
-    rotY: -0.22,
-    zoom: 1.05,
-    panX: 0,
-    panY: 0,
-  });
+  const neuronsRef = useRef<BPNeuron[]>([]);
+  const synapsesRef = useRef<BPSynapse[]>([]);
+  const particlesRef = useRef<SignalParticle[]>([]);
 
+  // Camera 3D Orbital Controls
+  const cameraRef = useRef({ rotX: 0.14, rotY: -0.22, zoom: 1.05, panX: 0, panY: 0 });
   const isDraggingRef = useRef(false);
   const dragStartRef = useRef({ x: 0, y: 0 });
-
   const isTrainingRef = useRef(isTraining);
-  isTrainingRef.current = isTraining;
 
+  // Sync training ref
+  useEffect(() => {
+    isTrainingRef.current = isTraining;
+  }, [isTraining]);
+
+  // Reset Camera Trigger from TopNav
   useEffect(() => {
     if (cameraResetTrigger > 0) {
       cameraRef.current = { rotX: 0.14, rotY: -0.22, zoom: 1.05, panX: 0, panY: 0 };
     }
   }, [cameraResetTrigger]);
 
-  // Topology Refs
-  const neuronsRef = useRef<BPNeuron[]>([]);
-  const synapsesRef = useRef<BPSynapse[]>([]);
-  const particlesRef = useRef<SignalParticle[]>([]);
-
-  // 1. Initialize FXFORGE 4-Stage Topology:
-  // Layer 0: 6 State Inputs [Ret5, Ret10, Ret20, Volat10, DistSMA20, Pos]
-  // Layer 1: 8 Hidden (Actor H1 64D)
-  // Layer 2: 6 Hidden (Actor H2 32D)
-  // Layer 3: 3 Action Outputs [BUY (0), HOLD (1), SELL (2)]
+  // 1. Initialize Neural Network Geometry [6 -> 12 -> 8 -> 3]
   useEffect(() => {
+    const layerSizes = [6, 12, 8, 3];
     const neurons: BPNeuron[] = [];
     const synapses: BPSynapse[] = [];
 
-    const stateLabels = [
-      { name: 'Ret5', sub: '5-bar Return %' },
-      { name: 'Ret10', sub: '10-bar Return %' },
-      { name: 'Ret20', sub: '20-bar Return %' },
-      { name: 'Volat10', sub: 'Norm Volatility %' },
-      { name: 'DistSMA20', sub: 'Distance SMA20 %' },
-      { name: 'Position', sub: 'Holding State' },
-    ];
+    const inputLabels = ['Ret(5)', 'Ret(10)', 'Ret(20)', 'Vol(10)', 'DistSMA', 'Pos'];
+    const outputLabels = ['BUY (Long)', 'HOLD (Flat)', 'SELL (Short)'];
 
-    const actionLabels = [
-      { name: 'BUY / LONG', sub: 'Action a=0' },
-      { name: 'HOLD / FLAT', sub: 'Action a=1' },
-      { name: 'SELL / SHORT', sub: 'Action a=2' },
-    ];
+    const layerSpacingX = 240;
+    const originX = -((layerSizes.length - 1) * layerSpacingX) / 2;
 
-    const layerConfigs = [
-      { count: 6, x: -260, name: 'State Input s_t' },
-      { count: 8, x: -90, name: 'Actor H1 (64D)' },
-      { count: 6, x: 90, name: 'Actor H2 (32D)' },
-      { count: 3, x: 260, name: 'Policy Action π' },
-    ];
+    for (let l = 0; l < layerSizes.length; l++) {
+      const count = layerSizes[l];
+      const spacingY = Math.min(65, 380 / count);
+      const originY = -((count - 1) * spacingY) / 2;
 
-    layerConfigs.forEach((layer, layerIdx) => {
-      const spacingY = layer.count === 8 ? 38 : layer.count === 6 ? 48 : 64;
-      const totalHeight = (layer.count - 1) * spacingY;
-      const startY = totalHeight / 2;
+      for (let i = 0; i < count; i++) {
+        const x = originX + l * layerSpacingX;
+        const y = originY + i * spacingY;
+        const z = (Math.sin((l / 3) * Math.PI) * 50 - 25) + (i % 2 === 0 ? 15 : -15);
 
-      for (let i = 0; i < layer.count; i++) {
-        const yPos = startY - i * spacingY;
-        const zPos = Math.sin((i / layer.count) * Math.PI) * 18;
-
-        let label = `${layer.name} ${i + 1}`;
-        let subLabel = `Layer ${layerIdx + 1}`;
-
-        if (layerIdx === 0 && stateLabels[i]) {
-          label = stateLabels[i].name;
-          subLabel = stateLabels[i].sub;
-        } else if (layerIdx === 3 && actionLabels[i]) {
-          label = actionLabels[i].name;
-          subLabel = actionLabels[i].sub;
+        let label = `N_${l}_${i}`;
+        let subLabel = '';
+        if (l === 0) {
+          label = inputLabels[i] || `In_${i}`;
+          subLabel = 'State';
+        } else if (l === layerSizes.length - 1) {
+          label = outputLabels[i] || `Act_${i}`;
+          subLabel = 'Action';
+        } else {
+          label = `h_${l}_${i}`;
+          subLabel = 'Hidden';
         }
 
         neurons.push({
-          id: `n_${layerIdx}_${i}`,
-          layerIdx,
+          id: `neuron_${l}_${i}`,
+          layerIdx: l,
           neuronIdx: i,
           label,
           subLabel,
-          x: layer.x,
-          y: yPos,
-          z: zPos,
-          activation: 0.2 + Math.random() * 0.6,
+          x,
+          y,
+          z,
+          activation: Math.random() * 0.4 + 0.1,
           pulse: 0,
         });
       }
-    });
+    }
 
-    // Fully Connected Synapses between adjacent layers
-    for (let l = 0; l < layerConfigs.length - 1; l++) {
-      const currCount = layerConfigs[l].count;
-      const nextCount = layerConfigs[l + 1].count;
+    // Connect Fully Connected Dense Synapses
+    for (let l = 0; l < layerSizes.length - 1; l++) {
+      const currCount = layerSizes[l];
+      const nextCount = layerSizes[l + 1];
 
       for (let i = 0; i < currCount; i++) {
         for (let j = 0; j < nextCount; j++) {
@@ -165,37 +145,36 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
     synapsesRef.current = synapses;
   }, []);
 
-  // 2. Real-time FXFORGE Environment Step Loop
+  // 2. Real-time Activation Update from Global Latest Step
   useEffect(() => {
-    if (!isTraining) return;
+    if (!latestStep) return;
+    const neurons = neuronsRef.current;
+    if (neurons.length > 0) {
+      // State inputs
+      const n0 = neurons.find((n) => n.layerIdx === 0 && n.neuronIdx === 0);
+      const n1 = neurons.find((n) => n.layerIdx === 0 && n.neuronIdx === 1);
+      const n2 = neurons.find((n) => n.layerIdx === 0 && n.neuronIdx === 2);
+      const n3 = neurons.find((n) => n.layerIdx === 0 && n.neuronIdx === 3);
+      const n4 = neurons.find((n) => n.layerIdx === 0 && n.neuronIdx === 4);
+      const n5 = neurons.find((n) => n.layerIdx === 0 && n.neuronIdx === 5);
 
-    const interval = setInterval(() => {
-      const stepResult = fxforgeEngine.step();
-      const telem = fxforgeEngine.getTelemetry();
-      if (onTelemetryUpdate) {
-        onTelemetryUpdate(telem, stepResult);
-      }
+      if (n0) n0.activation = Math.min(1, Math.abs(latestStep.state.ret5) / 2);
+      if (n1) n1.activation = Math.min(1, Math.abs(latestStep.state.ret10) / 3);
+      if (n2) n2.activation = Math.min(1, Math.abs(latestStep.state.ret20) / 4);
+      if (n3) n3.activation = Math.min(1, latestStep.state.volat10 / 1.5);
+      if (n4) n4.activation = Math.min(1, Math.abs(latestStep.state.distSma20) / 2);
+      if (n5) n5.activation = (latestStep.state.pos + 1) / 2;
 
-      // Update Node Activations directly
-      const neurons = neuronsRef.current;
-      if (neurons.length > 0) {
-        // State inputs
-        neurons.find((n) => n.layerIdx === 0 && n.neuronIdx === 0)!.activation = Math.min(1, Math.abs(stepResult.state.ret5) / 2);
-        neurons.find((n) => n.layerIdx === 0 && n.neuronIdx === 1)!.activation = Math.min(1, Math.abs(stepResult.state.ret10) / 3);
-        neurons.find((n) => n.layerIdx === 0 && n.neuronIdx === 2)!.activation = Math.min(1, Math.abs(stepResult.state.ret20) / 4);
-        neurons.find((n) => n.layerIdx === 0 && n.neuronIdx === 3)!.activation = Math.min(1, stepResult.state.volat10 / 1.5);
-        neurons.find((n) => n.layerIdx === 0 && n.neuronIdx === 4)!.activation = Math.min(1, Math.abs(stepResult.state.distSma20) / 2);
-        neurons.find((n) => n.layerIdx === 0 && n.neuronIdx === 5)!.activation = (stepResult.state.pos + 1) / 2;
+      // Action outputs (Softmax Probabilities)
+      const out0 = neurons.find((n) => n.layerIdx === 3 && n.neuronIdx === 0);
+      const out1 = neurons.find((n) => n.layerIdx === 3 && n.neuronIdx === 1);
+      const out2 = neurons.find((n) => n.layerIdx === 3 && n.neuronIdx === 2);
 
-        // Action outputs (Softmax Probabilities)
-        neurons.find((n) => n.layerIdx === 3 && n.neuronIdx === 0)!.activation = stepResult.actionProbs[0]; // BUY
-        neurons.find((n) => n.layerIdx === 3 && n.neuronIdx === 1)!.activation = stepResult.actionProbs[1]; // HOLD
-        neurons.find((n) => n.layerIdx === 3 && n.neuronIdx === 2)!.activation = stepResult.actionProbs[2]; // SELL
-      }
-    }, 450);
-
-    return () => clearInterval(interval);
-  }, [isTraining, onTelemetryUpdate]);
+      if (out0) out0.activation = latestStep.actionProbs[0]; // BUY
+      if (out1) out1.activation = latestStep.actionProbs[1]; // HOLD
+      if (out2) out2.activation = latestStep.actionProbs[2]; // SELL
+    }
+  }, [latestStep]);
 
   // 3. Spawn Signal Pulses
   const spawnSignals = useCallback(() => {

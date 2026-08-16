@@ -47,7 +47,6 @@ const FlowCanvas: React.FC = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialTemplate.edges);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [isRunning, setIsRunning] = useState(false);
   const [logs, setLogs] = useState<string[]>(INITIAL_LOGS);
   const [isExportOpen, setIsExportOpen] = useState(false);
   const [isClearModalOpen, setIsClearModalOpen] = useState(false);
@@ -58,6 +57,20 @@ const FlowCanvas: React.FC = () => {
   const [rlLatestStep, setRlLatestStep] = useState<RLEnvironmentStep | null>(null);
   const [isMT5DeployOpen, setIsMT5DeployOpen] = useState(false);
   const [cameraResetTrigger, setCameraResetTrigger] = useState(0);
+
+  // Global Real-time Deep RL Simulation Loop (Active on both Flow DAG & Live 3D BPNN views)
+  useEffect(() => {
+    if (!isRLTraining) return;
+
+    const interval = setInterval(() => {
+      const stepResult = fxforgeEngine.step();
+      const telem = fxforgeEngine.getTelemetry();
+      setRlTelemetry(telem);
+      setRlLatestStep(stepResult);
+    }, 450);
+
+    return () => clearInterval(interval);
+  }, [isRLTraining]);
 
   // Clipboard & History State
   const [clipboard, setClipboard] = useState<{ nodes: Node[]; edges: Edge[] } | null>(null);
@@ -508,56 +521,7 @@ const FlowCanvas: React.FC = () => {
     }, 100);
   };
 
-  // Run Flow DAG
-  const handleRunFlow = async () => {
-    if (isRunning) return;
-    setIsRunning(true);
-    setLogs((prev) => [
-      ...prev,
-      `[DAG] Executing flow pipeline (${nodes.length} nodes)...`,
-    ]);
 
-    setEdges((eds) => eds.map((e) => ({ ...e, animated: true })));
-
-    for (let i = 0; i < nodes.length; i++) {
-      const currentNode = nodes[i];
-      const title = (currentNode.data as any).title;
-
-      setNodes((nds) =>
-        nds.map((n) =>
-          n.id === currentNode.id ? { ...n, data: { ...n.data, status: 'running' } } : n
-        )
-      );
-
-      setLogs((prev) => [
-        ...prev,
-        `[${i + 1}/${nodes.length}] Processing: ${title}`,
-      ]);
-
-      await new Promise((r) => setTimeout(r, 600));
-
-      setNodes((nds) =>
-        nds.map((n) =>
-          n.id === currentNode.id ? { ...n, data: { ...n.data, status: 'completed' } } : n
-        )
-      );
-    }
-
-    setIsRunning(false);
-    setLogs((prev) => [...prev, `[✓] Pipeline compiled & executed successfully.`]);
-  };
-
-  const handleStopFlow = () => {
-    setIsRunning(false);
-    setNodes((nds) =>
-      nds.map((n) =>
-        (n.data as any).status === 'running'
-          ? { ...n, data: { ...n.data, status: 'idle' } }
-          : n
-      )
-    );
-    setLogs((prev) => [...prev, `[STOP] Pipeline execution halted.`]);
-  };
 
   const handleClearFlow = () => {
     setNodes([]);
@@ -692,9 +656,6 @@ const FlowCanvas: React.FC = () => {
       <TopNav
         activeView={activeView}
         onViewChange={setActiveView}
-        isRunning={isRunning}
-        onRunFlow={handleRunFlow}
-        onStopFlow={handleStopFlow}
         onSelectTemplate={handleSelectTemplate}
         onOpenExportModal={() => setIsExportOpen(true)}
         onAutoLayout={handleAutoLayout}
@@ -714,10 +675,7 @@ const FlowCanvas: React.FC = () => {
         <div className="flex-1 h-full relative bg-[#08080c]">
           <LiveNeuralLink
             isTraining={isRLTraining}
-            onTelemetryUpdate={(t, s) => {
-              setRlTelemetry(t);
-              setRlLatestStep(s);
-            }}
+            latestStep={rlLatestStep}
             cameraResetTrigger={cameraResetTrigger}
           />
         </div>
@@ -788,7 +746,7 @@ const FlowCanvas: React.FC = () => {
           {/* Bottom: Apple Analytics Drawer */}
           <AnalyticsDrawer
             logs={logs}
-            isRunning={isRunning}
+            isRunning={isRLTraining}
             onClearLogs={() => setLogs(['[SYSTEM] Console cleared.'])}
           />
         </>

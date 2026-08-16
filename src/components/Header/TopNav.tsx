@@ -6,19 +6,15 @@ import type { QuantTelemetry, RLEnvironmentStep } from '../../services/fxforgeEn
 interface TopNavProps {
   activeView: 'studio' | 'bpnn';
   onViewChange: (view: 'studio' | 'bpnn') => void;
-  isRunning: boolean;
-  onRunFlow: () => void;
-  onStopFlow: () => void;
   onSelectTemplate?: (template: PipelineTemplate) => void;
-  onOpenExportModal: () => void;
+  onOpenExportModal?: () => void;
   onAutoLayout?: () => void;
-  onFitView: () => void;
-  onClearFlow: () => void;
+  onFitView?: () => void;
+  onClearFlow?: () => void;
   nodeCount?: number;
-  // RL Live Telemetry Props
   isRLTraining?: boolean;
   onToggleRLTraining?: () => void;
-  rlTelemetry?: QuantTelemetry;
+  rlTelemetry?: QuantTelemetry | null;
   rlLatestStep?: RLEnvironmentStep | null;
   onOpenMT5Deploy?: () => void;
   onResetCamera?: () => void;
@@ -27,9 +23,6 @@ interface TopNavProps {
 export const TopNav: React.FC<TopNavProps> = ({
   activeView,
   onViewChange,
-  isRunning,
-  onRunFlow,
-  onStopFlow,
   onOpenExportModal,
   onFitView,
   onClearFlow,
@@ -85,164 +78,142 @@ export const TopNav: React.FC<TopNavProps> = ({
         </div>
       </div>
 
-      {/* Center: Controls & Telemetry (Pure Frameless Glowing Buttons, No Capsules) */}
-      {activeView === 'studio' ? (
-        <div className="flex items-center gap-5">
-          {!isRunning ? (
-            <button
-              onClick={onRunFlow}
-              className="flex items-center gap-1.5 text-xs font-bold text-[#007aff] hover:text-[#389bff] drop-shadow-[0_0_8px_rgba(0,122,255,0.6)] transition-all cursor-pointer"
-            >
-              <LucideIcons.Play size={13} className="fill-[#007aff] text-[#007aff]" />
-              <span>Run Pipeline</span>
-            </button>
+      {/* Center: Controls & Telemetry Always Active on Both Views (Pure Frameless Glowing) */}
+      <div className="flex items-center gap-5 text-xs">
+        <button
+          onClick={onToggleRLTraining}
+          className={`w-[135px] inline-flex items-center gap-1.5 text-xs font-bold transition-all cursor-pointer flex-shrink-0 ${
+            isRLTraining
+              ? 'text-[#007aff] hover:text-[#389bff] drop-shadow-[0_0_8px_rgba(0,122,255,0.8)]'
+              : 'text-[#86868b] hover:text-white'
+          }`}
+        >
+          {isRLTraining ? (
+            <LucideIcons.Pause size={13} className="fill-[#007aff] text-[#007aff] flex-shrink-0" />
           ) : (
-            <button
-              onClick={onStopFlow}
-              className="flex items-center gap-1.5 text-xs font-bold text-[#ff453a] hover:text-[#ff6961] drop-shadow-[0_0_8px_rgba(255,69,58,0.7)] transition-all animate-pulse cursor-pointer"
-            >
-              <LucideIcons.Square size={13} className="fill-[#ff453a] text-[#ff453a]" />
-              <span>Stop Pipeline</span>
-            </button>
+            <LucideIcons.Play size={13} className="fill-[#86868b] text-[#86868b] flex-shrink-0" />
           )}
+          <span className="truncate">{isRLTraining ? 'RL Training Active' : 'Paused'}</span>
+        </button>
 
-          <button
-            onClick={onOpenExportModal}
-            className="flex items-center gap-1.5 text-xs font-medium text-white/70 hover:text-white hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.5)] transition-all cursor-pointer"
-          >
-            <LucideIcons.FileCode size={13} className="text-[#007aff]" />
-            <span>Export Python</span>
-          </button>
+        <div className="h-3.5 w-[1px] bg-white/10 flex-shrink-0" />
 
-          <button
-            onClick={onClearFlow}
-            title="Reset Flow"
-            className="p-1 text-[#86868b] hover:text-[#ff453a] hover:drop-shadow-[0_0_6px_rgba(255,69,58,0.5)] transition-colors cursor-pointer"
-          >
-            <LucideIcons.Trash2 size={14} />
-          </button>
-        </div>
-      ) : (
-        /*  Live 3D BPNN Controls & Telemetry: Locked Fixed Column Widths (Zero Shifting) */
-        <div className="flex items-center gap-5 text-xs">
-          <button
-            onClick={onToggleRLTraining}
-            className={`w-[135px] inline-flex items-center gap-1.5 text-xs font-bold transition-all cursor-pointer flex-shrink-0 ${
-              isRLTraining
-                ? 'text-[#007aff] hover:text-[#389bff] drop-shadow-[0_0_8px_rgba(0,122,255,0.8)]'
-                : 'text-[#86868b] hover:text-white'
-            }`}
-          >
-            {isRLTraining ? (
-              <LucideIcons.Pause size={13} className="fill-[#007aff] text-[#007aff] flex-shrink-0" />
-            ) : (
-              <LucideIcons.Play size={13} className="fill-[#86868b] text-[#86868b] flex-shrink-0" />
-            )}
-            <span className="truncate">{isRLTraining ? 'RL Training Active' : 'Paused'}</span>
-          </button>
-
-          <div className="h-3.5 w-[1px] bg-white/10 flex-shrink-0" />
-
-          {/* Live Telemetry Stats (Numbers tight to labels, Header start positions locked) */}
-          {rlTelemetry && (
-            <div className="flex items-center gap-4 text-[11px] text-[#86868b] select-none">
-              <div className="w-[82px] inline-flex items-center gap-1.5 flex-shrink-0">
-                <span className="text-[#86868b]">Episodes:</span>
-                <strong className="text-white tabular-nums">{rlTelemetry.episodes}</strong>
-              </div>
-
-              <div className="w-[102px] inline-flex items-center gap-1.5 flex-shrink-0">
-                <span className="text-[#86868b]">Win Rate:</span>
-                <strong className="text-[#30d158] tabular-nums drop-shadow-[0_0_6px_rgba(48,209,88,0.5)]">
-                  {typeof rlTelemetry.winRate === 'number' ? rlTelemetry.winRate.toFixed(1) : rlTelemetry.winRate}%
-                </strong>
-              </div>
-
-              <div className="w-[84px] inline-flex items-center gap-1.5 flex-shrink-0">
-                <span className="text-[#86868b]">Sharpe:</span>
-                <strong className="text-[#00c7be] tabular-nums drop-shadow-[0_0_6px_rgba(0,199,190,0.5)]">
-                  {typeof rlTelemetry.annualizedSharpe === 'number'
-                    ? rlTelemetry.annualizedSharpe.toFixed(2)
-                    : rlTelemetry.annualizedSharpe}
-                </strong>
-              </div>
-
-              <div className="w-[124px] inline-flex items-center gap-1.5 flex-shrink-0">
-                <span className="text-[#86868b]">Reward:</span>
-                <strong className="text-[#ffd60a] tabular-nums drop-shadow-[0_0_6px_rgba(255,214,10,0.5)]">
-                  {typeof rlTelemetry.totalReward === 'number'
-                    ? rlTelemetry.totalReward > 0
-                      ? `+${rlTelemetry.totalReward.toFixed(4)}`
-                      : rlTelemetry.totalReward.toFixed(4)
-                    : rlTelemetry.totalReward}
-                </strong>
-              </div>
+        {/* Live Telemetry Stats (Numbers tight to labels, Header start positions locked) */}
+        {rlTelemetry && (
+          <div className="flex items-center gap-4 text-[11px] text-[#86868b] select-none">
+            <div className="w-[82px] inline-flex items-center gap-1.5 flex-shrink-0">
+              <span className="text-[#86868b]">Episodes:</span>
+              <strong className="text-white tabular-nums">{rlTelemetry.episodes}</strong>
             </div>
-          )}
 
-          {/* Action Probability Indicator: Locked 105px Fixed Width */}
-          <div className="w-[105px] inline-flex items-center gap-1.5 text-xs font-bold tabular-nums flex-shrink-0">
-            {rlLatestStep && (
-              <>
-                <span
-                  className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${
-                    rlLatestStep.action === 0
-                      ? 'bg-[#30d158] shadow-[0_0_8px_#30d158]'
-                      : rlLatestStep.action === 2
-                      ? 'bg-[#ff453a] shadow-[0_0_8px_#ff453a]'
-                      : 'bg-[#ffd60a] shadow-[0_0_8px_#ffd60a]'
-                  }`}
-                />
-                <span
-                  className={`truncate ${
-                    rlLatestStep.action === 0
-                      ? 'text-[#30d158] drop-shadow-[0_0_8px_rgba(48,209,88,0.8)]'
-                      : rlLatestStep.action === 2
-                      ? 'text-[#ff453a] drop-shadow-[0_0_8px_rgba(255,69,58,0.8)]'
-                      : 'text-[#ffd60a] drop-shadow-[0_0_8px_rgba(255,214,10,0.8)]'
-                  }`}
-                >
-                  {rlLatestStep.action === 0
-                    ? 'BUY (LONG)'
+            <div className="w-[102px] inline-flex items-center gap-1.5 flex-shrink-0">
+              <span className="text-[#86868b]">Win Rate:</span>
+              <strong className="text-[#30d158] tabular-nums drop-shadow-[0_0_6px_rgba(48,209,88,0.5)]">
+                {typeof rlTelemetry.winRate === 'number' ? rlTelemetry.winRate.toFixed(1) : rlTelemetry.winRate}%
+              </strong>
+            </div>
+
+            <div className="w-[84px] inline-flex items-center gap-1.5 flex-shrink-0">
+              <span className="text-[#86868b]">Sharpe:</span>
+              <strong className="text-[#00c7be] tabular-nums drop-shadow-[0_0_6px_rgba(0,199,190,0.5)]">
+                {typeof rlTelemetry.annualizedSharpe === 'number'
+                  ? rlTelemetry.annualizedSharpe.toFixed(2)
+                  : rlTelemetry.annualizedSharpe}
+              </strong>
+            </div>
+
+            <div className="w-[124px] inline-flex items-center gap-1.5 flex-shrink-0">
+              <span className="text-[#86868b]">Reward:</span>
+              <strong className="text-[#ffd60a] tabular-nums drop-shadow-[0_0_6px_rgba(255,214,10,0.5)]">
+                {typeof rlTelemetry.totalReward === 'number'
+                  ? rlTelemetry.totalReward > 0
+                    ? `+${rlTelemetry.totalReward.toFixed(4)}`
+                    : rlTelemetry.totalReward.toFixed(4)
+                  : rlTelemetry.totalReward}
+              </strong>
+            </div>
+          </div>
+        )}
+
+        {/* Action Probability Indicator: Locked 105px Fixed Width */}
+        <div className="w-[105px] inline-flex items-center gap-1.5 text-xs font-bold tabular-nums flex-shrink-0">
+          {rlLatestStep && (
+            <>
+              <span
+                className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${
+                  rlLatestStep.action === 0
+                    ? 'bg-[#30d158] shadow-[0_0_8px_#30d158]'
                     : rlLatestStep.action === 2
-                    ? 'SELL (SHORT)'
-                    : 'HOLD (FLAT)'}
-                </span>
-              </>
-            )}
-          </div>
+                    ? 'bg-[#ff453a] shadow-[0_0_8px_#ff453a]'
+                    : 'bg-[#ffd60a] shadow-[0_0_8px_#ffd60a]'
+                }`}
+              />
+              <span
+                className={`truncate ${
+                  rlLatestStep.action === 0
+                    ? 'text-[#30d158] drop-shadow-[0_0_8px_rgba(48,209,88,0.8)]'
+                    : rlLatestStep.action === 2
+                    ? 'text-[#ff453a] drop-shadow-[0_0_8px_rgba(255,69,58,0.8)]'
+                    : 'text-[#ffd60a] drop-shadow-[0_0_8px_rgba(255,214,10,0.8)]'
+                }`}
+              >
+                {rlLatestStep.action === 0
+                  ? 'BUY (LONG)'
+                  : rlLatestStep.action === 2
+                  ? 'SELL (SHORT)'
+                  : 'HOLD (FLAT)'}
+              </span>
+            </>
+          )}
         </div>
-      )}
+      </div>
 
-      {/* Right: Actions (Frameless Glowing Buttons, No Capsules) */}
+      {/* Right: Actions (Deploy MT5 on both views + View-specific Tools) */}
       <div className="flex items-center gap-4">
+        {/* Deploy MT5 ONNX (Available on both pages) */}
+        <button
+          onClick={onOpenMT5Deploy}
+          className="flex items-center gap-1.5 text-xs font-bold text-[#30d158] hover:text-[#3cd864] drop-shadow-[0_0_8px_rgba(48,209,88,0.6)] transition-all cursor-pointer"
+        >
+          <LucideIcons.Rocket size={13} className="text-[#30d158]" />
+          <span>Deploy MT5 ONNX</span>
+        </button>
+
         {activeView === 'studio' ? (
-          <button
-            onClick={onFitView}
-            title="Fit Flow to Screen (Ctrl+1)"
-            className="flex items-center gap-1.5 text-xs font-medium text-white/70 hover:text-white hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.6)] transition-all cursor-pointer"
-          >
-            <LucideIcons.Maximize2 size={13} className="text-[#38bdf8]" />
-            <span>Fit Screen</span>
-          </button>
-        ) : (
-          <div className="flex items-center gap-4">
+          <>
             <button
-              onClick={onOpenMT5Deploy}
-              className="flex items-center gap-1.5 text-xs font-bold text-[#30d158] hover:text-[#3cd864] drop-shadow-[0_0_8px_rgba(48,209,88,0.6)] transition-all cursor-pointer"
+              onClick={onOpenExportModal}
+              className="flex items-center gap-1.5 text-xs font-medium text-white/70 hover:text-white hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.5)] transition-all cursor-pointer"
+              title="Export Python DAG Code"
             >
-              <LucideIcons.Rocket size={13} className="text-[#30d158]" />
-              <span>Deploy MT5 ONNX</span>
+              <LucideIcons.FileCode size={13} className="text-[#007aff]" />
+              <span>Export Python</span>
             </button>
 
             <button
-              onClick={onResetCamera}
-              title="Reset Camera Angle"
-              className="p-1 text-[#86868b] hover:text-white hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.7)] transition-colors cursor-pointer"
+              onClick={onFitView}
+              title="Fit Flow to Screen (Ctrl+1)"
+              className="p-1 text-[#86868b] hover:text-white hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.6)] transition-all cursor-pointer"
             >
-              <LucideIcons.RotateCcw size={13} />
+              <LucideIcons.Maximize2 size={13} />
             </button>
-          </div>
+
+            <button
+              onClick={onClearFlow}
+              title="Reset Flow"
+              className="p-1 text-[#86868b] hover:text-[#ff453a] hover:drop-shadow-[0_0_6px_rgba(255,69,58,0.5)] transition-colors cursor-pointer"
+            >
+              <LucideIcons.Trash2 size={13} />
+            </button>
+          </>
+        ) : (
+          <button
+            onClick={onResetCamera}
+            title="Reset Camera Angle"
+            className="p-1 text-[#86868b] hover:text-white hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.7)] transition-colors cursor-pointer"
+          >
+            <LucideIcons.RotateCcw size={13} />
+          </button>
         )}
 
         <div className="h-3.5 w-[1px] bg-white/10" />
