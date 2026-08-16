@@ -692,7 +692,7 @@ const FlowCanvas: React.FC = () => {
 
       {/* Main Viewport Routing: Flow DAG Canvas vs. Live 3D BPNN Visualizer */}
       {activeView === 'bpnn' ? (
-        <div className="flex-1 h-full relative bg-[#08080c]">
+        <div className="flex-1 h-full relative bg-[#08080c] overflow-hidden">
           <LiveNeuralLink
             isTraining={rlStatus === 'running'}
             latestStep={rlLatestStep}
@@ -700,79 +700,76 @@ const FlowCanvas: React.FC = () => {
           />
         </div>
       ) : (
-        <>
-          {/* Main Studio Area */}
-          <div className="flex-1 flex overflow-hidden relative">
-            {/* Left: Accordion Components Library */}
-            <NodePalette
-              onAddNode={(cfg) => handleAddNodeFromPalette(cfg)}
-              isCollapsed={isSidebarCollapsed}
-              onToggleCollapse={() => setIsSidebarCollapsed((prev) => !prev)}
-            />
+        <div className="flex-1 flex overflow-hidden relative">
+          {/* Left: Accordion Components Library */}
+          <NodePalette
+            onAddNode={(cfg) => handleAddNodeFromPalette(cfg)}
+            isCollapsed={isSidebarCollapsed}
+            onToggleCollapse={() => setIsSidebarCollapsed((prev) => !prev)}
+          />
 
-            {/* Center: React Flow Canvas */}
-            <div ref={reactFlowWrapper} className="flex-1 h-full relative">
-              <ReactFlow
-                nodes={nodes}
-                edges={edges}
-                onNodesChange={onNodesChange}
-                onEdgesChange={onEdgesChange}
-                onConnect={onConnect}
-                onNodeClick={onNodeClick}
-                onPaneClick={onPaneClick}
-                onSelectionChange={onSelectionChange}
-                onNodeContextMenu={onNodeContextMenu}
-                onPaneContextMenu={onPaneContextMenu}
-                onSelectionContextMenu={onSelectionContextMenu}
-                onDrop={onDrop}
-                onDragOver={onDragOver}
-                nodeTypes={nodeTypes}
-                proOptions={{ hideAttribution: true }}
-                fitView
-                fitViewOptions={{ padding: 0.25 }}
-                minZoom={0.1}
-                maxZoom={2.5}
-                selectionOnDrag={true}
-                selectionMode={SelectionMode.Partial}
-                selectNodesOnDrag={true}
-                panOnDrag={[1, 2]}
-                panActivationKeyCode="Space"
-                multiSelectionKeyCode={['Shift', 'Control', 'Meta']}
-                zoomOnScroll={true}
-                zoomOnPinch={true}
-                defaultEdgeOptions={{
-                  animated: true,
-                  style: { stroke: '#0a84ff', strokeWidth: 1.8 },
-                }}
-              >
-                <Background
-                  variant={BackgroundVariant.Dots}
-                  gap={24}
-                  size={1}
-                  color="rgba(255, 255, 255, 0.08)"
-                />
-              </ReactFlow>
-            </div>
-
-            {/* Right: Apple Inspector */}
-            <NodeInspector
-              selectedNode={selectedNode}
-              onUpdateParams={handleUpdateParams}
-              onDeleteNode={handleDeleteNode}
-              onClose={() => setSelectedNodeId(null)}
-            />
+          {/* Center: React Flow Canvas */}
+          <div ref={reactFlowWrapper} className="flex-1 h-full relative">
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              onConnect={onConnect}
+              onNodeClick={onNodeClick}
+              onPaneClick={onPaneClick}
+              onSelectionChange={onSelectionChange}
+              onNodeContextMenu={onNodeContextMenu}
+              onPaneContextMenu={onPaneContextMenu}
+              onSelectionContextMenu={onSelectionContextMenu}
+              onDrop={onDrop}
+              onDragOver={onDragOver}
+              nodeTypes={nodeTypes}
+              proOptions={{ hideAttribution: true }}
+              fitView
+              fitViewOptions={{ padding: 0.25 }}
+              minZoom={0.1}
+              maxZoom={2.5}
+              selectionOnDrag={true}
+              selectionMode={SelectionMode.Partial}
+              selectNodesOnDrag={true}
+              panOnDrag={[1, 2]}
+              panActivationKeyCode="Space"
+              multiSelectionKeyCode={['Shift', 'Control', 'Meta']}
+              zoomOnScroll={true}
+              zoomOnPinch={true}
+              defaultEdgeOptions={{
+                animated: true,
+                style: { stroke: '#0a84ff', strokeWidth: 1.8 },
+              }}
+            >
+              <Background
+                variant={BackgroundVariant.Dots}
+                gap={24}
+                size={1}
+                color="rgba(255, 255, 255, 0.08)"
+              />
+            </ReactFlow>
           </div>
 
-          {/* Bottom: Apple Analytics Drawer */}
-          <AnalyticsDrawer
-            logs={logs}
-            isRunning={rlStatus === 'running'}
-            rlTelemetry={rlTelemetry}
-            latestStep={rlLatestStep}
-            onClearLogs={() => setLogs(['[SYSTEM] Console cleared.'])}
+          {/* Right: Apple Inspector */}
+          <NodeInspector
+            selectedNode={selectedNode}
+            onUpdateParams={handleUpdateParams}
+            onDeleteNode={handleDeleteNode}
+            onClose={() => setSelectedNodeId(null)}
           />
-        </>
+        </div>
       )}
+
+      {/* Persistent Bottom: Apple Analytics Drawer (Present across Both Views) */}
+      <AnalyticsDrawer
+        logs={logs}
+        isRunning={rlStatus === 'running'}
+        rlTelemetry={rlTelemetry}
+        latestStep={rlLatestStep}
+        onClearLogs={() => setLogs(['[SYSTEM] Console cleared.'])}
+      />
 
       {/* Minimal Clean Right-Click Context Menu */}
       <CanvasContextMenu
