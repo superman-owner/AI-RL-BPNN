@@ -168,6 +168,11 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
     let isDragging = false;
     let ghostEl: HTMLDivElement | null = null;
 
+    // Immediately enter grabbing state on mouse press
+    document.documentElement.classList.add('is-dragging-node');
+    document.body.classList.add('is-dragging-node');
+    document.body.style.cursor = 'var(--mac-cursor-grabbing)';
+
     const cleanup = () => {
       window.removeEventListener('pointermove', onPointerMove);
       window.removeEventListener('pointerup', onPointerUp);
@@ -175,6 +180,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
       window.removeEventListener('mouseup', onPointerUp);
       window.removeEventListener('blur', cleanup);
 
+      document.documentElement.classList.remove('is-dragging-node');
       document.body.classList.remove('is-dragging-node');
       document.body.style.cursor = '';
 
@@ -192,10 +198,8 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
       }
 
       const dist = Math.hypot(moveEvent.clientX - startX, moveEvent.clientY - startY);
-      if (!isDragging && dist > 5) {
+      if (!isDragging && dist > 4) {
         isDragging = true;
-        document.body.classList.add('is-dragging-node');
-        document.body.style.cursor = 'var(--mac-cursor-grabbing)';
 
         ghostEl = document.createElement('div');
         ghostEl.className = 'fxforge-drag-ghost';

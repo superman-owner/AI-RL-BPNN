@@ -466,6 +466,22 @@ input[type='number'] {
   cursor: var(--mac-cursor-crosshair) !important;
 }
 
+/*  Absolute Highest Specificity: Global Dragging State across Entire Window (Grabbing Fist) */
+html.is-dragging-node,
+html.is-dragging-node *,
+body.is-dragging-node,
+body.is-dragging-node *,
+body.is-dragging-node .react-flow,
+body.is-dragging-node .react-flow *,
+body.is-dragging-node .react-flow__pane,
+body.is-dragging-node .react-flow__pane *,
+body.is-dragging-node .react-flow__node,
+body.is-dragging-node .react-flow__node *,
+body.is-dragging-node .react-flow__viewport,
+body.is-dragging-node .react-flow__viewport * {
+  cursor: var(--mac-cursor-grabbing) !important;
+}
+
 /* ==========================================================================
     Authentic macOS Light Mode Theme Styles & Tokens
    ========================================================================== */
