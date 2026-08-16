@@ -11,6 +11,7 @@ import {
   addEdge,
   useReactFlow,
   SelectionMode,
+  ConnectionLineType,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import type { Connection, Edge, Node } from '@xyflow/react';
@@ -111,13 +112,23 @@ const INITIAL_NODES: Node[] = [
 ];
 
 const INITIAL_EDGES: Edge[] = [
-  { id: 'e1-2', source: 'node-1', target: 'node-2', animated: true, style: { stroke: '#38bdf8', strokeWidth: 2 } },
-  { id: 'e2-3', source: 'node-2', target: 'node-3', animated: true, style: { stroke: '#ff9f0a', strokeWidth: 2 } },
-  { id: 'e3-4', source: 'node-3', target: 'node-4', animated: true, style: { stroke: '#bf5af2', strokeWidth: 2 } },
-  { id: 'e4-5', source: 'node-4', target: 'node-5', animated: true, style: { stroke: '#ff453a', strokeWidth: 2 } },
-  { id: 'e5-6', source: 'node-5', target: 'node-6', animated: true, style: { stroke: '#30d158', strokeWidth: 2 } },
-  { id: 'e6-7', source: 'node-6', target: 'node-7', animated: true, style: { stroke: '#0a84ff', strokeWidth: 2 } },
+  { id: 'e1-2', source: 'node-1', target: 'node-2', type: 'straight', animated: true, style: { stroke: '#38bdf8', strokeWidth: 2 } },
+  { id: 'e2-3', source: 'node-2', target: 'node-3', type: 'straight', animated: true, style: { stroke: '#ff9f0a', strokeWidth: 2 } },
+  { id: 'e3-4', source: 'node-3', target: 'node-4', type: 'straight', animated: true, style: { stroke: '#bf5af2', strokeWidth: 2 } },
+  { id: 'e4-5', source: 'node-4', target: 'node-5', type: 'straight', animated: true, style: { stroke: '#ff453a', strokeWidth: 2 } },
+  { id: 'e5-6', source: 'node-5', target: 'node-6', type: 'straight', animated: true, style: { stroke: '#30d158', strokeWidth: 2 } },
+  { id: 'e6-7', source: 'node-6', target: 'node-7', type: 'straight', animated: true, style: { stroke: '#0a84ff', strokeWidth: 2 } },
 ];
+
+// 🟢 กำหนดให้ทุกเส้นที่ลากเชื่อมต่อเป็น "straight" (เส้นตรงดิ่ง)
+const defaultEdgeOptions = {
+  type: 'straight', // 🟢 กำหนดเป็นเส้นตรง
+  animated: true,
+  style: {
+    stroke: '#38bdf8', // สีเส้น (Cyan ฟ้า)
+    strokeWidth: 2,    // ความหนาเส้น 2px
+  },
+};
 
 interface ContextMenuState {
   x: number;
@@ -457,17 +468,27 @@ const FlowContent: React.FC = () => {
   // 1. การเชื่อมต่อสายสัญญาณ (Connect Edge)
   // ==========================================
   const onConnect = useCallback(
-    (params: Connection) =>
-      setEdges((eds) =>
-        addEdge(
-          {
-            ...params,
-            animated: true,
-            style: { stroke: '#007aff', strokeWidth: 1.5 },
-          },
-          eds
-        )
-      ),
+    (connection: Connection) => {
+      // เลือกสีตามขาที่ลากออกมา (เช่น ลากจากขา True = สีเขียว, ขา False = สีแดง, ขาปกติ = สีฟ้า)
+      const edgeColor =
+        connection.sourceHandle === 'true'
+          ? '#10b981' // เขียว
+          : connection.sourceHandle === 'false'
+            ? '#f43f5e' // แดง
+            : '#38bdf8'; // ฟ้า
+
+      const newEdge = {
+        ...connection,
+        type: 'straight', // 🟢 บังคับให้เส้นนี้เป็น "เส้นตรง (Straight Line)"
+        animated: true,   // เส้นวิ่งเคลื่อนไหว (Flowing Animation)
+        style: {
+          stroke: edgeColor,
+          strokeWidth: 2,
+        },
+      };
+
+      setEdges((eds) => addEdge(newEdge, eds));
+    },
     [setEdges]
   );
 
@@ -836,6 +857,9 @@ const FlowContent: React.FC = () => {
         onPaneClick={() => setContextMenu(null)}
         onPaneScroll={() => setContextMenu(null)}
         nodeTypes={nodeTypes}
+        defaultEdgeOptions={defaultEdgeOptions}
+        connectionLineType={ConnectionLineType.Straight}
+        connectionLineStyle={{ stroke: '#38bdf8', strokeWidth: 2 }}
         selectionOnDrag={true}
         selectionMode={SelectionMode.Partial}
         panOnDrag={[1, 2]}

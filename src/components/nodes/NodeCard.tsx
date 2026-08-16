@@ -160,38 +160,85 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
         })}
       </div>
 
-      {/* Input Handle (ซ้าย) */}
+      {/* =======================================================
+          1. ขาเข้า IN (TARGET) - อยู่ฝั่งซ้ายกึ่งกลาง (Left 50%)
+          ======================================================= */}
       {def.hasInput && (
         <Handle
           type="target"
           position={Position.Left}
           id="in"
           style={{
-            left: -5,
-            width: 8,
-            height: 8,
-            borderRadius: '50%',
-            background: '#08080c',
-            border: `1.5px solid ${accent}`,
+            left: -6,                           // ยื่นออกไปนอกขอบกล่อง 6px
+            width: 9,                           // ขนาดกว้าง 9px
+            height: 9,                          // ขนาดสูง 9px
+            borderRadius: '50%',                // วงกลมมน
+            background: '#141416',              // 🟢 ไส้ในสีดำด้าน
+            border: `2px solid ${accent}`,      // 🟢 ขอบสีตาม Node
+            cursor: 'crosshair',
           }}
         />
       )}
 
-      {/* Output Handle (ขวา) */}
-      {def.hasOutput && (
+      {/* =======================================================
+          2. ขาออก OUT (SOURCE) - แบบทางออกเดียว อยู่ฝั่งขวากึ่งกลาง
+          ======================================================= */}
+      {def.hasOutput && !def.decision && (
         <Handle
           type="source"
           position={Position.Right}
-          id="true"
+          id="out"
           style={{
-            right: -5,
-            width: 8,
-            height: 8,
+            right: -6,                          // ยื่นออกไปนอกขอบขวา 6px
+            width: 9,
+            height: 9,
             borderRadius: '50%',
-            background: accent,
-            border: '1.5px solid #08080c',
+            background: accent,                 // 🟢 สีเต็มจุดเชื่อม
+            border: '2px solid #ffffff',        // 🟢 ขอบขาวสว่างเรืองแสง
+            cursor: 'crosshair',
           }}
         />
+      )}
+
+      {/* =======================================================
+          3. หรือ ขาออกแยก 2 ทาง (TRUE = เขียว / FALSE = แดง)
+          ======================================================= */}
+      {def.hasOutput && def.decision && (
+        <>
+          {/* 🟢 ขาออก TRUE / PASS (ด้านขวาบน 35%) */}
+          <Handle
+            type="source"
+            position={Position.Right}
+            id="true"
+            style={{
+              top: '35%',
+              right: -6,
+              width: 9,
+              height: 9,
+              borderRadius: '50%',
+              background: '#10b981',              // 🟢 สีเขียวมรกต (Emerald Green)
+              border: '2px solid #ffffff',
+              cursor: 'crosshair',
+            }}
+          />
+
+          {/* 🔴 ขาออก FALSE / FAIL (ด้านขวาล่าง 65%) */}
+          <Handle
+            type="source"
+            position={Position.Right}
+            id="false"
+            style={{
+              top: '65%',
+              right: -6,
+              width: 9,
+              height: 9,
+              borderRadius: '50%',
+              background: '#f43f5e',              // 🔴 สีแดงกุหลาบ (Rose Red)
+              border: '2px solid #ffffff',
+              cursor: 'crosshair',
+            }}
+          />
+        </>
       )}
     </div>
   );
