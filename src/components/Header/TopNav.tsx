@@ -74,8 +74,8 @@ export const TopNav: React.FC<TopNavProps> = ({
         </div>
       </div>
 
-      {/* Center: Controls & Telemetry Always Active on Both Views (Pure Frameless Glowing) */}
-      <div className="flex items-center gap-5 text-xs">
+      {/* Center + Actions: Controls & Telemetry & MT5 ONNX & MT5 Connected unified seamlessly */}
+      <div className="flex items-center gap-5 text-xs mr-6">
         <button
           onClick={onToggleRLTraining}
           className={`w-[135px] inline-flex items-center gap-1.5 text-xs font-bold transition-all cursor-pointer flex-shrink-0 ${
@@ -162,23 +162,22 @@ export const TopNav: React.FC<TopNavProps> = ({
             </>
           )}
         </div>
-      </div>
 
-      {/* Right: Actions (Deploy MT5 ONNX + MT5 Connected shifted left by an additional 10px) */}
-      <div className="flex items-center gap-4 pr-[34px]">
-        {/* Deploy MT5 ONNX (Available on both pages) */}
+        <div className="h-3.5 w-[1px] bg-white/10 flex-shrink-0" />
+
+        {/* Deploy MT5 ONNX */}
         <button
           onClick={onOpenMT5Deploy}
-          className="flex items-center gap-1.5 text-xs font-bold text-[#30d158] hover:text-[#3cd864] drop-shadow-[0_0_8px_rgba(48,209,88,0.6)] transition-all cursor-pointer"
+          className="flex items-center gap-1.5 text-xs font-bold text-[#30d158] hover:text-[#3cd864] drop-shadow-[0_0_8px_rgba(48,209,88,0.6)] transition-all cursor-pointer flex-shrink-0"
         >
           <LucideIcons.Rocket size={13} className="text-[#30d158]" />
           <span>Deploy MT5 ONNX</span>
         </button>
 
-        <div className="h-3.5 w-[1px] bg-white/10" />
+        <div className="h-3.5 w-[1px] bg-white/10 flex-shrink-0" />
 
-        {/* MT5 Connected Status Indicator */}
-        <div className="flex items-center gap-1.5 text-[11px] text-[#86868b]">
+        {/* MT5 Connected */}
+        <div className="flex items-center gap-1.5 text-[11px] text-[#86868b] flex-shrink-0 pr-4">
           <span className="w-1.5 h-1.5 rounded-full bg-[#30d158] shadow-[0_0_6px_#30d158]" />
           <span className="text-[#d1d1d6] font-medium">MT5 Connected</span>
         </div>
