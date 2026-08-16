@@ -18,7 +18,6 @@ import {
   Bot,
   Layers,
   Settings,
-  FolderTree,
 } from 'lucide-react';
 
 // Map Group Icons
@@ -64,7 +63,6 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
   };
 
   const q = query.toLowerCase().trim();
-  const totalNodesCount = GROUPS.reduce((acc, g) => acc + nodesByGroup(g.id).length, 0);
 
   return (
     <aside
@@ -86,7 +84,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
         zIndex: 20,
       }}
     >
-      {/* 1. Header: Pure Minimalist Crisp Typography */}
+      {/* 1. Header: RL Hyperparameters (Pure Crisp Minimalist) */}
       <div
         style={{
           padding: '14px 16px 10px',
@@ -106,25 +104,25 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
         >
           <div
             style={{
-              fontSize: 13,
-              fontWeight: 700,
-              color: '#ffffff',
               display: 'flex',
               alignItems: 'center',
               gap: 8,
             }}
           >
-            <FolderTree size={15} color="#38bdf8" />
-            <span>AI Node Palette</span>
-            <span
-              style={{
-                fontSize: 11,
-                color: '#38bdf8',
-                fontWeight: 700,
-              }}
-            >
-              ({totalNodesCount})
-            </span>
+            <Sliders size={15} color="#0a84ff" />
+            <div>
+              <span
+                style={{
+                  fontSize: 13,
+                  fontWeight: 700,
+                  color: '#ffffff',
+                  letterSpacing: '0.02em',
+                  display: 'block',
+                }}
+              >
+                RL Hyperparameters
+              </span>
+            </div>
           </div>
 
           <button
@@ -164,7 +162,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search AI modules & nodes..."
+            placeholder="Search parameters & modules..."
             style={{
               width: '100%',
               boxSizing: 'border-box',
@@ -189,7 +187,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
         </div>
       </div>
 
-      {/* 2. Flat List: Gray Default -> White on Hover */}
+      {/* 2. Flat List: Gray Default -> Pure Crisp White on Hover */}
       <div
         id="node-palette-scroll-container"
         style={{
