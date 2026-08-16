@@ -233,6 +233,7 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const triggerButtonRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({});
 
   const isBoolean = type === 'boolean' || typeof defaultValue === 'boolean';
@@ -274,12 +275,27 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
     }
   };
 
-  // Close dropdown on window scroll
+  // Close dropdown on click outside or scroll (Allows 1-click opening of another dropdown)
   useEffect(() => {
     if (!isOpen) return;
+    const handleOutsidePointerDown = (e: PointerEvent | MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (
+        (triggerButtonRef.current && triggerButtonRef.current.contains(target)) ||
+        (menuRef.current && menuRef.current.contains(target))
+      ) {
+        return;
+      }
+      onToggleOpen?.(false);
+    };
+
     const handleScroll = () => onToggleOpen?.(false);
+    window.addEventListener('pointerdown', handleOutsidePointerDown);
     window.addEventListener('scroll', handleScroll, true);
-    return () => window.removeEventListener('scroll', handleScroll, true);
+    return () => {
+      window.removeEventListener('pointerdown', handleOutsidePointerDown);
+      window.removeEventListener('scroll', handleScroll, true);
+    };
   }, [isOpen, onToggleOpen]);
 
   //  Frameless Apple Settings Toggle Switch (with explicit 10px spacing)
@@ -335,13 +351,16 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
         {label}
       </label>
 
-      {/*  macOS Apple Dropdown Select (Single-Open Panel with Full Backdrop Dismiss) */}
+      {/*  macOS Apple Dropdown Select (Instant 1-Click Switchable) */}
       {isSelect ? (
         <div className="relative w-full">
           <button
             ref={triggerButtonRef}
             type="button"
-            onClick={toggleDropdown}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleDropdown();
+            }}
             onPointerDown={(e) => e.stopPropagation()}
             onMouseDown={(e) => e.stopPropagation()}
             style={{
@@ -362,64 +381,45 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
             <LucideIcons.ChevronsUpDown size={12} className="text-white/50 flex-shrink-0 ml-1.5" />
           </button>
 
-          {/*  macOS Floating Dark Glass Menu Portal with Backdrop */}
+          {/*  macOS Floating Dark Glass Menu Portal (Instant Single Click) */}
           {isOpen &&
             createPortal(
-              <>
-                {/* Transparent Click-Outside Overlay to dismiss dropdown anywhere */}
-                <div
-                  style={{
-                    position: 'fixed',
-                    inset: 0,
-                    zIndex: 999998,
-                    backgroundColor: 'transparent',
-                    cursor: 'default',
-                  }}
-                  onPointerDown={(e) => {
-                    e.stopPropagation();
-                    onToggleOpen?.(false);
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onToggleOpen?.(false);
-                  }}
-                />
-                <div
-                  style={menuStyle}
-                  className="custom-scrollbar nodrag nopan select-none"
-                  onPointerDown={(e) => e.stopPropagation()}
-                  onMouseDown={(e) => e.stopPropagation()}
-                >
-                  {selectOptions.map((opt) => {
-                    const isSelected = opt === (strVal || selectOptions[0]);
-                    return (
-                      <div
-                        key={opt}
-                        onClick={() => {
-                          onChange(opt);
-                          onToggleOpen?.(false);
-                        }}
-                        style={{
-                          fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
-                          paddingLeft: '8px',
-                          paddingRight: '10px',
-                          height: '28px',
-                        }}
-                        className={`flex items-center gap-2 rounded-[5px] text-[12px] cursor-pointer transition-colors select-none ${
-                          isSelected
-                            ? 'bg-[#0a84ff] text-white font-medium shadow-sm'
-                            : 'text-[#e5e5ea] hover:bg-white/[0.08] hover:text-white font-normal'
-                        }`}
-                      >
-                        <span className="w-3.5 flex items-center justify-center flex-shrink-0">
-                          {isSelected && <LucideIcons.Check size={12} strokeWidth={2.5} className="text-white" />}
-                        </span>
-                        <span className="truncate">{opt}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </>,
+              <div
+                ref={menuRef}
+                style={menuStyle}
+                className="custom-scrollbar nodrag nopan select-none"
+                onPointerDown={(e) => e.stopPropagation()}
+                onMouseDown={(e) => e.stopPropagation()}
+              >
+                {selectOptions.map((opt) => {
+                  const isSelected = opt === (strVal || selectOptions[0]);
+                  return (
+                    <div
+                      key={opt}
+                      onClick={() => {
+                        onChange(opt);
+                        onToggleOpen?.(false);
+                      }}
+                      style={{
+                        fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
+                        paddingLeft: '8px',
+                        paddingRight: '10px',
+                        height: '28px',
+                      }}
+                      className={`flex items-center gap-2 rounded-[5px] text-[12px] cursor-pointer transition-colors select-none ${
+                        isSelected
+                          ? 'bg-[#0a84ff] text-white font-medium shadow-sm'
+                          : 'text-[#e5e5ea] hover:bg-white/[0.08] hover:text-white font-normal'
+                      }`}
+                    >
+                      <span className="w-3.5 flex items-center justify-center flex-shrink-0">
+                        {isSelected && <LucideIcons.Check size={12} strokeWidth={2.5} className="text-white" />}
+                      </span>
+                      <span className="truncate">{opt}</span>
+                    </div>
+                  );
+                })}
+              </div>,
               document.body
             )}
         </div>
