@@ -70,8 +70,8 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
       className="w-[290px] h-full flex flex-col flex-shrink-0 bg-[#08080c]/98 border-r border-white/[0.08] text-[#c7c7cc] select-none z-20 font-sans"
     >
       {/* 1.  Apple macOS Header & Spotlight Search */}
-      <div className="px-4 pt-4 pb-3.5 border-b border-white/[0.06] bg-[#0c0c14]/90 flex-shrink-0">
-        <div className="flex justify-between items-center mb-3.5 px-0.5">
+      <div className="px-4.5 pt-5 pb-4 border-b border-white/[0.06] bg-[#0c0c14]/90 flex-shrink-0">
+        <div className="flex justify-between items-center mb-4 px-0.5">
           <div className="flex items-center gap-2.5">
             <Sliders size={15} className="text-[#0a84ff]" />
             <span className="text-[13.5px] font-bold text-white tracking-tight">
@@ -95,13 +95,13 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search parameters & modules..."
             style={{ paddingLeft: '32px' }}
-            className="w-full h-[32px] bg-white/[0.05] border border-white/[0.08] hover:border-white/20 focus:border-[#0a84ff] rounded-[7px] text-[12px] text-white placeholder-[#71717a] pr-3 py-1 outline-none transition-colors"
+            className="w-full h-[34px] bg-white/[0.05] border border-white/[0.08] hover:border-white/20 focus:border-[#0a84ff] rounded-[8px] text-[12px] text-white placeholder-[#71717a] pr-3 py-1 outline-none transition-colors"
           />
         </div>
       </div>
 
-      {/* 2.  Apple Mac Mail / Finder Sidebar List (Perfect Spacing & Rhythm) */}
-      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar px-3 py-2 space-y-4">
+      {/* 2.  Apple Mac Mail / Finder Sidebar List (Spacious & Airy macOS Spacing) */}
+      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar px-3.5 py-4 space-y-6">
         {GROUPS.map((group) => {
           const allNodes = nodesByGroup(group.id);
           const matchingNodes = allNodes.filter(
@@ -114,13 +114,13 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
           const GroupIcon = GROUP_ICONS[group.id] || Layers;
 
           return (
-            <div key={group.id} className="space-y-1">
+            <div key={group.id}>
               {/*  Section Header (SF Symbol on Header) */}
               <div
                 onClick={() => toggleGroup(group.id)}
-                className="px-2 py-1.5 flex items-center justify-between cursor-pointer rounded-[6px] hover:bg-white/[0.04] transition-colors"
+                className="px-2.5 py-1.5 flex items-center justify-between cursor-pointer rounded-[6px] hover:bg-white/[0.04] transition-colors"
               >
-                <div className="flex items-center gap-2 min-w-0 flex-1">
+                <div className="flex items-center gap-2.5 min-w-0 flex-1">
                   {/* Rotating Chevron */}
                   <ChevronRight
                     size={11}
@@ -136,15 +136,15 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
                   />
 
                   {/* Section Label */}
-                  <span className="text-[11.5px] font-bold text-[#e5e5ea] uppercase tracking-wider truncate">
+                  <span className="text-[11px] font-bold text-[#8e8e93] uppercase tracking-wider truncate">
                     {group.label}
                   </span>
                 </div>
               </div>
 
-              {/*  Child Items (Mid Dot for Draggable Nodes) */}
+              {/*  Child Items (Spacious 34px macOS Row with 10px Top Gap) */}
               {isExpanded && (
-                <div className="space-y-0.5 pl-3.5">
+                <div className="mt-2 space-y-1 pl-3.5">
                   {matchingNodes.map((node) => {
                     const isNodeHovered = hoveredNode === node.type;
 
@@ -156,16 +156,16 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
                         onMouseEnter={() => setHoveredNode(node.type)}
                         onMouseLeave={() => setHoveredNode(null)}
                         title="Drag onto canvas to add module"
-                        className={`h-[30px] px-2.5 rounded-[6px] flex items-center justify-between cursor-grab transition-all ${
+                        className={`h-[34px] px-3 rounded-[8px] flex items-center justify-between cursor-grab transition-all ${
                           isNodeHovered
                             ? 'bg-white/[0.08] text-white shadow-sm'
                             : 'text-[#d1d1d6] hover:bg-white/[0.04]'
                         }`}
                       >
                         {/* Left: Mid Dot (·) + Label */}
-                        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                        <div className="flex items-center gap-3 min-w-0 flex-1">
                           <span
-                            className={`text-[17px] font-bold leading-none select-none transition-colors flex-shrink-0 ${
+                            className={`text-[18px] font-bold leading-none select-none transition-colors flex-shrink-0 ${
                               isNodeHovered ? 'text-[#0a84ff]' : 'text-[#71717a]'
                             }`}
                           >
