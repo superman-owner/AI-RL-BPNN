@@ -232,6 +232,41 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
   const isSelect = !isBoolean && (type === 'select' || (options && options.length > 0));
   const isNumber = !isBoolean && !isSelect && typeof defaultValue === 'number';
 
+  if (isBoolean) {
+    const isChecked = Boolean(value ?? defaultValue);
+    return (
+      <div
+        className="flex items-center justify-between py-1 px-0.5 nodrag nopan select-none"
+        style={{ pointerEvents: 'all' }}
+        onPointerDown={(e) => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()}
+      >
+        <span
+          className="text-[12px] font-medium text-[#f5f5f7] tracking-tight"
+          style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif' }}
+        >
+          {label}
+        </span>
+        <button
+          type="button"
+          onClick={() => onChange(!isChecked)}
+          onPointerDown={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          className={`w-9 h-5 rounded-full transition-colors relative cursor-pointer nodrag nopan pointer-events-auto flex-shrink-0 ${
+            isChecked ? 'bg-[#30d158]' : 'bg-[#3a3a44]'
+          }`}
+        >
+          <span
+            className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${
+              isChecked ? 'left-[18px]' : 'left-0.5'
+            }`}
+            style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.4)' }}
+          />
+        </button>
+      </div>
+    );
+  }
+
   // State checks matching Apple/Figma specs
   const strVal = value !== undefined && value !== null ? String(value) : '';
   const isInvalidNumber = isNumber && (strVal.trim() === '' || isNaN(Number(strVal)));
@@ -263,32 +298,7 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
             : 'border border-white/[0.08] hover:border-white/[0.15]'
         }`}
       >
-        {isBoolean ? (
-          <div className="w-full flex items-center justify-between px-0.5">
-            <span
-              className="text-[12px] font-medium text-[#f5f5f7]"
-              style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif' }}
-            >
-              {Boolean(value ?? defaultValue) ? 'Enabled (True)' : 'Disabled (False)'}
-            </span>
-            <button
-              type="button"
-              onClick={() => onChange(!Boolean(value ?? defaultValue))}
-              onPointerDown={(e) => e.stopPropagation()}
-              onMouseDown={(e) => e.stopPropagation()}
-              className={`w-9 h-5 rounded-full transition-colors relative cursor-pointer nodrag nopan pointer-events-auto ${
-                Boolean(value ?? defaultValue) ? 'bg-[#30d158]' : 'bg-[#2c2c35]'
-              }`}
-            >
-              <span
-                className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${
-                  Boolean(value ?? defaultValue) ? 'left-[18px]' : 'left-0.5'
-                }`}
-                style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.4)' }}
-              />
-            </button>
-          </div>
-        ) : isSelect ? (
+        {isSelect ? (
           <div className="relative w-full flex items-center">
             <select
               value={strVal}
