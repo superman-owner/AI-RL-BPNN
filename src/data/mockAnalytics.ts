@@ -1,0 +1,96 @@
+import type { EquityPoint, LossPoint, FeatureImportanceItem, MetricSummary } from '../types/flow';
+
+export const MOCK_METRICS: MetricSummary = {
+  sharpeRatio: 2.84,
+  sortinoRatio: 3.42,
+  maxDrawdown: 9.2,
+  totalReturn: 184.2,
+  winRate: 63.4,
+  profitFactor: 2.18,
+  totalTrades: 342,
+  avgTradeReturn: 0.84,
+};
+
+// Generate realistic simulated Equity Curve
+export const generateEquityData = (): EquityPoint[] => {
+  const points: EquityPoint[] = [];
+  let portfolioVal = 10000;
+  let benchmarkVal = 10000;
+  let peak = 10000;
+  const startDate = new Date('2024-01-01');
+
+  for (let i = 0; i < 90; i++) {
+    const currentDate = new Date(startDate.getTime() + i * 24 * 60 * 60 * 1000);
+    const dateStr = currentDate.toISOString().split('T')[0];
+
+    // Benchmark has higher volatility
+    const btcDailyReturn = (Math.random() - 0.48) * 0.04;
+    benchmarkVal = benchmarkVal * (1 + btcDailyReturn);
+
+    // Strategy has controlled volatility and steady edge
+    const stratDailyReturn = (Math.random() - 0.42) * 0.025;
+    portfolioVal = portfolioVal * (1 + stratDailyReturn);
+
+    if (portfolioVal > peak) {
+      peak = portfolioVal;
+    }
+    const dd = ((portfolioVal - peak) / peak) * 100;
+
+    points.push({
+      date: dateStr,
+      portfolio: Math.round(portfolioVal),
+      benchmark: Math.round(benchmarkVal),
+      drawdown: Number(dd.toFixed(2)),
+    });
+  }
+
+  return points;
+};
+
+// Generate Loss & Metric curves for AI Training
+export const generateLossData = (): LossPoint[] => {
+  const points: LossPoint[] = [];
+  let trainLoss = 0.693;
+  let valLoss = 0.695;
+  let auc = 0.50;
+
+  for (let epoch = 1; epoch <= 60; epoch++) {
+    trainLoss = Math.max(0.18, trainLoss * 0.965 + (Math.random() - 0.5) * 0.01);
+    valLoss = Math.max(0.24, valLoss * 0.972 + (Math.random() - 0.45) * 0.015);
+    auc = Math.min(0.765, 0.50 + (1 - Math.exp(-epoch / 18)) * 0.25 + (Math.random() - 0.5) * 0.008);
+
+    points.push({
+      epoch,
+      trainLoss: Number(trainLoss.toFixed(4)),
+      valLoss: Number(valLoss.toFixed(4)),
+      metricValue: Number(auc.toFixed(3)),
+    });
+  }
+
+  return points;
+};
+
+export const FEATURE_IMPORTANCE: FeatureImportanceItem[] = [
+  { feature: 'frac_diff_d045', importance: 0.234, category: 'Stationary' },
+  { feature: 'rsi_14_divergence', importance: 0.182, category: 'Momentum' },
+  { feature: 'atr_volatility_ratio', importance: 0.145, category: 'Volatility' },
+  { feature: 'funding_rate_zscore', importance: 0.118, category: 'Alternative' },
+  { feature: 'macd_hist_slope', importance: 0.095, category: 'Trend' },
+  { feature: 'bb_percent_b', importance: 0.078, category: 'Mean Reversion' },
+  { feature: 'volume_surge_ratio', importance: 0.065, category: 'Liquidity' },
+  { feature: 'ema_20_50_spread', importance: 0.048, category: 'Trend' },
+  { feature: 'orderbook_imbalance_l2', importance: 0.035, category: 'Microstructure' },
+];
+
+export const INITIAL_LOGS: string[] = [
+  '[SYSTEM] AlphaFlow AI Core Engine v1.0.4 initialized.',
+  '[CUDA] Device detected: NVIDIA GeForce RTX (Driver 555.85, CUDA 12.4)',
+  '[IPC] Connected to Local Python Execution Server (127.0.0.1:8765)',
+  '[DAG] Graph parsed: 7 nodes, 9 sockets verified without circular dependencies.',
+  '[DATA] Binance OHLCV: 50,000 candles loaded in 342ms. Zero missing timestamps.',
+  '[FEAT] Calculating Technical Indicators & Fractional Diff (d=0.45)...',
+  '[LABEL] Triple Barrier: 42% Long, 39% Short, 19% Neutral (Horizontal Barrier 24 bars).',
+  '[TRAIN] LightGBM Classifier: 600 trees, learning_rate=0.03. Best Val AUC: 0.742',
+  '[BACKTEST] VectorBT Execution simulated: Sharpe=2.84, MDD=-9.2%, Profit Factor=2.18',
+  '[READY] Strategy Ready for Export / Paper Trading deployment.',
+];

@@ -1,0 +1,343 @@
+@import "tailwindcss";
+@import "@xyflow/react/dist/style.css";
+
+/* ==========================================================================
+    Authentic iOS App Icon & Home Screen Design System
+   Pure Minimalism, Iconic Squircles, and SF Pro Typography
+   ========================================================================== */
+
+:root {
+  color-scheme: dark;
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
+  --font-mono: "SF Mono", Menlo, Monaco, Consolas, monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html, body, #root {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #000000;
+  font-family: var(--font-sans);
+  color: #ffffff;
+  letter-spacing: -0.012em;
+}
+
+/*  Disable default React Flow bounding-box outlines & Hide watermark */
+.react-flow__node,
+.react-flow__node:focus,
+.react-flow__node.selected,
+.react-flow__node.selected:focus {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.react-flow__attribution {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/*  Institutional Marquee Drag-to-Select Bounding Box (Only active while dragging) */
+.react-flow__selection {
+  background: rgba(0, 122, 255, 0.12) !important;
+  border: 1.5px solid rgba(0, 122, 255, 0.7) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 0 20px rgba(0, 122, 255, 0.3) !important;
+}
+
+/*  Hide persistent selection bounding rect (Prevents stuck frame after drag) */
+.react-flow__nodesselection,
+.react-flow__nodesselection-rect {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/*  Remove white focus outline on charts, SVGs, and Recharts containers */
+.recharts-wrapper,
+.recharts-wrapper:focus,
+.recharts-wrapper:focus-visible,
+.recharts-surface,
+.recharts-surface:focus,
+.recharts-surface:focus-visible,
+.recharts-responsive-container,
+.recharts-responsive-container:focus,
+.recharts-responsive-container:focus-visible,
+svg,
+svg:focus,
+svg:focus-visible,
+*:focus,
+*:focus-visible {
+  outline: none !important;
+}
+
+/*  iOS Glass Panel */
+.ios-glass-panel {
+  background: rgba(22, 22, 28, 0.75);
+  backdrop-filter: blur(50px) saturate(190%);
+  -webkit-backdrop-filter: blur(50px) saturate(190%);
+  border: 0.5px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.85);
+}
+
+/*  iOS App Icon Tile (Rock Solid Static - Zero Hover Movement) */
+.ios-app-tile {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 14px 28px -6px rgba(0, 0, 0, 0.8);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  cursor: pointer;
+}
+
+/*  Apple Specular Illumination on Hover (Zero Movement, Pure Light Feedback) */
+.ios-node-wrapper:hover .ios-app-tile {
+  filter: brightness(1.22);
+}
+
+.ios-node-wrapper:hover h4 {
+  color: #ffffff !important;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+/*  Canvas Background */
+.react-flow__background {
+  background-color: #000000 !important;
+  background-image: radial-gradient(circle at 50% 30%, rgba(0, 122, 255, 0.06), transparent 70%) !important;
+}
+
+/*  Minimal Flow Edge Cables */
+.react-flow__edge-path {
+  stroke-width: 2px !important;
+  stroke: rgba(255, 255, 255, 0.25) !important;
+}
+
+.react-flow__edge:hover .react-flow__edge-path {
+  stroke: rgba(255, 255, 255, 0.7) !important;
+  stroke-width: 2.5px !important;
+}
+
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: #007aff !important;
+  stroke-width: 2.5px !important;
+  filter: drop-shadow(0 0 8px rgba(0, 122, 255, 0.8));
+}
+
+.react-flow__edge.animated .react-flow__edge-path {
+  stroke: #007aff !important;
+  stroke-dasharray: 6 5;
+  animation: appleCablePulse 0.8s linear infinite;
+  filter: drop-shadow(0 0 8px rgba(0, 122, 255, 0.6));
+}
+
+@keyframes appleCablePulse {
+  from { stroke-dashoffset: 11; }
+  to { stroke-dashoffset: 0; }
+}
+
+/*  React Flow Magnetic Handles (Static Pixel-Locked Pins) */
+.react-flow__handle {
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+  border: 1.5px solid #000000 !important;
+  box-shadow: none !important;
+  z-index: 10 !important;
+  transition: filter 0.15s ease !important;
+}
+
+.react-flow__handle:hover {
+  filter: brightness(1.4) !important;
+  box-shadow: 0 0 6px currentColor !important;
+}
+
+/* Left Handle: Statically locked on left border */
+.react-flow__handle-left,
+.react-flow__handle[data-handlepos="left"] {
+  left: 0 !important;
+  transform: translate(-50%, -50%) !important;
+}
+
+/* Right Handle: Statically locked on right border */
+.react-flow__handle-right,
+.react-flow__handle[data-handlepos="right"] {
+  right: 0 !important;
+  transform: translate(50%, -50%) !important;
+}
+
+/*  Minimal Controls */
+.react-flow__controls,
+.react-flow__minimap {
+  background: rgba(22, 22, 28, 0.85) !important;
+  backdrop-filter: blur(40px) !important;
+  border: 0.5px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8) !important;
+  overflow: hidden !important;
+}
+
+.react-flow__controls-button {
+  background: transparent !important;
+  border: none !important;
+  fill: #86868b !important;
+  color: #86868b !important;
+  width: 28px !important;
+  height: 28px !important;
+}
+.react-flow__controls-button:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  fill: #ffffff !important;
+}
+
+/*  Native iOS Toggle Switch */
+.apple-toggle {
+  position: relative;
+  width: 40px;
+  height: 24px;
+  background-color: rgba(120, 120, 128, 0.3);
+  border-radius: 9999px;
+  transition: background-color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+.apple-toggle.active {
+  background-color: #34c759;
+}
+.apple-toggle-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.apple-toggle.active .apple-toggle-knob {
+  transform: translateX(16px);
+}
+
+/*  iOS App Launch Pop-up Physics */
+@keyframes iosAppSpringIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.88) translateY(24px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.02) translateY(-2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-ios-app-launch {
+  animation: iosAppSpringIn 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/*  iOS Glass App Window */
+.ios-app-window {
+  background: rgba(18, 18, 26, 0.88);
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 30px 80px -15px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+/* Custom Scrollbars */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/*  Institutional Context Menu Specification */
+.context-menu-container {
+  min-width: 180px;
+  background-color: #141414;          /* Dark Studio Base */
+  border: 1px solid #262626;         /* Subtle Border */
+  border-radius: 8px;                 /* Corner Curve */
+  padding: 6px;                       /* ระยะเว้นขอบกล่อง */
+  box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;                           /* 🟢 ระยะห่างระหว่างบรรทัด 2px */
+}
+
+/* แต่ละแถวเมนู */
+.context-menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 32px;                       /* 🟢 ความสูงของแต่ละแถว 32px */
+  padding: 0 10px;                    /* 🟢 ระยะเว้นซ้าย-ขวา 10px */
+  border-radius: 6px;                 /* ขอบมนเวลา Hover */
+  font-size: 13px;
+  font-weight: 500;
+  color: #e5e5e5;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+/* ส่วนไอคอนและข้อความซ้าย */
+.context-menu-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;                           /* 🟢 ระยะห่างระหว่าง Icon กับ Text 8px */
+}
+
+/* ปุ่มคีย์ลัดฝั่งขวา */
+.context-menu-shortcut {
+  font-size: 11px;
+  color: #737373;
+  margin-left: 16px;                  /* ระยะเว้นห่างจากข้อความหลัก */
+}
+
+/* Hover Effect */
+.context-menu-item:hover {
+  background-color: #262626;
+  color: #ffffff;
+}
+
+/* Disabled State */
+.context-menu-item.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Danger Item (Delete) */
+.context-menu-item.danger {
+  color: #ef4444;
+}
+.context-menu-item.danger:hover {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+}
