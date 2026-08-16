@@ -1311,6 +1311,15 @@ const FlowContent: React.FC = () => {
           document.documentElement.classList.remove('is-selecting-canvas');
           document.body.classList.remove('is-selecting-canvas');
         }}
+        onConnectStart={() => {
+          if (canvasHoldTimerRef.current) clearTimeout(canvasHoldTimerRef.current);
+          document.documentElement.classList.add('is-connecting');
+          document.body.classList.add('is-connecting');
+        }}
+        onConnectEnd={() => {
+          document.documentElement.classList.remove('is-connecting');
+          document.body.classList.remove('is-connecting');
+        }}
         onNodeDoubleClick={onNodeDoubleClick}
         onNodeContextMenu={onNodeContextMenu}
         onPaneContextMenu={onPaneContextMenu}
@@ -1321,7 +1330,13 @@ const FlowContent: React.FC = () => {
         nodeTypes={nodeTypes}
         defaultEdgeOptions={defaultEdgeOptions}
         connectionLineType={ConnectionLineType.SmoothStep}
-        connectionLineStyle={{ stroke: isLight ? '#0071e3' : '#38bdf8', strokeWidth: 2.5 }}
+        connectionLineStyle={{
+          stroke: isLight ? '#0071e3' : '#0a84ff',
+          strokeWidth: 2.5,
+          filter: isLight
+            ? 'drop-shadow(0 0 8px rgba(0, 113, 227, 0.75))'
+            : 'drop-shadow(0 0 10px rgba(10, 132, 255, 0.9))',
+        }}
         selectionOnDrag={true}
         selectionMode={SelectionMode.Partial}
         panOnDrag={[1, 2]}

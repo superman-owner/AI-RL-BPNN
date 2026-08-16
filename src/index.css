@@ -128,8 +128,7 @@ body.is-dragging-node *,
 /*  เมื่อเอาเมาส์ไปชี้ที่เส้น (Hover) ให้เส้นขยายและสว่างขึ้น */
 .react-flow__edge:hover path {
   stroke-width: 3.5px !important;
-  filter: drop-shadow(0 0 10px currentColor) !important;
-  cursor: pointer;
+  filter: drop-shadow(0 0 12px rgba(10, 132, 255, 0.95)) drop-shadow(0 0 4px rgba(56, 189, 248, 0.95)) !important;
 }
 
 /*  Remove white focus outline on charts, SVGs, and Recharts containers */
@@ -170,7 +169,6 @@ svg:focus-visible,
   justify-content: center;
   box-shadow: 0 14px 28px -6px rgba(0, 0, 0, 0.8);
   transition: border-color 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
-  cursor: pointer;
 }
 
 /*  Apple Specular Illumination on Hover (Zero Movement, Pure Light Feedback) */
@@ -192,25 +190,24 @@ svg:focus-visible,
 /*  Minimal Flow Edge Cables */
 .react-flow__edge-path {
   stroke-width: 2px !important;
-  stroke: rgba(255, 255, 255, 0.25) !important;
+  transition: stroke-width 0.2s ease, filter 0.2s ease, stroke 0.2s ease;
 }
 
 .react-flow__edge:hover .react-flow__edge-path {
-  stroke: rgba(255, 255, 255, 0.7) !important;
-  stroke-width: 2.5px !important;
+  stroke-width: 3.5px !important;
+  filter: drop-shadow(0 0 12px rgba(10, 132, 255, 0.95)) drop-shadow(0 0 4px rgba(56, 189, 248, 0.95)) !important;
 }
 
 .react-flow__edge.selected .react-flow__edge-path {
   stroke: #007aff !important;
-  stroke-width: 2.5px !important;
-  filter: drop-shadow(0 0 8px rgba(0, 122, 255, 0.8));
+  stroke-width: 3px !important;
+  filter: drop-shadow(0 0 10px rgba(0, 122, 255, 0.9)) !important;
 }
 
 .react-flow__edge.animated .react-flow__edge-path {
-  stroke: #007aff !important;
   stroke-dasharray: 6 5;
   animation: appleCablePulse 0.8s linear infinite;
-  filter: drop-shadow(0 0 8px rgba(0, 122, 255, 0.6));
+  filter: drop-shadow(0 0 6px rgba(10, 132, 255, 0.6));
 }
 
 @keyframes appleCablePulse {
@@ -484,11 +481,26 @@ body.is-selecting-canvas .react-flow__viewport * {
   cursor: var(--mac-cursor-default) !important;
 }
 
-/*  Absolute Highest Specificity: Global Dragging State across Entire Window (Grabbing Fist) */
+/*  Absolute Highest Specificity: Global Dragging / Connecting State across Entire Window (Grabbing Fist) */
 html.is-dragging-node,
 html.is-dragging-node *,
 body.is-dragging-node,
 body.is-dragging-node *,
+html.is-connecting,
+html.is-connecting *,
+body.is-connecting,
+body.is-connecting *,
+body.is-connecting .react-flow,
+body.is-connecting .react-flow *,
+body.is-connecting .react-flow__pane,
+body.is-connecting .react-flow__pane *,
+body.is-connecting .react-flow__node,
+body.is-connecting .react-flow__node *,
+body.is-connecting .react-flow__edge,
+body.is-connecting .react-flow__edge *,
+body.is-connecting .react-flow__handle,
+body.is-connecting .react-flow__connectionline,
+body.is-connecting .react-flow__connection-path,
 body.is-dragging-node .react-flow,
 body.is-dragging-node .react-flow *,
 body.is-dragging-node .react-flow__pane,
@@ -525,28 +537,34 @@ body.is-dragging-node .react-flow__viewport * {
   background-image: radial-gradient(circle at 50% 30%, rgba(0, 113, 227, 0.04), transparent 70%) !important;
 }
 
-/*  Light Mode Flow Edge Cables */
+/*  Light Mode Flow Edge Cables & Vibrant Apple Illumination Hover Glow */
 .theme-light .react-flow__edge-path {
   stroke-width: 2px !important;
-  stroke: rgba(0, 0, 0, 0.22) !important;
+  stroke: #0071e3 !important;
+  opacity: 0.85;
+  transition: stroke-width 0.2s ease, filter 0.2s ease, opacity 0.2s ease;
 }
 
+.theme-light .react-flow__edge:hover path,
 .theme-light .react-flow__edge:hover .react-flow__edge-path {
-  stroke: rgba(0, 0, 0, 0.6) !important;
-  stroke-width: 2.5px !important;
+  stroke: #0071e3 !important;
+  stroke-width: 3.5px !important;
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 10px rgba(0, 113, 227, 0.95)) drop-shadow(0 0 4px rgba(0, 113, 227, 1)) !important;
 }
 
 .theme-light .react-flow__edge.selected .react-flow__edge-path {
   stroke: #0071e3 !important;
-  stroke-width: 2.5px !important;
-  filter: drop-shadow(0 0 6px rgba(0, 113, 227, 0.5));
+  stroke-width: 3px !important;
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 10px rgba(0, 113, 227, 0.85)) !important;
 }
 
 .theme-light .react-flow__edge.animated .react-flow__edge-path {
   stroke: #0071e3 !important;
   stroke-dasharray: 6 5;
   animation: appleCablePulse 0.8s linear infinite;
-  filter: drop-shadow(0 0 6px rgba(0, 113, 227, 0.4));
+  filter: drop-shadow(0 0 6px rgba(0, 113, 227, 0.5));
 }
 
 /*  Light Mode React Flow Controls */
