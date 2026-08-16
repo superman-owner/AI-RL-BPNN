@@ -5,8 +5,6 @@ import type { QuantTelemetry, RLEnvironmentStep } from '../../services/fxforgeEn
 interface TopNavProps {
   activeView?: 'studio' | 'bpnn';
   onViewChange?: (view: 'studio' | 'bpnn') => void;
-  isSidebarOpen?: boolean;
-  onToggleSidebar?: () => void;
   rlStatus?: 'running' | 'paused' | 'stopped';
   onStartRL?: () => void;
   onPauseRL?: () => void;
@@ -20,8 +18,6 @@ interface TopNavProps {
 export const TopNav: React.FC<TopNavProps> = ({
   activeView = 'bpnn',
   onViewChange,
-  isSidebarOpen = true,
-  onToggleSidebar,
   rlStatus = 'running',
   onStartRL,
   onPauseRL,
@@ -32,7 +28,7 @@ export const TopNav: React.FC<TopNavProps> = ({
 }) => {
   return (
     <header className="h-12 w-full vision-glass apple-specular border-b border-white/[0.08] px-4 flex items-center gap-4 text-slate-200 z-30 select-none overflow-x-auto no-scrollbar">
-      {/* Left: macOS Traffic Lights + Brand + View Switcher + Parameters Toggle */}
+      {/* Left: macOS Traffic Lights + Brand + View Switcher */}
       <div className="flex items-center gap-4 flex-shrink-0">
         <div className="flex items-center gap-1.5 pr-2">
           <div className="w-3 h-3 rounded-full bg-[#ff5f56] border border-[#e0443e]/50 cursor-pointer hover:opacity-80 transition-opacity" />
@@ -75,22 +71,6 @@ export const TopNav: React.FC<TopNavProps> = ({
             </button>
           </div>
         )}
-
-        <div className="h-3.5 w-[1px] bg-white/10" />
-
-        {/*  RL Parameters Sidebar Toggle Button */}
-        <button
-          onClick={onToggleSidebar}
-          className={`flex items-center gap-1.5 text-xs transition-all cursor-pointer ${
-            isSidebarOpen
-              ? 'text-[#0a84ff] font-bold drop-shadow-[0_0_8px_rgba(10,132,255,0.7)]'
-              : 'text-white/60 hover:text-white font-medium'
-          }`}
-          title="Toggle RL Hyperparameters Sidebar"
-        >
-          <LucideIcons.Sliders size={13} />
-          <span>RL Parameters</span>
-        </button>
       </div>
 
       <div className="h-3.5 w-[1px] bg-white/10 flex-shrink-0" />
