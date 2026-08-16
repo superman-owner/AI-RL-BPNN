@@ -229,22 +229,63 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const triggerButtonRef = useRef<HTMLButtonElement>(null);
+  const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({});
 
   const isBoolean = type === 'boolean' || typeof defaultValue === 'boolean';
   const isSelect = !isBoolean && (type === 'select' || (options && options.length > 0));
   const isNumber = !isBoolean && !isSelect && typeof defaultValue === 'number';
 
-  // Close dropdown on click outside
+  // Calculate portal position on open
+  const updateMenuPosition = useCallback(() => {
+    if (!triggerButtonRef.current) return;
+    const rect = triggerButtonRef.current.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const estimatedHeight = Math.min((options?.length || 3) * 32 + 10, 220);
+    const openUpwards = spaceBelow < estimatedHeight && rect.top > estimatedHeight;
+
+    setMenuStyle({
+      position: 'fixed',
+      top: openUpwards ? Math.max(10, rect.top - estimatedHeight - 4) : rect.bottom + 4,
+      left: rect.left,
+      width: rect.width,
+      backgroundColor: 'rgba(28, 28, 34, 0.98)',
+      backdropFilter: 'blur(28px)',
+      WebkitBackdropFilter: 'blur(28px)',
+      borderRadius: '8px',
+      border: '1px solid rgba(255, 255, 255, 0.16)',
+      boxShadow: '0 20px 48px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(0, 0, 0, 0.4)',
+      padding: '4px',
+      zIndex: 999999,
+      maxHeight: `${estimatedHeight}px`,
+      overflowY: 'auto',
+    });
+  }, [options]);
+
+  const toggleDropdown = () => {
+    if (!isOpen) {
+      updateMenuPosition();
+      setIsOpen(true);
+    } else {
+      setIsOpen(false);
+    }
+  };
+
+  // Close dropdown on click outside or scroll
   useEffect(() => {
     if (!isOpen) return;
     const handleOutsideClick = (e: MouseEvent | PointerEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as HTMLElement)) {
-        setIsOpen(false);
+      if (triggerButtonRef.current && triggerButtonRef.current.contains(e.target as HTMLElement)) {
+        return;
       }
+      setIsOpen(false);
     };
     window.addEventListener('pointerdown', handleOutsideClick);
-    return () => window.removeEventListener('pointerdown', handleOutsideClick);
+    window.addEventListener('scroll', () => setIsOpen(false), true);
+    return () => {
+      window.removeEventListener('pointerdown', handleOutsideClick);
+      window.removeEventListener('scroll', () => setIsOpen(false), true);
+    };
   }, [isOpen]);
 
   //  Frameless Apple Settings Toggle Switch (with explicit 10px spacing)
@@ -291,7 +332,7 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
   const selectOptions = options || ['32', '64', '128'];
 
   return (
-    <div className="flex flex-col gap-1.5 group nodrag nopan relative" style={{ pointerEvents: 'all' }} ref={dropdownRef}>
+    <div className="flex flex-col gap-1.5 group nodrag nopan relative" style={{ pointerEvents: 'all' }}>
       {/* Label above */}
       <label
         className="text-[11px] font-medium text-[#86868b] select-none tracking-tight"
@@ -300,19 +341,22 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
         {label}
       </label>
 
-      {/*  macOS Apple Dropdown Select (Exact replica of macOS System Popover) */}
+      {/*  macOS Apple Dropdown Select (Reduced 5px to h-[25px], 10px Left Padding) */}
       {isSelect ? (
         <div className="relative w-full">
           <button
+            ref={triggerButtonRef}
             type="button"
-            onClick={() => setIsOpen((prev) => !prev)}
+            onClick={toggleDropdown}
             onPointerDown={(e) => e.stopPropagation()}
             onMouseDown={(e) => e.stopPropagation()}
             style={{
               fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
               pointerEvents: 'all',
+              paddingLeft: '10px',
+              paddingRight: '10px',
             }}
-            className={`w-full h-[30px] rounded-[7px] px-2.5 flex items-center justify-between transition-all bg-white/[0.07] hover:bg-white/[0.11] active:bg-white/[0.14] border text-left cursor-pointer nodrag nopan pointer-events-auto select-none ${
+            className={`w-full h-[25px] rounded-[6px] flex items-center justify-between transition-all bg-white/[0.07] hover:bg-white/[0.11] active:bg-white/[0.14] border text-left cursor-pointer nodrag nopan pointer-events-auto select-none ${
               isOpen
                 ? 'border-[#0a84ff] ring-2 ring-[#0a84ff]/25 bg-white/[0.12]'
                 : 'border-white/[0.14] hover:border-white/[0.22]'
@@ -324,64 +368,54 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
             <LucideIcons.ChevronsUpDown size={12} className="text-white/50 flex-shrink-0 ml-1.5" />
           </button>
 
-          {/*  macOS Floating Dark Glass Menu */}
-          {isOpen && (
-            <div
-              style={{
-                position: 'absolute',
-                top: 'calc(100% + 4px)',
-                left: 0,
-                right: 0,
-                backgroundColor: 'rgba(28, 28, 34, 0.97)',
-                backdropFilter: 'blur(28px)',
-                WebkitBackdropFilter: 'blur(28px)',
-                borderRadius: '8px',
-                border: '1px solid rgba(255, 255, 255, 0.16)',
-                boxShadow: '0 16px 36px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(0, 0, 0, 0.3)',
-                padding: '4px',
-                zIndex: 100000,
-                maxHeight: '220px',
-                overflowY: 'auto',
-              }}
-              className="custom-scrollbar nodrag nopan"
-              onPointerDown={(e) => e.stopPropagation()}
-              onMouseDown={(e) => e.stopPropagation()}
-            >
-              {selectOptions.map((opt) => {
-                const isSelected = opt === (strVal || selectOptions[0]);
-                return (
-                  <div
-                    key={opt}
-                    onClick={() => {
-                      onChange(opt);
-                      setIsOpen(false);
-                    }}
-                    style={{
-                      fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
-                    }}
-                    className={`flex items-center gap-2 px-2 py-1.5 rounded-[5px] text-[12px] cursor-pointer transition-colors select-none ${
-                      isSelected
-                        ? 'bg-[#0a84ff] text-white font-medium shadow-sm'
-                        : 'text-[#e5e5ea] hover:bg-white/[0.08] hover:text-white font-normal'
-                    }`}
-                  >
-                    <span className="w-3.5 flex items-center justify-center flex-shrink-0">
-                      {isSelected && <LucideIcons.Check size={12} strokeWidth={2.5} className="text-white" />}
-                    </span>
-                    <span className="truncate">{opt}</span>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+          {/*  macOS Floating Dark Glass Menu Portal (Never Clipped) */}
+          {isOpen &&
+            createPortal(
+              <div
+                style={menuStyle}
+                className="custom-scrollbar nodrag nopan select-none"
+                onPointerDown={(e) => e.stopPropagation()}
+                onMouseDown={(e) => e.stopPropagation()}
+              >
+                {selectOptions.map((opt) => {
+                  const isSelected = opt === (strVal || selectOptions[0]);
+                  return (
+                    <div
+                      key={opt}
+                      onClick={() => {
+                        onChange(opt);
+                        setIsOpen(false);
+                      }}
+                      style={{
+                        fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
+                        paddingLeft: '8px',
+                        paddingRight: '10px',
+                        height: '28px',
+                      }}
+                      className={`flex items-center gap-2 rounded-[5px] text-[12px] cursor-pointer transition-colors select-none ${
+                        isSelected
+                          ? 'bg-[#0a84ff] text-white font-medium shadow-sm'
+                          : 'text-[#e5e5ea] hover:bg-white/[0.08] hover:text-white font-normal'
+                      }`}
+                    >
+                      <span className="w-3.5 flex items-center justify-center flex-shrink-0">
+                        {isSelected && <LucideIcons.Check size={12} strokeWidth={2.5} className="text-white" />}
+                      </span>
+                      <span className="truncate">{opt}</span>
+                    </div>
+                  );
+                })}
+              </div>,
+              document.body
+            )}
         </div>
       ) : (
-        /* Text / Number Input Container */
+        /* Text / Number Input Container (Reduced 5px to h-[25px], 10px Left Padding) */
         <div
-          style={{ pointerEvents: 'all' }}
+          style={{ pointerEvents: 'all', paddingLeft: '10px', paddingRight: '10px' }}
           onPointerDown={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
-          className={`h-[30px] w-full rounded-[7px] px-2.5 flex items-center transition-all duration-150 bg-white/[0.05] pointer-events-auto relative ${
+          className={`h-[25px] w-full rounded-[6px] flex items-center transition-all duration-150 bg-white/[0.05] pointer-events-auto relative ${
             isError
               ? 'border border-[#ff453a] ring-2 ring-[#ff453a]/25 bg-[#261c1e]'
               : isFocused
@@ -414,7 +448,7 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
                 : '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
               pointerEvents: 'all',
             }}
-            className="w-full bg-transparent text-[#f5f5f7] text-[12px] font-medium focus:outline-none placeholder:text-[#71717a] nodrag nopan pointer-events-auto cursor-text"
+            className="w-full bg-transparent text-[#f5f5f7] text-[12px] font-medium focus:outline-none placeholder:text-[#71717a] nodrag nopan pointer-events-auto cursor-text px-0"
           />
         </div>
       )}

@@ -67,13 +67,13 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
         transition: 'border 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease',
       }}
     >
-      {/* Node Header */}
+      {/* Node Header (Reduced height) */}
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: 8,
-          padding: '9px 12px',
+          gap: 7,
+          padding: '7px 10px',
           background: 'rgba(255,255,255,0.025)',
           borderBottom: '1px solid rgba(255,255,255,0.07)',
           borderTopLeftRadius: '9px',
@@ -104,7 +104,7 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
               whiteSpace: 'nowrap',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
-              lineHeight: 1.35,
+              lineHeight: 1.3,
               fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif',
             }}
           >
@@ -126,8 +126,8 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
         />
       </div>
 
-      {/* Node Body (พารามิเตอร์ย่อ) */}
-      <div style={{ padding: '9px 12px', display: 'flex', flexDirection: 'column', gap: 5.5 }}>
+      {/* Node Body (พารามิเตอร์ย่อ - ลดความสูงลง 5px) */}
+      <div style={{ padding: '5px 10px', display: 'flex', flexDirection: 'column', gap: 4 }}>
         {def.fields.slice(0, 3).map((f) => {
           const val = data[f.key] ?? f.default;
           return (
