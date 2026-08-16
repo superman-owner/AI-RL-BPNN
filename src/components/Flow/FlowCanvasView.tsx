@@ -551,11 +551,13 @@ const FlowContent: React.FC = () => {
           <div
             style={{
               position: 'fixed',
-              top: contextMenu.y,
-              left: contextMenu.x,
+              top: Math.min(contextMenu.y, window.innerHeight - 240),
+              left: Math.min(contextMenu.x, window.innerWidth - 240),
               zIndex: 100,
+              minWidth: '220px',
+              padding: '6px',
             }}
-            className="bg-[#12121a]/95 backdrop-blur-xl border border-white/[0.12] rounded-lg shadow-2xl py-1.5 min-w-[180px] text-xs text-slate-200 select-none animate-in fade-in zoom-in-95 duration-100"
+            className="bg-[#12121c]/95 backdrop-blur-2xl border border-white/[0.14] rounded-xl shadow-2xl text-xs text-slate-200 select-none animate-in fade-in zoom-in-95 duration-100 flex flex-col gap-0.5"
             onClick={(e) => e.stopPropagation()}
           >
             {contextMenu.targetNodeId ? (
@@ -568,79 +570,79 @@ const FlowContent: React.FC = () => {
                     }
                     setContextMenu(null);
                   }}
-                  className="w-full px-3 py-1.5 flex items-center justify-between hover:bg-[#007aff]/20 hover:text-white transition-colors cursor-pointer text-left"
+                  className="w-full px-3 py-2 rounded-lg flex items-center justify-between hover:bg-white/[0.08] hover:text-white transition-all cursor-pointer text-left"
                 >
-                  <span className="flex items-center gap-2">
-                    <LucideIcons.Sliders size={12} className="text-[#007aff]" />
+                  <span className="flex items-center gap-2.5 text-[12px] font-medium">
+                    <LucideIcons.Sliders size={13} className="text-[#007aff] flex-shrink-0" />
                     <span>Inspect Parameters</span>
                   </span>
-                  <span className="text-[10px] text-white/40 font-mono">2×Click</span>
+                  <span className="text-[11px] text-white/45 font-mono pl-4 flex-shrink-0">2×Click</span>
                 </button>
                 <button
                   onClick={() => {
                     duplicateNodes();
                     setContextMenu(null);
                   }}
-                  className="w-full px-3 py-1.5 flex items-center justify-between hover:bg-white/[0.06] hover:text-white transition-colors cursor-pointer text-left"
+                  className="w-full px-3 py-2 rounded-lg flex items-center justify-between hover:bg-white/[0.08] hover:text-white transition-all cursor-pointer text-left"
                 >
-                  <span className="flex items-center gap-2">
-                    <LucideIcons.CopyPlus size={12} className="text-[#ffd60a]" />
+                  <span className="flex items-center gap-2.5 text-[12px] font-medium">
+                    <LucideIcons.CopyPlus size={13} className="text-[#ffd60a] flex-shrink-0" />
                     <span>Duplicate</span>
                   </span>
-                  <span className="text-[10px] text-white/40 font-mono">Ctrl+D</span>
+                  <span className="text-[11px] text-white/45 font-mono pl-4 flex-shrink-0">Ctrl+D</span>
                 </button>
                 <button
                   onClick={() => {
                     copyNodes();
                     setContextMenu(null);
                   }}
-                  className="w-full px-3 py-1.5 flex items-center justify-between hover:bg-white/[0.06] hover:text-white transition-colors cursor-pointer text-left"
+                  className="w-full px-3 py-2 rounded-lg flex items-center justify-between hover:bg-white/[0.08] hover:text-white transition-all cursor-pointer text-left"
                 >
-                  <span className="flex items-center gap-2">
-                    <LucideIcons.Copy size={12} className="text-white/70" />
+                  <span className="flex items-center gap-2.5 text-[12px] font-medium">
+                    <LucideIcons.Copy size={13} className="text-white/70 flex-shrink-0" />
                     <span>Copy</span>
                   </span>
-                  <span className="text-[10px] text-white/40 font-mono">Ctrl+C</span>
+                  <span className="text-[11px] text-white/45 font-mono pl-4 flex-shrink-0">Ctrl+C</span>
                 </button>
                 <button
                   onClick={() => {
                     cutNodes();
                     setContextMenu(null);
                   }}
-                  className="w-full px-3 py-1.5 flex items-center justify-between hover:bg-white/[0.06] hover:text-white transition-colors cursor-pointer text-left"
+                  className="w-full px-3 py-2 rounded-lg flex items-center justify-between hover:bg-white/[0.08] hover:text-white transition-all cursor-pointer text-left"
                 >
-                  <span className="flex items-center gap-2">
-                    <LucideIcons.Scissors size={12} className="text-white/70" />
+                  <span className="flex items-center gap-2.5 text-[12px] font-medium">
+                    <LucideIcons.Scissors size={13} className="text-white/70 flex-shrink-0" />
                     <span>Cut</span>
                   </span>
-                  <span className="text-[10px] text-white/40 font-mono">Ctrl+X</span>
+                  <span className="text-[11px] text-white/45 font-mono pl-4 flex-shrink-0">Ctrl+X</span>
                 </button>
-                <div className="my-1 border-t border-white/[0.08]" />
+                <div className="my-1 border-t border-white/[0.08] mx-1" />
                 <button
                   onClick={() => {
                     disconnectNodes();
                     setContextMenu(null);
                   }}
-                  className="w-full px-3 py-1.5 flex items-center justify-between hover:bg-[#ff9f0a]/20 hover:text-[#ff9f0a] transition-colors cursor-pointer text-left"
+                  className="w-full px-3 py-2 rounded-lg flex items-center justify-between hover:bg-[#ff9f0a]/15 text-[#ff9f0a] transition-all cursor-pointer text-left"
                 >
-                  <span className="flex items-center gap-2">
-                    <LucideIcons.Unlink size={12} className="text-[#ff9f0a]" />
+                  <span className="flex items-center gap-2.5 text-[12px] font-medium">
+                    <LucideIcons.Unlink size={13} className="text-[#ff9f0a] flex-shrink-0" />
                     <span>Disconnect Edges</span>
                   </span>
-                  <span className="text-[10px] text-white/40 font-mono">Ctrl+K</span>
+                  <span className="text-[11px] text-white/45 font-mono pl-4 flex-shrink-0">Ctrl+K</span>
                 </button>
                 <button
                   onClick={() => {
                     deleteNodes();
                     setContextMenu(null);
                   }}
-                  className="w-full px-3 py-1.5 flex items-center justify-between hover:bg-[#ff453a]/20 text-[#ff453a] transition-colors cursor-pointer text-left"
+                  className="w-full px-3 py-2 rounded-lg flex items-center justify-between hover:bg-[#ff453a]/15 text-[#ff453a] transition-all cursor-pointer text-left"
                 >
-                  <span className="flex items-center gap-2">
-                    <LucideIcons.Trash2 size={12} />
+                  <span className="flex items-center gap-2.5 text-[12px] font-medium">
+                    <LucideIcons.Trash2 size={13} className="flex-shrink-0" />
                     <span>Delete</span>
                   </span>
-                  <span className="text-[10px] text-white/40 font-mono">Del</span>
+                  <span className="text-[11px] text-white/45 font-mono pl-4 flex-shrink-0">Del</span>
                 </button>
               </>
             ) : (
@@ -650,26 +652,26 @@ const FlowContent: React.FC = () => {
                     pasteAt(contextMenu.flowPos);
                     setContextMenu(null);
                   }}
-                  className="w-full px-3 py-1.5 flex items-center justify-between hover:bg-white/[0.06] hover:text-white transition-colors cursor-pointer text-left"
+                  className="w-full px-3 py-2 rounded-lg flex items-center justify-between hover:bg-white/[0.08] hover:text-white transition-all cursor-pointer text-left"
                 >
-                  <span className="flex items-center gap-2">
-                    <LucideIcons.ClipboardPaste size={12} className="text-[#007aff]" />
+                  <span className="flex items-center gap-2.5 text-[12px] font-medium">
+                    <LucideIcons.ClipboardPaste size={13} className="text-[#007aff] flex-shrink-0" />
                     <span>Paste Here</span>
                   </span>
-                  <span className="text-[10px] text-white/40 font-mono">Ctrl+V</span>
+                  <span className="text-[11px] text-white/45 font-mono pl-4 flex-shrink-0">Ctrl+V</span>
                 </button>
                 <button
                   onClick={() => {
                     fitView({ duration: 400, padding: 0.15 });
                     setContextMenu(null);
                   }}
-                  className="w-full px-3 py-1.5 flex items-center justify-between hover:bg-white/[0.06] hover:text-white transition-colors cursor-pointer text-left"
+                  className="w-full px-3 py-2 rounded-lg flex items-center justify-between hover:bg-white/[0.08] hover:text-white transition-all cursor-pointer text-left"
                 >
-                  <span className="flex items-center gap-2">
-                    <LucideIcons.Maximize size={12} className="text-[#30d158]" />
+                  <span className="flex items-center gap-2.5 text-[12px] font-medium">
+                    <LucideIcons.Maximize size={13} className="text-[#30d158] flex-shrink-0" />
                     <span>Fit View</span>
                   </span>
-                  <span className="text-[10px] text-white/40 font-mono">F</span>
+                  <span className="text-[11px] text-white/45 font-mono pl-4 flex-shrink-0">F</span>
                 </button>
               </>
             )}
@@ -693,41 +695,42 @@ const FlowContent: React.FC = () => {
                 top: 24,
                 right: 24,
                 zIndex: 40,
-                width: 280,
+                width: 320,
+                padding: '16px 18px 14px 18px',
               }}
-              className="bg-[#0f0f18]/95 backdrop-blur-xl border border-white/[0.12] rounded-xl shadow-2xl p-3.5 text-xs select-none animate-in fade-in zoom-in-95 duration-150"
+              className="bg-[#0f0f18]/95 backdrop-blur-2xl border border-white/[0.14] rounded-2xl shadow-2xl text-xs select-none animate-in fade-in zoom-in-95 duration-150"
             >
               {/* Inspector Header */}
-              <div className="flex items-center justify-between pb-2 mb-3 border-b border-white/[0.08]">
-                <div className="flex items-center gap-2">
+              <div className="flex items-center justify-between pb-3 mb-3.5 border-b border-white/[0.08]">
+                <div className="flex items-center gap-2.5">
                   <span
-                    className="w-2.5 h-2.5 rounded-full"
-                    style={{ background: group.color, boxShadow: `0 0 8px ${group.color}` }}
+                    className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                    style={{ background: group.color, boxShadow: `0 0 10px ${group.color}` }}
                   />
                   <div>
                     <span className="text-[10px] font-bold tracking-wider uppercase block" style={{ color: group.color }}>
                       {group.label}
                     </span>
-                    <span className="text-xs font-semibold text-white block">
+                    <span className="text-[13px] font-semibold text-white block">
                       {nodeLabel}
                     </span>
                   </div>
                 </div>
                 <button
                   onClick={() => closeInspector(ins.nodeId)}
-                  className="text-white/40 hover:text-white transition-colors p-1"
+                  className="text-white/40 hover:text-white hover:bg-white/[0.08] transition-all p-1.5 rounded-lg cursor-pointer"
                 >
-                  <LucideIcons.X size={13} />
+                  <LucideIcons.X size={14} />
                 </button>
               </div>
 
               {/* Parameter Inputs */}
-              <div className="space-y-2.5 max-h-[300px] overflow-y-auto custom-scrollbar pr-1">
+              <div className="space-y-3 max-h-[300px] overflow-y-auto custom-scrollbar pr-1">
                 {def?.fields.map((f) => {
                   const val = (targetNode.data?.[f.key] ?? f.default) as string | number;
                   return (
                     <div key={f.key}>
-                      <label className="text-[10px] text-[#86868b] block mb-1">{f.label}</label>
+                      <label className="text-[11px] font-medium text-[#86868b] block mb-1.5">{f.label}</label>
                       <input
                         type={typeof f.default === 'number' ? 'number' : 'text'}
                         value={val}
@@ -738,7 +741,7 @@ const FlowContent: React.FC = () => {
                             typeof f.default === 'number' ? parseFloat(e.target.value) || 0 : e.target.value
                           )
                         }
-                        className="w-full bg-[#161622] border border-white/10 rounded-lg px-2.5 py-1 text-white font-mono text-xs focus:outline-none focus:border-[#007aff]"
+                        className="w-full bg-[#161622] border border-white/[0.12] rounded-lg px-3 py-1.5 text-white font-mono text-xs focus:outline-none focus:border-[#007aff] transition-colors"
                       />
                     </div>
                   );
@@ -746,19 +749,19 @@ const FlowContent: React.FC = () => {
               </div>
 
               {/* Inspector Footer Actions */}
-              <div className="mt-3 pt-2 border-t border-white/[0.08] flex items-center justify-between">
+              <div className="mt-4 pt-3 border-t border-white/[0.08] flex items-center justify-between">
                 <button
                   onClick={() => disconnectNodes([targetNode])}
-                  className="text-[10px] text-[#ff9f0a] hover:underline flex items-center gap-1 font-medium"
+                  className="text-[11px] text-[#ff9f0a] hover:text-[#ffb340] hover:bg-[#ff9f0a]/10 px-2.5 py-1 rounded-md flex items-center gap-1.5 font-medium transition-all cursor-pointer"
                 >
-                  <LucideIcons.Unlink size={10} />
+                  <LucideIcons.Unlink size={11} />
                   <span>Disconnect</span>
                 </button>
                 <button
                   onClick={() => deleteNodes([targetNode])}
-                  className="text-[10px] text-[#ff453a] hover:underline flex items-center gap-1 font-medium"
+                  className="text-[11px] text-[#ff453a] hover:text-[#ff6961] hover:bg-[#ff453a]/10 px-2.5 py-1 rounded-md flex items-center gap-1.5 font-medium transition-all cursor-pointer"
                 >
-                  <LucideIcons.Trash2 size={10} />
+                  <LucideIcons.Trash2 size={11} />
                   <span>Delete Node</span>
                 </button>
               </div>
