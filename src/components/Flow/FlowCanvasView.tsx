@@ -230,13 +230,13 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
             }
           }}
           placeholder={`Enter ${label.toLowerCase()}...`}
-          className="w-full bg-transparent text-[#f4f4f5] font-mono text-[13px] focus:outline-none placeholder:text-[#71717a]"
+          className="w-full bg-transparent text-[#f4f4f5] font-mono text-[13px] text-center focus:outline-none placeholder:text-[#71717a]"
         />
       </div>
 
       {/* Error message indicator */}
       {isError && (
-        <span className="text-[10px] text-[#ff453a] font-medium tracking-tight -mt-0.5">
+        <span className="text-[10px] text-[#ff453a] font-medium tracking-tight text-center -mt-0.5">
           Invalid numeric value
         </span>
       )}
@@ -767,12 +767,21 @@ const FlowContent: React.FC = () => {
                 right: 24,
                 zIndex: 40,
                 width: 320,
-                padding: '18px 20px 16px 20px',
+                padding: '16px 18px 14px 18px',
+                backgroundColor: '#08080c',
               }}
-              className="bg-[#12121a]/95 backdrop-blur-2xl border border-white/[0.14] rounded-2xl shadow-2xl text-xs select-none animate-in fade-in zoom-in-95 duration-150"
+              className="border border-white/[0.14] rounded-2xl shadow-2xl text-xs select-none animate-in fade-in zoom-in-95 duration-150"
             >
-              {/* Inspector Header */}
-              <div className="flex items-center justify-between pb-3.5 mb-4 border-b border-white/[0.08]">
+              {/* Inspector Header (Seamless / No Border) */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: '12px',
+                  borderBottom: 'none',
+                }}
+              >
                 <div className="flex items-center gap-2.5">
                   <span
                     className="w-2.5 h-2.5 rounded-full flex-shrink-0"
@@ -789,14 +798,14 @@ const FlowContent: React.FC = () => {
                 </div>
                 <button
                   onClick={() => closeInspector(ins.nodeId)}
-                  className="text-white/40 hover:text-white hover:bg-white/[0.08] transition-all p-1.5 rounded-lg cursor-pointer"
+                  className="text-white/40 hover:text-white transition-all p-1 rounded-lg cursor-pointer hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.7)]"
                 >
                   <LucideIcons.X size={14} />
                 </button>
               </div>
 
               {/* Parameter Inputs */}
-              <div className="space-y-4 max-h-[300px] overflow-y-auto custom-scrollbar pr-1">
+              <div className="space-y-3 max-h-[300px] overflow-y-auto custom-scrollbar pr-1">
                 {def?.fields.map((f) => {
                   const val = (targetNode.data?.[f.key] ?? f.default) as string | number;
                   return (
@@ -811,20 +820,30 @@ const FlowContent: React.FC = () => {
                 })}
               </div>
 
-              {/* Inspector Footer Actions (Generous Spacing & High-Contrast Touch Target) */}
-              <div className="mt-5 pt-3.5 border-t border-white/[0.08] flex items-center justify-between">
+              {/* Inspector Footer Actions: Exactly 10px below Edit Fields, No Border, Glowing Text Hover */}
+              <div
+                style={{
+                  marginTop: '10px',
+                  borderTop: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  paddingLeft: '2px',
+                  paddingRight: '2px',
+                }}
+              >
                 <button
-                  onClick={() => disconnectNodes([targetNode])}
-                  className="text-[11.5px] text-[#ff9f0a] hover:text-[#ffb340] hover:bg-[#ff9f0a]/15 px-3 py-1.5 rounded-lg flex items-center gap-1.5 font-medium transition-all cursor-pointer"
+                  onClick={() => closeInspector(ins.nodeId)}
+                  className="text-[11.5px] text-[#30d158] hover:text-[#5ee387] flex items-center gap-1.5 font-semibold transition-all cursor-pointer hover:drop-shadow-[0_0_8px_rgba(48,209,88,0.85)] hover:scale-105"
                 >
-                  <LucideIcons.Unlink size={12} />
-                  <span>Disconnect</span>
+                  <LucideIcons.Check size={13} className="text-[#30d158]" />
+                  <span>Update</span>
                 </button>
                 <button
                   onClick={() => deleteNodes([targetNode])}
-                  className="text-[11.5px] text-[#ff453a] hover:text-[#ff6961] hover:bg-[#ff453a]/15 px-3 py-1.5 rounded-lg flex items-center gap-1.5 font-medium transition-all cursor-pointer"
+                  className="text-[11.5px] text-[#ff453a] hover:text-[#ff6961] flex items-center gap-1.5 font-semibold transition-all cursor-pointer hover:drop-shadow-[0_0_8px_rgba(255,69,58,0.85)] hover:scale-105"
                 >
-                  <LucideIcons.Trash2 size={12} />
+                  <LucideIcons.Trash2 size={13} className="text-[#ff453a]" />
                   <span>Delete Node</span>
                 </button>
               </div>
