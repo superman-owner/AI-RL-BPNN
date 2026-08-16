@@ -692,13 +692,14 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
         })}
       </div>
 
-      {/* 🟢 FOOTER: Clean Apple Sidebar-Style Hover (Smooth Color Transition, No Box, No Blur) */}
+      {/* 🟢 FOOTER: Centered Apple Action Buttons with 20px Gap */}
       <div
         style={{
           marginTop: '12px',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
+          justifyContent: 'center',
+          gap: '20px',
           pointerEvents: 'all',
         }}
         className="nodrag nopan pointer-events-auto px-1 select-none"
