@@ -18,11 +18,14 @@ import { NodeInspector } from './components/Inspector/NodeInspector';
 import { AnalyticsDrawer } from './components/BottomPanel/AnalyticsDrawer';
 import { TopNav } from './components/Header/TopNav';
 import { CodeExportModal } from './components/Modals/CodeExportModal';
+import { MT5DeployModal } from './components/Modals/MT5DeployModal';
 import { CanvasContextMenu } from './components/Canvas/CanvasContextMenu';
 import { LiveNeuralLink } from './components/NeuralLink/LiveNeuralLink';
 import { TEMPLATES } from './data/templates';
 import type { PipelineTemplate } from './data/templates';
 import { INITIAL_LOGS } from './data/mockAnalytics';
+import { fxforgeEngine } from './services/fxforgeEngine';
+import type { QuantTelemetry, RLEnvironmentStep } from './services/fxforgeEngine';
 import type { TradingNodeConfig } from './types/flow';
 import { generatePythonScript } from './utils/codeGenerator';
 import { autoLayoutDAG } from './utils/dagLayout';
@@ -48,6 +51,13 @@ const FlowCanvas: React.FC = () => {
   const [logs, setLogs] = useState<string[]>(INITIAL_LOGS);
   const [isExportOpen, setIsExportOpen] = useState(false);
   const [isClearModalOpen, setIsClearModalOpen] = useState(false);
+
+  // RL Live Telemetry State for TopNav integration
+  const [isRLTraining, setIsRLTraining] = useState(true);
+  const [rlTelemetry, setRlTelemetry] = useState<QuantTelemetry>(() => fxforgeEngine.getTelemetry());
+  const [rlLatestStep, setRlLatestStep] = useState<RLEnvironmentStep | null>(null);
+  const [isMT5DeployOpen, setIsMT5DeployOpen] = useState(false);
+  const [cameraResetTrigger, setCameraResetTrigger] = useState(0);
 
   // Clipboard & History State
   const [clipboard, setClipboard] = useState<{ nodes: Node[]; edges: Edge[] } | null>(null);
@@ -691,12 +701,25 @@ const FlowCanvas: React.FC = () => {
         onFitView={() => fitView({ padding: 0.25, duration: 400 })}
         onClearFlow={() => setIsClearModalOpen(true)}
         nodeCount={nodes.length}
+        isRLTraining={isRLTraining}
+        onToggleRLTraining={() => setIsRLTraining((prev) => !prev)}
+        rlTelemetry={rlTelemetry}
+        rlLatestStep={rlLatestStep}
+        onOpenMT5Deploy={() => setIsMT5DeployOpen(true)}
+        onResetCamera={() => setCameraResetTrigger((c) => c + 1)}
       />
 
       {/* Main Viewport Routing: Flow DAG Canvas vs. Live 3D BPNN Visualizer */}
       {activeView === 'bpnn' ? (
         <div className="flex-1 h-full relative bg-[#08080c]">
-          <LiveNeuralLink />
+          <LiveNeuralLink
+            isTraining={isRLTraining}
+            onTelemetryUpdate={(t, s) => {
+              setRlTelemetry(t);
+              setRlLatestStep(s);
+            }}
+            cameraResetTrigger={cameraResetTrigger}
+          />
         </div>
       ) : (
         <>
@@ -850,6 +873,12 @@ const FlowCanvas: React.FC = () => {
         isOpen={isExportOpen}
         code={compiledPythonCode}
         onClose={() => setIsExportOpen(false)}
+      />
+
+      {/* MT5 ONNX Deploy Modal */}
+      <MT5DeployModal
+        isOpen={isMT5DeployOpen}
+        onClose={() => setIsMT5DeployOpen(false)}
       />
     </div>
   );

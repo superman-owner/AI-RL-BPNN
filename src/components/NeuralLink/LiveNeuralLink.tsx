@@ -1,7 +1,5 @@
-import React, { useRef, useEffect, useState, useCallback } from 'react';
-import * as LucideIcons from 'lucide-react';
+import React, { useRef, useEffect, useCallback } from 'react';
 import { fxforgeEngine, type RLEnvironmentStep, type QuantTelemetry } from '../../services/fxforgeEngine';
-import { generatePythonOnnxScript, generateMql5SourceCode } from '../../services/onnxExporter';
 
 interface BPNeuron {
   id: string;
@@ -38,7 +36,17 @@ interface SignalParticle {
   color: string;
 }
 
-export const LiveNeuralLink: React.FC = () => {
+interface LiveNeuralLinkProps {
+  isTraining?: boolean;
+  onTelemetryUpdate?: (telemetry: QuantTelemetry, latestStep: RLEnvironmentStep) => void;
+  cameraResetTrigger?: number;
+}
+
+export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
+  isTraining = true,
+  onTelemetryUpdate,
+  cameraResetTrigger = 0,
+}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -54,14 +62,14 @@ export const LiveNeuralLink: React.FC = () => {
   const isDraggingRef = useRef(false);
   const dragStartRef = useRef({ x: 0, y: 0 });
 
-  // FXFORGE Engine State
-  const [isTraining, setIsTraining] = useState(true);
-  const [telemetry, setTelemetry] = useState<QuantTelemetry>(fxforgeEngine.getTelemetry());
-  const [latestStep, setLatestStep] = useState<RLEnvironmentStep | null>(null);
-  const [showExportModal, setShowExportModal] = useState(false);
-
   const isTrainingRef = useRef(isTraining);
   isTrainingRef.current = isTraining;
+
+  useEffect(() => {
+    if (cameraResetTrigger > 0) {
+      cameraRef.current = { rotX: 0.14, rotY: -0.22, zoom: 1.05, panX: 0, panY: 0 };
+    }
+  }, [cameraResetTrigger]);
 
   // Topology Refs
   const neuronsRef = useRef<BPNeuron[]>([]);
@@ -163,8 +171,10 @@ export const LiveNeuralLink: React.FC = () => {
 
     const interval = setInterval(() => {
       const stepResult = fxforgeEngine.step();
-      setLatestStep(stepResult);
-      setTelemetry(fxforgeEngine.getTelemetry());
+      const telem = fxforgeEngine.getTelemetry();
+      if (onTelemetryUpdate) {
+        onTelemetryUpdate(telem, stepResult);
+      }
 
       // Update Node Activations directly
       const neurons = neuronsRef.current;
@@ -185,7 +195,7 @@ export const LiveNeuralLink: React.FC = () => {
     }, 450);
 
     return () => clearInterval(interval);
-  }, [isTraining]);
+  }, [isTraining, onTelemetryUpdate]);
 
   // 3. Spawn Signal Pulses
   const spawnSignals = useCallback(() => {
@@ -458,124 +468,6 @@ export const LiveNeuralLink: React.FC = () => {
         onWheel={handleWheel}
         className="w-full h-full cursor-grab active:cursor-grabbing block"
       />
-
-      {/*  Apple Vision Pro Floating Glass Capsule Controls (Live Telemetry & ONNX Deploy) */}
-      <div className="absolute top-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3.5 bg-[#12121a]/85 backdrop-blur-2xl border border-white/[0.12] px-4.5 py-2.5 rounded-2xl shadow-[0_16px_36px_rgba(0,0,0,0.75)] text-xs text-white">
-        <button
-          onClick={() => setIsTraining(!isTraining)}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-semibold transition-all cursor-pointer ${
-            isTraining
-              ? 'bg-[#007aff] text-white shadow-[0_0_12px_rgba(0,122,255,0.5)]'
-              : 'bg-white/10 text-white/70 hover:text-white'
-          }`}
-        >
-          {isTraining ? <LucideIcons.Pause size={13} /> : <LucideIcons.Play size={13} />}
-          <span>{isTraining ? 'RL Training Active' : 'Paused'}</span>
-        </button>
-
-        <div className="h-4 w-[1px] bg-white/15" />
-
-        <div className="flex items-center gap-4 font-mono text-[11px] text-[#86868b]">
-          <span>Episodes: <strong className="text-white">{telemetry.episodes}</strong></span>
-          <span>Win Rate: <strong className="text-[#30d158]">{telemetry.winRate}%</strong></span>
-          <span>Sharpe: <strong className="text-[#00c7be]">{telemetry.annualizedSharpe}</strong></span>
-          <span>Reward: <strong className="text-[#ffd60a]">{telemetry.totalReward}</strong></span>
-        </div>
-
-        <div className="h-4 w-[1px] bg-white/15" />
-
-        {/* Action Probability Indicator */}
-        {latestStep && (
-          <div className="flex items-center gap-2 text-[11px]">
-            <span
-              className={`px-2 py-0.5 rounded-md font-bold text-[10px] ${
-                latestStep.action === 0
-                  ? 'bg-[#30d158]/20 text-[#30d158] border border-[#30d158]/40'
-                  : latestStep.action === 2
-                  ? 'bg-[#ff453a]/20 text-[#ff453a] border border-[#ff453a]/40'
-                  : 'bg-white/10 text-white/80'
-              }`}
-            >
-              {latestStep.action === 0 ? 'BUY (LONG)' : latestStep.action === 2 ? 'SELL (SHORT)' : 'HOLD (FLAT)'}
-            </span>
-          </div>
-        )}
-
-        <div className="h-4 w-[1px] bg-white/15" />
-
-        {/* ONNX / MT5 Deploy Button */}
-        <button
-          onClick={() => setShowExportModal(true)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.08] hover:bg-white/[0.14] text-white font-semibold transition-all cursor-pointer"
-        >
-          <LucideIcons.Rocket size={13} className="text-[#30d158]" />
-          <span>Deploy MT5 ONNX</span>
-        </button>
-
-        <button
-          onClick={() => {
-            cameraRef.current = { rotX: 0.14, rotY: -0.22, zoom: 1.05, panX: 0, panY: 0 };
-          }}
-          title="Reset Camera Angle"
-          className="p-1.5 text-[#86868b] hover:text-white transition-colors cursor-pointer"
-        >
-          <LucideIcons.RotateCcw size={13} />
-        </button>
-      </div>
-
-      {/* ONNX & MQL5 Code Deployment Modal */}
-      {showExportModal && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xl flex items-center justify-center p-6 animate-in fade-in duration-200">
-          <div className="bg-[#12121a]/98 backdrop-blur-3xl border border-white/[0.14] rounded-3xl shadow-[0_24px_64px_rgba(0,0,0,0.85)] text-white w-[720px] max-w-[92vw] p-6 flex flex-col max-h-[85vh] overflow-hidden">
-            <div className="flex items-center justify-between border-b border-white/[0.08] pb-4 mb-4">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-[#30d158]/15 border border-[#30d158]/30 flex items-center justify-center text-[#30d158]">
-                  <LucideIcons.Rocket size={16} />
-                </div>
-                <div>
-                  <h3 className="text-sm font-semibold text-white">MT5 Zero-Latency ONNX Deploy Package</h3>
-                  <p className="text-[11px] text-[#86868b]">Opset 14 Static Tensor Shape [1, 6] float32 ➔ [1, 3] float32</p>
-                </div>
-              </div>
-              <button
-                onClick={() => setShowExportModal(false)}
-                className="p-1.5 rounded-lg text-[#86868b] hover:text-white hover:bg-white/[0.08] transition-colors cursor-pointer"
-              >
-                <LucideIcons.X size={16} />
-              </button>
-            </div>
-
-            <div className="flex-1 overflow-y-auto space-y-4 pr-1 custom-scrollbar text-xs font-mono">
-              <div>
-                <div className="flex items-center justify-between mb-1.5 text-slate-300 font-semibold">
-                  <span>1. PyTorch ONNX Exporter (Python)</span>
-                </div>
-                <pre className="p-3.5 bg-[#09090e] border border-white/[0.06] rounded-xl text-[11px] text-slate-300 overflow-x-auto leading-relaxed">
-                  {generatePythonOnnxScript()}
-                </pre>
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-1.5 text-slate-300 font-semibold">
-                  <span>2. Native MetaTrader 5 Expert Advisor (MQL5)</span>
-                </div>
-                <pre className="p-3.5 bg-[#09090e] border border-white/[0.06] rounded-xl text-[11px] text-slate-300 overflow-x-auto leading-relaxed">
-                  {generateMql5SourceCode()}
-                </pre>
-              </div>
-            </div>
-
-            <div className="mt-4 pt-3 border-t border-white/[0.08] flex items-center justify-end gap-3">
-              <button
-                onClick={() => setShowExportModal(false)}
-                className="px-4 py-2 rounded-xl bg-white/[0.08] hover:bg-white/[0.14] text-white text-xs font-medium cursor-pointer"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
