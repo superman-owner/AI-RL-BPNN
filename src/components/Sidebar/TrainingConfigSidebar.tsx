@@ -25,7 +25,7 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
     setActiveAccordion(activeAccordion === id ? null : id);
   };
 
-  // Preset Presets
+  // Preset Configurations
   const applyPreset = (preset: 'scalping' | 'daytrading' | 'swing') => {
     if (preset === 'scalping') {
       onUpdateConfig({
@@ -78,57 +78,59 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
         isOpen ? 'w-[330px]' : 'w-0'
       }`}
     >
-      {/*  Top Header */}
+      {/*  Top Header (Frameless, Zero-Capsule) */}
       <div className="h-12 px-4 border-b border-white/[0.08] flex items-center justify-between flex-shrink-0 bg-[#0c0c14]/80">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-[#007aff]/30 to-[#5856d6]/30 border border-[#007aff]/40 flex items-center justify-center text-[#0a84ff]">
-            <LucideIcons.Sliders size={13} />
-          </div>
+        <div className="flex items-center gap-2.5">
+          <LucideIcons.Sliders size={14} className="text-[#0a84ff] drop-shadow-[0_0_8px_rgba(10,132,255,0.7)]" />
           <div>
             <h2 className="text-xs font-bold text-white tracking-wide">RL Hyperparameters</h2>
-            <p className="text-[10px] text-[#86868b]">Deep PPO Agent Setup</p>
+            <p className="text-[10px] text-[#86868b]">Deep PPO Agent Configuration</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
           <button
             onClick={onResetDefaults}
-            title="Reset to Quantitative Defaults"
-            className="p-1.5 rounded-lg hover:bg-white/[0.08] text-[#86868b] hover:text-white transition-colors cursor-pointer text-[10px] flex items-center gap-1"
+            title="Reset to Institutional Defaults"
+            className="text-[#86868b] hover:text-white transition-colors cursor-pointer text-[10px] flex items-center gap-1 font-medium"
           >
             <LucideIcons.RotateCcw size={11} />
             <span>Reset</span>
           </button>
 
+          <div className="h-3 w-[1px] bg-white/10" />
+
           <button
             onClick={onToggle}
             title="Collapse Sidebar"
-            className="p-1.5 rounded-lg hover:bg-white/[0.08] text-[#86868b] hover:text-white transition-colors cursor-pointer"
+            className="text-[#86868b] hover:text-white transition-colors cursor-pointer p-0.5"
           >
             <LucideIcons.ChevronLeft size={14} />
           </button>
         </div>
       </div>
 
-      {/* Preset Quick Toolbar */}
-      <div className="px-3 py-2 border-b border-white/[0.06] bg-[#07070b] flex items-center justify-between gap-1 flex-shrink-0">
+      {/*  Preset Bar (Frameless Typography, Zero Pills) */}
+      <div className="px-4 py-2 border-b border-white/[0.06] bg-[#07070b] flex items-center justify-between flex-shrink-0">
         <span className="text-[10px] font-medium text-[#636366]">Presets:</span>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-3 text-[11px]">
           <button
             onClick={() => applyPreset('scalping')}
-            className="px-2 py-0.5 rounded text-[10px] bg-white/[0.04] hover:bg-white/[0.1] text-[#86868b] hover:text-white border border-white/[0.06] transition-colors cursor-pointer"
+            className="text-[#86868b] hover:text-white transition-colors cursor-pointer font-medium"
           >
             Scalping
           </button>
+          <span className="text-white/20">·</span>
           <button
             onClick={() => applyPreset('daytrading')}
-            className="px-2 py-0.5 rounded text-[10px] bg-[#007aff]/20 hover:bg-[#007aff]/30 text-[#0a84ff] border border-[#007aff]/30 transition-colors cursor-pointer font-medium"
+            className="text-[#0a84ff] font-semibold drop-shadow-[0_0_6px_rgba(10,132,255,0.6)] cursor-pointer"
           >
             Day Trade
           </button>
+          <span className="text-white/20">·</span>
           <button
             onClick={() => applyPreset('swing')}
-            className="px-2 py-0.5 rounded text-[10px] bg-white/[0.04] hover:bg-white/[0.1] text-[#86868b] hover:text-white border border-white/[0.06] transition-colors cursor-pointer"
+            className="text-[#86868b] hover:text-white transition-colors cursor-pointer font-medium"
           >
             Swing
           </button>
@@ -142,11 +144,11 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
         <div className="bg-[#0f0f18] border border-white/[0.08] rounded-xl overflow-hidden shadow-sm">
           <button
             onClick={() => toggleAccordion('friction')}
-            className="w-full px-3 py-2.5 flex items-center justify-between text-left hover:bg-white/[0.02] transition-colors cursor-pointer"
+            className="w-full px-3.5 py-2.5 flex items-center justify-between text-left hover:bg-white/[0.02] transition-colors cursor-pointer"
           >
             <div className="flex items-center gap-2 text-xs font-semibold text-white">
               <LucideIcons.Coins size={13} className="text-[#ffd60a]" />
-              <span>1. Friction & Spread (ต้นทุน)</span>
+              <span>1. Friction & Spread</span>
             </div>
             <LucideIcons.ChevronDown
               size={12}
@@ -157,7 +159,7 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
           </button>
 
           {activeAccordion === 'friction' && (
-            <div className="px-3 pb-3 pt-1 space-y-2.5 border-t border-white/[0.06] text-xs">
+            <div className="px-3.5 pb-3.5 pt-1 space-y-2.5 border-t border-white/[0.06] text-xs">
               <div>
                 <div className="flex justify-between items-center mb-1">
                   <label className="text-[11px] text-[#86868b]">Spread (Pips):</label>
@@ -170,7 +172,7 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
                   step="0.1"
                   value={config.spreadPips}
                   onChange={(e) => onUpdateConfig({ spreadPips: parseFloat(e.target.value) })}
-                  className="w-full accent-[#ffd60a] bg-white/10 h-1 rounded-lg cursor-pointer"
+                  className="w-full accent-[#ffd60a] bg-white/10 h-1 rounded-full cursor-pointer"
                 />
               </div>
 
@@ -208,8 +210,8 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
                   onChange={(e) => onUpdateConfig({ spreadMode: e.target.value as 'fixed' | 'dynamic' })}
                   className="w-full bg-[#161622] border border-white/10 rounded-lg px-2.5 py-1 text-white text-xs focus:outline-none focus:border-[#007aff] cursor-pointer"
                 >
-                  <option value="fixed">Fixed Spread (ตามค่ากำหนด)</option>
-                  <option value="dynamic">Dynamic Market Spread (ตาม Volatility)</option>
+                  <option value="fixed">Fixed Spread (Constant Pips)</option>
+                  <option value="dynamic">Dynamic Market Spread (Volatility-Adaptive)</option>
                 </select>
               </div>
             </div>
@@ -220,11 +222,11 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
         <div className="bg-[#0f0f18] border border-white/[0.08] rounded-xl overflow-hidden shadow-sm">
           <button
             onClick={() => toggleAccordion('risk')}
-            className="w-full px-3 py-2.5 flex items-center justify-between text-left hover:bg-white/[0.02] transition-colors cursor-pointer"
+            className="w-full px-3.5 py-2.5 flex items-center justify-between text-left hover:bg-white/[0.02] transition-colors cursor-pointer"
           >
             <div className="flex items-center gap-2 text-xs font-semibold text-white">
               <LucideIcons.ShieldAlert size={13} className="text-[#ff453a]" />
-              <span>2. Risk & Drawdown (ความเสี่ยง)</span>
+              <span>2. Risk & Drawdown Limits</span>
             </div>
             <LucideIcons.ChevronDown
               size={12}
@@ -235,7 +237,7 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
           </button>
 
           {activeAccordion === 'risk' && (
-            <div className="px-3 pb-3 pt-1 space-y-2.5 border-t border-white/[0.06] text-xs">
+            <div className="px-3.5 pb-3.5 pt-1 space-y-2.5 border-t border-white/[0.06] text-xs">
               <div>
                 <div className="flex justify-between items-center mb-1">
                   <label className="text-[11px] text-[#86868b]">Max Allowed Drawdown:</label>
@@ -250,9 +252,9 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
                   step="0.5"
                   value={config.maxDrawdownLimit}
                   onChange={(e) => onUpdateConfig({ maxDrawdownLimit: parseFloat(e.target.value) })}
-                  className="w-full accent-[#ff453a] bg-white/10 h-1 rounded-lg cursor-pointer"
+                  className="w-full accent-[#ff453a] bg-white/10 h-1 rounded-full cursor-pointer"
                 />
-                <p className="text-[9px] text-[#636366] mt-0.5">หากย่อตัวเกินนี้ จะตัดจบ Episode ทันที (Early Stop)</p>
+                <p className="text-[9px] text-[#636366] mt-0.5">Early termination and penalty if drawdown threshold is breached</p>
               </div>
 
               <div className="grid grid-cols-2 gap-2">
@@ -283,7 +285,7 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
               </div>
 
               <div>
-                <label className="text-[10px] text-[#86868b] block mb-1">Max Position Holding (Bars)</label>
+                <label className="text-[10px] text-[#86868b] block mb-1">Max Holding Period (Bars)</label>
                 <input
                   type="number"
                   min="4"
@@ -301,9 +303,9 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
                   onChange={(e) => onUpdateConfig({ rewardMetric: e.target.value as 'sharpe' | 'sortino' | 'pnl' })}
                   className="w-full bg-[#161622] border border-white/10 rounded-lg px-2.5 py-1 text-white text-xs focus:outline-none focus:border-[#007aff] cursor-pointer"
                 >
-                  <option value="sharpe">Differential Sharpe Ratio (สมดุลกำไร/ผันผวน)</option>
-                  <option value="sortino">Sortino Ratio (เน้นคุม Downside)</option>
-                  <option value="pnl">Pure Net PnL (กำไรสุทธิ)</option>
+                  <option value="sharpe">Differential Sharpe Ratio (Risk-Adjusted Return)</option>
+                  <option value="sortino">Sortino Ratio (Downside Risk Penalized)</option>
+                  <option value="pnl">Pure Net Cumulative PnL</option>
                 </select>
               </div>
             </div>
@@ -314,11 +316,11 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
         <div className="bg-[#0f0f18] border border-white/[0.08] rounded-xl overflow-hidden shadow-sm">
           <button
             onClick={() => toggleAccordion('inactivity')}
-            className="w-full px-3 py-2.5 flex items-center justify-between text-left hover:bg-white/[0.02] transition-colors cursor-pointer"
+            className="w-full px-3.5 py-2.5 flex items-center justify-between text-left hover:bg-white/[0.02] transition-colors cursor-pointer"
           >
             <div className="flex items-center gap-2 text-xs font-semibold text-white">
               <LucideIcons.Flame size={13} className="text-[#ff9f0a]" />
-              <span>3. Inactivity Penalty (ลงโทษ Hold)</span>
+              <span>3. Inactivity & Action Penalty</span>
             </div>
             <LucideIcons.ChevronDown
               size={12}
@@ -329,7 +331,7 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
           </button>
 
           {activeAccordion === 'inactivity' && (
-            <div className="px-3 pb-3 pt-1 space-y-2.5 border-t border-white/[0.06] text-xs">
+            <div className="px-3.5 pb-3.5 pt-1 space-y-2.5 border-t border-white/[0.06] text-xs">
               <div>
                 <div className="flex justify-between items-center mb-1">
                   <label className="text-[11px] text-[#86868b]">Hold Step Penalty:</label>
@@ -344,15 +346,15 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
                   step="0.0001"
                   value={config.inactivityPenalty}
                   onChange={(e) => onUpdateConfig({ inactivityPenalty: parseFloat(e.target.value) })}
-                  className="w-full accent-[#ff9f0a] bg-white/10 h-1 rounded-lg cursor-pointer"
+                  className="w-full accent-[#ff9f0a] bg-white/10 h-1 rounded-full cursor-pointer"
                 />
-                <p className="text-[9px] text-[#636366] mt-0.5">หักคะแนนสะสมทีละนิดเพื่อกระตุ้นให้โมเดลหาจังหวะเทรด</p>
+                <p className="text-[9px] text-[#636366] mt-0.5">Penalizes continuous idle holding to encourage active alpha search</p>
               </div>
 
               <div className="flex items-center justify-between pt-1">
                 <div>
                   <span className="text-[11px] text-white font-medium block">Opportunity Cost Penalty</span>
-                  <span className="text-[9px] text-[#86868b] block">ลงโทษหากถือว่างขณะตลาดมีเทรนด์แรง</span>
+                  <span className="text-[9px] text-[#86868b] block">Penalize staying flat during strong market moves</span>
                 </div>
                 <input
                   type="checkbox"
@@ -369,11 +371,11 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
         <div className="bg-[#0f0f18] border border-white/[0.08] rounded-xl overflow-hidden shadow-sm">
           <button
             onClick={() => toggleAccordion('ppo')}
-            className="w-full px-3 py-2.5 flex items-center justify-between text-left hover:bg-white/[0.02] transition-colors cursor-pointer"
+            className="w-full px-3.5 py-2.5 flex items-center justify-between text-left hover:bg-white/[0.02] transition-colors cursor-pointer"
           >
             <div className="flex items-center gap-2 text-xs font-semibold text-white">
               <LucideIcons.BrainCircuit size={13} className="text-[#bf5af2]" />
-              <span>4. Anti-Overfitting & PPO (โมเดล)</span>
+              <span>4. Anti-Overfitting & PPO Policy</span>
             </div>
             <LucideIcons.ChevronDown
               size={12}
@@ -384,7 +386,7 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
           </button>
 
           {activeAccordion === 'ppo' && (
-            <div className="px-3 pb-3 pt-1 space-y-2.5 border-t border-white/[0.06] text-xs">
+            <div className="px-3.5 pb-3.5 pt-1 space-y-2.5 border-t border-white/[0.06] text-xs">
               <div>
                 <div className="flex justify-between items-center mb-1">
                   <label className="text-[11px] text-[#86868b]">Entropy Regularization (β):</label>
@@ -397,9 +399,9 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
                   step="0.005"
                   value={config.entropyCoef}
                   onChange={(e) => onUpdateConfig({ entropyCoef: parseFloat(e.target.value) })}
-                  className="w-full accent-[#bf5af2] bg-white/10 h-1 rounded-lg cursor-pointer"
+                  className="w-full accent-[#bf5af2] bg-white/10 h-1 rounded-full cursor-pointer"
                 />
-                <p className="text-[9px] text-[#636366] mt-0.5">ยิ่งสูงโมเดลยิ่งสำรวจทางเลือกใหม่ ลดการจำข้อสอบ</p>
+                <p className="text-[9px] text-[#636366] mt-0.5">Higher entropy forces action exploration and prevents overfitting</p>
               </div>
 
               <div className="grid grid-cols-2 gap-2">
@@ -449,11 +451,11 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
         <div className="bg-[#0f0f18] border border-white/[0.08] rounded-xl overflow-hidden shadow-sm">
           <button
             onClick={() => toggleAccordion('data')}
-            className="w-full px-3 py-2.5 flex items-center justify-between text-left hover:bg-white/[0.02] transition-colors cursor-pointer"
+            className="w-full px-3.5 py-2.5 flex items-center justify-between text-left hover:bg-white/[0.02] transition-colors cursor-pointer"
           >
             <div className="flex items-center gap-2 text-xs font-semibold text-white">
               <LucideIcons.BarChart2 size={13} className="text-[#0a84ff]" />
-              <span>5. Symbol & Timeframe (ข้อมูล)</span>
+              <span>5. Market & Asset Setup</span>
             </div>
             <LucideIcons.ChevronDown
               size={12}
@@ -464,7 +466,7 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
           </button>
 
           {activeAccordion === 'data' && (
-            <div className="px-3 pb-3 pt-1 space-y-2.5 border-t border-white/[0.06] text-xs">
+            <div className="px-3.5 pb-3.5 pt-1 space-y-2.5 border-t border-white/[0.06] text-xs">
               <div>
                 <label className="text-[10px] text-[#86868b] block mb-1">Trading Asset / Symbol</label>
                 <select
@@ -524,22 +526,22 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
                   step="0.05"
                   value={config.fractionalDiffOrder}
                   onChange={(e) => onUpdateConfig({ fractionalDiffOrder: parseFloat(e.target.value) })}
-                  className="w-full accent-[#0a84ff] bg-white/10 h-1 rounded-lg cursor-pointer"
+                  className="w-full accent-[#0a84ff] bg-white/10 h-1 rounded-full cursor-pointer"
                 />
-                <p className="text-[9px] text-[#636366] mt-0.5">แปลงราคาเป็น Stationary โดยคง Memory ไว้</p>
+                <p className="text-[9px] text-[#636366] mt-0.5">Fractionally differentiated stationary series preserving memory features</p>
               </div>
             </div>
           )}
         </div>
       </div>
 
-      {/*  Bottom Status Footer */}
-      <div className="p-3 border-t border-white/[0.08] bg-[#0c0c14] flex items-center justify-between text-[11px]">
+      {/*  Bottom Status Footer (Frameless Typography, Zero Capsules) */}
+      <div className="px-4 py-3 border-t border-white/[0.08] bg-[#0c0c14] flex items-center justify-between text-[11px]">
         <div className="flex items-center gap-1.5 text-[#86868b]">
-          <span className={`w-1.5 h-1.5 rounded-full ${isRunning ? 'bg-[#30d158] animate-pulse' : 'bg-[#ffd60a]'}`} />
-          <span>{isRunning ? 'Live Training Sync' : 'Engine Ready'}</span>
+          <span className={`w-1.5 h-1.5 rounded-full ${isRunning ? 'bg-[#30d158] shadow-[0_0_6px_#30d158] animate-pulse' : 'bg-[#ffd60a]'}`} />
+          <span className="font-medium">{isRunning ? 'Live Training Sync' : 'Engine Ready'}</span>
         </div>
-        <span className="text-[10px] font-mono text-[#0a84ff] bg-[#007aff]/10 px-2 py-0.5 rounded border border-[#007aff]/20">
+        <span className="text-[11px] font-mono text-[#0a84ff] font-semibold">
           {config.symbol} · {config.primaryTimeframe}
         </span>
       </div>
