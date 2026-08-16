@@ -59,11 +59,16 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
   const isDraggingRef = useRef(false);
   const dragStartRef = useRef({ x: 0, y: 0 });
   const isTrainingRef = useRef(isTraining);
+  const latestStepRef = useRef<RLEnvironmentStep | null>(latestStep);
 
-  // Sync training ref
+  // Sync refs
   useEffect(() => {
     isTrainingRef.current = isTraining;
   }, [isTraining]);
+
+  useEffect(() => {
+    latestStepRef.current = latestStep;
+  }, [latestStep]);
 
   // Reset Camera Trigger from TopNav
   useEffect(() => {
@@ -377,6 +382,8 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
       }
 
       // Draw Soma Orbs (Apple Frosted Glass & Specular Photonic Aura)
+      const currentStep = latestStepRef.current;
+
       neurons.forEach((n) => {
         // Decay pulse
         if (n.pulse > 0) {
@@ -386,7 +393,7 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
         const proj = project(n.x, n.y, n.z);
         const isOutput = n.layerIdx === 3;
         const isInput = n.layerIdx === 0;
-        const isSelectedAction = isOutput && latestStep && latestStep.action === n.neuronIdx;
+        const isSelectedAction = isOutput && currentStep !== null && currentStep.action === n.neuronIdx;
         
         // Proportional, balanced radius
         const baseRadius = isOutput ? 7.2 : isInput ? 6.2 : 5.0;
@@ -454,7 +461,7 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
 
         // Elegant Apple Typography Labels for Input & Output
         if (isOutput || isInput) {
-          const fontSize = Math.max(9, Math.floor(10.5 * proj.scale));
+          const fontSize = Math.max(9, Math.min(13, Math.floor(10.5 * proj.scale)));
           ctx.font = `600 ${fontSize}px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif`;
           ctx.textAlign = isInput ? 'right' : 'left';
           ctx.textBaseline = 'middle';
@@ -465,7 +472,7 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
             if (isSelectedAction) {
               ctx.fillStyle = coreColor;
               ctx.shadowColor = coreColor;
-              ctx.shadowBlur = 8;
+              ctx.shadowBlur = 5;
               ctx.fillText(n.label, textX, textY);
               ctx.shadowBlur = 0;
             } else {
