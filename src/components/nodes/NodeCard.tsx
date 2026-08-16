@@ -50,7 +50,8 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
   return (
     <div
       style={{
-        minWidth: 235,
+        minWidth: 240,
+        maxWidth: 270,
         position: 'relative',
         background: '#14141a',
         opacity: executionMode === 'off' ? 0.55 : (isConnected ? 1 : 0.8),
@@ -67,7 +68,7 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
         transition: 'border 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease',
       }}
     >
-      {/* Node Header (Reduced height) */}
+      {/* Node Header (Reduced height, perfectly fitted single line) */}
       <div
         style={{
           display: 'flex',
@@ -84,12 +85,15 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
         <div style={{ flex: 1, minWidth: 0 }}>
           <div
             style={{
-              fontSize: 9.5,
+              fontSize: 9,
               fontWeight: 700,
               letterSpacing: '0.06em',
               color: isConnected ? accent : '#86868b',
               textTransform: 'uppercase',
               lineHeight: 1.2,
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
               fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
             }}
           >
@@ -97,14 +101,14 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
           </div>
           <div
             style={{
-              fontSize: 12.5,
+              fontSize: 12,
               fontWeight: 600,
               letterSpacing: '-0.015em',
               color: isConnected ? '#ffffff' : '#a1a1aa',
               whiteSpace: 'nowrap',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
-              lineHeight: 1.3,
+              lineHeight: 1.25,
               fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif',
             }}
           >

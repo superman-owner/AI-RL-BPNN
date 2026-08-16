@@ -582,19 +582,19 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
         position: 'absolute',
         left: `${position.x}px`,
         top: `${position.y}px`,
-        width: 310,
+        width: 265,
         backgroundColor: 'rgba(22, 22, 28, 0.96)',
         backdropFilter: 'blur(24px)',
         WebkitBackdropFilter: 'blur(24px)',
         zIndex: 9999,
-        padding: '14px 16px 12px 16px',
+        padding: '12px 14px 10px 14px',
         pointerEvents: 'all',
         boxShadow: '0 24px 48px rgba(0, 0, 0, 0.6), 0 1px 0 rgba(255, 255, 255, 0.08) inset',
         WebkitFontSmoothing: 'antialiased',
         MozOsxFontSmoothing: 'grayscale',
         textRendering: 'geometricPrecision',
       }}
-      className="border border-white/[0.12] rounded-2xl text-xs select-none nodrag nopan nowheel cursor-default pointer-events-auto"
+      className="border border-white/[0.12] rounded-2xl text-xs select-none nodrag nopan cursor-default pointer-events-auto"
       onPointerDown={(e) => e.stopPropagation()}
       onMouseDown={(e) => e.stopPropagation()}
       onClick={(e) => e.stopPropagation()}
@@ -606,7 +606,7 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          marginBottom: '12px',
+          marginBottom: '10px',
           cursor: isDragging ? 'grabbing' : 'grab',
           userSelect: 'none',
           borderBottom: 'none',
@@ -614,26 +614,28 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
         }}
         className="nodrag nopan pointer-events-auto"
       >
-        <div className="flex items-center gap-2 pointer-events-none">
+        <div className="flex items-center gap-2 pointer-events-none min-w-0 flex-1 pr-2">
           <span
             className="w-2 h-2 rounded-full flex-shrink-0"
             style={{ background: group.color, boxShadow: `0 0 8px ${group.color}` }}
           />
-          <div>
+          <div className="min-w-0 flex-1">
             <span
-              className="text-[9.5px] font-bold tracking-wider uppercase block"
+              className="text-[9px] font-bold tracking-wider uppercase block truncate"
               style={{
                 color: group.color,
                 fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
+                whiteSpace: 'nowrap',
               }}
             >
               {group.label}
             </span>
             <span
-              className="text-[12.5px] font-semibold text-white block"
+              className="text-[12px] font-semibold text-white block truncate"
               style={{
                 fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif',
                 letterSpacing: '-0.015em',
+                whiteSpace: 'nowrap',
               }}
             >
               {nodeLabel}
@@ -651,7 +653,7 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
           onPointerDown={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
           style={{ pointerEvents: 'all' }}
-          className="text-white/40 hover:text-white transition-all p-1 rounded-md hover:bg-white/[0.08] cursor-pointer pointer-events-auto nodrag nopan"
+          className="text-white/40 hover:text-white transition-all p-1 rounded-md hover:bg-white/[0.08] cursor-pointer pointer-events-auto nodrag nopan flex-shrink-0"
         >
           <LucideIcons.X size={13} />
         </button>
