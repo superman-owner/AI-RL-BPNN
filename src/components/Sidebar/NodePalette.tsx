@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { GROUPS, nodesByGroup } from '../../data/nodeRegistry';
 import {
   Search,
-  ChevronDown,
   ChevronRight,
   Plus,
   BarChart2,
@@ -20,8 +19,8 @@ import {
   Settings,
 } from 'lucide-react';
 
-// Map Group Icons
-const GROUP_ICONS: Record<string, React.ComponentType<{ size?: number; color?: string }>> = {
+// Apple SF Symbols Icon Mapping
+const GROUP_ICONS: Record<string, React.ComponentType<{ size?: number; className?: string; color?: string }>> = {
   stage1: BarChart2,
   stage2: Sliders,
   stage3: Brain,
@@ -67,140 +66,40 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
   return (
     <aside
       onWheel={(e) => e.stopPropagation()}
-      style={{
-        width: 300,
-        height: '100%',
-        maxHeight: '100%',
-        flexShrink: 0,
-        background: '#07070b',
-        borderRight: '1px solid rgba(255, 255, 255, 0.08)',
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-        boxSizing: 'border-box',
-        fontFamily: 'Inter, -apple-system, sans-serif',
-        color: '#d4d4d8',
-        userSelect: 'none',
-        zIndex: 20,
-      }}
+      className="w-[280px] h-full flex flex-col flex-shrink-0 bg-[#09090e]/95 border-r border-white/[0.08] text-[#c7c7cc] select-none z-20 font-sans"
     >
-      {/* 1. Header: RL Hyperparameters (Pure Crisp Minimalist) */}
-      <div
-        style={{
-          padding: '14px 16px 10px',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-          background: '#0a0a10',
-          flexShrink: 0,
-          boxSizing: 'border-box',
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 12,
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8,
-            }}
-          >
-            <Sliders size={15} color="#0a84ff" />
-            <div>
-              <span
-                style={{
-                  fontSize: 13,
-                  fontWeight: 700,
-                  color: '#ffffff',
-                  letterSpacing: '0.02em',
-                  display: 'block',
-                }}
-              >
-                RL Hyperparameters
-              </span>
-            </div>
+      {/* 1.  Apple macOS Pro Header */}
+      <div className="p-3 pb-2.5 border-b border-white/[0.06] bg-[#0c0c14]/90 flex-shrink-0">
+        <div className="flex justify-between items-center mb-2.5 px-0.5">
+          <div className="flex items-center gap-2">
+            <Sliders size={14} className="text-[#0a84ff]" />
+            <span className="text-xs font-bold text-white tracking-tight">
+              RL Hyperparameters
+            </span>
           </div>
 
           <button
             onClick={toggleAll}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: '#86868b',
-              fontSize: 11,
-              fontWeight: 600,
-              cursor: 'pointer',
-              padding: '2px 4px',
-              transition: 'color 0.15s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = '#ffffff';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = '#86868b';
-            }}
+            className="text-[11px] font-medium text-[#86868b] hover:text-white transition-colors cursor-pointer"
           >
             {Object.values(expandedGroups).every(Boolean) ? 'Collapse All' : 'Expand All'}
           </button>
         </div>
 
-        {/* Flat Minimalist Search Bar */}
-        <div style={{ position: 'relative' }}>
-          <Search
-            size={13}
-            style={{
-              position: 'absolute',
-              left: 2,
-              top: 8,
-              color: '#71717a',
-            }}
-          />
+        {/*  macOS Spotlight-style Search Field */}
+        <div className="relative">
+          <Search size={12} className="absolute left-2.5 top-2 text-[#86868b]" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search parameters & modules..."
-            style={{
-              width: '100%',
-              boxSizing: 'border-box',
-              background: 'transparent',
-              border: 'none',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
-              borderRadius: 0,
-              color: '#ffffff',
-              fontSize: 12,
-              padding: '6px 8px 6px 24px',
-              outline: 'none',
-              fontFamily: 'inherit',
-              transition: 'border-color 0.2s ease',
-            }}
-            onFocus={(e) => {
-              e.currentTarget.style.borderBottomColor = 'rgba(255, 255, 255, 0.4)';
-            }}
-            onBlur={(e) => {
-              e.currentTarget.style.borderBottomColor = 'rgba(255, 255, 255, 0.12)';
-            }}
+            className="w-full bg-white/[0.05] border border-white/[0.08] hover:border-white/20 focus:border-[#0a84ff] rounded-md text-xs text-white placeholder-[#86868b] pl-7 pr-2.5 py-1.5 outline-none transition-colors"
           />
         </div>
       </div>
 
-      {/* 2. Flat List: Gray Default -> Pure Crisp White on Hover */}
-      <div
-        id="node-palette-scroll-container"
-        style={{
-          flex: 1,
-          minHeight: 0,
-          overflowY: 'auto',
-          padding: '8px 14px 40px',
-          display: 'flex',
-          flexDirection: 'column',
-          boxSizing: 'border-box',
-        }}
-        className="custom-scrollbar"
-      >
+      {/* 2.  macOS Xcode-style Navigation Tree (Clean SF Symbols) */}
+      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar px-2 py-1.5 space-y-0.5">
         {GROUPS.map((group) => {
           const allNodes = nodesByGroup(group.id);
           const matchingNodes = allNodes.filter(
@@ -214,73 +113,47 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
           const GroupIcon = GROUP_ICONS[group.id] || Layers;
 
           return (
-            <div
-              key={group.id}
-              style={{
-                borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
-                padding: '6px 0',
-              }}
-            >
-              {/* Group Header (Gray -> White) */}
+            <div key={group.id} className="py-0.5">
+              {/*  Section Header (Clean SF Symbol + Rotating Disclosure Chevron) */}
               <div
                 onClick={() => toggleGroup(group.id)}
                 onMouseEnter={() => setHoveredGroup(group.id)}
                 onMouseLeave={() => setHoveredGroup(null)}
-                style={{
-                  padding: '6px 2px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  cursor: 'pointer',
-                  gap: 8,
-                }}
+                className={`px-2 py-1.5 rounded-md flex items-center justify-between cursor-pointer transition-colors ${
+                  isGroupHovered ? 'bg-white/[0.04] text-white' : 'text-[#8e8e93]'
+                }`}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 7, flex: 1, minWidth: 0 }}>
-                  {isExpanded ? (
-                    <ChevronDown size={13} color={isGroupHovered ? '#ffffff' : '#71717a'} />
-                  ) : (
-                    <ChevronRight size={13} color={isGroupHovered ? '#ffffff' : '#71717a'} />
-                  )}
-                  <span
-                    style={{
-                      width: 3,
-                      height: 12,
-                      background: group.color,
-                      borderRadius: 1,
-                      flexShrink: 0,
-                      opacity: isGroupHovered ? 1 : 0.7,
-                    }}
+                <div className="flex items-center gap-2 min-w-0 flex-1">
+                  {/* Rotating Chevron */}
+                  <ChevronRight
+                    size={12}
+                    className={`text-[#86868b] transition-transform duration-150 flex-shrink-0 ${
+                      isExpanded ? 'rotate-90 text-white' : ''
+                    }`}
                   />
+                  
+                  {/* Single Clean SF Symbol Icon */}
                   <GroupIcon
                     size={13}
-                    color={group.color}
+                    className={`flex-shrink-0 transition-colors ${
+                      isGroupHovered ? 'text-[#0a84ff]' : 'text-[#8e8e93]'
+                    }`}
                   />
+
+                  {/* Section Label */}
                   <span
-                    style={{
-                      fontSize: 12,
-                      fontWeight: 600,
-                      color: isGroupHovered ? '#ffffff' : '#a1a1aa',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                      transition: 'color 0.15s ease',
-                    }}
+                    className={`text-xs font-semibold tracking-tight truncate transition-colors ${
+                      isGroupHovered ? 'text-white' : 'text-[#d1d1d6]'
+                    }`}
                   >
                     {group.label}
                   </span>
                 </div>
               </div>
 
-              {/* Child Nodes (Gray -> White on Hover, No Frame/Box) */}
+              {/*  Child Items (Clean Indentation & Monochromatic Style) */}
               {isExpanded && (
-                <div
-                  style={{
-                    padding: '3px 0 6px 14px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 1,
-                  }}
-                >
+                <div className="pl-6 pr-1 py-0.5 space-y-0.5">
                   {matchingNodes.map((node) => {
                     const isNodeHovered = hoveredNode === node.type;
 
@@ -291,49 +164,33 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
                         onDragStart={(e) => onDragStartNode(e, node.type)}
                         onMouseEnter={() => setHoveredNode(node.type)}
                         onMouseLeave={() => setHoveredNode(null)}
-                        title="Drag onto canvas to create node"
-                        style={{
-                          padding: '6px 4px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          cursor: 'grab',
-                          background: 'transparent',
-                          border: 'none',
-                        }}
+                        title="Drag onto canvas to add module"
+                        className={`px-2 py-1 rounded-md flex items-center justify-between cursor-grab transition-colors ${
+                          isNodeHovered
+                            ? 'bg-white/[0.06] text-white'
+                            : 'text-[#8e8e93] hover:text-white'
+                        }`}
                       >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
+                        <div className="flex items-center gap-2 min-w-0 flex-1">
                           <span
-                            style={{
-                              width: 5,
-                              height: 5,
-                              borderRadius: '50%',
-                              background: group.color,
-                              flexShrink: 0,
-                              opacity: isNodeHovered ? 1 : 0.5,
-                              transition: 'opacity 0.15s ease',
-                            }}
+                            className={`w-1.5 h-1.5 rounded-full transition-opacity flex-shrink-0 ${
+                              isNodeHovered ? 'opacity-100 bg-[#0a84ff]' : 'opacity-40 bg-[#8e8e93]'
+                            }`}
                           />
                           <span
-                            style={{
-                              fontSize: 11.5,
-                              fontWeight: 500,
-                              color: isNodeHovered ? '#ffffff' : '#8e8e93',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              whiteSpace: 'nowrap',
-                              transition: 'color 0.15s ease',
-                            }}
+                            className={`text-[11.5px] truncate font-normal ${
+                              isNodeHovered ? 'font-medium text-white' : 'text-[#a1a1aa]'
+                            }`}
                           >
                             {node.label}
                           </span>
                         </div>
+
                         <Plus
-                          size={12}
-                          color={isNodeHovered ? '#ffffff' : '#52525b'}
-                          style={{
-                            transition: 'color 0.15s ease',
-                          }}
+                          size={11}
+                          className={`flex-shrink-0 transition-colors ${
+                            isNodeHovered ? 'text-[#0a84ff]' : 'text-transparent'
+                          }`}
                         />
                       </div>
                     );
@@ -345,42 +202,17 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
         })}
       </div>
 
-      {/* 3. Flat Minimal Footer */}
-      <div
-        style={{
-          padding: '10px 16px',
-          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-          background: '#0a0a10',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          fontSize: 12,
-          color: '#86868b',
-          flexShrink: 0,
-        }}
-      >
-        <div
+      {/* 3.  macOS Footer Status */}
+      <div className="p-3 border-t border-white/[0.06] bg-[#0c0c14]/90 flex items-center justify-between text-xs text-[#86868b] flex-shrink-0">
+        <button
           onClick={onOpenSettings}
-          title="Open System & LLM Settings"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6,
-            cursor: 'pointer',
-            padding: '2px 0',
-            transition: 'color 0.15s ease',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.color = '#ffffff';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.color = '#86868b';
-          }}
+          title="Open System & Quant Settings"
+          className="flex items-center gap-1.5 hover:text-white transition-colors cursor-pointer"
         >
           <Settings size={13} />
           <span>Settings</span>
-        </div>
-        <span style={{ fontSize: 10.5, color: '#30d158', fontWeight: 600 }}>
+        </button>
+        <span className="text-[10.5px] text-[#30d158] font-mono font-medium">
           v2.0 Quant AI
         </span>
       </div>
