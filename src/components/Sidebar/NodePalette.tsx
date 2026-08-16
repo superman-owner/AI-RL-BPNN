@@ -40,10 +40,10 @@ function onDragStartNode(event: React.DragEvent, nodeType: string, label: string
   dragGhost.style.left = '-9999px';
   dragGhost.style.padding = '8px 16px';
   dragGhost.style.borderRadius = '10px';
-  dragGhost.style.backgroundColor = isLight ? '#ffffff' : '#181822';
-  dragGhost.style.color = isLight ? '#111827' : '#ffffff';
-  dragGhost.style.border = isLight ? '1.5px solid #0071e3' : '1.5px solid rgba(255, 255, 255, 0.25)';
-  dragGhost.style.boxShadow = isLight ? '0 10px 25px rgba(0, 0, 0, 0.18)' : '0 10px 30px rgba(0, 0, 0, 0.7)';
+  dragGhost.style.backgroundColor = isLight ? '#1d1d1f' : '#181822';
+  dragGhost.style.color = '#ffffff';
+  dragGhost.style.border = '2px solid #0071e3';
+  dragGhost.style.boxShadow = '0 12px 32px rgba(0, 0, 0, 0.45)';
   dragGhost.style.fontFamily = '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif';
   dragGhost.style.fontSize = '13px';
   dragGhost.style.fontWeight = '600';
