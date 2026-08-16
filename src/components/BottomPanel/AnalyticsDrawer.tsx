@@ -202,7 +202,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
   return (
     <div
       className={`border-t border-white/[0.08] bg-[#07070b] transition-all duration-200 flex flex-col z-20 ${
-        isMinimized ? 'h-10' : isMaximized ? 'h-[580px]' : 'h-[350px]'
+        isMinimized ? 'h-10' : isMaximized ? 'h-[590px]' : 'h-[365px]'
       }`}
     >
       {/*  Top Segmented HUD Navigation Bar (Seamless borderless glass) */}
@@ -345,7 +345,15 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
 
       {/*  Drawer Full-Width Inset Area */}
       {!isMinimized && (
-        <div className="flex-1 overflow-hidden px-3.5 py-[5px] bg-black/60 min-h-0">
+        <div
+          className="flex-1 overflow-hidden bg-black/60 min-h-0"
+          style={{
+            paddingLeft: '14px',
+            paddingRight: '14px',
+            paddingTop: '6px',
+            paddingBottom: '16px', // Generous 16px bottom padding (+10px) so metrics and chart x-axis are never clipped
+          }}
+        >
           {/* TAB 1: HUD TELEMETRY & GAUGES */}
           {activeTab === 'equity' && (
             <div className="h-full flex flex-col lg:flex-row gap-3.5 min-h-0">
@@ -599,7 +607,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                 {/* RL Reward Area Chart */}
                 <div className="flex-1 w-full min-h-0 z-10">
                   <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={rewardData} margin={{ top: 12, right: 10, left: -10, bottom: 0 }}>
+                    <AreaChart data={rewardData} margin={{ top: 8, right: 10, left: -10, bottom: 6 }}>
                       <defs>
                         <linearGradient id="hudEquityGrad" x1="0" y1="0" x2="0" y2="1">
                           <stop offset="5%" stopColor="#30d158" stopOpacity={0.45} />
@@ -681,7 +689,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
 
               <div className="flex-1 w-full min-h-0">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={lossData} margin={{ top: 12, right: 10, left: -20, bottom: 0 }}>
+                  <LineChart data={lossData} margin={{ top: 8, right: 10, left: -20, bottom: 6 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
                     <XAxis dataKey="epoch" stroke="#636366" tick={{ fontSize: isMaximized ? 11 : 9 }} />
                     <YAxis yAxisId="left" stroke="#636366" tick={{ fontSize: isMaximized ? 11 : 9 }} />
@@ -746,7 +754,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                   <BarChart
                     data={FEATURE_IMPORTANCE}
                     layout="vertical"
-                    margin={{ top: 12, right: 20, left: 60, bottom: 0 }}
+                    margin={{ top: 8, right: 20, left: 60, bottom: 6 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
                     <XAxis type="number" stroke="#636366" tick={{ fontSize: isMaximized ? 11 : 9 }} />
