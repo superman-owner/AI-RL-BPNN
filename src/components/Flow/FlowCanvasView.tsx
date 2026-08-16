@@ -1383,7 +1383,7 @@ const FlowContent: React.FC = () => {
         )}
       </div>
 
-      {/* Floating Right-Click Context Menu (Apple Native Context Menu, Sleek Non-Capsule Box) */}
+      {/* Floating Right-Click Context Menu (Apple Native Context Menu, Pure Glow Text, Zero Background Capsule) */}
       {contextMenu && (
         <div
           style={{
@@ -1391,15 +1391,15 @@ const FlowContent: React.FC = () => {
             top: Math.min(contextMenu.y, window.innerHeight - 260),
             left: Math.min(contextMenu.x, window.innerWidth - 240),
             zIndex: 100,
-            minWidth: contextMenu.targetNodeId ? '200px' : '160px',
-            backgroundColor: isLight ? 'rgba(255, 255, 255, 0.98)' : 'rgba(22, 22, 30, 0.98)',
+            minWidth: contextMenu.targetNodeId ? '190px' : '150px',
+            backgroundColor: isLight ? 'rgba(255, 255, 255, 0.98)' : 'rgba(20, 20, 28, 0.98)',
             backdropFilter: 'blur(20px)',
             WebkitBackdropFilter: 'blur(20px)',
             padding: '4px',
-            borderRadius: '10px',
+            borderRadius: '8px',
             border: isLight ? '1px solid rgba(0, 0, 0, 0.12)' : '1px solid rgba(255, 255, 255, 0.12)',
             boxShadow: isLight
-              ? '0 12px 30px rgba(0, 0, 0, 0.14), 0 1px 3px rgba(0, 0, 0, 0.06)'
+              ? '0 12px 30px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.06)'
               : '0 20px 50px rgba(0, 0, 0, 0.85), 0 0 1px rgba(255, 255, 255, 0.2)',
           }}
           className={`text-xs select-none animate-in fade-in duration-75 flex flex-col gap-0.5 ${
@@ -1416,10 +1416,10 @@ const FlowContent: React.FC = () => {
                   duplicateNodes(target.length ? target : null);
                   setContextMenu(null);
                 }}
-                className={`w-full px-2.5 py-1.5 rounded-md flex items-center justify-between transition-colors text-left ${
+                className={`w-full px-2 py-1.5 rounded-none bg-transparent hover:bg-transparent flex items-center justify-between transition-colors text-left ${
                   isLight
-                    ? 'text-[#111827] hover:bg-black/[0.06] hover:text-[#0071e3]'
-                    : 'text-white/90 hover:bg-white/[0.08] hover:text-[#ffd60a]'
+                    ? 'text-[#111827] hover:text-[#d97706]'
+                    : 'text-white/90 hover:text-[#ffd60a]'
                 }`}
                 style={{ cursor: 'var(--mac-cursor-default)' }}
               >
@@ -1439,10 +1439,10 @@ const FlowContent: React.FC = () => {
                   copyNodes(target.length ? target : null);
                   setContextMenu(null);
                 }}
-                className={`w-full px-2.5 py-1.5 rounded-md flex items-center justify-between transition-colors text-left ${
+                className={`w-full px-2 py-1.5 rounded-none bg-transparent hover:bg-transparent flex items-center justify-between transition-colors text-left ${
                   isLight
-                    ? 'text-[#111827] hover:bg-black/[0.06] hover:text-[#0071e3]'
-                    : 'text-white/90 hover:bg-white/[0.08] hover:text-white'
+                    ? 'text-[#111827] hover:text-[#0071e3]'
+                    : 'text-white/90 hover:text-[#0a84ff]'
                 }`}
                 style={{ cursor: 'var(--mac-cursor-default)' }}
               >
@@ -1462,10 +1462,10 @@ const FlowContent: React.FC = () => {
                   cutNodes(target.length ? target : null);
                   setContextMenu(null);
                 }}
-                className={`w-full px-2.5 py-1.5 rounded-md flex items-center justify-between transition-colors text-left ${
+                className={`w-full px-2 py-1.5 rounded-none bg-transparent hover:bg-transparent flex items-center justify-between transition-colors text-left ${
                   isLight
-                    ? 'text-[#111827] hover:bg-black/[0.06] hover:text-[#0071e3]'
-                    : 'text-white/90 hover:bg-white/[0.08] hover:text-white'
+                    ? 'text-[#111827] hover:text-[#0071e3]'
+                    : 'text-white/90 hover:text-[#0a84ff]'
                 }`}
                 style={{ cursor: 'var(--mac-cursor-default)' }}
               >
@@ -1487,14 +1487,14 @@ const FlowContent: React.FC = () => {
                   setContextMenu(null);
                 }}
                 style={{ cursor: hasClipboard ? 'var(--mac-cursor-default)' : 'not-allowed' }}
-                className={`w-full px-2.5 py-1.5 rounded-md flex items-center justify-between transition-colors text-left ${
+                className={`w-full px-2 py-1.5 rounded-none bg-transparent hover:bg-transparent flex items-center justify-between transition-colors text-left ${
                   !hasClipboard
                     ? isLight
-                      ? 'opacity-35 text-black/30 cursor-not-allowed pointer-events-none hover:bg-transparent'
-                      : 'opacity-35 text-white/30 cursor-not-allowed pointer-events-none hover:bg-transparent'
+                      ? 'opacity-35 text-black/30 cursor-not-allowed pointer-events-none'
+                      : 'opacity-35 text-white/30 cursor-not-allowed pointer-events-none'
                     : isLight
-                    ? 'text-[#111827] hover:bg-black/[0.06] hover:text-[#0071e3]'
-                    : 'text-white/90 hover:bg-white/[0.08] hover:text-[#007aff]'
+                    ? 'text-[#111827] hover:text-[#0071e3]'
+                    : 'text-white/90 hover:text-[#0a84ff]'
                 }`}
               >
                 <span className="flex items-center gap-2 text-[12px] font-medium">
@@ -1537,11 +1537,7 @@ const FlowContent: React.FC = () => {
                   disconnectNodes(target.length ? target : null);
                   setContextMenu(null);
                 }}
-                className={`w-full px-2.5 py-1.5 rounded-md flex items-center justify-between transition-colors text-left text-[#ff9f0a] ${
-                  isLight
-                    ? 'hover:bg-[#ff9f0a]/10'
-                    : 'hover:bg-white/[0.08]'
-                }`}
+                className="w-full px-2 py-1.5 rounded-none bg-transparent hover:bg-transparent flex items-center justify-between transition-colors text-left text-[#ff9f0a] hover:text-[#ff9f0a] [filter:hover:drop-shadow(0_0_6px_rgba(255,159,10,0.5))]"
                 style={{ cursor: 'var(--mac-cursor-default)' }}
               >
                 <span className="flex items-center gap-2 text-[12px] font-medium">
@@ -1560,11 +1556,7 @@ const FlowContent: React.FC = () => {
                   deleteNodes(target.length ? target : null);
                   setContextMenu(null);
                 }}
-                className={`w-full px-2.5 py-1.5 rounded-md flex items-center justify-between transition-colors text-left text-[#ff453a] ${
-                  isLight
-                    ? 'hover:bg-[#ff453a]/10'
-                    : 'hover:bg-white/[0.08]'
-                }`}
+                className="w-full px-2 py-1.5 rounded-none bg-transparent hover:bg-transparent flex items-center justify-between transition-colors text-left text-[#ff453a] hover:text-[#ff453a] [filter:hover:drop-shadow(0_0_6px_rgba(255,69,58,0.5))]"
                 style={{ cursor: 'var(--mac-cursor-default)' }}
               >
                 <span className="flex items-center gap-2 text-[12px] font-medium">
@@ -1577,7 +1569,7 @@ const FlowContent: React.FC = () => {
               </button>
             </>
           ) : (
-            /* Paste Here (Grayed out if clipboard is empty) */
+            /* Paste Here (Grayed out if clipboard is empty, Zero Hover Background) */
             <button
               disabled={!hasClipboard}
               onClick={() => {
@@ -1586,14 +1578,14 @@ const FlowContent: React.FC = () => {
                 setContextMenu(null);
               }}
               style={{ cursor: hasClipboard ? 'var(--mac-cursor-default)' : 'not-allowed' }}
-              className={`w-full px-2.5 py-1.5 rounded-md flex items-center justify-between transition-colors text-left ${
+              className={`w-full px-2 py-1.5 rounded-none bg-transparent hover:bg-transparent flex items-center justify-between transition-colors text-left ${
                 !hasClipboard
                   ? isLight
-                    ? 'opacity-35 text-black/30 cursor-not-allowed pointer-events-none hover:bg-transparent'
-                    : 'opacity-35 text-white/30 cursor-not-allowed pointer-events-none hover:bg-transparent'
+                    ? 'opacity-35 text-black/30 cursor-not-allowed pointer-events-none'
+                    : 'opacity-35 text-white/30 cursor-not-allowed pointer-events-none'
                   : isLight
-                  ? 'text-[#111827] hover:bg-black/[0.06] hover:text-[#0071e3]'
-                  : 'text-white/90 hover:bg-white/[0.08] hover:text-[#007aff]'
+                  ? 'text-[#111827] hover:text-[#0071e3]'
+                  : 'text-white/90 hover:text-[#0a84ff]'
               }`}
             >
               <span className="flex items-center gap-2 text-[12px] font-medium">

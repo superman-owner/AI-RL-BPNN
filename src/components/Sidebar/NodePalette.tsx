@@ -583,16 +583,14 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                           paddingRight: '12px',
                           paddingTop: '5px',
                           paddingBottom: '5px',
-                          borderRadius: '6px',
+                          borderRadius: '4px',
                           cursor: 'var(--mac-cursor-grab)',
                           userSelect: 'none',
-                          transition: 'background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease',
-                          backgroundColor: isNodeHovered
-                            ? (isLight ? '#ffffff' : 'rgba(10, 132, 255, 0.12)')
-                            : 'transparent',
-                          boxShadow: isNodeHovered && isLight ? '0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 1px rgba(0, 0, 0, 0.04)' : 'none',
+                          transition: 'color 0.15s ease',
+                          backgroundColor: 'transparent',
+                          boxShadow: 'none',
                           color: isNodeHovered
-                            ? (isLight ? '#111827' : '#0a84ff')
+                            ? (isLight ? '#0071e3' : '#0a84ff')
                             : (isLight ? '#6b7280' : '#9ca3af'),
                         }}
                       >
