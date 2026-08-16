@@ -159,8 +159,8 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
     <aside
       onWheel={(e) => e.stopPropagation()}
       style={{
-        width: '280px',
-        minWidth: '280px',
+        width: '295px',
+        minWidth: '295px',
         transition: 'width 0.22s cubic-bezier(0.16, 1, 0.3, 1)',
       }}
       className="h-full flex flex-col flex-shrink-0 bg-[#08080c] border-r border-white/[0.08] text-[#c7c7cc] select-none z-20 font-sans"
@@ -170,8 +170,8 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
         style={{
           paddingTop: '10px',
           paddingBottom: '10px',
-          paddingLeft: '18px',
-          paddingRight: '18px',
+          paddingLeft: '14px',
+          paddingRight: '14px',
           borderBottom: 'none',
           backgroundColor: 'transparent',
           flexShrink: 0,
@@ -185,21 +185,22 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
             marginBottom: '10px',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Sliders size={16} className="text-[#86868b] hover:text-white transition-colors" />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+            <Sliders size={16} className="text-[#86868b] hover:text-white transition-colors flex-shrink-0" />
             <span
               style={{
-                fontSize: '14px',
+                fontSize: '13.5px',
                 fontWeight: 700,
                 color: '#ffffff',
                 letterSpacing: '-0.01em',
+                whiteSpace: 'nowrap',
               }}
             >
               RL Hyperparameters
             </span>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
             <button
               onClick={toggleAll}
               style={{
@@ -211,6 +212,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                 cursor: 'pointer',
                 padding: '2px 4px',
                 transition: 'color 0.15s ease',
+                whiteSpace: 'nowrap',
               }}
               onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
               onMouseLeave={(e) => (e.currentTarget.style.color = '#86868b')}

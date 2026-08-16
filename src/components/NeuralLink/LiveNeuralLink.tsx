@@ -593,20 +593,16 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
 
   return (
     <div ref={containerRef} className="w-full h-full relative overflow-hidden select-none bg-[#08080c]">
-      {/*  Top Floating HUD Badges */}
-      <div className="absolute top-4 left-4 z-10 flex items-center gap-2 pointer-events-none">
-        <div className="px-3 py-1.5 rounded-lg bg-[#0c0c14]/85 backdrop-blur-md border border-white/[0.08] shadow-xl flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-[#30d158] shadow-[0_0_6px_#30d158] animate-pulse" />
-          <span className="text-[12px] font-bold text-white tracking-tight">BPNN Policy Network</span>
-          <span className="text-[11px] text-[#86868b] font-medium font-mono">PPO Actor-Critic</span>
-        </div>
+      {/*  Top Floating HUD (Frameless / 0 Capsule Boxes) */}
+      <div className="absolute top-4 left-4 z-10 flex items-center gap-2 pointer-events-none select-none">
+        <span className="w-2 h-2 rounded-full bg-[#30d158] shadow-[0_0_6px_#30d158] animate-pulse" />
+        <span className="text-[12px] font-bold text-white tracking-tight">BPNN Policy Network</span>
+        <span className="text-[11px] text-[#86868b] font-medium">PPO Actor-Critic</span>
       </div>
 
-      <div className="absolute top-4 right-4 z-10 hidden sm:flex items-center gap-2 pointer-events-none">
-        <div className="px-3 py-1.5 rounded-lg bg-[#0c0c14]/85 backdrop-blur-md border border-white/[0.08] shadow-xl flex items-center gap-1.5 text-[11px] font-mono text-[#86868b]">
-          <span className="text-white font-medium">Architecture:</span>
-          <span>6 In ➔ 12 Dense ➔ 8 Dense ➔ 3 Action</span>
-        </div>
+      <div className="absolute top-4 right-4 z-10 hidden sm:flex items-center gap-1.5 text-[11px] font-mono text-[#86868b] pointer-events-none select-none">
+        <span className="text-white font-medium">Architecture:</span>
+        <span>6 In ➔ 12 Dense ➔ 8 Dense ➔ 3 Action</span>
       </div>
 
       {/* 3D Canvas */}
@@ -620,8 +616,8 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
         className="w-full h-full cursor-grab active:cursor-grabbing block"
       />
 
-      {/*  Bottom Orbital Helper Hint */}
-      <div className="absolute bottom-3 right-4 z-10 pointer-events-none text-[10.5px] text-[#86868b] font-medium tracking-tight bg-[#0c0c14]/70 backdrop-blur-sm px-2.5 py-1 rounded-md border border-white/[0.06]">
+      {/*  Bottom Orbital Helper Hint (Frameless) */}
+      <div className="absolute bottom-3 right-4 z-10 pointer-events-none text-[10.5px] text-[#71717a] font-medium tracking-tight select-none">
         Drag to Orbit · Scroll to Zoom
       </div>
     </div>
