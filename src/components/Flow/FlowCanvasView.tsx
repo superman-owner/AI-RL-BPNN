@@ -199,51 +199,22 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
   return (
     <div className="flex flex-col gap-1.5 group">
       {/* Label above */}
-      <label className="text-[11.5px] font-medium text-[#86868b] select-none tracking-tight">
+      <label className="text-[11.5px] font-medium text-[#a1a1aa] select-none tracking-tight">
         {label}
       </label>
 
-      {/* Input Container (Default, Focus, Filled, Error) */}
+      {/* Input Container (Frameless Icon / Soft Charcoal Background) */}
       <div
-        className={`h-[38px] w-full rounded-[10px] px-3 flex items-center gap-2.5 transition-all duration-150 bg-[#161622] ${
+        className={`h-[38px] w-full rounded-[10px] px-3.5 flex items-center transition-all duration-150 bg-[#1e1e26] ${
           isError
-            ? 'border border-[#ff453a] ring-1 ring-[#ff453a]/30 bg-[#ff453a]/[0.05]'
+            ? 'border border-[#ff453a] ring-1 ring-[#ff453a]/30 bg-[#261c1e]'
             : isFocused
-            ? 'border border-[#007aff] ring-1 ring-[#007aff]/35 bg-[#181828]'
+            ? 'border border-[#007aff] ring-1 ring-[#007aff]/35 bg-[#1e1e28]'
             : isFilled
             ? 'border border-white/[0.14] hover:border-white/[0.22]'
-            : 'border border-white/[0.08] hover:border-white/[0.16]'
+            : 'border border-white/[0.09] hover:border-white/[0.16]'
         }`}
       >
-        {/* Left Icon with matching state colors */}
-        {isNumber ? (
-          <LucideIcons.Hash
-            size={14}
-            className={`flex-shrink-0 transition-colors ${
-              isError
-                ? 'text-[#ff453a]'
-                : isFocused
-                ? 'text-[#007aff]'
-                : isFilled
-                ? 'text-[#86868b]'
-                : 'text-[#636366]'
-            }`}
-          />
-        ) : (
-          <LucideIcons.SlidersHorizontal
-            size={14}
-            className={`flex-shrink-0 transition-colors ${
-              isError
-                ? 'text-[#ff453a]'
-                : isFocused
-                ? 'text-[#007aff]'
-                : isFilled
-                ? 'text-[#86868b]'
-                : 'text-[#636366]'
-            }`}
-          />
-        )}
-
         <input
           type={isNumber ? 'number' : 'text'}
           value={strVal}
@@ -259,7 +230,7 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
             }
           }}
           placeholder={`Enter ${label.toLowerCase()}...`}
-          className="w-full bg-transparent text-white font-mono text-[12.5px] focus:outline-none placeholder:text-[#636366]"
+          className="w-full bg-transparent text-[#f4f4f5] font-mono text-[13px] focus:outline-none placeholder:text-[#71717a]"
         />
       </div>
 
@@ -796,12 +767,12 @@ const FlowContent: React.FC = () => {
                 right: 24,
                 zIndex: 40,
                 width: 320,
-                padding: '16px 18px 14px 18px',
+                padding: '18px 20px 16px 20px',
               }}
-              className="bg-[#0f0f18]/95 backdrop-blur-2xl border border-white/[0.14] rounded-2xl shadow-2xl text-xs select-none animate-in fade-in zoom-in-95 duration-150"
+              className="bg-[#12121a]/95 backdrop-blur-2xl border border-white/[0.14] rounded-2xl shadow-2xl text-xs select-none animate-in fade-in zoom-in-95 duration-150"
             >
               {/* Inspector Header */}
-              <div className="flex items-center justify-between pb-3 mb-3.5 border-b border-white/[0.08]">
+              <div className="flex items-center justify-between pb-3.5 mb-4 border-b border-white/[0.08]">
                 <div className="flex items-center gap-2.5">
                   <span
                     className="w-2.5 h-2.5 rounded-full flex-shrink-0"
@@ -825,7 +796,7 @@ const FlowContent: React.FC = () => {
               </div>
 
               {/* Parameter Inputs */}
-              <div className="space-y-3.5 max-h-[300px] overflow-y-auto custom-scrollbar pr-1">
+              <div className="space-y-4 max-h-[300px] overflow-y-auto custom-scrollbar pr-1">
                 {def?.fields.map((f) => {
                   const val = (targetNode.data?.[f.key] ?? f.default) as string | number;
                   return (
@@ -840,20 +811,20 @@ const FlowContent: React.FC = () => {
                 })}
               </div>
 
-              {/* Inspector Footer Actions */}
-              <div className="mt-4 pt-3 border-t border-white/[0.08] flex items-center justify-between">
+              {/* Inspector Footer Actions (Generous Spacing & High-Contrast Touch Target) */}
+              <div className="mt-5 pt-3.5 border-t border-white/[0.08] flex items-center justify-between">
                 <button
                   onClick={() => disconnectNodes([targetNode])}
-                  className="text-[11px] text-[#ff9f0a] hover:text-[#ffb340] hover:bg-[#ff9f0a]/10 px-2.5 py-1 rounded-md flex items-center gap-1.5 font-medium transition-all cursor-pointer"
+                  className="text-[11.5px] text-[#ff9f0a] hover:text-[#ffb340] hover:bg-[#ff9f0a]/15 px-3 py-1.5 rounded-lg flex items-center gap-1.5 font-medium transition-all cursor-pointer"
                 >
-                  <LucideIcons.Unlink size={11} />
+                  <LucideIcons.Unlink size={12} />
                   <span>Disconnect</span>
                 </button>
                 <button
                   onClick={() => deleteNodes([targetNode])}
-                  className="text-[11px] text-[#ff453a] hover:text-[#ff6961] hover:bg-[#ff453a]/10 px-2.5 py-1 rounded-md flex items-center gap-1.5 font-medium transition-all cursor-pointer"
+                  className="text-[11.5px] text-[#ff453a] hover:text-[#ff6961] hover:bg-[#ff453a]/15 px-3 py-1.5 rounded-lg flex items-center gap-1.5 font-medium transition-all cursor-pointer"
                 >
-                  <LucideIcons.Trash2 size={11} />
+                  <LucideIcons.Trash2 size={12} />
                   <span>Delete Node</span>
                 </button>
               </div>
