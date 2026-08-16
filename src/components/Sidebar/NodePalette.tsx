@@ -20,6 +20,7 @@ import {
   FileCode,
   Sparkles,
   PanelLeftClose,
+  PanelLeftOpen,
 } from 'lucide-react';
 
 // Apple SF Symbols Icon Mapping (Clean, authentic Apple Blue & System Colors)
@@ -74,18 +75,95 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
 
   const q = query.toLowerCase().trim();
 
+  //  1. Slim Icon Rail Mode (Collapsed Sidebar like Reference Image)
+  if (isCollapsed) {
+    return (
+      <aside
+        onWheel={(e) => e.stopPropagation()}
+        style={{
+          width: '56px',
+          minWidth: '56px',
+          transition: 'width 0.22s cubic-bezier(0.16, 1, 0.3, 1)',
+        }}
+        className="h-full flex flex-col items-center justify-between bg-[#08080c] border-r border-white/[0.08] text-[#c7c7cc] select-none z-20 py-3 flex-shrink-0"
+      >
+        {/* Top: Expand Toggle Button & Search Quick-Action */}
+        <div className="flex flex-col items-center gap-2.5 w-full">
+          {onToggleCollapse && (
+            <button
+              onClick={onToggleCollapse}
+              title="Expand Sidebar (ขยายแถบข้าง)"
+              className="w-9 h-9 rounded-lg flex items-center justify-center text-[#86868b] hover:text-white hover:bg-white/[0.06] transition-all cursor-pointer"
+            >
+              <PanelLeftOpen size={16} />
+            </button>
+          )}
+
+          {/* Quick Search Action */}
+          <button
+            onClick={onToggleCollapse}
+            title="Search parameters & modules"
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-[#86868b] hover:text-white hover:bg-white/[0.06] border border-white/[0.06] transition-all cursor-pointer"
+          >
+            <Search size={13} />
+          </button>
+        </div>
+
+        {/* Middle: Vertical Group Icons Rail */}
+        <div className="flex-1 w-full overflow-y-auto custom-scrollbar flex flex-col items-center gap-1.5 py-4 my-1">
+          {GROUPS.map((group) => {
+            const GroupIcon = GROUP_ICONS[group.id] || Layers;
+
+            return (
+              <div key={group.id} className="relative group w-full flex items-center justify-center">
+                <button
+                  onClick={() => {
+                    setExpandedGroups((prev) => ({ ...prev, [group.id]: true }));
+                    if (onToggleCollapse) onToggleCollapse();
+                  }}
+                  title={group.label}
+                  className="w-9 h-8 rounded-md flex items-center justify-center hover:bg-white/[0.08] transition-all cursor-pointer relative"
+                >
+                  <GroupIcon
+                    size={15}
+                    style={{ color: group.color }}
+                    className="transition-transform duration-150 group-hover:scale-115"
+                  />
+                </button>
+
+                {/* Apple macOS Floating Tooltip */}
+                <div className="absolute left-[54px] px-2.5 py-1 bg-[#161622] border border-white/[0.12] rounded-md shadow-2xl text-[11px] font-medium text-white whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                  {group.label}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Bottom: Settings Button */}
+        <div className="w-full flex justify-center pt-2 border-t border-white/[0.06]">
+          <button
+            onClick={onOpenSettings}
+            title="Settings"
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-[#86868b] hover:text-white hover:bg-white/[0.06] transition-colors cursor-pointer"
+          >
+            <Settings size={15} />
+          </button>
+        </div>
+      </aside>
+    );
+  }
+
+  //  2. Full Expanded Sidebar Mode
   return (
     <aside
       onWheel={(e) => e.stopPropagation()}
       style={{
-        width: isCollapsed ? 0 : 290,
-        minWidth: isCollapsed ? 0 : 290,
-        opacity: isCollapsed ? 0 : 1,
-        pointerEvents: isCollapsed ? 'none' : 'auto',
-        transition: 'width 0.25s cubic-bezier(0.16, 1, 0.3, 1), min-width 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease',
-        overflow: 'hidden',
+        width: '280px',
+        minWidth: '280px',
+        transition: 'width 0.22s cubic-bezier(0.16, 1, 0.3, 1)',
       }}
-      className="h-full flex flex-col flex-shrink-0 bg-[#08080c]/98 border-r border-white/[0.08] text-[#c7c7cc] select-none z-20 font-sans"
+      className="h-full flex flex-col flex-shrink-0 bg-[#08080c] border-r border-white/[0.08] text-[#c7c7cc] select-none z-20 font-sans"
     >
       {/* 1.  Apple macOS Header & Spotlight Search (Exact 10px Spacing, Seamless Background) */}
       <div
@@ -143,7 +221,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
             {onToggleCollapse && (
               <button
                 onClick={onToggleCollapse}
-                title="Collapse Sidebar (พับแถบข้าง)"
+                title="Collapse to Slim Rail (พับแถบข้าง)"
                 style={{
                   background: 'transparent',
                   border: 'none',
@@ -157,7 +235,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                 onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
                 onMouseLeave={(e) => (e.currentTarget.style.color = '#86868b')}
               >
-                <PanelLeftClose size={14} />
+                <PanelLeftClose size={15} />
               </button>
             )}
           </div>
