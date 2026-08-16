@@ -185,17 +185,16 @@ export const TopNav: React.FC<TopNavProps> = ({
 
         <div className="h-3.5 w-[1px] bg-white/10 flex-shrink-0" />
 
-        {/* Deploy MT5 ONNX / Ready to Deploy */}
+        {/* Deploy MT5 ONNX / ONNX Ready */}
         <button
           onClick={onOpenMT5Deploy}
           className="flex items-center gap-1.5 text-xs font-medium text-[#86868b] hover:text-white transition-colors duration-150 cursor-pointer flex-shrink-0 group select-none"
-          title="Ready to Deploy - Export standalone ONNX model to MetaTrader 5"
         >
           <LucideIcons.Rocket
             size={13}
             className="text-[#86868b] group-hover:text-[#30d158] group-hover:drop-shadow-[0_0_8px_rgba(48,209,88,0.85)] transition-all duration-150"
           />
-          <span>Ready to Deploy</span>
+          <span>ONNX Ready</span>
         </button>
 
         <div className="h-3.5 w-[1px] bg-white/10 flex-shrink-0" />
