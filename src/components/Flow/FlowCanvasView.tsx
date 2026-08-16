@@ -1360,22 +1360,18 @@ const FlowContent: React.FC = () => {
         />
       </ReactFlow>
 
-      {/* Real-time Status Badge */}
-      <div
-        className={`absolute bottom-6 left-6 z-10 px-3 py-1.5 rounded-full border backdrop-blur-md flex items-center gap-2 select-none shadow-sm ${
-          isLight ? 'bg-white/90 border-black/[0.08]' : 'bg-[#12121a]/90 border-white/[0.08]'
-        }`}
-      >
-        <div className="w-2 h-2 rounded-full bg-[#30d158] animate-pulse" />
+      {/* Real-time Status Indicator (Top-Left, Clean Typography, Zero Capsule Frame) */}
+      <div className="absolute top-4 left-5 z-10 flex items-center gap-2 select-none pointer-events-none">
+        <div className="w-2 h-2 rounded-full bg-[#30d158] animate-pulse flex-shrink-0" />
         <span
-          className={`text-xs font-semibold tracking-tight ${isLight ? 'text-[#1d1d1f]' : 'text-white'}`}
+          className={`text-[12px] font-semibold tracking-tight ${isLight ? 'text-[#1d1d1f]' : 'text-white'}`}
           style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif' }}
         >
           {activeNodesCount} Nodes Active
         </span>
         {nodes.length > activeNodesCount && (
           <span
-            className={`text-[11px] ${isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}`}
+            className={`text-[11px] font-medium ${isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}`}
             style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif' }}
           >
             ({nodes.length - activeNodesCount} Idle)
