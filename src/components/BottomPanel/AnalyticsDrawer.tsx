@@ -194,6 +194,12 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
   const holdPct = latestStep?.actionProbs ? (latestStep.actionProbs[1] * 100).toFixed(1) : '80.6';
   const sellPct = latestStep?.actionProbs ? (latestStep.actionProbs[2] * 100).toFixed(1) : '2.3';
 
+  const totalEpisodesTarget =
+    currentTelemetry.episodes > 10000
+      ? Math.ceil(currentTelemetry.episodes / 10000) * 10000
+      : 10000;
+  const progressPct = ((currentTelemetry.episodes / totalEpisodesTarget) * 100).toFixed(1);
+
   return (
     <div
       className={`border-t border-white/[0.08] bg-[#07070b] transition-all duration-200 flex flex-col z-20 ${
@@ -299,14 +305,14 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
               <div
                 className="h-full bg-gradient-to-r from-[#007aff] via-[#30d158] to-[#00c7be] rounded-full transition-all duration-300"
                 style={{
-                  width: `${Math.min(100, Math.max(4, ((currentTelemetry.episodes || 0) % 1000) / 10))}%`,
+                  width: `${Math.min(100, Math.max(3, Number(progressPct)))}%`,
                   boxShadow: '0 0 8px rgba(48, 209, 88, 0.5)',
                 }}
               />
             </div>
 
             <strong className="text-[11px] font-mono font-bold text-[#30d158] whitespace-nowrap drop-shadow-[0_0_6px_rgba(48,209,88,0.4)]">
-              {((((currentTelemetry.episodes || 0) % 1000) / 1000) * 100).toFixed(1)}%
+              {progressPct}%
             </strong>
 
             <span className="text-white/30">·</span>
@@ -314,21 +320,16 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
             <div className="flex items-center gap-1 text-[11px] whitespace-nowrap">
               <span className="text-[#86868b]">Episodes:</span>
               <strong className="text-white font-mono tabular-nums font-bold">
-                {currentTelemetry.episodes >= 10000
-                  ? `${(currentTelemetry.episodes / 1000).toFixed(1)}K`
-                  : currentTelemetry.episodes.toLocaleString()}
+                {currentTelemetry.episodes.toLocaleString()}
               </strong>
+              <span className="text-white/40 font-mono">/</span>
+              <span className="text-[#86868b] font-mono">
+                {totalEpisodesTarget.toLocaleString()}
+              </span>
             </div>
           </div>
 
           <div className="h-3.5 w-[1px] bg-white/10 flex-shrink-0" />
-
-          {isRunning && (
-            <span className="text-[10px] font-mono text-emerald-400 flex items-center gap-1.5 font-medium whitespace-nowrap">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-              TELEMETRY ACTIVE
-            </span>
-          )}
 
           {activeTab === 'logs' && (
             <button
@@ -584,7 +585,12 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                   }`}
                 >
                   <span className="font-bold text-white flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-[#30d158] shadow-[0_0_8px_#30d158]" />
+                    <span className="relative flex h-2 w-2 items-center justify-center">
+                      {isRunning && (
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#30d158] opacity-75" />
+                      )}
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-[#30d158] shadow-[0_0_8px_#30d158]" />
+                    </span>
                     RL Reward Curve & Telemetry
                   </span>
                   <div className="flex items-center gap-4 text-[#86868b]">
