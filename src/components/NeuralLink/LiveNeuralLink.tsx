@@ -263,14 +263,14 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
       ctx.save();
       ctx.scale(dpr, dpr);
 
-      // Deep Luxury Space Background
-      ctx.fillStyle = '#08080c';
+      // Deep Luxury Obsidian Canvas
+      ctx.fillStyle = '#040407';
       ctx.fillRect(0, 0, width, height);
 
       // Camera Matrix Transformations
       const cam = cameraRef.current;
       if (!isDraggingRef.current) {
-        cam.rotY += 0.0012; // Subtle Auto-rotation
+        cam.rotY += 0.0010; // Subtle Apple Keynote Auto-rotation
       }
 
       const cosX = Math.cos(cam.rotX);
@@ -298,7 +298,7 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
 
       spawnSignals();
 
-      // Draw Synapses (Hairline Silver Filaments)
+      // Draw Synapses (Hairline Optical Fiber Filaments)
       const neurons = neuronsRef.current;
       const synapses = synapsesRef.current;
 
@@ -310,18 +310,16 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
         const p1 = project(src.x, src.y, src.z);
         const p2 = project(tgt.x, tgt.y, tgt.z);
 
-        const alpha = 0.08 + Math.abs(syn.weight) * 0.12;
-        ctx.strokeStyle = syn.weight > 0 
-          ? `rgba(255, 255, 255, ${alpha})` 
-          : `rgba(100, 210, 255, ${alpha * 0.9})`;
-        ctx.lineWidth = 0.8;
+        const alpha = 0.05 + Math.abs(syn.weight) * 0.08;
+        ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
+        ctx.lineWidth = 0.65;
         ctx.beginPath();
         ctx.moveTo(p1.px, p1.py);
         ctx.lineTo(p2.px, p2.py);
         ctx.stroke();
       });
 
-      // Draw Signal Pulses
+      // Draw Signal Pulses (Crisp Light Photons)
       const particles = particlesRef.current;
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
@@ -339,64 +337,100 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
 
         ctx.fillStyle = p.color;
         ctx.shadowColor = p.color;
-        ctx.shadowBlur = 8;
+        ctx.shadowBlur = 6;
         ctx.beginPath();
-        ctx.arc(proj.px, proj.py, 2.2 * proj.scale, 0, Math.PI * 2);
+        ctx.arc(proj.px, proj.py, 1.8 * proj.scale, 0, Math.PI * 2);
         ctx.fill();
         ctx.shadowBlur = 0;
       }
 
-      // Draw Soma Orbs (Frosted Glass with Specular Glow)
+      // Draw Soma Orbs (Apple Frosted Glass & Specular Photonic Aura)
       neurons.forEach((n) => {
         const proj = project(n.x, n.y, n.z);
         const isOutput = n.layerIdx === 3;
         const isInput = n.layerIdx === 0;
-        const radius = (isOutput ? 8 : isInput ? 7 : 6) * proj.scale;
+        const isSelectedAction = isOutput && latestStep && latestStep.action === n.neuronIdx;
+        
+        // Proportional, balanced radius
+        const baseRadius = isOutput ? 7.2 : isInput ? 6.2 : 5.0;
+        const radius = baseRadius * proj.scale;
 
-        // Custom glow colors based on layer type
-        let coreColor = 'rgba(255, 255, 255, 0.95)';
-        let outerColor = 'rgba(10, 132, 255, 0.2)';
+        // Apple Pro Palette: Monochromatic Glass by default, Subtle Glow ONLY on Active Decision
+        let coreColor = '#FFFFFF';
+        let outerColor = 'rgba(0, 122, 255, 0.15)';
+        let auraIntensity = 1.25 + n.activation * 0.35;
 
         if (isOutput) {
-          if (n.neuronIdx === 0) {
-            // BUY
-            coreColor = 'rgba(48, 209, 88, 0.95)';
-            outerColor = 'rgba(48, 209, 88, 0.35)';
-          } else if (n.neuronIdx === 1) {
-            // HOLD
-            coreColor = 'rgba(255, 214, 10, 0.95)';
-            outerColor = 'rgba(255, 214, 10, 0.3)';
+          if (isSelectedAction) {
+            if (n.neuronIdx === 0) {
+              // BUY (Apple Soft Emerald)
+              coreColor = '#30d158';
+              outerColor = 'rgba(48, 209, 88, 0.28)';
+            } else if (n.neuronIdx === 1) {
+              // HOLD (Apple Electric Cyan)
+              coreColor = '#5ac8fa';
+              outerColor = 'rgba(90, 200, 250, 0.25)';
+            } else {
+              // SELL (Apple Rose Crimson)
+              coreColor = '#ff453a';
+              outerColor = 'rgba(255, 69, 58, 0.28)';
+            }
+            auraIntensity = 1.45 + n.activation * 0.4;
           } else {
-            // SELL
-            coreColor = 'rgba(255, 69, 58, 0.95)';
-            outerColor = 'rgba(255, 69, 58, 0.35)';
+            // Inactive Output Node (Calm Frosted Platinum)
+            coreColor = 'rgba(255, 255, 255, 0.42)';
+            outerColor = 'rgba(255, 255, 255, 0.05)';
+            auraIntensity = 1.15;
           }
         }
 
-        // Outer Glow
+        // Soft Radial Aura
         const grad = ctx.createRadialGradient(
-          proj.px - radius * 0.3,
-          proj.py - radius * 0.3,
+          proj.px,
+          proj.py,
           radius * 0.1,
           proj.px,
           proj.py,
-          radius * 1.6
+          radius * auraIntensity
         );
         grad.addColorStop(0, coreColor);
-        grad.addColorStop(0.4, 'rgba(200, 225, 255, 0.5)');
-        grad.addColorStop(0.8, outerColor);
+        grad.addColorStop(0.35, isSelectedAction ? outerColor : 'rgba(255, 255, 255, 0.12)');
         grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
         ctx.fillStyle = grad;
         ctx.beginPath();
-        ctx.arc(proj.px, proj.py, radius * (1.2 + n.activation * 0.5), 0, Math.PI * 2);
+        ctx.arc(proj.px, proj.py, radius * auraIntensity, 0, Math.PI * 2);
         ctx.fill();
 
-        // Inner Acrylic Core
+        // Inner Frosted Core
         ctx.fillStyle = coreColor;
         ctx.beginPath();
-        ctx.arc(proj.px, proj.py, radius * 0.5, 0, Math.PI * 2);
+        ctx.arc(proj.px, proj.py, radius * 0.55, 0, Math.PI * 2);
         ctx.fill();
+
+        // Subtle Specular Ring
+        ctx.strokeStyle = isSelectedAction ? coreColor : 'rgba(255, 255, 255, 0.25)';
+        ctx.lineWidth = 0.75;
+        ctx.beginPath();
+        ctx.arc(proj.px, proj.py, radius * 0.85, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Elegant Apple Typography Labels for Input & Output
+        if (isOutput || isInput) {
+          const fontSize = Math.max(9, Math.floor(10.5 * proj.scale));
+          ctx.font = `600 ${fontSize}px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif`;
+          ctx.textAlign = isInput ? 'right' : 'left';
+          ctx.textBaseline = 'middle';
+          const textX = isInput ? proj.px - radius - 8 * proj.scale : proj.px + radius + 8 * proj.scale;
+          const textY = proj.py;
+
+          if (isOutput) {
+            ctx.fillStyle = isSelectedAction ? coreColor : 'rgba(255, 255, 255, 0.35)';
+          } else {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+          }
+          ctx.fillText(n.label, textX, textY);
+        }
       });
 
       ctx.restore();
