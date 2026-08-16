@@ -164,8 +164,8 @@ export const TopNav: React.FC<TopNavProps> = ({
         </div>
       </div>
 
-      {/* Right: Actions (Deploy MT5 ONNX + MT5 Connected with 10px offset from right) */}
-      <div className="flex items-center gap-4 pr-2.5">
+      {/* Right: Actions (Deploy MT5 ONNX + MT5 Connected shifted left with generous margin) */}
+      <div className="flex items-center gap-4.5 pr-6">
         {/* Deploy MT5 ONNX (Available on both pages) */}
         <button
           onClick={onOpenMT5Deploy}
