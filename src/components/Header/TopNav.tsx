@@ -38,7 +38,7 @@ export const TopNav: React.FC<TopNavProps> = ({
 
         <div className="flex items-center gap-2">
           <span className="text-xs font-semibold tracking-tight text-white">
-            AlphaFlow <span className="text-[#0a84ff]">Studio</span>
+            FXFORGE <span className="text-[#007aff]">LAB</span>
           </span>
         </div>
 
