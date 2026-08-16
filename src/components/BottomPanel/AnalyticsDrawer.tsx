@@ -293,7 +293,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
 
       {/*  Drawer Full-Width Inset Area */}
       {!isMinimized && (
-        <div className="flex-1 overflow-hidden p-3.5 bg-black/60 min-h-0">
+        <div className="flex-1 overflow-hidden px-3.5 py-[5px] bg-black/60 min-h-0">
           {/* TAB 1: HUD TELEMETRY & GAUGES */}
           {activeTab === 'equity' && (
             <div className="h-full flex flex-col lg:flex-row gap-3.5 min-h-0">
