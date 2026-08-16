@@ -42,7 +42,7 @@ export const TopNav: React.FC<TopNavProps> = ({
 }) => {
   return (
     <header className="h-12 w-full vision-glass apple-specular border-b border-white/[0.08] px-4 flex items-center justify-between text-slate-200 z-30 select-none">
-      {/* Left: macOS Traffic Lights + Brand + View Switcher */}
+      {/* Left: macOS Traffic Lights + Brand + Frameless Glowing View Switcher */}
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-1.5 pr-2">
           <div className="w-3 h-3 rounded-full bg-[#ff5f56] border border-[#e0443e]/50 cursor-pointer hover:opacity-80 transition-opacity" />
@@ -58,14 +58,14 @@ export const TopNav: React.FC<TopNavProps> = ({
 
         <div className="h-3.5 w-[1px] bg-white/10" />
 
-        {/*  Apple Vision Pro Segmented View Switcher */}
-        <div className="flex items-center bg-[#14141e]/90 p-0.5 rounded-xl border border-white/[0.08]">
+        {/*  Pure Frameless Glowing View Switcher (No Capsules) */}
+        <div className="flex items-center gap-4">
           <button
             onClick={() => onViewChange('studio')}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+            className={`flex items-center gap-1.5 text-xs transition-all cursor-pointer ${
               activeView === 'studio'
-                ? 'bg-[#007aff] text-white shadow-[0_2px_8px_rgba(0,122,255,0.4)]'
-                : 'text-white/60 hover:text-white'
+                ? 'text-[#007aff] font-bold drop-shadow-[0_0_8px_rgba(0,122,255,0.7)]'
+                : 'text-white/50 hover:text-white font-medium'
             }`}
           >
             <LucideIcons.Network size={13} />
@@ -73,10 +73,10 @@ export const TopNav: React.FC<TopNavProps> = ({
           </button>
           <button
             onClick={() => onViewChange('bpnn')}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+            className={`flex items-center gap-1.5 text-xs transition-all cursor-pointer ${
               activeView === 'bpnn'
-                ? 'bg-[#0a84ff] text-white shadow-[0_2px_8px_rgba(10,132,255,0.4)]'
-                : 'text-white/60 hover:text-white'
+                ? 'text-[#0a84ff] font-bold drop-shadow-[0_0_8px_rgba(10,132,255,0.7)]'
+                : 'text-white/50 hover:text-white font-medium'
             }`}
           >
             <LucideIcons.Brain size={13} />
@@ -85,13 +85,13 @@ export const TopNav: React.FC<TopNavProps> = ({
         </div>
       </div>
 
-      {/* Center: Controls & Telemetry Aligned on the Single Row */}
+      {/* Center: Controls & Telemetry (Pure Frameless Glowing Buttons, No Capsules) */}
       {activeView === 'studio' ? (
         <div className="flex items-center gap-5">
           {!isRunning ? (
             <button
               onClick={onRunFlow}
-              className="flex items-center gap-1.5 text-xs font-bold text-[#007aff] hover:text-[#389bff] transition-all cursor-pointer"
+              className="flex items-center gap-1.5 text-xs font-bold text-[#007aff] hover:text-[#389bff] drop-shadow-[0_0_8px_rgba(0,122,255,0.6)] transition-all cursor-pointer"
             >
               <LucideIcons.Play size={13} className="fill-[#007aff] text-[#007aff]" />
               <span>Run Pipeline</span>
@@ -99,7 +99,7 @@ export const TopNav: React.FC<TopNavProps> = ({
           ) : (
             <button
               onClick={onStopFlow}
-              className="flex items-center gap-1.5 text-xs font-bold text-[#ff453a] hover:text-[#ff6961] transition-all animate-pulse cursor-pointer"
+              className="flex items-center gap-1.5 text-xs font-bold text-[#ff453a] hover:text-[#ff6961] drop-shadow-[0_0_8px_rgba(255,69,58,0.7)] transition-all animate-pulse cursor-pointer"
             >
               <LucideIcons.Square size={13} className="fill-[#ff453a] text-[#ff453a]" />
               <span>Stop Pipeline</span>
@@ -108,7 +108,7 @@ export const TopNav: React.FC<TopNavProps> = ({
 
           <button
             onClick={onOpenExportModal}
-            className="flex items-center gap-1.5 text-xs font-medium text-white/70 hover:text-white transition-all cursor-pointer"
+            className="flex items-center gap-1.5 text-xs font-medium text-white/70 hover:text-white hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.5)] transition-all cursor-pointer"
           >
             <LucideIcons.FileCode size={13} className="text-[#007aff]" />
             <span>Export Python</span>
@@ -117,83 +117,98 @@ export const TopNav: React.FC<TopNavProps> = ({
           <button
             onClick={onClearFlow}
             title="Reset Flow"
-            className="p-1 text-[#86868b] hover:text-[#ff453a] transition-colors cursor-pointer"
+            className="p-1 text-[#86868b] hover:text-[#ff453a] hover:drop-shadow-[0_0_6px_rgba(255,69,58,0.5)] transition-colors cursor-pointer"
           >
             <LucideIcons.Trash2 size={14} />
           </button>
         </div>
       ) : (
-        /*  Live 3D BPNN Top Row Controls & Telemetry */
-        <div className="flex items-center gap-4 text-xs">
+        /*  Live 3D BPNN Controls & Telemetry: Pure Frameless Glowing (No Capsules) */
+        <div className="flex items-center gap-5 text-xs">
           <button
             onClick={onToggleRLTraining}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-semibold transition-all cursor-pointer ${
+            className={`flex items-center gap-1.5 text-xs font-bold transition-all cursor-pointer ${
               isRLTraining
-                ? 'bg-[#007aff] text-white shadow-[0_0_12px_rgba(0,122,255,0.5)]'
-                : 'bg-white/10 text-white/70 hover:text-white'
+                ? 'text-[#007aff] hover:text-[#389bff] drop-shadow-[0_0_8px_rgba(0,122,255,0.8)]'
+                : 'text-[#86868b] hover:text-white'
             }`}
           >
-            {isRLTraining ? <LucideIcons.Pause size={13} /> : <LucideIcons.Play size={13} />}
+            {isRLTraining ? (
+              <LucideIcons.Pause size={13} className="fill-[#007aff] text-[#007aff]" />
+            ) : (
+              <LucideIcons.Play size={13} className="fill-[#86868b] text-[#86868b]" />
+            )}
             <span>{isRLTraining ? 'RL Training Active' : 'Paused'}</span>
           </button>
 
-          <div className="h-3.5 w-[1px] bg-white/15" />
+          <div className="h-3.5 w-[1px] bg-white/10" />
 
           {/* Live Telemetry Stats */}
           {rlTelemetry && (
-            <div className="flex items-center gap-3.5 text-[11px] text-[#86868b]">
+            <div className="flex items-center gap-4 text-[11px] text-[#86868b]">
               <span>
                 Episodes: <strong className="text-white tabular-nums">{rlTelemetry.episodes}</strong>
               </span>
               <span>
-                Win Rate: <strong className="text-[#30d158] tabular-nums">{rlTelemetry.winRate}%</strong>
+                Win Rate: <strong className="text-[#30d158] tabular-nums drop-shadow-[0_0_6px_rgba(48,209,88,0.5)]">{rlTelemetry.winRate}%</strong>
               </span>
               <span>
-                Sharpe: <strong className="text-[#00c7be] tabular-nums">{rlTelemetry.annualizedSharpe}</strong>
+                Sharpe: <strong className="text-[#00c7be] tabular-nums drop-shadow-[0_0_6px_rgba(0,199,190,0.5)]">{rlTelemetry.annualizedSharpe}</strong>
               </span>
               <span>
-                Reward: <strong className="text-[#ffd60a] tabular-nums">{rlTelemetry.totalReward}</strong>
+                Reward: <strong className="text-[#ffd60a] tabular-nums drop-shadow-[0_0_6px_rgba(255,214,10,0.5)]">{rlTelemetry.totalReward}</strong>
               </span>
             </div>
           )}
 
-          {/* Action Probability Badge */}
+          {/* Action Probability Indicator: Frameless Glowing Text */}
           {rlLatestStep && (
-            <span
-              className={`px-2 py-0.5 rounded-md font-bold text-[10px] tabular-nums ${
-                rlLatestStep.action === 0
-                  ? 'bg-[#30d158]/20 text-[#30d158] border border-[#30d158]/40'
+            <div className="flex items-center gap-1.5 text-xs font-bold tabular-nums">
+              <span
+                className={`w-1.5 h-1.5 rounded-full ${
+                  rlLatestStep.action === 0
+                    ? 'bg-[#30d158] shadow-[0_0_8px_#30d158]'
+                    : rlLatestStep.action === 2
+                    ? 'bg-[#ff453a] shadow-[0_0_8px_#ff453a]'
+                    : 'bg-[#ffd60a] shadow-[0_0_8px_#ffd60a]'
+                }`}
+              />
+              <span
+                className={`${
+                  rlLatestStep.action === 0
+                    ? 'text-[#30d158] drop-shadow-[0_0_8px_rgba(48,209,88,0.8)]'
+                    : rlLatestStep.action === 2
+                    ? 'text-[#ff453a] drop-shadow-[0_0_8px_rgba(255,69,58,0.8)]'
+                    : 'text-[#ffd60a] drop-shadow-[0_0_8px_rgba(255,214,10,0.8)]'
+                }`}
+              >
+                {rlLatestStep.action === 0
+                  ? 'BUY (LONG)'
                   : rlLatestStep.action === 2
-                  ? 'bg-[#ff453a]/20 text-[#ff453a] border border-[#ff453a]/40'
-                  : 'bg-white/10 text-white/80'
-              }`}
-            >
-              {rlLatestStep.action === 0
-                ? 'BUY (LONG)'
-                : rlLatestStep.action === 2
-                ? 'SELL (SHORT)'
-                : 'HOLD (FLAT)'}
-            </span>
+                  ? 'SELL (SHORT)'
+                  : 'HOLD (FLAT)'}
+              </span>
+            </div>
           )}
         </div>
       )}
 
-      {/* Right: Actions (Fit Screen / Deploy MT5 / Camera Reset) */}
-      <div className="flex items-center gap-3">
+      {/* Right: Actions (Frameless Glowing Buttons, No Capsules) */}
+      <div className="flex items-center gap-4">
         {activeView === 'studio' ? (
           <button
             onClick={onFitView}
             title="Fit Flow to Screen (Ctrl+1)"
-            className="flex items-center gap-1.5 text-xs font-medium text-white/70 hover:text-white hover:bg-white/[0.06] px-2.5 py-1 rounded-lg transition-all cursor-pointer"
+            className="flex items-center gap-1.5 text-xs font-medium text-white/70 hover:text-white hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.6)] transition-all cursor-pointer"
           >
-            <LucideIcons.Maximize2 size={14} className="text-[#38bdf8]" />
+            <LucideIcons.Maximize2 size={13} className="text-[#38bdf8]" />
             <span>Fit Screen</span>
           </button>
         ) : (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
             <button
               onClick={onOpenMT5Deploy}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.08] hover:bg-white/[0.14] text-white font-semibold transition-all cursor-pointer text-xs"
+              className="flex items-center gap-1.5 text-xs font-bold text-[#30d158] hover:text-[#3cd864] drop-shadow-[0_0_8px_rgba(48,209,88,0.6)] transition-all cursor-pointer"
             >
               <LucideIcons.Rocket size={13} className="text-[#30d158]" />
               <span>Deploy MT5 ONNX</span>
@@ -202,9 +217,9 @@ export const TopNav: React.FC<TopNavProps> = ({
             <button
               onClick={onResetCamera}
               title="Reset Camera Angle"
-              className="p-1.5 rounded-lg text-[#86868b] hover:text-white hover:bg-white/[0.08] transition-colors cursor-pointer"
+              className="p-1 text-[#86868b] hover:text-white hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.7)] transition-colors cursor-pointer"
             >
-              <LucideIcons.RotateCcw size={14} />
+              <LucideIcons.RotateCcw size={13} />
             </button>
           </div>
         )}
@@ -213,7 +228,7 @@ export const TopNav: React.FC<TopNavProps> = ({
 
         <div className="flex items-center gap-3 text-[11px] text-[#86868b]">
           <div className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#30d158]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#30d158] shadow-[0_0_6px_#30d158]" />
             <span className="text-[#d1d1d6]">Neural Engine</span>
           </div>
         </div>
