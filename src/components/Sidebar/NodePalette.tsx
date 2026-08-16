@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { GROUPS, nodesByGroup } from '../../data/nodeRegistry';
 import {
   Search,
-  ChevronRight,
   Plus,
   Sliders,
   Brain,
@@ -278,22 +277,12 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
 
           return (
             <div key={group.id}>
-              {/*  Section Header (Muted Gray -> Pure White on Hover, No Frame) */}
+              {/*  Section Header (Clean Icon & Label, No Down Arrow) */}
               <div
                 onClick={() => toggleGroup(group.id)}
                 className="group px-1 py-1 flex items-center justify-between cursor-pointer transition-colors"
               >
-                <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                  {/* Rotating Chevron */}
-                  <ChevronRight
-                    size={11}
-                    className={`transition-all duration-150 flex-shrink-0 ${
-                      isExpanded
-                        ? 'rotate-90 text-[#86868b] group-hover:text-white'
-                        : 'text-[#86868b] group-hover:text-white'
-                    }`}
-                  />
-
+                <div className="flex items-center gap-2 min-w-0 flex-1">
                   {/* SF Symbol on Main Header (Distinct Group Color) */}
                   <GroupIcon
                     size={14}
@@ -308,11 +297,11 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                 </div>
               </div>
 
-              {/*  Child Items (Mid Dot aligns directly under first letter of Header) */}
+              {/*  Child Items */}
               {isExpanded && (
                 <div
-                  className="mt-2 space-y-1.5"
-                  style={{ paddingLeft: '45px' }}
+                  className="mt-1.5 space-y-1.5"
+                  style={{ paddingLeft: '22px' }}
                 >
                   {matchingNodes.map((node) => {
                     const isNodeHovered = hoveredNode === node.type;

@@ -12,7 +12,6 @@ import {
   useReactFlow,
   SelectionMode,
   ConnectionLineType,
-  MarkerType,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import type { Connection, Edge, Node } from '@xyflow/react';
@@ -130,7 +129,6 @@ const INITIAL_EDGES: Edge[] = [
     type: 'smoothstep',
     animated: true,
     style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' },
-    markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: '#0a84ff' },
   },
   {
     id: 'e2-3',
@@ -139,7 +137,6 @@ const INITIAL_EDGES: Edge[] = [
     type: 'smoothstep',
     animated: true,
     style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' },
-    markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: '#0a84ff' },
   },
   {
     id: 'e3-4',
@@ -148,7 +145,6 @@ const INITIAL_EDGES: Edge[] = [
     type: 'smoothstep',
     animated: true,
     style: { stroke: '#30d158', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(48,209,88,0.55))' },
-    markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: '#30d158' },
   },
   {
     id: 'e4-5',
@@ -157,7 +153,6 @@ const INITIAL_EDGES: Edge[] = [
     type: 'smoothstep',
     animated: true,
     style: { stroke: '#bf5af2', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(191,90,242,0.55))' },
-    markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: '#bf5af2' },
   },
   {
     id: 'e5-6',
@@ -166,7 +161,6 @@ const INITIAL_EDGES: Edge[] = [
     type: 'smoothstep',
     animated: true,
     style: { stroke: '#ffd60a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,214,10,0.55))' },
-    markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: '#ffd60a' },
   },
   {
     id: 'e6-7',
@@ -175,7 +169,6 @@ const INITIAL_EDGES: Edge[] = [
     type: 'smoothstep',
     animated: true,
     style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' },
-    markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: '#0a84ff' },
   },
   {
     id: 'e7-8',
@@ -184,29 +177,22 @@ const INITIAL_EDGES: Edge[] = [
     type: 'smoothstep',
     animated: true,
     style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' },
-    markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: '#0a84ff' },
   },
 ];
 
 // ==========================================
-// 1. กำหนดค่าเริ่มต้นของทุกเส้นเป็น "smoothstep"
+// 1. กำหนดค่าเริ่มต้นของทุกเส้นเป็น "smoothstep" แบบไม่มีหัวลูกศร
 // ==========================================
 const defaultEdgeOptions = {
   type: 'smoothstep', // 🟢 เส้นตรงหักมุมฉากแบบมุมมน
   animated: true,     // 🟢 แอนิเมชันจุดไฟวิ่งบนเส้น
   interactionWidth: 20, // 🟢 ขอบจับสัมผัสสำหรับการคลิกและคลิกขวาตัดสาย
   style: {
-    stroke: '#38bdf8', // สีเส้นเริ่มต้น (Cyber Cyan)
+    stroke: '#0a84ff', // สีเส้นเริ่มต้น
     strokeWidth: 2,    // ความหนาของเส้น 2px
   },
   pathOptions: {
     borderRadius: 16,  // 🟢 รัศมีความโค้งมนของมุมเลี้ยว (16px กำลังสวย สบายตา)
-  },
-  markerEnd: {
-    type: MarkerType.ArrowClosed,
-    width: 14,
-    height: 14,
-    color: '#38bdf8',
   },
 };
 
@@ -661,13 +647,6 @@ const FlowContent: React.FC = () => {
           stroke: edgeColor,
           strokeWidth: 2,
           filter: `drop-shadow(0 0 6px ${edgeColor}88)`, // แสงนีออนฟุ้งเรืองแสง
-        },
-        // หัวลูกศรชี้บอกทิศทาง
-        markerEnd: {
-          type: MarkerType.ArrowClosed,
-          width: 14,
-          height: 14,
-          color: edgeColor,
         },
       };
 
