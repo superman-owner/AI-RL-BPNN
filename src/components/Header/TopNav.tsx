@@ -30,9 +30,9 @@ export const TopNav: React.FC<TopNavProps> = ({
   onOpenMT5Deploy,
 }) => {
   return (
-    <header className="h-12 w-full vision-glass apple-specular border-b border-white/[0.08] px-4 flex items-center justify-between text-slate-200 z-30 select-none">
+    <header className="h-12 w-full vision-glass apple-specular border-b border-white/[0.08] px-4 flex items-center gap-4 text-slate-200 z-30 select-none overflow-x-auto">
       {/* Left: macOS Traffic Lights + Brand + Frameless Glowing View Switcher */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 flex-shrink-0">
         <div className="flex items-center gap-1.5 pr-2">
           <div className="w-3 h-3 rounded-full bg-[#ff5f56] border border-[#e0443e]/50 cursor-pointer hover:opacity-80 transition-opacity" />
           <div className="w-3 h-3 rounded-full bg-[#ffbd2e] border border-[#dea123]/50 cursor-pointer hover:opacity-80 transition-opacity" />
@@ -74,8 +74,10 @@ export const TopNav: React.FC<TopNavProps> = ({
         </div>
       </div>
 
-      {/* Center + Actions: Compact & Optimized spacing so it never overflows or collides with the screen edge */}
-      <div className="flex items-center gap-3.5 text-xs pr-6">
+      <div className="h-3.5 w-[1px] bg-white/10 flex-shrink-0" />
+
+      {/* Controls & Telemetry & MT5 ONNX & MT5 Connected Attached Right Next to View Switcher */}
+      <div className="flex items-center gap-3.5 text-xs flex-shrink-0">
         <button
           onClick={onToggleRLTraining}
           className={`w-[125px] inline-flex items-center gap-1.5 text-xs font-bold transition-all cursor-pointer flex-shrink-0 ${
