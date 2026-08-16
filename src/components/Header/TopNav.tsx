@@ -23,13 +23,11 @@ interface TopNavProps {
 export const TopNav: React.FC<TopNavProps> = ({
   activeView,
   onViewChange,
-  onFitView,
   isRLTraining = true,
   onToggleRLTraining,
   rlTelemetry,
   rlLatestStep,
   onOpenMT5Deploy,
-  onResetCamera,
 }) => {
   return (
     <header className="h-12 w-full vision-glass apple-specular border-b border-white/[0.08] px-4 flex items-center justify-between text-slate-200 z-30 select-none">
@@ -166,8 +164,8 @@ export const TopNav: React.FC<TopNavProps> = ({
         </div>
       </div>
 
-      {/* Right: Actions (Identical on Both Views: Deploy MT5 ONNX + Reset + MT5 Connected) */}
-      <div className="flex items-center gap-4">
+      {/* Right: Actions (Deploy MT5 ONNX + MT5 Connected with 10px offset from right) */}
+      <div className="flex items-center gap-4 pr-2.5">
         {/* Deploy MT5 ONNX (Available on both pages) */}
         <button
           onClick={onOpenMT5Deploy}
@@ -177,23 +175,12 @@ export const TopNav: React.FC<TopNavProps> = ({
           <span>Deploy MT5 ONNX</span>
         </button>
 
-        {/* Reset View Button */}
-        <button
-          onClick={activeView === 'studio' ? onFitView : onResetCamera}
-          title={activeView === 'studio' ? 'Reset Canvas View' : 'Reset Camera Angle'}
-          className="p-1 text-[#86868b] hover:text-white hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.7)] transition-colors cursor-pointer"
-        >
-          <LucideIcons.RotateCcw size={13} />
-        </button>
-
         <div className="h-3.5 w-[1px] bg-white/10" />
 
         {/* MT5 Connected Status Indicator */}
-        <div className="flex items-center gap-3 text-[11px] text-[#86868b]">
-          <div className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#30d158] shadow-[0_0_6px_#30d158]" />
-            <span className="text-[#d1d1d6] font-medium">MT5 Connected</span>
-          </div>
+        <div className="flex items-center gap-1.5 text-[11px] text-[#86868b]">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#30d158] shadow-[0_0_6px_#30d158]" />
+          <span className="text-[#d1d1d6] font-medium">MT5 Connected</span>
         </div>
       </div>
     </header>
