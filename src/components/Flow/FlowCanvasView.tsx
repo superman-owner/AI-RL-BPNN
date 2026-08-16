@@ -34,7 +34,7 @@ const INITIAL_NODES: Node[] = [
       timeframe: 'M15',
       symbol: 'XAUUSD',
       bars_count: '10,000',
-      execution: { status: 'passed', detail: 'Strategy Feed: XAUUSD M15 (10K Bars)' },
+      execution: { status: 'passed', detail: 'Strategy Feed: XAUUSD M15' },
     },
   },
   {
@@ -46,7 +46,7 @@ const INITIAL_NODES: Node[] = [
       vol_window: 10,
       sma_period: 20,
       metric: 'ATR Normalized',
-      execution: { status: 'passed', detail: 'ATR Filter: σ=0.0018 (Stationary)' },
+      execution: { status: 'passed', detail: 'ATR Filter: 0.0018' },
     },
   },
   {
@@ -56,10 +56,10 @@ const INITIAL_NODES: Node[] = [
     data: {
       nodeType: 'fc1_dense_expansion',
       units: '64',
-      activation: 'LeakyReLU (alpha=0.1)',
-      weight_init: 'Kaiming Normal (He)',
+      activation: 'LeakyReLU',
+      weight_init: 'Kaiming Normal',
       use_bias: true,
-      execution: { status: 'passed', detail: 'FC1 Linear Expansion: [6, 64]' },
+      execution: { status: 'passed', detail: 'FC1 Linear Expansion: 6 to 64' },
     },
   },
   {
@@ -70,7 +70,7 @@ const INITIAL_NODES: Node[] = [
       nodeType: 'spatial_dropout',
       rate: 0.15,
       mode: 'Standard Dropout',
-      execution: { status: 'passed', detail: 'Dropout Active: p=0.15' },
+      execution: { status: 'passed', detail: 'Dropout Active: 0.15' },
     },
   },
   {
@@ -80,9 +80,9 @@ const INITIAL_NODES: Node[] = [
     data: {
       nodeType: 'fc2_bottleneck_synthesizer',
       units: '32',
-      activation: 'LeakyReLU (alpha=0.1)',
-      residual: 'Enable x + F(x)',
-      execution: { status: 'passed', detail: 'FC2 Bottleneck: [64, 32] + Residual' },
+      activation: 'LeakyReLU',
+      residual: 'Enable',
+      execution: { status: 'passed', detail: 'FC2 Bottleneck: 64 to 32' },
     },
   },
   {
@@ -93,7 +93,7 @@ const INITIAL_NODES: Node[] = [
       nodeType: 'friction_spread_cost',
       spread_pip: 0.15,
       commission: 0.00,
-      execution: { status: 'passed', detail: 'Friction Adjusted: Spread 0.15 pips' },
+      execution: { status: 'passed', detail: 'Friction Adjusted: Spread 0.15' },
     },
   },
   {
@@ -102,9 +102,9 @@ const INITIAL_NODES: Node[] = [
     position: { x: 1580, y: 160 },
     data: {
       nodeType: 'fc3_policy_action_head',
-      classes: '3 (BUY, HOLD, SELL)',
+      classes: '3',
       entropy_beta: 0.08,
-      execution: { status: 'passed', detail: 'Policy Softmax: 3 Actions (β=0.08)' },
+      execution: { status: 'passed', detail: 'Policy Softmax: 3 Actions' },
     },
   },
   {
@@ -113,7 +113,7 @@ const INITIAL_NODES: Node[] = [
     position: { x: 1880, y: 160 },
     data: {
       nodeType: 'onnx_mt5_compiler',
-      export_mode: 'TorchScript Standalone (.onnx)',
+      export_mode: 'TorchScript Standalone',
       target_folder: 'MQL5/Files/',
       opset: 14,
       execution: { status: 'passed', detail: 'Compiled ONNX Standalone Ready' },

@@ -101,12 +101,9 @@ export const NODE_DEFS: Record<string, NodeDef> = {
       {
         key: 'encoding',
         label: 'Position Encoding',
-        default: 'Discrete (-1, 0, +1)',
+        default: 'Discrete',
         type: 'select',
-        options: [
-          'Discrete (-1, 0, +1)',
-          'Continuous Lot Size',
-        ],
+        options: ['Discrete', 'Continuous'],
       },
     ],
     hasInput: false,
@@ -122,7 +119,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
     fields: [
       {
         key: 'units',
-        label: 'Neuron Count (Units)',
+        label: 'Neuron Count',
         default: '64',
         type: 'select',
         options: ['32', '64', '128'],
@@ -130,16 +127,16 @@ export const NODE_DEFS: Record<string, NodeDef> = {
       {
         key: 'activation',
         label: 'Activation Function',
-        default: 'LeakyReLU (alpha=0.1)',
+        default: 'LeakyReLU',
         type: 'select',
-        options: ['LeakyReLU (alpha=0.1)', 'GELU', 'ELU', 'ReLU', 'Mish'],
+        options: ['LeakyReLU', 'GELU', 'ELU', 'ReLU', 'Mish'],
       },
       {
         key: 'weight_init',
         label: 'Weight Initialization',
-        default: 'Kaiming Normal (He)',
+        default: 'Kaiming Normal',
         type: 'select',
-        options: ['Kaiming Normal (He)', 'Xavier Uniform', 'Orthogonal'],
+        options: ['Kaiming Normal', 'Xavier Uniform', 'Orthogonal'],
       },
       { key: 'use_bias', label: 'Use Bias', default: true, type: 'boolean' },
     ],
@@ -154,7 +151,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
     group: 'regularization',
     label: 'Spatial Dropout Node',
     fields: [
-      { key: 'rate', label: 'Dropout Rate (p)', default: 0.15, type: 'number' },
+      { key: 'rate', label: 'Dropout Rate', default: 0.15, type: 'number' },
       {
         key: 'mode',
         label: 'Dropout Mode',
@@ -177,7 +174,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
         type: 'select',
         options: ['LayerNorm', 'RMSNorm', 'None'],
       },
-      { key: 'eps', label: 'Epsilon (ε)', default: '1e-5', type: 'string' },
+      { key: 'eps', label: 'Epsilon', default: '1e-5', type: 'string' },
     ],
     hasInput: true,
     hasOutput: true,
@@ -186,7 +183,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
     group: 'regularization',
     label: 'L2 Weight Decay Regularizer Node',
     fields: [
-      { key: 'decay', label: 'Weight Decay (λ)', default: '1e-4', type: 'string' },
+      { key: 'decay', label: 'Weight Decay', default: '1e-4', type: 'string' },
     ],
     hasInput: true,
     hasOutput: true,
@@ -210,7 +207,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
     fields: [
       {
         key: 'units',
-        label: 'Neuron Count (Units)',
+        label: 'Neuron Count',
         default: '32',
         type: 'select',
         options: ['16', '32', '64'],
@@ -218,16 +215,16 @@ export const NODE_DEFS: Record<string, NodeDef> = {
       {
         key: 'activation',
         label: 'Activation Function',
-        default: 'LeakyReLU (alpha=0.1)',
+        default: 'LeakyReLU',
         type: 'select',
-        options: ['LeakyReLU (alpha=0.1)', 'GELU', 'Tanh'],
+        options: ['LeakyReLU', 'GELU', 'Tanh'],
       },
       {
         key: 'residual',
-        label: 'Residual Connection (Skip Layer)',
-        default: 'Enable x + F(x)',
+        label: 'Residual Connection',
+        default: 'Enable',
         type: 'select',
-        options: ['Enable x + F(x)', 'Disable'],
+        options: ['Enable', 'Disable'],
       },
     ],
     hasInput: true,
@@ -241,8 +238,8 @@ export const NODE_DEFS: Record<string, NodeDef> = {
     group: 'reward',
     label: 'Friction Cost & Spread Node',
     fields: [
-      { key: 'spread_pip', label: 'Spread (Pips)', default: 0.15, type: 'number' },
-      { key: 'commission', label: 'Commission (USD/Lot)', default: 0.00, type: 'number' },
+      { key: 'spread_pip', label: 'Spread', default: 0.15, type: 'number' },
+      { key: 'commission', label: 'Commission', default: 0.00, type: 'number' },
     ],
     hasInput: true,
     hasOutput: true,
@@ -251,7 +248,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
     group: 'reward',
     label: 'Anti-Inactivity & Opportunity Cost Node',
     fields: [
-      { key: 'idle_penalty', label: 'Idle Penalty (λ)', default: -0.0005, type: 'number' },
+      { key: 'idle_penalty', label: 'Idle Penalty', default: -0.0005, type: 'number' },
       { key: 'opp_cost_multiplier', label: 'Opportunity Cost Multiplier', default: '0.50x', type: 'string' },
     ],
     hasInput: true,
@@ -268,10 +265,10 @@ export const NODE_DEFS: Record<string, NodeDef> = {
       {
         key: 'classes',
         label: 'Output Classes',
-        default: '3 (BUY, HOLD, SELL)',
+        default: '3',
         type: 'string',
       },
-      { key: 'entropy_beta', label: 'Entropy Regularization Bonus (β)', default: 0.08, type: 'number' },
+      { key: 'entropy_beta', label: 'Entropy Regularization Bonus', default: 0.08, type: 'number' },
     ],
     hasInput: true,
     hasOutput: true,
@@ -283,9 +280,9 @@ export const NODE_DEFS: Record<string, NodeDef> = {
       {
         key: 'export_mode',
         label: 'Export Mode',
-        default: 'TorchScript Standalone (.onnx)',
+        default: 'TorchScript Standalone',
         type: 'select',
-        options: ['TorchScript Standalone (.onnx)'],
+        options: ['TorchScript Standalone'],
       },
       {
         key: 'target_folder',
