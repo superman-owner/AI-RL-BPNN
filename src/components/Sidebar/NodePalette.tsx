@@ -70,11 +70,11 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
       className="w-[290px] h-full flex flex-col flex-shrink-0 bg-[#08080c]/98 border-r border-white/[0.08] text-[#c7c7cc] select-none z-20 font-sans"
     >
       {/* 1.  Apple macOS Header & Spotlight Search */}
-      <div className="px-3.5 pt-3.5 pb-2.5 border-b border-white/[0.06] bg-[#0c0c14]/90 flex-shrink-0">
-        <div className="flex justify-between items-center mb-3 px-1">
-          <div className="flex items-center gap-2">
-            <Sliders size={14} className="text-[#0a84ff]" />
-            <span className="text-[13px] font-bold text-white tracking-tight">
+      <div className="px-4 pt-4 pb-3.5 border-b border-white/[0.06] bg-[#0c0c14]/90 flex-shrink-0">
+        <div className="flex justify-between items-center mb-3.5 px-0.5">
+          <div className="flex items-center gap-2.5">
+            <Sliders size={15} className="text-[#0a84ff]" />
+            <span className="text-[13.5px] font-bold text-white tracking-tight">
               RL Hyperparameters
             </span>
           </div>
@@ -95,7 +95,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search parameters & modules..."
             style={{ paddingLeft: '32px' }}
-            className="w-full h-[30px] bg-white/[0.05] border border-white/[0.08] hover:border-white/20 focus:border-[#0a84ff] rounded-[7px] text-[12px] text-white placeholder-[#71717a] pr-3 py-1 outline-none transition-colors"
+            className="w-full h-[32px] bg-white/[0.05] border border-white/[0.08] hover:border-white/20 focus:border-[#0a84ff] rounded-[7px] text-[12px] text-white placeholder-[#71717a] pr-3 py-1 outline-none transition-colors"
           />
         </div>
       </div>
