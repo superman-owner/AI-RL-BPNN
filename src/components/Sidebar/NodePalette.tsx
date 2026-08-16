@@ -516,7 +516,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                 style={{ cursor: 'var(--mac-cursor-default)' }}
                 className={`group py-1 px-1 rounded-md flex items-center justify-between select-none transition-colors duration-150 ${
                   isLight
-                    ? 'hover:text-[#111827] text-[#4b5563]'
+                    ? 'hover:text-[#0071e3] text-[#111827]'
                     : 'hover:text-white text-[#9ca3af]'
                 }`}
               >
@@ -589,12 +589,13 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                           transition: 'color 0.15s ease',
                           backgroundColor: 'transparent',
                           boxShadow: 'none',
+                          border: 'none',
                           color: isNodeHovered
-                            ? (isLight ? '#0071e3' : '#0a84ff')
-                            : (isLight ? '#6b7280' : '#9ca3af'),
+                            ? (isLight ? '#0071e3' : '#ffffff')
+                            : (isLight ? '#111827' : '#9ca3af'),
                         }}
                       >
-                        {/* Left: Crisp Solid Bullet Point with 14px Capsule Clearance */}
+                        {/* Left: Crisp Solid Bullet Point with 14px Clearance */}
                         <div style={{ display: 'flex', alignItems: 'center', gap: '9px', minWidth: 0, flex: 1 }}>
                           <span
                             style={{
@@ -602,7 +603,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                               height: '5.5px',
                               borderRadius: '50%',
                               flexShrink: 0,
-                              backgroundColor: isNodeHovered ? (isLight ? '#0071e3' : '#0a84ff') : group.color,
+                              backgroundColor: isNodeHovered ? (isLight ? '#0071e3' : '#ffffff') : group.color,
                               transition: 'background-color 0.15s ease',
                             }}
                           />
@@ -621,14 +622,14 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                           </span>
                         </div>
 
-                        {/* Right: Subtle Add Indicator with 12px Capsule Clearance */}
+                        {/* Right: Subtle Add Indicator with 12px Clearance */}
                         <Plus
                           size={13}
                           style={{
                             flexShrink: 0,
                             marginLeft: '6px',
                             opacity: isNodeHovered ? 1 : 0,
-                            color: isLight ? '#0071e3' : '#0a84ff',
+                            color: isLight ? '#0071e3' : '#ffffff',
                             transition: 'opacity 0.15s ease',
                           }}
                         />
