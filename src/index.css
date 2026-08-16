@@ -2,14 +2,16 @@
 @import "@xyflow/react/dist/style.css";
 
 /* ==========================================================================
-    Authentic iOS App Icon & Home Screen Design System
-   Pure Minimalism, Iconic Squircles, and SF Pro Typography
+    Authentic iPhone iOS Design System: SF Pro Text Medium & Tabular Numbers
+   Clean Minimalism, Iconic iOS Squircles, and Apple Typography
    ========================================================================== */
 
 :root {
   color-scheme: dark;
-  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
-  --font-mono: "SF Mono", Menlo, Monaco, Consolas, monospace;
+  --font-apple-text: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "SF Pro", "Inter", -apple-system, sans-serif;
+  --font-apple-numbers: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro", "Inter", sans-serif;
+  --font-sans: var(--font-apple-text);
+  --font-mono: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro", "Inter", "JetBrains Mono", monospace;
 }
 
 * {
@@ -18,6 +20,8 @@
   padding: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "tnum" 1, "cv01" 1, "cv02" 1;
 }
 
 html, body, #root {
@@ -27,9 +31,22 @@ html, body, #root {
   padding: 0;
   overflow: hidden;
   background-color: #000000;
-  font-family: var(--font-sans);
+  font-family: var(--font-apple-text);
+  font-weight: 500; /* iPhone Text Medium standard */
   color: #ffffff;
-  letter-spacing: -0.012em;
+  letter-spacing: -0.015em;
+  font-variant-numeric: tabular-nums;
+}
+
+/*  Number & Metric typography utility classes */
+.font-num,
+.tabular-nums,
+[data-value],
+.metric-value {
+  font-family: var(--font-apple-numbers) !important;
+  font-variant-numeric: tabular-nums !important;
+  font-feature-settings: "tnum" 1, "zero" 1 !important;
+  letter-spacing: -0.02em !important;
 }
 
 /*  Disable default React Flow bounding-box outlines & Hide watermark */
