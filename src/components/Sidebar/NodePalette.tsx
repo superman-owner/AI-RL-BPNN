@@ -100,8 +100,8 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
         </div>
       </div>
 
-      {/* 2.  Apple Mac Mail / Finder Sidebar List (space-y-6: 24px between groups) */}
-      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar px-3.5 py-4 space-y-6">
+      {/* 2.  Apple Mac Mail / Finder Sidebar List (space-y-[36px]: +50% Section Gap = 36px) */}
+      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar px-3.5 py-4 space-y-[36px]">
         {GROUPS.map((group) => {
           const allNodes = nodesByGroup(group.id);
           const matchingNodes = allNodes.filter(
@@ -118,7 +118,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
               {/*  Section Header (Muted Gray -> Pure White on Hover, No Frame) */}
               <div
                 onClick={() => toggleGroup(group.id)}
-                className="group px-1 py-1.5 flex items-center justify-between cursor-pointer transition-colors"
+                className="group px-1 py-1 flex items-center justify-between cursor-pointer transition-colors"
               >
                 <div className="flex items-center gap-2.5 min-w-0 flex-1">
                   {/* Rotating Chevron */}
@@ -144,9 +144,9 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
                 </div>
               </div>
 
-              {/*  Child Items (mt-2: gap under header, h-[34px] row height) */}
+              {/*  Child Items (h-[18px]: -50% Row Height, mt-2 gap) */}
               {isExpanded && (
-                <div className="mt-2 space-y-1 pl-4">
+                <div className="mt-2 space-y-1.5 pl-4">
                   {matchingNodes.map((node) => {
                     const isNodeHovered = hoveredNode === node.type;
 
@@ -158,19 +158,19 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
                         onMouseEnter={() => setHoveredNode(node.type)}
                         onMouseLeave={() => setHoveredNode(null)}
                         title="Drag onto canvas to add module"
-                        className="h-[34px] px-1 flex items-center justify-between cursor-grab transition-colors"
+                        className="h-[18px] px-1 flex items-center justify-between cursor-grab transition-colors"
                       >
                         {/* Left: Mid Dot (·) + Label */}
-                        <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <div className="flex items-center gap-2.5 min-w-0 flex-1">
                           <span
-                            className={`text-[18px] font-bold leading-none select-none transition-colors flex-shrink-0 ${
+                            className={`text-[15px] font-bold leading-none select-none transition-colors flex-shrink-0 ${
                               isNodeHovered ? 'text-white' : 'text-[#71717a]'
                             }`}
                           >
                             ·
                           </span>
                           <span
-                            className={`text-[13px] tracking-tight truncate leading-tight transition-colors ${
+                            className={`text-[12.5px] tracking-tight truncate leading-none transition-colors ${
                               isNodeHovered ? 'font-medium text-white' : 'font-normal text-[#8e8e93]'
                             }`}
                           >
@@ -180,7 +180,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
 
                         {/* Right: Subtle Add Indicator */}
                         <Plus
-                          size={12}
+                          size={11}
                           className={`flex-shrink-0 transition-colors ${
                             isNodeHovered ? 'text-white' : 'text-transparent'
                           }`}
