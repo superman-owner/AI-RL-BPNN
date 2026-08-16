@@ -141,7 +141,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
         </div>
 
         {/* Bottom: Settings Button */}
-        <div className="w-full flex justify-center pt-2 border-t border-white/[0.06]">
+        <div className="w-full flex justify-center pt-2">
           <button
             onClick={onOpenSettings}
             title="Settings"
@@ -372,8 +372,22 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
         })}
       </div>
 
-      {/* 3.  macOS Footer */}
-      <div className="px-4 py-3 border-t border-white/[0.06] bg-[#0c0c14]/90 flex items-center justify-between text-xs text-[#86868b] flex-shrink-0">
+      {/* 3.  macOS Footer (Seamless, No Border, Settings 10px Left Offset) */}
+      <div
+        style={{
+          paddingTop: '10px',
+          paddingBottom: '12px',
+          paddingLeft: '10px',
+          paddingRight: '14px',
+          borderTop: 'none',
+          backgroundColor: 'transparent',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexShrink: 0,
+        }}
+        className="text-xs text-[#86868b]"
+      >
         <button
           onClick={onOpenSettings}
           title="Open System & Quant Settings"
