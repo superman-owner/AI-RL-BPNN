@@ -217,6 +217,8 @@ interface InspectorTextFieldProps {
   type?: 'string' | 'number' | 'boolean' | 'select';
   options?: string[];
   onChange: (val: string | number | boolean) => void;
+  isOpen?: boolean;
+  onToggleOpen?: (open: boolean) => void;
 }
 
 const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
@@ -226,9 +228,10 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
   type,
   options,
   onChange,
+  isOpen = false,
+  onToggleOpen,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
   const triggerButtonRef = useRef<HTMLButtonElement>(null);
   const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({});
 
@@ -265,28 +268,19 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
   const toggleDropdown = () => {
     if (!isOpen) {
       updateMenuPosition();
-      setIsOpen(true);
+      onToggleOpen?.(true);
     } else {
-      setIsOpen(false);
+      onToggleOpen?.(false);
     }
   };
 
-  // Close dropdown on click outside or scroll
+  // Close dropdown on window scroll
   useEffect(() => {
     if (!isOpen) return;
-    const handleOutsideClick = (e: MouseEvent | PointerEvent) => {
-      if (triggerButtonRef.current && triggerButtonRef.current.contains(e.target as HTMLElement)) {
-        return;
-      }
-      setIsOpen(false);
-    };
-    window.addEventListener('pointerdown', handleOutsideClick);
-    window.addEventListener('scroll', () => setIsOpen(false), true);
-    return () => {
-      window.removeEventListener('pointerdown', handleOutsideClick);
-      window.removeEventListener('scroll', () => setIsOpen(false), true);
-    };
-  }, [isOpen]);
+    const handleScroll = () => onToggleOpen?.(false);
+    window.addEventListener('scroll', handleScroll, true);
+    return () => window.removeEventListener('scroll', handleScroll, true);
+  }, [isOpen, onToggleOpen]);
 
   //  Frameless Apple Settings Toggle Switch (with explicit 10px spacing)
   if (isBoolean) {
@@ -341,7 +335,7 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
         {label}
       </label>
 
-      {/*  macOS Apple Dropdown Select (Reduced 5px to h-[25px], 10px Left Padding) */}
+      {/*  macOS Apple Dropdown Select (Single-Open Panel with Full Backdrop Dismiss) */}
       {isSelect ? (
         <div className="relative w-full">
           <button
@@ -368,44 +362,64 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
             <LucideIcons.ChevronsUpDown size={12} className="text-white/50 flex-shrink-0 ml-1.5" />
           </button>
 
-          {/*  macOS Floating Dark Glass Menu Portal (Never Clipped) */}
+          {/*  macOS Floating Dark Glass Menu Portal with Backdrop */}
           {isOpen &&
             createPortal(
-              <div
-                style={menuStyle}
-                className="custom-scrollbar nodrag nopan select-none"
-                onPointerDown={(e) => e.stopPropagation()}
-                onMouseDown={(e) => e.stopPropagation()}
-              >
-                {selectOptions.map((opt) => {
-                  const isSelected = opt === (strVal || selectOptions[0]);
-                  return (
-                    <div
-                      key={opt}
-                      onClick={() => {
-                        onChange(opt);
-                        setIsOpen(false);
-                      }}
-                      style={{
-                        fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
-                        paddingLeft: '8px',
-                        paddingRight: '10px',
-                        height: '28px',
-                      }}
-                      className={`flex items-center gap-2 rounded-[5px] text-[12px] cursor-pointer transition-colors select-none ${
-                        isSelected
-                          ? 'bg-[#0a84ff] text-white font-medium shadow-sm'
-                          : 'text-[#e5e5ea] hover:bg-white/[0.08] hover:text-white font-normal'
-                      }`}
-                    >
-                      <span className="w-3.5 flex items-center justify-center flex-shrink-0">
-                        {isSelected && <LucideIcons.Check size={12} strokeWidth={2.5} className="text-white" />}
-                      </span>
-                      <span className="truncate">{opt}</span>
-                    </div>
-                  );
-                })}
-              </div>,
+              <>
+                {/* Transparent Click-Outside Overlay to dismiss dropdown anywhere */}
+                <div
+                  style={{
+                    position: 'fixed',
+                    inset: 0,
+                    zIndex: 999998,
+                    backgroundColor: 'transparent',
+                    cursor: 'default',
+                  }}
+                  onPointerDown={(e) => {
+                    e.stopPropagation();
+                    onToggleOpen?.(false);
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onToggleOpen?.(false);
+                  }}
+                />
+                <div
+                  style={menuStyle}
+                  className="custom-scrollbar nodrag nopan select-none"
+                  onPointerDown={(e) => e.stopPropagation()}
+                  onMouseDown={(e) => e.stopPropagation()}
+                >
+                  {selectOptions.map((opt) => {
+                    const isSelected = opt === (strVal || selectOptions[0]);
+                    return (
+                      <div
+                        key={opt}
+                        onClick={() => {
+                          onChange(opt);
+                          onToggleOpen?.(false);
+                        }}
+                        style={{
+                          fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
+                          paddingLeft: '8px',
+                          paddingRight: '10px',
+                          height: '28px',
+                        }}
+                        className={`flex items-center gap-2 rounded-[5px] text-[12px] cursor-pointer transition-colors select-none ${
+                          isSelected
+                            ? 'bg-[#0a84ff] text-white font-medium shadow-sm'
+                            : 'text-[#e5e5ea] hover:bg-white/[0.08] hover:text-white font-normal'
+                        }`}
+                      >
+                        <span className="w-3.5 flex items-center justify-center flex-shrink-0">
+                          {isSelected && <LucideIcons.Check size={12} strokeWidth={2.5} className="text-white" />}
+                        </span>
+                        <span className="truncate">{opt}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>,
               document.body
             )}
         </div>
@@ -550,6 +564,8 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
     window.addEventListener('pointerup', onPointerUp, { once: true });
   };
 
+  const [activeDropdownKey, setActiveDropdownKey] = useState<string | null>(null);
+
   const nodeType = node.data?.nodeType as string;
   const def = NODE_DEFS[nodeType];
   const group = GROUPS.find((g) => g.id === def?.group) || { label: 'Node', color: '#007aff' };
@@ -662,6 +678,8 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
               type={f.type}
               options={f.options}
               onChange={(newVal) => updateNodeData(node.id, f.key, newVal)}
+              isOpen={activeDropdownKey === f.key}
+              onToggleOpen={(open) => setActiveDropdownKey(open ? f.key : null)}
             />
           );
         })}
