@@ -178,49 +178,62 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
       ghostEl.style.left = '0px';
       ghostEl.style.pointerEvents = 'none';
       ghostEl.style.zIndex = '9999999';
-      ghostEl.style.padding = '7px 14px 7px 12px';
-      ghostEl.style.borderRadius = '12px';
-      ghostEl.style.backgroundColor = isLight ? '#ffffff' : '#14141c';
-      ghostEl.style.color = isLight ? '#111827' : '#ffffff';
-      ghostEl.style.border = isLight ? '1.5px solid #0071e3' : '1.5px solid rgba(0, 122, 255, 0.6)';
+      ghostEl.style.padding = '6px 12px 6px 10px';
+      ghostEl.style.borderRadius = '18px';
+      ghostEl.style.backgroundColor = isLight ? 'rgba(255, 255, 255, 0.94)' : 'rgba(26, 26, 34, 0.94)';
+      ghostEl.style.backdropFilter = 'blur(24px)';
+      (ghostEl.style as any).webkitBackdropFilter = 'blur(24px)';
+      ghostEl.style.color = isLight ? '#1d1d1f' : '#f5f5f7';
+      ghostEl.style.border = isLight ? '1px solid rgba(0, 0, 0, 0.12)' : '1px solid rgba(255, 255, 255, 0.18)';
       ghostEl.style.boxShadow = isLight
-        ? '0 12px 36px rgba(0, 113, 227, 0.25), 0 2px 8px rgba(0,0,0,0.08)'
-        : '0 16px 40px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 122, 255, 0.4)';
-      ghostEl.style.fontFamily = '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif';
-      ghostEl.style.fontSize = '12.5px';
+        ? '0 14px 34px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.05)'
+        : '0 18px 44px rgba(0, 0, 0, 0.8), 0 0 1px rgba(255, 255, 255, 0.2)';
+      ghostEl.style.fontFamily = '-apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, sans-serif';
+      ghostEl.style.fontSize = '12px';
       ghostEl.style.fontWeight = '600';
+      ghostEl.style.letterSpacing = '-0.01em';
       ghostEl.style.display = 'flex';
       ghostEl.style.alignItems = 'center';
       ghostEl.style.gap = '7px';
       // 🎯 Exact Center Alignment: The grabbing hand sits precisely in the center of the Visual
       ghostEl.style.transform = `translate3d(${clientX}px, ${clientY}px, 0) translate(-50%, -50%)`;
 
+      // Color orb
       const dot = document.createElement('span');
       dot.style.width = '7px';
       dot.style.height = '7px';
       dot.style.borderRadius = '50%';
       dot.style.backgroundColor = color || '#0071e3';
       dot.style.boxShadow = `0 0 6px ${color || '#0071e3'}`;
+      dot.style.flexShrink = '0';
       ghostEl.appendChild(dot);
 
+      // Node label
       const text = document.createElement('span');
       text.textContent = label;
-      text.style.marginRight = '3px';
+      text.style.whiteSpace = 'nowrap';
+      text.style.marginRight = '2px';
       ghostEl.appendChild(text);
 
-      const addBadge = document.createElement('span');
-      addBadge.textContent = '+';
-      addBadge.style.width = '16px';
-      addBadge.style.height = '16px';
+      //  Authentic Apple SF-Symbol SVG Plus Badge (Pixel-Perfect Alignment)
+      const addBadge = document.createElement('div');
+      addBadge.style.width = '15px';
+      addBadge.style.height = '15px';
+      addBadge.style.minWidth = '15px';
+      addBadge.style.minHeight = '15px';
       addBadge.style.borderRadius = '50%';
-      addBadge.style.backgroundColor = '#34c759';
-      addBadge.style.color = '#ffffff';
-      addBadge.style.fontSize = '12px';
-      addBadge.style.fontWeight = 'bold';
+      addBadge.style.background = isLight
+        ? 'linear-gradient(180deg, #34c759 0%, #28a745 100%)'
+        : 'linear-gradient(180deg, #30d158 0%, #248a3d 100%)';
       addBadge.style.display = 'flex';
       addBadge.style.alignItems = 'center';
       addBadge.style.justifyContent = 'center';
-      addBadge.style.boxShadow = '0 2px 6px rgba(52, 199, 89, 0.4)';
+      addBadge.style.flexShrink = '0';
+      addBadge.style.border = isLight ? '0.5px solid rgba(0, 0, 0, 0.08)' : '0.5px solid rgba(255, 255, 255, 0.3)';
+      addBadge.style.boxShadow = isLight
+        ? '0 1.5px 4px rgba(52, 199, 89, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.4)'
+        : '0 2px 6px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.35)';
+      addBadge.innerHTML = `<svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"><line x1="5" y1="1.4" x2="5" y2="8.6"></line><line x1="1.4" y1="5" x2="8.6" y2="5"></line></svg>`;
       ghostEl.appendChild(addBadge);
 
       document.body.appendChild(ghostEl);
