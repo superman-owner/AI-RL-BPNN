@@ -22,7 +22,10 @@ import {
 } from 'lucide-react';
 
 // Apple SF Symbols Icon Mapping (Clean, authentic Apple Blue & System Colors)
-const GROUP_ICONS: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+const GROUP_ICONS: Record<
+  string,
+  React.ComponentType<{ size?: number; className?: string; color?: string; style?: React.CSSProperties }>
+> = {
   stage1: Database,
   stage2: SlidersHorizontal,
   stage3: Brain,
@@ -186,10 +189,11 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
                     }`}
                   />
 
-                  {/* SF Symbol on Main Header (Gray -> White) */}
+                  {/* SF Symbol on Main Header (Distinct Group Color) */}
                   <GroupIcon
                     size={14}
-                    className="text-[#86868b] group-hover:text-white transition-colors flex-shrink-0"
+                    style={{ color: group.color }}
+                    className="flex-shrink-0 transition-transform duration-150 group-hover:scale-110"
                   />
 
                   {/* Section Label (Gray -> White) */}
@@ -221,9 +225,8 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
                         {/* Left: Mid Dot (·) directly aligned at 45px mark under Header text */}
                         <div className="flex items-center gap-2 min-w-0 flex-1">
                           <span
-                            className={`text-[15px] font-bold leading-none select-none transition-colors flex-shrink-0 ${
-                              isNodeHovered ? 'text-white' : 'text-[#71717a]'
-                            }`}
+                            style={{ color: isNodeHovered ? '#ffffff' : group.color }}
+                            className="text-[15px] font-bold leading-none select-none transition-colors flex-shrink-0"
                           >
                             ·
                           </span>
