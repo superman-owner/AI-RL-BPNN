@@ -30,7 +30,7 @@ export const TopNav: React.FC<TopNavProps> = ({
   onOpenMT5Deploy,
 }) => {
   return (
-    <header className="h-12 w-full vision-glass apple-specular border-b border-white/[0.08] px-4 flex items-center gap-4 text-slate-200 z-30 select-none overflow-x-auto">
+    <header className="h-12 w-full vision-glass apple-specular border-b border-white/[0.08] px-4 flex items-center gap-4 text-slate-200 z-30 select-none overflow-x-auto no-scrollbar">
       {/* Left: macOS Traffic Lights + Brand + Frameless Glowing View Switcher */}
       <div className="flex items-center gap-4 flex-shrink-0">
         <div className="flex items-center gap-1.5 pr-2">

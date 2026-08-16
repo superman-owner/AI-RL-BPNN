@@ -430,7 +430,7 @@ export const NodeInspector: React.FC<NodeInspectorProps> = ({
                 Mathematical Kernel
               </span>
               <div
-                className="rounded-2xl bg-black/50 font-mono text-xs text-emerald-400 border border-white/[0.08] overflow-x-auto leading-relaxed"
+                className="rounded-2xl bg-black/50 font-mono text-xs text-emerald-400 border border-white/[0.08] overflow-x-auto custom-scrollbar leading-relaxed"
                 style={{ padding: '16px 20px' }}
               >
                 {data.category === 'feature'

@@ -38,7 +38,7 @@ export const MT5DeployModal: React.FC<MT5DeployModalProps> = ({ isOpen, onClose 
             <div className="flex items-center justify-between mb-1.5 text-slate-300 font-semibold">
               <span>1. PyTorch ONNX Exporter (Python)</span>
             </div>
-            <pre className="p-3.5 bg-[#09090e] border border-white/[0.06] rounded-xl text-[11px] font-mono text-slate-300 overflow-x-auto leading-relaxed">
+            <pre className="p-3.5 bg-[#09090e] border border-white/[0.06] rounded-xl text-[11px] font-mono text-slate-300 overflow-x-auto custom-scrollbar leading-relaxed">
               {generatePythonOnnxScript()}
             </pre>
           </div>
@@ -47,7 +47,7 @@ export const MT5DeployModal: React.FC<MT5DeployModalProps> = ({ isOpen, onClose 
             <div className="flex items-center justify-between mb-1.5 text-slate-300 font-semibold">
               <span>2. Native MetaTrader 5 Expert Advisor (MQL5)</span>
             </div>
-            <pre className="p-3.5 bg-[#09090e] border border-white/[0.06] rounded-xl text-[11px] font-mono text-slate-300 overflow-x-auto leading-relaxed">
+            <pre className="p-3.5 bg-[#09090e] border border-white/[0.06] rounded-xl text-[11px] font-mono text-slate-300 overflow-x-auto custom-scrollbar leading-relaxed">
               {generateMql5SourceCode()}
             </pre>
           </div>
