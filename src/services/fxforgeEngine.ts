@@ -43,7 +43,71 @@ export interface QuantTelemetry {
   totalReward: number;
 }
 
+export interface RLTrainingConfig {
+  // 1. Data & Market
+  symbol: string;
+  primaryTimeframe: string;
+  contextTimeframe: string;
+  fractionalDiffOrder: number;
+
+  // 2. Friction & Execution
+  spreadMode: 'fixed' | 'dynamic';
+  spreadPips: number;
+  slippagePips: number;
+  commissionPerLot: number;
+  initialCapital: number;
+
+  // 3. Risk & Limits
+  maxDrawdownLimit: number; // %
+  takeProfitAtr: number;
+  stopLossAtr: number;
+  maxHoldingBars: number;
+  rewardMetric: 'sharpe' | 'sortino' | 'pnl';
+
+  // 4. Inactivity & Action
+  inactivityPenalty: number;
+  enableOppCostPenalty: boolean;
+  actionCooldown: number;
+
+  // 5. Anti-Overfitting & PPO
+  targetEpisodes: number;
+  learningRate: number;
+  entropyCoef: number;
+  discountFactor: number;
+  domainNoisePct: number;
+}
+
+export const DEFAULT_TRAINING_CONFIG: RLTrainingConfig = {
+  symbol: 'EURUSD',
+  primaryTimeframe: 'M15',
+  contextTimeframe: 'H4',
+  fractionalDiffOrder: 0.40,
+
+  spreadMode: 'fixed',
+  spreadPips: 1.2,
+  slippagePips: 0.5,
+  commissionPerLot: 3.5,
+  initialCapital: 100000,
+
+  maxDrawdownLimit: 10.0,
+  takeProfitAtr: 2.0,
+  stopLossAtr: 1.0,
+  maxHoldingBars: 32,
+  rewardMetric: 'sharpe',
+
+  inactivityPenalty: 0.0005,
+  enableOppCostPenalty: true,
+  actionCooldown: 1,
+
+  targetEpisodes: 10000,
+  learningRate: 0.0003,
+  entropyCoef: 0.02,
+  discountFactor: 0.97,
+  domainNoisePct: 1.5,
+};
+
 export class FXForgeEngine {
+  private config: RLTrainingConfig = { ...DEFAULT_TRAINING_CONFIG };
   private initialCapital: number = 100000;
   private currentEquity: number = 100000;
   private peakEquity: number = 100000;
@@ -191,16 +255,16 @@ export class FXForgeEngine {
     }
 
     // B. Spread Friction Penalty
-    const spreadPips = 0.00015; // 0.15 pips spread
+    const spreadPips = (this.config.spreadPips / 10000);
     const rSpread = isPositionFlip ? spreadPips * 10.0 * 100 : 0;
 
-    // C. Anti-Inactivity Penalty
-    const lambdaIdle = 0.0005 * 10.0;
+    // C. Anti-Inactivity Penalty (punish holding idle without market positioning)
+    const lambdaIdle = this.config.inactivityPenalty * 10.0;
     const rInactivity = targetPos === 0 ? lambdaIdle : 0;
 
     // D. Opportunity Cost Penalty (if remaining FLAT during strong market move > 0.15%)
     let rOppCost = 0;
-    if (targetPos === 0 && Math.abs(priceDeltaRatio) > 0.0015) {
+    if (this.config.enableOppCostPenalty && targetPos === 0 && Math.abs(priceDeltaRatio) > 0.0015) {
       rOppCost = 0.5 * Math.abs(priceDeltaRatio) * 10.0;
     }
 
@@ -266,6 +330,14 @@ export class FXForgeEngine {
 
   public getRewardHistory() {
     return [...this.history];
+  }
+
+  public getConfig(): RLTrainingConfig {
+    return { ...this.config };
+  }
+
+  public updateConfig(newConfig: Partial<RLTrainingConfig>): void {
+    this.config = { ...this.config, ...newConfig };
   }
 
   public getTelemetry(): QuantTelemetry {

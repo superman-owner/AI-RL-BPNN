@@ -1,23 +1,14 @@
 import React from 'react';
 import * as LucideIcons from 'lucide-react';
-import type { PipelineTemplate } from '../../data/templates';
 import type { QuantTelemetry, RLEnvironmentStep } from '../../services/fxforgeEngine';
 
 interface TopNavProps {
-  activeView: 'studio' | 'bpnn';
-  onViewChange: (view: 'studio' | 'bpnn') => void;
-  onSelectTemplate?: (template: PipelineTemplate) => void;
-  onOpenExportModal?: () => void;
-  onAutoLayout?: () => void;
-  onFitView?: () => void;
-  onClearFlow?: () => void;
-  nodeCount?: number;
+  isSidebarOpen?: boolean;
+  onToggleSidebar?: () => void;
   rlStatus?: 'running' | 'paused' | 'stopped';
   onStartRL?: () => void;
   onPauseRL?: () => void;
   onStopRL?: () => void;
-  isRLTraining?: boolean;
-  onToggleRLTraining?: () => void;
   rlTelemetry?: QuantTelemetry | null;
   rlLatestStep?: RLEnvironmentStep | null;
   onOpenMT5Deploy?: () => void;
@@ -25,8 +16,8 @@ interface TopNavProps {
 }
 
 export const TopNav: React.FC<TopNavProps> = ({
-  activeView,
-  onViewChange,
+  isSidebarOpen = true,
+  onToggleSidebar,
   rlStatus = 'running',
   onStartRL,
   onPauseRL,
@@ -37,7 +28,7 @@ export const TopNav: React.FC<TopNavProps> = ({
 }) => {
   return (
     <header className="h-12 w-full vision-glass apple-specular border-b border-white/[0.08] px-4 flex items-center gap-4 text-slate-200 z-30 select-none overflow-x-auto no-scrollbar">
-      {/* Left: macOS Traffic Lights + Brand + Frameless Glowing View Switcher */}
+      {/* Left: macOS Traffic Lights + Brand + Parameters Toggle */}
       <div className="flex items-center gap-4 flex-shrink-0">
         <div className="flex items-center gap-1.5 pr-2">
           <div className="w-3 h-3 rounded-full bg-[#ff5f56] border border-[#e0443e]/50 cursor-pointer hover:opacity-80 transition-opacity" />
@@ -53,31 +44,19 @@ export const TopNav: React.FC<TopNavProps> = ({
 
         <div className="h-3.5 w-[1px] bg-white/10" />
 
-        {/*  Pure Frameless Glowing View Switcher (No Capsules) */}
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => onViewChange('studio')}
-            className={`flex items-center gap-1.5 text-xs transition-all cursor-pointer ${
-              activeView === 'studio'
-                ? 'text-[#007aff] font-bold drop-shadow-[0_0_8px_rgba(0,122,255,0.7)]'
-                : 'text-white/50 hover:text-white font-medium'
-            }`}
-          >
-            <LucideIcons.Network size={13} />
-            <span>Flow DAG</span>
-          </button>
-          <button
-            onClick={() => onViewChange('bpnn')}
-            className={`flex items-center gap-1.5 text-xs transition-all cursor-pointer ${
-              activeView === 'bpnn'
-                ? 'text-[#0a84ff] font-bold drop-shadow-[0_0_8px_rgba(10,132,255,0.7)]'
-                : 'text-white/50 hover:text-white font-medium'
-            }`}
-          >
-            <LucideIcons.Brain size={13} />
-            <span>Live 3D BPNN</span>
-          </button>
-        </div>
+        {/*  RL Parameters Sidebar Toggle Button */}
+        <button
+          onClick={onToggleSidebar}
+          className={`flex items-center gap-1.5 text-xs transition-all cursor-pointer ${
+            isSidebarOpen
+              ? 'text-[#0a84ff] font-bold drop-shadow-[0_0_8px_rgba(10,132,255,0.7)]'
+              : 'text-white/60 hover:text-white font-medium'
+          }`}
+          title="Toggle RL Hyperparameters Sidebar"
+        >
+          <LucideIcons.Sliders size={13} />
+          <span>RL Parameters</span>
+        </button>
       </div>
 
       <div className="h-3.5 w-[1px] bg-white/10 flex-shrink-0" />
