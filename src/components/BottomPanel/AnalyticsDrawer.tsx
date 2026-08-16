@@ -725,7 +725,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
             >
               {/* MT5 Table Header */}
               <div className="h-8 bg-[#13131b] border-b border-white/[0.08] flex items-center text-xs font-semibold text-[#86868b] select-none flex-shrink-0">
-                <div className="w-[230px] pl-6 pr-4 border-r border-white/[0.08] flex items-center gap-1.5">
+                <div className="w-[230px] pl-[22px] pr-4 border-r border-white/[0.08] flex items-center gap-1.5">
                   <span>Time</span>
                 </div>
                 <div className="w-[160px] px-4 border-r border-white/[0.08] flex items-center">
@@ -796,7 +796,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                       className="flex items-center min-h-[26px] py-1 hover:bg-white/[0.04] transition-colors"
                     >
                       {/* Time Column with MT5 Bullet */}
-                      <div className="w-[230px] pl-6 pr-4 border-r border-white/[0.06] text-[#d1d1d6] flex items-center gap-2 flex-shrink-0">
+                      <div className="w-[230px] pl-[22px] pr-4 border-r border-white/[0.06] text-[#d1d1d6] flex items-center gap-2 flex-shrink-0">
                         <span className="text-[#86868b] text-[10px] select-none">•</span>
                         <span>{timeStr}</span>
                       </div>
