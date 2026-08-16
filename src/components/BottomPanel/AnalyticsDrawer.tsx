@@ -23,7 +23,7 @@ import { fxforgeEngine } from '../../services/fxforgeEngine';
 interface AnalyticsDrawerProps {
   logs: string[];
   isRunning: boolean;
-  onClearLogs: () => void;
+  onClearLogs?: () => void;
   rlTelemetry?: QuantTelemetry | null;
   latestStep?: RLEnvironmentStep | null;
 }
@@ -152,7 +152,6 @@ const MiniRadialGauge: React.FC<MiniRadialGaugeProps> = ({
 export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
   logs,
   isRunning,
-  onClearLogs,
   rlTelemetry,
   latestStep,
 }) => {
@@ -330,16 +329,6 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
           </div>
 
           <div className="h-3.5 w-[1px] bg-white/10 flex-shrink-0" />
-
-          {activeTab === 'logs' && (
-            <button
-              onClick={onClearLogs}
-              title="Clear Console"
-              className="p-1 rounded-lg hover:bg-white/[0.08] text-[#86868b] hover:text-white cursor-pointer"
-            >
-              <LucideIcons.Trash2 size={12} />
-            </button>
-          )}
 
           <button
             onClick={() => setIsMinimized(!isMinimized)}
