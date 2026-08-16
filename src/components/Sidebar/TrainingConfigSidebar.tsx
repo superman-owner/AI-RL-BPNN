@@ -19,7 +19,7 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
   onResetDefaults,
   isRunning = false,
 }) => {
-  const [activeAccordion, setActiveAccordion] = useState<string | null>('friction');
+  const [activeAccordion, setActiveAccordion] = useState<string | null>('data');
 
   const toggleAccordion = (id: string) => {
     setActiveAccordion(activeAccordion === id ? null : id);
@@ -74,21 +74,21 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
 
   return (
     <aside
-      className={`h-full bg-[#08080d]/95 backdrop-blur-xl border-r border-white/[0.08] flex flex-col transition-all duration-300 ease-in-out z-30 flex-shrink-0 select-none overflow-hidden ${
-        isOpen ? 'w-[330px]' : 'w-0'
+      className={`h-full bg-[#08080d]/98 border-r border-white/[0.08] flex flex-col transition-all duration-300 ease-in-out z-30 flex-shrink-0 select-none overflow-hidden ${
+        isOpen ? 'w-[320px]' : 'w-0'
       }`}
     >
-      {/*  Top Header (Frameless, Zero-Capsule) */}
-      <div className="h-12 px-4 border-b border-white/[0.08] flex items-center justify-between flex-shrink-0 bg-[#0c0c14]/80">
-        <div className="flex items-center gap-2.5">
-          <LucideIcons.Sliders size={14} className="text-[#0a84ff] drop-shadow-[0_0_8px_rgba(10,132,255,0.7)]" />
+      {/*  Top Header (Pure Flat Frameless) */}
+      <div className="h-12 px-4 border-b border-white/[0.08] flex items-center justify-between flex-shrink-0 bg-[#0c0c14]">
+        <div className="flex items-center gap-2">
+          <LucideIcons.Sliders size={14} className="text-[#0a84ff]" />
           <div>
             <h2 className="text-xs font-bold text-white tracking-wide">RL Hyperparameters</h2>
             <p className="text-[10px] text-[#86868b]">Deep PPO Agent Configuration</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <button
             onClick={onResetDefaults}
             title="Reset to Institutional Defaults"
@@ -98,22 +98,22 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
             <span>Reset</span>
           </button>
 
-          <div className="h-3 w-[1px] bg-white/10" />
+          <span className="text-white/20">|</span>
 
           <button
             onClick={onToggle}
             title="Collapse Sidebar"
-            className="text-[#86868b] hover:text-white transition-colors cursor-pointer p-0.5"
+            className="text-[#86868b] hover:text-white transition-colors cursor-pointer"
           >
             <LucideIcons.ChevronLeft size={14} />
           </button>
         </div>
       </div>
 
-      {/*  Preset Bar (Frameless Typography, Zero Pills) */}
-      <div className="px-4 py-2 border-b border-white/[0.06] bg-[#07070b] flex items-center justify-between flex-shrink-0">
+      {/*  Preset Bar (Pure Frameless Text Links) */}
+      <div className="px-4 py-2 border-b border-white/[0.06] bg-[#06060a] flex items-center justify-between flex-shrink-0 text-[11px]">
         <span className="text-[10px] font-medium text-[#636366]">Presets:</span>
-        <div className="flex items-center gap-3 text-[11px]">
+        <div className="flex items-center gap-3">
           <button
             onClick={() => applyPreset('scalping')}
             className="text-[#86868b] hover:text-white transition-colors cursor-pointer font-medium"
@@ -123,7 +123,7 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
           <span className="text-white/20">·</span>
           <button
             onClick={() => applyPreset('daytrading')}
-            className="text-[#0a84ff] font-semibold drop-shadow-[0_0_6px_rgba(10,132,255,0.6)] cursor-pointer"
+            className="text-[#0a84ff] font-bold drop-shadow-[0_0_6px_rgba(10,132,255,0.7)] cursor-pointer"
           >
             Day Trade
           </button>
@@ -137,14 +137,14 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
         </div>
       </div>
 
-      {/*  Scrollable Parameter Controls */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2.5">
+      {/*  Flat Frameless Parameter Sections */}
+      <div className="flex-1 overflow-y-auto custom-scrollbar px-4 py-1 divide-y divide-white/[0.08]">
         
         {/* SECTION 1: TRADING FRICTION & SPREAD */}
-        <div className="bg-[#0f0f18] border border-white/[0.08] rounded-xl overflow-hidden shadow-sm">
+        <div className="py-2.5">
           <button
             onClick={() => toggleAccordion('friction')}
-            className="w-full px-3.5 py-2.5 flex items-center justify-between text-left hover:bg-white/[0.02] transition-colors cursor-pointer"
+            className="w-full py-1 flex items-center justify-between text-left hover:text-white transition-colors cursor-pointer"
           >
             <div className="flex items-center gap-2 text-xs font-semibold text-white">
               <LucideIcons.Coins size={13} className="text-[#ffd60a]" />
@@ -159,7 +159,7 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
           </button>
 
           {activeAccordion === 'friction' && (
-            <div className="px-3.5 pb-3.5 pt-1 space-y-2.5 border-t border-white/[0.06] text-xs">
+            <div className="pt-2 pb-1 space-y-3 text-xs">
               <div>
                 <div className="flex justify-between items-center mb-1">
                   <label className="text-[11px] text-[#86868b]">Spread (Pips):</label>
@@ -172,11 +172,11 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
                   step="0.1"
                   value={config.spreadPips}
                   onChange={(e) => onUpdateConfig({ spreadPips: parseFloat(e.target.value) })}
-                  className="w-full accent-[#ffd60a] bg-white/10 h-1 rounded-full cursor-pointer"
+                  className="w-full accent-[#ffd60a] bg-white/10 h-1 cursor-pointer"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="text-[10px] text-[#86868b] block mb-1">Slippage (Pips)</label>
                   <input
@@ -186,7 +186,7 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
                     max="5.0"
                     value={config.slippagePips}
                     onChange={(e) => onUpdateConfig({ slippagePips: parseFloat(e.target.value) || 0 })}
-                    className="w-full bg-[#161622] border border-white/10 rounded-lg px-2.5 py-1 text-white font-mono text-xs focus:outline-none focus:border-[#007aff]"
+                    className="w-full bg-white/[0.04] border-b border-white/20 focus:border-[#007aff] px-2 py-1 text-white font-mono text-xs focus:outline-none"
                   />
                 </div>
                 <div>
@@ -198,7 +198,7 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
                     max="20"
                     value={config.commissionPerLot}
                     onChange={(e) => onUpdateConfig({ commissionPerLot: parseFloat(e.target.value) || 0 })}
-                    className="w-full bg-[#161622] border border-white/10 rounded-lg px-2.5 py-1 text-white font-mono text-xs focus:outline-none focus:border-[#007aff]"
+                    className="w-full bg-white/[0.04] border-b border-white/20 focus:border-[#007aff] px-2 py-1 text-white font-mono text-xs focus:outline-none"
                   />
                 </div>
               </div>
@@ -208,10 +208,10 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
                 <select
                   value={config.spreadMode}
                   onChange={(e) => onUpdateConfig({ spreadMode: e.target.value as 'fixed' | 'dynamic' })}
-                  className="w-full bg-[#161622] border border-white/10 rounded-lg px-2.5 py-1 text-white text-xs focus:outline-none focus:border-[#007aff] cursor-pointer"
+                  className="w-full bg-white/[0.04] border-b border-white/20 focus:border-[#007aff] px-2 py-1 text-white text-xs focus:outline-none cursor-pointer"
                 >
-                  <option value="fixed">Fixed Spread (Constant Pips)</option>
-                  <option value="dynamic">Dynamic Market Spread (Volatility-Adaptive)</option>
+                  <option value="fixed" className="bg-[#0c0c14]">Fixed Spread (Constant Pips)</option>
+                  <option value="dynamic" className="bg-[#0c0c14]">Dynamic Market Spread (Volatility-Adaptive)</option>
                 </select>
               </div>
             </div>
@@ -219,10 +219,10 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
         </div>
 
         {/* SECTION 2: RISK MANAGEMENT & LIMITS */}
-        <div className="bg-[#0f0f18] border border-white/[0.08] rounded-xl overflow-hidden shadow-sm">
+        <div className="py-2.5">
           <button
             onClick={() => toggleAccordion('risk')}
-            className="w-full px-3.5 py-2.5 flex items-center justify-between text-left hover:bg-white/[0.02] transition-colors cursor-pointer"
+            className="w-full py-1 flex items-center justify-between text-left hover:text-white transition-colors cursor-pointer"
           >
             <div className="flex items-center gap-2 text-xs font-semibold text-white">
               <LucideIcons.ShieldAlert size={13} className="text-[#ff453a]" />
@@ -237,7 +237,7 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
           </button>
 
           {activeAccordion === 'risk' && (
-            <div className="px-3.5 pb-3.5 pt-1 space-y-2.5 border-t border-white/[0.06] text-xs">
+            <div className="pt-2 pb-1 space-y-3 text-xs">
               <div>
                 <div className="flex justify-between items-center mb-1">
                   <label className="text-[11px] text-[#86868b]">Max Allowed Drawdown:</label>
@@ -252,12 +252,12 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
                   step="0.5"
                   value={config.maxDrawdownLimit}
                   onChange={(e) => onUpdateConfig({ maxDrawdownLimit: parseFloat(e.target.value) })}
-                  className="w-full accent-[#ff453a] bg-white/10 h-1 rounded-full cursor-pointer"
+                  className="w-full accent-[#ff453a] bg-white/10 h-1 cursor-pointer"
                 />
-                <p className="text-[9px] text-[#636366] mt-0.5">Early termination and penalty if drawdown threshold is breached</p>
+                <p className="text-[9px] text-[#636366] mt-0.5">Early termination & penalty if drawdown breached</p>
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="text-[10px] text-[#86868b] block mb-1">TP Barrier (× ATR)</label>
                   <input
@@ -267,7 +267,7 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
                     max="10.0"
                     value={config.takeProfitAtr}
                     onChange={(e) => onUpdateConfig({ takeProfitAtr: parseFloat(e.target.value) || 1.0 })}
-                    className="w-full bg-[#161622] border border-white/10 rounded-lg px-2.5 py-1 text-[#30d158] font-mono text-xs focus:outline-none focus:border-[#007aff]"
+                    className="w-full bg-white/[0.04] border-b border-white/20 focus:border-[#007aff] px-2 py-1 text-[#30d158] font-mono text-xs focus:outline-none"
                   />
                 </div>
                 <div>
@@ -279,7 +279,7 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
                     max="5.0"
                     value={config.stopLossAtr}
                     onChange={(e) => onUpdateConfig({ stopLossAtr: parseFloat(e.target.value) || 0.5 })}
-                    className="w-full bg-[#161622] border border-white/10 rounded-lg px-2.5 py-1 text-[#ff453a] font-mono text-xs focus:outline-none focus:border-[#007aff]"
+                    className="w-full bg-white/[0.04] border-b border-white/20 focus:border-[#007aff] px-2 py-1 text-[#ff453a] font-mono text-xs focus:outline-none"
                   />
                 </div>
               </div>
@@ -292,7 +292,7 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
                   max="128"
                   value={config.maxHoldingBars}
                   onChange={(e) => onUpdateConfig({ maxHoldingBars: parseInt(e.target.value, 10) || 32 })}
-                  className="w-full bg-[#161622] border border-white/10 rounded-lg px-2.5 py-1 text-white font-mono text-xs focus:outline-none focus:border-[#007aff]"
+                  className="w-full bg-white/[0.04] border-b border-white/20 focus:border-[#007aff] px-2 py-1 text-white font-mono text-xs focus:outline-none"
                 />
               </div>
 
@@ -301,11 +301,11 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
                 <select
                   value={config.rewardMetric}
                   onChange={(e) => onUpdateConfig({ rewardMetric: e.target.value as 'sharpe' | 'sortino' | 'pnl' })}
-                  className="w-full bg-[#161622] border border-white/10 rounded-lg px-2.5 py-1 text-white text-xs focus:outline-none focus:border-[#007aff] cursor-pointer"
+                  className="w-full bg-white/[0.04] border-b border-white/20 focus:border-[#007aff] px-2 py-1 text-white text-xs focus:outline-none cursor-pointer"
                 >
-                  <option value="sharpe">Differential Sharpe Ratio (Risk-Adjusted Return)</option>
-                  <option value="sortino">Sortino Ratio (Downside Risk Penalized)</option>
-                  <option value="pnl">Pure Net Cumulative PnL</option>
+                  <option value="sharpe" className="bg-[#0c0c14]">Differential Sharpe Ratio</option>
+                  <option value="sortino" className="bg-[#0c0c14]">Sortino Ratio (Downside Penalized)</option>
+                  <option value="pnl" className="bg-[#0c0c14]">Net Cumulative PnL</option>
                 </select>
               </div>
             </div>
@@ -313,10 +313,10 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
         </div>
 
         {/* SECTION 3: INACTIVITY & ACTION BALANCING */}
-        <div className="bg-[#0f0f18] border border-white/[0.08] rounded-xl overflow-hidden shadow-sm">
+        <div className="py-2.5">
           <button
             onClick={() => toggleAccordion('inactivity')}
-            className="w-full px-3.5 py-2.5 flex items-center justify-between text-left hover:bg-white/[0.02] transition-colors cursor-pointer"
+            className="w-full py-1 flex items-center justify-between text-left hover:text-white transition-colors cursor-pointer"
           >
             <div className="flex items-center gap-2 text-xs font-semibold text-white">
               <LucideIcons.Flame size={13} className="text-[#ff9f0a]" />
@@ -331,7 +331,7 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
           </button>
 
           {activeAccordion === 'inactivity' && (
-            <div className="px-3.5 pb-3.5 pt-1 space-y-2.5 border-t border-white/[0.06] text-xs">
+            <div className="pt-2 pb-1 space-y-3 text-xs">
               <div>
                 <div className="flex justify-between items-center mb-1">
                   <label className="text-[11px] text-[#86868b]">Hold Step Penalty:</label>
@@ -346,9 +346,9 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
                   step="0.0001"
                   value={config.inactivityPenalty}
                   onChange={(e) => onUpdateConfig({ inactivityPenalty: parseFloat(e.target.value) })}
-                  className="w-full accent-[#ff9f0a] bg-white/10 h-1 rounded-full cursor-pointer"
+                  className="w-full accent-[#ff9f0a] bg-white/10 h-1 cursor-pointer"
                 />
-                <p className="text-[9px] text-[#636366] mt-0.5">Penalizes continuous idle holding to encourage active alpha search</p>
+                <p className="text-[9px] text-[#636366] mt-0.5">Penalizes continuous idle holding to stimulate alpha discovery</p>
               </div>
 
               <div className="flex items-center justify-between pt-1">
@@ -360,7 +360,7 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
                   type="checkbox"
                   checked={config.enableOppCostPenalty}
                   onChange={(e) => onUpdateConfig({ enableOppCostPenalty: e.target.checked })}
-                  className="w-4 h-4 accent-[#007aff] rounded cursor-pointer"
+                  className="w-3.5 h-3.5 accent-[#007aff] cursor-pointer"
                 />
               </div>
             </div>
@@ -368,10 +368,10 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
         </div>
 
         {/* SECTION 4: ANTI-OVERFITTING & PPO */}
-        <div className="bg-[#0f0f18] border border-white/[0.08] rounded-xl overflow-hidden shadow-sm">
+        <div className="py-2.5">
           <button
             onClick={() => toggleAccordion('ppo')}
-            className="w-full px-3.5 py-2.5 flex items-center justify-between text-left hover:bg-white/[0.02] transition-colors cursor-pointer"
+            className="w-full py-1 flex items-center justify-between text-left hover:text-white transition-colors cursor-pointer"
           >
             <div className="flex items-center gap-2 text-xs font-semibold text-white">
               <LucideIcons.BrainCircuit size={13} className="text-[#bf5af2]" />
@@ -386,7 +386,7 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
           </button>
 
           {activeAccordion === 'ppo' && (
-            <div className="px-3.5 pb-3.5 pt-1 space-y-2.5 border-t border-white/[0.06] text-xs">
+            <div className="pt-2 pb-1 space-y-3 text-xs">
               <div>
                 <div className="flex justify-between items-center mb-1">
                   <label className="text-[11px] text-[#86868b]">Entropy Regularization (β):</label>
@@ -399,12 +399,12 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
                   step="0.005"
                   value={config.entropyCoef}
                   onChange={(e) => onUpdateConfig({ entropyCoef: parseFloat(e.target.value) })}
-                  className="w-full accent-[#bf5af2] bg-white/10 h-1 rounded-full cursor-pointer"
+                  className="w-full accent-[#bf5af2] bg-white/10 h-1 cursor-pointer"
                 />
                 <p className="text-[9px] text-[#636366] mt-0.5">Higher entropy forces action exploration and prevents overfitting</p>
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="text-[10px] text-[#86868b] block mb-1">Learning Rate (α)</label>
                   <input
@@ -414,7 +414,7 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
                     max="0.005"
                     value={config.learningRate}
                     onChange={(e) => onUpdateConfig({ learningRate: parseFloat(e.target.value) || 0.0003 })}
-                    className="w-full bg-[#161622] border border-white/10 rounded-lg px-2.5 py-1 text-white font-mono text-xs focus:outline-none focus:border-[#007aff]"
+                    className="w-full bg-white/[0.04] border-b border-white/20 focus:border-[#007aff] px-2 py-1 text-white font-mono text-xs focus:outline-none"
                   />
                 </div>
                 <div>
@@ -426,7 +426,7 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
                     max="0.999"
                     value={config.discountFactor}
                     onChange={(e) => onUpdateConfig({ discountFactor: parseFloat(e.target.value) || 0.97 })}
-                    className="w-full bg-[#161622] border border-white/10 rounded-lg px-2.5 py-1 text-white font-mono text-xs focus:outline-none focus:border-[#007aff]"
+                    className="w-full bg-white/[0.04] border-b border-white/20 focus:border-[#007aff] px-2 py-1 text-white font-mono text-xs focus:outline-none"
                   />
                 </div>
               </div>
@@ -440,7 +440,7 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
                   max="100000"
                   value={config.targetEpisodes}
                   onChange={(e) => onUpdateConfig({ targetEpisodes: parseInt(e.target.value, 10) || 10000 })}
-                  className="w-full bg-[#161622] border border-white/10 rounded-lg px-2.5 py-1 text-white font-mono text-xs focus:outline-none focus:border-[#007aff]"
+                  className="w-full bg-white/[0.04] border-b border-white/20 focus:border-[#007aff] px-2 py-1 text-white font-mono text-xs focus:outline-none"
                 />
               </div>
             </div>
@@ -448,10 +448,10 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
         </div>
 
         {/* SECTION 5: DATA & SYMBOL */}
-        <div className="bg-[#0f0f18] border border-white/[0.08] rounded-xl overflow-hidden shadow-sm">
+        <div className="py-2.5">
           <button
             onClick={() => toggleAccordion('data')}
-            className="w-full px-3.5 py-2.5 flex items-center justify-between text-left hover:bg-white/[0.02] transition-colors cursor-pointer"
+            className="w-full py-1 flex items-center justify-between text-left hover:text-white transition-colors cursor-pointer"
           >
             <div className="flex items-center gap-2 text-xs font-semibold text-white">
               <LucideIcons.BarChart2 size={13} className="text-[#0a84ff]" />
@@ -466,37 +466,37 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
           </button>
 
           {activeAccordion === 'data' && (
-            <div className="px-3.5 pb-3.5 pt-1 space-y-2.5 border-t border-white/[0.06] text-xs">
+            <div className="pt-2 pb-1 space-y-3 text-xs">
               <div>
                 <label className="text-[10px] text-[#86868b] block mb-1">Trading Asset / Symbol</label>
                 <select
                   value={config.symbol}
                   onChange={(e) => onUpdateConfig({ symbol: e.target.value })}
-                  className="w-full bg-[#161622] border border-white/10 rounded-lg px-2.5 py-1 text-white text-xs focus:outline-none focus:border-[#007aff] cursor-pointer"
+                  className="w-full bg-white/[0.04] border-b border-white/20 focus:border-[#007aff] px-2 py-1 text-white text-xs focus:outline-none cursor-pointer"
                 >
-                  <option value="EURUSD">EURUSD (Euro / US Dollar)</option>
-                  <option value="GBPUSD">GBPUSD (British Pound / USD)</option>
-                  <option value="USDJPY">USDJPY (US Dollar / Yen)</option>
-                  <option value="XAUUSD">XAUUSD (Gold Spot / USD)</option>
-                  <option value="BTCUSDT">BTCUSDT (Bitcoin Spot)</option>
-                  <option value="ETHUSDT">ETHUSDT (Ethereum Spot)</option>
+                  <option value="EURUSD" className="bg-[#0c0c14]">EURUSD (Euro / US Dollar)</option>
+                  <option value="GBPUSD" className="bg-[#0c0c14]">GBPUSD (British Pound / USD)</option>
+                  <option value="USDJPY" className="bg-[#0c0c14]">USDJPY (US Dollar / Yen)</option>
+                  <option value="XAUUSD" className="bg-[#0c0c14]">XAUUSD (Gold Spot / USD)</option>
+                  <option value="BTCUSDT" className="bg-[#0c0c14]">BTCUSDT (Bitcoin Spot)</option>
+                  <option value="ETHUSDT" className="bg-[#0c0c14]">ETHUSDT (Ethereum Spot)</option>
                 </select>
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="text-[10px] text-[#86868b] block mb-1">Primary TF</label>
                   <select
                     value={config.primaryTimeframe}
                     onChange={(e) => onUpdateConfig({ primaryTimeframe: e.target.value })}
-                    className="w-full bg-[#161622] border border-white/10 rounded-lg px-2.5 py-1 text-white text-xs focus:outline-none focus:border-[#007aff] cursor-pointer"
+                    className="w-full bg-white/[0.04] border-b border-white/20 focus:border-[#007aff] px-2 py-1 text-white text-xs focus:outline-none cursor-pointer"
                   >
-                    <option value="M1">M1</option>
-                    <option value="M5">M5</option>
-                    <option value="M15">M15</option>
-                    <option value="H1">H1</option>
-                    <option value="H4">H4</option>
-                    <option value="D1">D1</option>
+                    <option value="M1" className="bg-[#0c0c14]">M1</option>
+                    <option value="M5" className="bg-[#0c0c14]">M5</option>
+                    <option value="M15" className="bg-[#0c0c14]">M15</option>
+                    <option value="H1" className="bg-[#0c0c14]">H1</option>
+                    <option value="H4" className="bg-[#0c0c14]">H4</option>
+                    <option value="D1" className="bg-[#0c0c14]">D1</option>
                   </select>
                 </div>
                 <div>
@@ -504,12 +504,12 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
                   <select
                     value={config.contextTimeframe}
                     onChange={(e) => onUpdateConfig({ contextTimeframe: e.target.value })}
-                    className="w-full bg-[#161622] border border-white/10 rounded-lg px-2.5 py-1 text-white text-xs focus:outline-none focus:border-[#007aff] cursor-pointer"
+                    className="w-full bg-white/[0.04] border-b border-white/20 focus:border-[#007aff] px-2 py-1 text-white text-xs focus:outline-none cursor-pointer"
                   >
-                    <option value="None">None</option>
-                    <option value="H1">H1</option>
-                    <option value="H4">H4</option>
-                    <option value="D1">D1</option>
+                    <option value="None" className="bg-[#0c0c14]">None</option>
+                    <option value="H1" className="bg-[#0c0c14]">H1</option>
+                    <option value="H4" className="bg-[#0c0c14]">H4</option>
+                    <option value="D1" className="bg-[#0c0c14]">D1</option>
                   </select>
                 </div>
               </div>
@@ -526,16 +526,16 @@ export const TrainingConfigSidebar: React.FC<TrainingConfigSidebarProps> = ({
                   step="0.05"
                   value={config.fractionalDiffOrder}
                   onChange={(e) => onUpdateConfig({ fractionalDiffOrder: parseFloat(e.target.value) })}
-                  className="w-full accent-[#0a84ff] bg-white/10 h-1 rounded-full cursor-pointer"
+                  className="w-full accent-[#0a84ff] bg-white/10 h-1 cursor-pointer"
                 />
-                <p className="text-[9px] text-[#636366] mt-0.5">Fractionally differentiated stationary series preserving memory features</p>
+                <p className="text-[9px] text-[#636366] mt-0.5">Fractionally differentiated stationary series preserving memory</p>
               </div>
             </div>
           )}
         </div>
       </div>
 
-      {/*  Bottom Status Footer (Frameless Typography, Zero Capsules) */}
+      {/*  Bottom Status Footer (Pure Frameless Inline Typography) */}
       <div className="px-4 py-3 border-t border-white/[0.08] bg-[#0c0c14] flex items-center justify-between text-[11px]">
         <div className="flex items-center gap-1.5 text-[#86868b]">
           <span className={`w-1.5 h-1.5 rounded-full ${isRunning ? 'bg-[#30d158] shadow-[0_0_6px_#30d158] animate-pulse' : 'bg-[#ffd60a]'}`} />
