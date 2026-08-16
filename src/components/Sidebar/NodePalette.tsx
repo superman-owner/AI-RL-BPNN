@@ -157,7 +157,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
 
   //  Pointer-based Drag Handler (100% Guaranteed Mac Closed Fist Cursor during entire drag)
   const handleItemPointerDown = (e: React.PointerEvent, nodeType: string, label: string, color: string) => {
-    // Only handle primary left click
+    // Only handle primary left click (No right-click or middle-click)
     if (e.button !== 0) return;
 
     // Remove any orphaned drag ghosts from DOM
@@ -168,12 +168,19 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
     let isDragging = false;
     let ghostEl: HTMLDivElement | null = null;
 
-    // Immediately enter grabbing state on mouse press
-    document.documentElement.classList.add('is-dragging-node');
-    document.body.classList.add('is-dragging-node');
-    document.body.style.cursor = 'var(--mac-cursor-grabbing)';
+    //  1-Second Hold Timer: Single click (< 1s) does NOT grab. Holding >= 1s triggers grabbing.
+    let holdTimer: ReturnType<typeof setTimeout> | null = setTimeout(() => {
+      document.documentElement.classList.add('is-dragging-node');
+      document.body.classList.add('is-dragging-node');
+      document.body.style.cursor = 'var(--mac-cursor-grabbing)';
+    }, 1000);
 
     const cleanup = () => {
+      if (holdTimer) {
+        clearTimeout(holdTimer);
+        holdTimer = null;
+      }
+
       window.removeEventListener('pointermove', onPointerMove);
       window.removeEventListener('pointerup', onPointerUp);
       window.removeEventListener('pointercancel', cleanup);
@@ -199,7 +206,15 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
 
       const dist = Math.hypot(moveEvent.clientX - startX, moveEvent.clientY - startY);
       if (!isDragging && dist > 4) {
+        if (holdTimer) {
+          clearTimeout(holdTimer);
+          holdTimer = null;
+        }
+
         isDragging = true;
+        document.documentElement.classList.add('is-dragging-node');
+        document.body.classList.add('is-dragging-node');
+        document.body.style.cursor = 'var(--mac-cursor-grabbing)';
 
         ghostEl = document.createElement('div');
         ghostEl.className = 'fxforge-drag-ghost';

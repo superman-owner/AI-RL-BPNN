@@ -1225,6 +1225,39 @@ const FlowContent: React.FC = () => {
     return nodes.filter((n) => connectedNodeIds.has(n.id)).length;
   }, [nodes, connectedNodeIds]);
 
+  //  1-Second Hold Timer for Canvas: Single click (< 1s) does NOT grab. Holding >= 1s or dragging triggers grabbing.
+  const canvasHoldTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleCanvasPointerDown = useCallback((e: React.PointerEvent) => {
+    // Only Primary Left Click (e.button === 0)
+    if (e.button !== 0) return;
+
+    if (canvasHoldTimerRef.current) {
+      clearTimeout(canvasHoldTimerRef.current);
+    }
+
+    canvasHoldTimerRef.current = setTimeout(() => {
+      document.documentElement.classList.add('is-dragging-node');
+      document.body.classList.add('is-dragging-node');
+    }, 1000);
+
+    const clearHold = () => {
+      if (canvasHoldTimerRef.current) {
+        clearTimeout(canvasHoldTimerRef.current);
+        canvasHoldTimerRef.current = null;
+      }
+      document.documentElement.classList.remove('is-dragging-node');
+      document.body.classList.remove('is-dragging-node');
+      window.removeEventListener('pointerup', clearHold);
+      window.removeEventListener('pointercancel', clearHold);
+      window.removeEventListener('mouseup', clearHold);
+    };
+
+    window.addEventListener('pointerup', clearHold, { once: true });
+    window.addEventListener('pointercancel', clearHold, { once: true });
+    window.addEventListener('mouseup', clearHold, { once: true });
+  }, []);
+
   return (
     <div
       style={{
@@ -1238,6 +1271,7 @@ const FlowContent: React.FC = () => {
       className={`w-full h-full relative overflow-hidden transition-colors duration-200 ${
         isLight ? 'bg-[#f5f5f7]' : 'bg-[#040407]'
       }`}
+      onPointerDown={handleCanvasPointerDown}
       onMouseMove={onMouseMove}
       onDragLeave={onDragLeave}
       onContextMenu={(e) => e.preventDefault()}
@@ -1250,6 +1284,16 @@ const FlowContent: React.FC = () => {
         onConnect={onConnect}
         onDrop={onDrop}
         onDragOver={onDragOver}
+        onNodeDragStart={() => {
+          if (canvasHoldTimerRef.current) clearTimeout(canvasHoldTimerRef.current);
+          document.documentElement.classList.add('is-dragging-node');
+          document.body.classList.add('is-dragging-node');
+        }}
+        onNodeDragStop={() => {
+          if (canvasHoldTimerRef.current) clearTimeout(canvasHoldTimerRef.current);
+          document.documentElement.classList.remove('is-dragging-node');
+          document.body.classList.remove('is-dragging-node');
+        }}
         onNodeDoubleClick={onNodeDoubleClick}
         onNodeContextMenu={onNodeContextMenu}
         onPaneContextMenu={onPaneContextMenu}

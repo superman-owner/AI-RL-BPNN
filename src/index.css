@@ -448,7 +448,6 @@ input[type='number'] {
 .react-flow__pane {
   cursor: var(--mac-cursor-grab) !important;
 }
-.react-flow__pane:active,
 .react-flow__pane.dragging {
   cursor: var(--mac-cursor-grabbing) !important;
 }
@@ -458,13 +457,9 @@ input[type='number'] {
 .react-flow__node {
   cursor: var(--mac-cursor-grab) !important;
 }
-.react-flow__node:active,
-.react-flow__node:active *,
 .react-flow__node.dragging,
 .react-flow__node.dragging * {
   cursor: var(--mac-cursor-grabbing) !important;
-}
-.react-flow__node.dragging {
   opacity: 0.94;
   filter: drop-shadow(0 15px 30px rgba(0, 113, 227, 0.35)) !important;
 }
