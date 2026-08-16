@@ -69,11 +69,11 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
       onWheel={(e) => e.stopPropagation()}
       className="w-[290px] h-full flex flex-col flex-shrink-0 bg-[#08080c]/98 border-r border-white/[0.08] text-[#c7c7cc] select-none z-20 font-sans"
     >
-      {/* 1.  Apple macOS Header & Spotlight Search */}
-      <div className="px-4 pt-4 pb-3.5 border-b border-white/[0.06] bg-[#0c0c14]/90 flex-shrink-0">
-        <div className="flex justify-between items-center mb-3.5 px-0.5">
+      {/* 1.  Apple macOS Header & Spotlight Search (Exact 30px Spacing) */}
+      <div className="px-4.5 pt-[30px] pb-[30px] border-b border-white/[0.06] bg-[#0c0c14]/90 flex-shrink-0">
+        <div className="flex justify-between items-center mb-[30px] px-0.5">
           <div className="flex items-center gap-2.5">
-            <Sliders size={15} className="text-[#0a84ff]" />
+            <Sliders size={15} className="text-[#86868b] hover:text-white transition-colors" />
             <span className="text-[13.5px] font-bold text-white tracking-tight">
               RL Hyperparameters
             </span>
@@ -87,7 +87,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
           </button>
         </div>
 
-        {/*  macOS Spotlight-style Search Field */}
+        {/*  macOS Spotlight-style Search Field (h-34px rounded-8) */}
         <div className="relative flex items-center">
           <Search size={13} className="absolute left-3 text-[#86868b] pointer-events-none z-10" />
           <input
@@ -95,13 +95,13 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search parameters & modules..."
             style={{ paddingLeft: '32px' }}
-            className="w-full h-[32px] bg-white/[0.05] border border-white/[0.08] hover:border-white/20 focus:border-[#0a84ff] rounded-[7px] text-[12px] text-white placeholder-[#71717a] pr-3 py-1 outline-none transition-colors"
+            className="w-full h-[34px] bg-white/[0.05] border border-white/[0.08] hover:border-white/20 focus:border-[#0a84ff] rounded-[8px] text-[12px] text-white placeholder-[#71717a] pr-3 py-1 outline-none transition-colors"
           />
         </div>
       </div>
 
-      {/* 2.  Apple Mac Mail / Finder Sidebar List (Perfect Spacing & Rhythm) */}
-      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar px-3 py-2 space-y-4">
+      {/* 2.  Apple Mac Mail / Finder Sidebar List (space-y-6: 24px between groups) */}
+      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar px-3.5 py-4 space-y-6">
         {GROUPS.map((group) => {
           const allNodes = nodesByGroup(group.id);
           const matchingNodes = allNodes.filter(
@@ -114,7 +114,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
           const GroupIcon = GROUP_ICONS[group.id] || Layers;
 
           return (
-            <div key={group.id} className="space-y-1">
+            <div key={group.id}>
               {/*  Section Header (Muted Gray -> Pure White on Hover, No Frame) */}
               <div
                 onClick={() => toggleGroup(group.id)}
@@ -144,9 +144,9 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
                 </div>
               </div>
 
-              {/*  Child Items (Frameless Gray -> White on Hover) */}
+              {/*  Child Items (mt-2: gap under header, h-[34px] row height) */}
               {isExpanded && (
-                <div className="space-y-0.5 pl-4">
+                <div className="mt-2 space-y-1 pl-4">
                   {matchingNodes.map((node) => {
                     const isNodeHovered = hoveredNode === node.type;
 
@@ -158,12 +158,12 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
                         onMouseEnter={() => setHoveredNode(node.type)}
                         onMouseLeave={() => setHoveredNode(null)}
                         title="Drag onto canvas to add module"
-                        className="h-[28px] px-1 flex items-center justify-between cursor-grab transition-colors"
+                        className="h-[34px] px-1 flex items-center justify-between cursor-grab transition-colors"
                       >
                         {/* Left: Mid Dot (·) + Label */}
-                        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                        <div className="flex items-center gap-3 min-w-0 flex-1">
                           <span
-                            className={`text-[17px] font-bold leading-none select-none transition-colors flex-shrink-0 ${
+                            className={`text-[18px] font-bold leading-none select-none transition-colors flex-shrink-0 ${
                               isNodeHovered ? 'text-white' : 'text-[#71717a]'
                             }`}
                           >
