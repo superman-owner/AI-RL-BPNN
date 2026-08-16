@@ -288,7 +288,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
               {/*  Section Header (Clean Icon & Label, No Down Arrow) */}
               <div
                 onClick={() => toggleGroup(group.id)}
-                className="group py-1 flex items-center justify-between cursor-pointer transition-colors"
+                className="group py-1.5 flex items-center justify-between cursor-pointer transition-colors"
               >
                 <div className="flex items-center gap-2 min-w-0 flex-1">
                   {/* SF Symbol on Main Header (Distinct Group Color) */}
@@ -308,7 +308,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
               {/*  Child Items */}
               {isExpanded && (
                 <div
-                  className="mt-1.5 space-y-1.5"
+                  className="mt-2 space-y-2.5"
                   style={{ paddingLeft: '18px' }}
                 >
                   {matchingNodes.map((node) => {
@@ -322,7 +322,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                         onMouseEnter={() => setHoveredNode(node.type)}
                         onMouseLeave={() => setHoveredNode(null)}
                         title="Drag onto canvas to add module"
-                        className="h-[20px] flex items-center justify-between cursor-grab transition-colors pr-1"
+                        className="py-[3px] min-h-[24px] flex items-center justify-between cursor-grab transition-colors pr-1"
                       >
                         {/* Left: Mid Dot (·) */}
                         <div className="flex items-center gap-2 min-w-0 flex-1">
@@ -333,7 +333,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                             ·
                           </span>
                           <span
-                            className={`text-[12.5px] tracking-tight truncate leading-none transition-colors ${
+                            className={`text-[12.5px] tracking-tight truncate leading-normal transition-colors ${
                               isNodeHovered ? 'font-medium text-white' : 'font-normal text-[#8e8e93]'
                             }`}
                           >
