@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useCallback } from 'react';
 import type { RLEnvironmentStep } from '../../services/fxforgeEngine';
+import { useTheme } from '../../context/ThemeContext';
 
 interface BPNeuron {
   id: string;
@@ -47,6 +48,14 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
   latestStep = null,
   cameraResetTrigger = 0,
 }) => {
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
+  const themeRef = useRef(theme);
+
+  useEffect(() => {
+    themeRef.current = theme;
+  }, [theme]);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -188,10 +197,10 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
         const hiddenLayer = neurons.filter((n) => n.layerIdx === 2);
         const actionColor =
           latestStep.action === 0
-            ? 'rgba(48, 209, 88, 0.95)'
+            ? 'rgba(40, 205, 65, 0.95)'
             : latestStep.action === 1
-            ? 'rgba(255, 214, 10, 0.95)'
-            : 'rgba(255, 69, 58, 0.95)';
+            ? 'rgba(255, 159, 10, 0.95)'
+            : 'rgba(255, 59, 48, 0.95)';
 
         hiddenLayer.forEach((hn) => {
           if (Math.random() < 0.6) {
@@ -218,8 +227,9 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
     if (!isTrainingRef.current) return;
     const neurons = neuronsRef.current;
     if (neurons.length === 0) return;
+    const currentIsLight = themeRef.current === 'light';
 
-    // A. Forward Pass (Pearl White Pulses: Left -> Right)
+    // A. Forward Pass Pulses (Left -> Right)
     if (Math.random() < 0.45) {
       const startLayer = Math.floor(Math.random() * 3);
       const layerSources = neurons.filter((n) => n.layerIdx === startLayer);
@@ -239,12 +249,12 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
           targetZ: tgt.z,
           progress: 0,
           speed: 0.022 + Math.random() * 0.015,
-          color: 'rgba(255, 255, 255, 0.95)',
+          color: currentIsLight ? 'rgba(0, 113, 227, 0.95)' : 'rgba(255, 255, 255, 0.95)',
         });
       }
     }
 
-    // B. Backpropagation Gradients (Apple Electric Blue: Right -> Left)
+    // B. Backpropagation Gradients (Right -> Left)
     if (Math.random() < 0.25) {
       const endLayer = 1 + Math.floor(Math.random() * 3);
       const layerSources = neurons.filter((n) => n.layerIdx === endLayer);
@@ -264,7 +274,7 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
           targetZ: tgt.z,
           progress: 0,
           speed: 0.028 + Math.random() * 0.015,
-          color: 'rgba(10, 132, 255, 0.95)',
+          color: currentIsLight ? 'rgba(175, 82, 222, 0.95)' : 'rgba(10, 132, 255, 0.95)',
         });
       }
     }
@@ -296,23 +306,48 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
       const dpr = window.devicePixelRatio || 1;
       const width = canvas.width / dpr;
       const height = canvas.height / dpr;
+      const currentIsLight = themeRef.current === 'light';
 
       ctx.save();
       ctx.scale(dpr, dpr);
 
-      // Deep Luxury Obsidian Canvas with Subtle Ambient Center Glow
-      const bgGrad = ctx.createRadialGradient(
-        width / 2,
-        height / 2,
-        50,
-        width / 2,
-        height / 2,
-        Math.max(width, height) * 0.75
-      );
-      bgGrad.addColorStop(0, '#0b0b14');
-      bgGrad.addColorStop(1, '#040407');
-      ctx.fillStyle = bgGrad;
-      ctx.fillRect(0, 0, width, height);
+      // Apple Studio Light Canvas vs Deep Obsidian Canvas
+      if (currentIsLight) {
+        const bgGrad = ctx.createRadialGradient(
+          width / 2,
+          height / 2,
+          50,
+          width / 2,
+          height / 2,
+          Math.max(width, height) * 0.8
+        );
+        bgGrad.addColorStop(0, '#ffffff');
+        bgGrad.addColorStop(0.65, '#f5f5f7');
+        bgGrad.addColorStop(1, '#e5e5ea');
+        ctx.fillStyle = bgGrad;
+        ctx.fillRect(0, 0, width, height);
+
+        // Apple Light Grid Accents
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.035)';
+        for (let gx = 20; gx < width; gx += 40) {
+          for (let gy = 20; gy < height; gy += 40) {
+            ctx.fillRect(gx, gy, 1.2, 1.2);
+          }
+        }
+      } else {
+        const bgGrad = ctx.createRadialGradient(
+          width / 2,
+          height / 2,
+          50,
+          width / 2,
+          height / 2,
+          Math.max(width, height) * 0.75
+        );
+        bgGrad.addColorStop(0, '#0b0b14');
+        bgGrad.addColorStop(1, '#040407');
+        ctx.fillStyle = bgGrad;
+        ctx.fillRect(0, 0, width, height);
+      }
 
       // Camera Matrix Transformations
       const cam = cameraRef.current;
@@ -366,25 +401,34 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
           // Vibrantly illuminated active decision path
           const actionColor =
             currentStep.action === 0
-              ? 'rgba(48, 209, 88, 0.75)'
+              ? currentIsLight ? 'rgba(36, 138, 61, 0.85)' : 'rgba(48, 209, 88, 0.75)'
               : currentStep.action === 1
-              ? 'rgba(255, 214, 10, 0.75)'
-              : 'rgba(255, 69, 58, 0.75)';
+              ? currentIsLight ? 'rgba(180, 120, 0, 0.85)' : 'rgba(255, 214, 10, 0.75)'
+              : currentIsLight ? 'rgba(215, 0, 21, 0.85)' : 'rgba(255, 69, 58, 0.75)';
 
           ctx.strokeStyle = actionColor;
-          ctx.lineWidth = 1.35 * avgScale;
+          ctx.lineWidth = (currentIsLight ? 1.6 : 1.35) * avgScale;
           ctx.beginPath();
           ctx.moveTo(p1.px, p1.py);
           ctx.lineTo(p2.px, p2.py);
           ctx.stroke();
         } else {
-          // Crisp, high-contrast synaptic fiber
-          const alpha = Math.min(0.55, 0.22 + Math.abs(syn.weight) * 0.28);
-          ctx.strokeStyle =
-            syn.weight > 0
-              ? `rgba(160, 210, 255, ${alpha})`
-              : `rgba(220, 225, 245, ${alpha * 0.85})`;
-          ctx.lineWidth = (0.85 + Math.abs(syn.weight) * 0.25) * avgScale;
+          // Crisp synaptic fiber
+          if (currentIsLight) {
+            const alpha = Math.min(0.45, 0.15 + Math.abs(syn.weight) * 0.25);
+            ctx.strokeStyle =
+              syn.weight > 0
+                ? `rgba(0, 113, 227, ${alpha})`
+                : `rgba(71, 85, 105, ${alpha * 0.85})`;
+            ctx.lineWidth = (0.9 + Math.abs(syn.weight) * 0.3) * avgScale;
+          } else {
+            const alpha = Math.min(0.55, 0.22 + Math.abs(syn.weight) * 0.28);
+            ctx.strokeStyle =
+              syn.weight > 0
+                ? `rgba(160, 210, 255, ${alpha})`
+                : `rgba(220, 225, 245, ${alpha * 0.85})`;
+            ctx.lineWidth = (0.85 + Math.abs(syn.weight) * 0.25) * avgScale;
+          }
           ctx.beginPath();
           ctx.moveTo(p1.px, p1.py);
           ctx.lineTo(p2.px, p2.py);
@@ -409,15 +453,17 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
         const proj = project(curX, curY, curZ);
 
         ctx.fillStyle = p.color;
-        ctx.shadowColor = p.color;
-        ctx.shadowBlur = 6;
+        if (!currentIsLight) {
+          ctx.shadowColor = p.color;
+          ctx.shadowBlur = 6;
+        }
         ctx.beginPath();
-        ctx.arc(proj.px, proj.py, 1.8 * proj.scale, 0, Math.PI * 2);
+        ctx.arc(proj.px, proj.py, (currentIsLight ? 2.0 : 1.8) * proj.scale, 0, Math.PI * 2);
         ctx.fill();
         ctx.shadowBlur = 0;
       }
 
-      // Draw Soma Orbs (Apple Frosted Glass & Specular Photonic Aura)
+      // Draw Soma Orbs (Apple Polished Glass Spheres)
       neurons.forEach((n) => {
         // Decay pulse
         if (n.pulse > 0) {
@@ -433,33 +479,36 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
         const baseRadius = isOutput ? 7.2 : isInput ? 6.2 : 5.0;
         const radius = baseRadius * proj.scale;
 
-        // Apple Pro Palette: Monochromatic Glass by default, Subtle Glow ONLY on Active Decision
-        let coreColor = '#FFFFFF';
-        let outerColor = 'rgba(0, 122, 255, 0.15)';
+        let coreColor = currentIsLight ? '#0071e3' : '#FFFFFF';
+        let outerColor = currentIsLight ? 'rgba(0, 113, 227, 0.22)' : 'rgba(0, 122, 255, 0.15)';
         let auraIntensity = 1.25 + n.activation * 0.35 + n.pulse * 0.4;
 
         if (isOutput) {
           if (isSelectedAction) {
             if (n.neuronIdx === 0) {
-              // BUY (Apple Soft Emerald - Matched with TopNav #30d158)
-              coreColor = '#30d158';
-              outerColor = 'rgba(48, 209, 88, 0.32)';
+              // BUY (Apple Soft Emerald)
+              coreColor = currentIsLight ? '#28cd41' : '#30d158';
+              outerColor = currentIsLight ? 'rgba(40, 205, 65, 0.35)' : 'rgba(48, 209, 88, 0.32)';
             } else if (n.neuronIdx === 1) {
-              // HOLD (Apple Amber Yellow - Matched with TopNav #ffd60a)
-              coreColor = '#ffd60a';
-              outerColor = 'rgba(255, 214, 10, 0.32)';
+              // HOLD (Apple Amber Yellow)
+              coreColor = currentIsLight ? '#ff9f0a' : '#ffd60a';
+              outerColor = currentIsLight ? 'rgba(255, 159, 10, 0.35)' : 'rgba(255, 214, 10, 0.32)';
             } else {
-              // SELL (Apple Rose Crimson - Matched with TopNav #ff453a)
-              coreColor = '#ff453a';
-              outerColor = 'rgba(255, 69, 58, 0.32)';
+              // SELL (Apple Rose Crimson)
+              coreColor = currentIsLight ? '#ff3b30' : '#ff453a';
+              outerColor = currentIsLight ? 'rgba(255, 59, 48, 0.35)' : 'rgba(255, 69, 58, 0.32)';
             }
             auraIntensity = 1.45 + n.activation * 0.4 + n.pulse * 0.5;
           } else {
-            // Inactive Output Node (Calm Frosted Platinum)
-            coreColor = 'rgba(255, 255, 255, 0.42)';
-            outerColor = 'rgba(255, 255, 255, 0.05)';
+            // Inactive Output Node
+            coreColor = currentIsLight ? 'rgba(0, 0, 0, 0.35)' : 'rgba(255, 255, 255, 0.42)';
+            outerColor = currentIsLight ? 'rgba(0, 0, 0, 0.06)' : 'rgba(255, 255, 255, 0.05)';
             auraIntensity = 1.15;
           }
+        } else if (!isInput) {
+          // Hidden Neurons
+          coreColor = currentIsLight ? '#ffffff' : '#ffffff';
+          outerColor = currentIsLight ? 'rgba(0, 113, 227, 0.2)' : 'rgba(255, 255, 255, 0.12)';
         }
 
         // Soft Radial Aura
@@ -472,7 +521,7 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
           radius * auraIntensity
         );
         grad.addColorStop(0, coreColor);
-        grad.addColorStop(0.35, isSelectedAction ? outerColor : 'rgba(255, 255, 255, 0.12)');
+        grad.addColorStop(0.35, isSelectedAction ? outerColor : (currentIsLight ? 'rgba(0, 113, 227, 0.12)' : 'rgba(255, 255, 255, 0.12)'));
         grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
         ctx.fillStyle = grad;
@@ -480,28 +529,32 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
         ctx.arc(proj.px, proj.py, radius * auraIntensity, 0, Math.PI * 2);
         ctx.fill();
 
-        // Inner Frosted Core
+        // Inner Polished Core
         ctx.fillStyle = coreColor;
         ctx.beginPath();
         ctx.arc(proj.px, proj.py, radius * 0.55, 0, Math.PI * 2);
         ctx.fill();
 
         // Subtle Specular Ring
-        ctx.strokeStyle = isSelectedAction ? coreColor : 'rgba(255, 255, 255, 0.25)';
-        ctx.lineWidth = 0.75;
+        ctx.strokeStyle = isSelectedAction
+          ? coreColor
+          : currentIsLight
+          ? 'rgba(0, 0, 0, 0.25)'
+          : 'rgba(255, 255, 255, 0.25)';
+        ctx.lineWidth = currentIsLight ? 1.0 : 0.75;
         ctx.beginPath();
         ctx.arc(proj.px, proj.py, radius * 0.85, 0, Math.PI * 2);
         ctx.stroke();
 
-        //  5. Apple macOS Frameless Typography (No Capsules / 0 Boxes)
+        //  5. Apple macOS Frameless Typography
         if (isOutput || isInput) {
           ctx.save();
 
-          const smoothScale = Math.max(0.8, Math.min(1.2, proj.scale));
-          const depthAlpha = Math.max(0.35, Math.min(1.0, 1 - (proj.depth - 400) / 700));
+          const smoothScale = Math.max(0.85, Math.min(1.2, proj.scale));
+          const depthAlpha = Math.max(0.4, Math.min(1.0, 1 - (proj.depth - 400) / 700));
 
           if (isInput) {
-            // Input State Text (Left Side - Right Aligned with Clean Apple Typography)
+            // Input State Text (Left Side - Right Aligned with High Contrast)
             const textOffset = radius + 10 * smoothScale;
             const anchorX = proj.px - textOffset;
             const anchorY = proj.py;
@@ -510,17 +563,18 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
             ctx.translate(anchorX, anchorY);
             ctx.scale(smoothScale, smoothScale);
 
-            ctx.font = '500 11.5px -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Mono", system-ui, sans-serif';
+            ctx.font = '600 12px -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif';
             ctx.textBaseline = 'middle';
             ctx.textAlign = 'right';
 
-            // Apple Muted Silver Typography
-            ctx.fillStyle = `rgba(220, 220, 230, ${0.8 * depthAlpha})`;
+            ctx.fillStyle = currentIsLight
+              ? `rgba(17, 24, 39, ${0.92 * depthAlpha})`
+              : `rgba(220, 220, 230, ${0.85 * depthAlpha})`;
             ctx.fillText(n.label, 0, 0);
 
             ctx.restore();
           } else if (isOutput) {
-            // Output Action Text (Right Side - Left Aligned with Apple System Colors)
+            // Output Action Text (Right Side - Left Aligned)
             const isSelected = isSelectedAction;
             const textOffset = radius + 10 * smoothScale;
             const anchorX = proj.px + textOffset;
@@ -534,17 +588,21 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
             ctx.textAlign = 'left';
 
             if (isSelected) {
-              // Active Decision (Apple Primary Accent: Green / Amber / Red with delicate soft glow)
-              ctx.font = '700 12px -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif';
+              // Active Decision
+              ctx.font = '700 12.5px -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif';
               ctx.fillStyle = coreColor;
-              ctx.shadowColor = coreColor;
-              ctx.shadowBlur = 6;
+              if (!currentIsLight) {
+                ctx.shadowColor = coreColor;
+                ctx.shadowBlur = 6;
+              }
               ctx.fillText(n.label, 0, 0);
               ctx.shadowBlur = 0;
             } else {
-              // Inactive Action (Apple Muted Tertiary Text)
-              ctx.font = '500 11px -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif';
-              ctx.fillStyle = `rgba(142, 142, 147, ${0.45 * depthAlpha})`;
+              // Inactive Action
+              ctx.font = '500 11.5px -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif';
+              ctx.fillStyle = currentIsLight
+                ? `rgba(107, 114, 128, ${0.75 * depthAlpha})`
+                : `rgba(142, 142, 147, ${0.45 * depthAlpha})`;
               ctx.fillText(n.label, 0, 0);
             }
 
@@ -598,18 +656,30 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
     <div
       ref={containerRef}
       onContextMenu={(e) => e.preventDefault()}
-      className="w-full h-full relative overflow-hidden select-none bg-[#08080c]"
+      className={`w-full h-full relative overflow-hidden select-none transition-colors duration-200 ${
+        isLight ? 'bg-[#f5f5f7]' : 'bg-[#08080c]'
+      }`}
     >
-      {/*  Top Floating HUD (Frameless / 0 Capsule Boxes) */}
+      {/*  Top Floating HUD */}
       <div className="absolute top-4 left-4 z-10 flex items-center gap-2 pointer-events-none select-none">
-        <span className="w-2 h-2 rounded-full bg-[#30d158] shadow-[0_0_6px_#30d158] animate-pulse" />
-        <span className="text-[12px] font-bold text-white tracking-tight">BPNN Policy Network</span>
-        <span className="text-[11px] text-[#86868b] font-medium">PPO Actor-Critic</span>
+        <span
+          className={`w-2 h-2 rounded-full ${
+            isLight ? 'bg-[#28cd41] shadow-[0_0_6px_#28cd41]' : 'bg-[#30d158] shadow-[0_0_6px_#30d158]'
+          } animate-pulse`}
+        />
+        <span className={`text-[12px] font-bold tracking-tight ${isLight ? 'text-[#111827]' : 'text-white'}`}>
+          BPNN Policy Network
+        </span>
+        <span className={`text-[11px] font-medium ${isLight ? 'text-[#4b5563]' : 'text-[#86868b]'}`}>
+          PPO Actor-Critic
+        </span>
       </div>
 
-      <div className="absolute top-4 right-4 z-10 hidden sm:flex items-center gap-1.5 text-[11px] font-mono text-[#86868b] pointer-events-none select-none">
-        <span className="text-white font-medium">Architecture:</span>
-        <span>6 In ➔ 12 Dense ➔ 8 Dense ➔ 3 Action</span>
+      <div className="absolute top-4 right-4 z-10 hidden sm:flex items-center gap-1.5 text-[11px] font-mono pointer-events-none select-none">
+        <span className={`font-semibold ${isLight ? 'text-[#111827]' : 'text-white'}`}>Architecture:</span>
+        <span className={isLight ? 'text-[#4b5563]' : 'text-[#86868b]'}>
+          6 In ➔ 12 Dense ➔ 8 Dense ➔ 3 Action
+        </span>
       </div>
 
       {/* 3D Canvas */}
@@ -624,8 +694,12 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
         className="w-full h-full cursor-grab active:cursor-grabbing block"
       />
 
-      {/*  Bottom Orbital Helper Hint (Frameless) */}
-      <div className="absolute bottom-3 right-4 z-10 pointer-events-none text-[10.5px] text-[#71717a] font-medium tracking-tight select-none">
+      {/*  Bottom Orbital Helper Hint */}
+      <div
+        className={`absolute bottom-3 right-4 z-10 pointer-events-none text-[10.5px] font-medium tracking-tight select-none ${
+          isLight ? 'text-[#6b7280]' : 'text-[#71717a]'
+        }`}
+      >
         Drag to Orbit · Scroll to Zoom
       </div>
     </div>
