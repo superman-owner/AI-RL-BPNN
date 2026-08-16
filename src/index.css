@@ -50,7 +50,7 @@ html, body, #root {
   cursor: var(--mac-cursor-default);
 }
 
-button, a, [role="button"], .cursor-pointer {
+button, a, [role="button"], .cursor-pointer, [onclick] {
   cursor: var(--mac-cursor-pointer) !important;
 }
 
@@ -61,6 +61,14 @@ button, a, [role="button"], .cursor-pointer {
 .cursor-grabbing,
 .active\:cursor-grabbing:active {
   cursor: var(--mac-cursor-grabbing) !important;
+}
+
+* {
+  cursor: inherit;
+}
+
+button, a, [role="button"], .cursor-pointer {
+  cursor: var(--mac-cursor-pointer) !important;
 }
 
 /*  Number & Metric typography utility classes */

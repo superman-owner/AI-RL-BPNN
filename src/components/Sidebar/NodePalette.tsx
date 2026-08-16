@@ -369,7 +369,8 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
               {/*  Section Header (High-contrast, Clear Typography) */}
               <div
                 onClick={() => toggleGroup(group.id)}
-                className="group py-1 flex items-center justify-between cursor-pointer transition-colors"
+                style={{ cursor: 'var(--mac-cursor-pointer)' }}
+                className="group py-1.5 px-2 -mx-2 rounded-lg flex items-center justify-between transition-all hover:bg-white/[0.04] dark:hover:bg-white/[0.04]"
               >
                 <div className="flex items-center gap-2.5 min-w-0 flex-1">
                   {/* SF Symbol on Main Header */}
@@ -423,7 +424,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                           paddingTop: '6px',
                           paddingBottom: '6px',
                           borderRadius: '8px',
-                          cursor: 'grab',
+                          cursor: 'var(--mac-cursor-grab)',
                           userSelect: 'none',
                           transition: 'background-color 0.15s ease, color 0.15s ease',
                           backgroundColor: isNodeHovered
