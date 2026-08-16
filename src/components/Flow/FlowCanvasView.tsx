@@ -30,85 +30,94 @@ const INITIAL_NODES: Node[] = [
     type: 'nodeCard',
     position: { x: 40, y: 160 },
     data: {
-      nodeType: 'mt5_feed',
-      symbol: 'EURUSD',
+      nodeType: 'strategy_preset_return',
+      preset: '🥇 Standard Quant (RET [5, 10, 20])',
       timeframe: 'M15',
-      historyBars: 50000,
-      execution: { status: 'passed', detail: 'Feed Connected: 50K Bars Synced' },
+      symbol: 'XAUUSD',
+      bars_count: '10,000',
+      execution: { status: 'passed', detail: 'Strategy Feed: XAUUSD M15 (10K Bars)' },
     },
   },
   {
     id: 'node-2',
     type: 'nodeCard',
-    position: { x: 320, y: 160 },
+    position: { x: 340, y: 160 },
     data: {
-      nodeType: 'fractional_diff',
-      d_order: 0.4,
-      threshold: 0.0001,
-      stationarity: -4.82,
-      execution: { status: 'passed', detail: 'Stationary Check: ADF -4.82 (p < 0.001)' },
+      nodeType: 'volatility_indicator',
+      vol_window: 10,
+      sma_period: 20,
+      metric: 'ATR Normalized',
+      execution: { status: 'passed', detail: 'ATR Filter: σ=0.0018 (Stationary)' },
     },
   },
   {
     id: 'node-3',
     type: 'nodeCard',
-    position: { x: 600, y: 160 },
+    position: { x: 640, y: 160 },
     data: {
-      nodeType: 'feature_pipeline',
-      features: 6,
-      scaling: 'Z-Score',
-      lookback: 20,
-      execution: { status: 'passed', detail: '6 Features Extracted & Normalized' },
+      nodeType: 'fc1_dense_expansion',
+      units: '64 ⭐',
+      activation: 'LeakyReLU (alpha=0.1) ⭐',
+      weight_init: 'Kaiming Normal (He) ⭐',
+      use_bias: true,
+      execution: { status: 'passed', detail: 'FC1 Linear Expansion: [6, 64]' },
     },
   },
   {
     id: 'node-4',
     type: 'nodeCard',
-    position: { x: 880, y: 160 },
+    position: { x: 940, y: 160 },
     data: {
-      nodeType: 'ppo_policy',
-      hidden_layers: '64 -> 32',
-      actor_lr: 0.0003,
-      clip_epsilon: 0.2,
-      gamma: 0.99,
-      batch_size: 64,
-      execution: { status: 'passed', detail: 'Epoch 120/120: Convergence Achieved' },
+      nodeType: 'spatial_dropout',
+      rate: 0.15,
+      mode: 'Standard Dropout',
+      execution: { status: 'passed', detail: 'Dropout Active: p=0.15' },
     },
   },
   {
     id: 'node-5',
     type: 'nodeCard',
-    position: { x: 1160, y: 160 },
+    position: { x: 1240, y: 160 },
     data: {
-      nodeType: 'var_guardrail',
-      max_drawdown: 0.05,
-      var_confidence: 0.99,
-      max_leverage: 3.0,
-      execution: { status: 'passed', detail: 'Risk Limits OK: Max DD < 5%' },
+      nodeType: 'fc2_bottleneck_synthesizer',
+      units: '32 ⭐',
+      activation: 'LeakyReLU (alpha=0.1)',
+      residual: 'Enable x + F(x)',
+      execution: { status: 'passed', detail: 'FC2 Bottleneck: [64, 32] + Residual' },
     },
   },
   {
     id: 'node-6',
     type: 'nodeCard',
-    position: { x: 1440, y: 160 },
+    position: { x: 1540, y: 160 },
     data: {
-      nodeType: 'mt5_execution',
-      magic_number: 888123,
-      slippage_max: 2.0,
-      execution_mode: 'DMA_STP',
-      execution: { status: 'passed', detail: 'DMA Order Router Active' },
+      nodeType: 'friction_spread_cost',
+      spread_pip: 0.15,
+      commission: 0.00,
+      execution: { status: 'passed', detail: 'Friction Adjusted: Spread 0.15 pips' },
     },
   },
   {
     id: 'node-7',
     type: 'nodeCard',
-    position: { x: 1720, y: 160 },
+    position: { x: 1840, y: 160 },
     data: {
-      nodeType: 'onnx_export',
+      nodeType: 'fc3_policy_action_head',
+      classes: '3 [0: BUY, 1: HOLD, 2: SELL]',
+      entropy_beta: 0.08,
+      execution: { status: 'passed', detail: 'Policy Softmax: 3 Actions (β=0.08)' },
+    },
+  },
+  {
+    id: 'node-8',
+    type: 'nodeCard',
+    position: { x: 2140, y: 160 },
+    data: {
+      nodeType: 'onnx_mt5_compiler',
+      export_mode: 'TorchScript Standalone Single-File (.onnx)',
+      target_folder: '%APPDATA%/MetaQuotes/Terminal/*/MQL5/Files/',
       opset: 14,
-      input_shape: '[1, 6]',
-      target_file: 'FXForge_PPO.mq5',
-      execution: { status: 'passed', detail: 'Ready to Deploy Artifact' },
+      execution: { status: 'passed', detail: 'Compiled ONNX Standalone Ready' },
     },
   },
 ];
@@ -138,8 +147,8 @@ const INITIAL_EDGES: Edge[] = [
     target: 'node-4',
     type: 'smoothstep',
     animated: true,
-    style: { stroke: '#bf5af2', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(191,90,242,0.55))' },
-    markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: '#bf5af2' },
+    style: { stroke: '#30d158', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(48,209,88,0.55))' },
+    markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: '#30d158' },
   },
   {
     id: 'e4-5',
@@ -147,8 +156,8 @@ const INITIAL_EDGES: Edge[] = [
     target: 'node-5',
     type: 'smoothstep',
     animated: true,
-    style: { stroke: '#ff453a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,69,58,0.55))' },
-    markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: '#ff453a' },
+    style: { stroke: '#bf5af2', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(191,90,242,0.55))' },
+    markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: '#bf5af2' },
   },
   {
     id: 'e5-6',
@@ -156,13 +165,22 @@ const INITIAL_EDGES: Edge[] = [
     target: 'node-6',
     type: 'smoothstep',
     animated: true,
-    style: { stroke: '#30d158', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(48,209,88,0.55))' },
-    markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: '#30d158' },
+    style: { stroke: '#f59e0b', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(245,158,11,0.55))' },
+    markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: '#f59e0b' },
   },
   {
     id: 'e6-7',
     source: 'node-6',
     target: 'node-7',
+    type: 'smoothstep',
+    animated: true,
+    style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' },
+    markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: '#0a84ff' },
+  },
+  {
+    id: 'e7-8',
+    source: 'node-7',
+    target: 'node-8',
     type: 'smoothstep',
     animated: true,
     style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' },
@@ -207,11 +225,11 @@ interface InspectorState {
 //  Apple Design System: State-driven Text & Dropdown Field (Default, Focus, Filled, Error)
 interface InspectorTextFieldProps {
   label: string;
-  value: string | number;
+  value: string | number | boolean;
   defaultValue: string | number | boolean;
   type?: 'string' | 'number' | 'boolean' | 'select';
   options?: string[];
-  onChange: (val: string | number) => void;
+  onChange: (val: string | number | boolean) => void;
 }
 
 const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
@@ -223,8 +241,9 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
   onChange,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
-  const isSelect = type === 'select' || (options && options.length > 0);
-  const isNumber = !isSelect && typeof defaultValue === 'number';
+  const isBoolean = type === 'boolean' || typeof defaultValue === 'boolean';
+  const isSelect = !isBoolean && (type === 'select' || (options && options.length > 0));
+  const isNumber = !isBoolean && !isSelect && typeof defaultValue === 'number';
 
   // State checks matching Apple/Figma specs
   const strVal = value !== undefined && value !== null ? String(value) : '';
@@ -257,7 +276,32 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
             : 'border border-white/[0.09] hover:border-white/[0.16]'
         }`}
       >
-        {isSelect ? (
+        {isBoolean ? (
+          <div className="w-full flex items-center justify-between px-1">
+            <span
+              className="text-[12.5px] font-medium text-[#f4f4f5]"
+              style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif' }}
+            >
+              {Boolean(value ?? defaultValue) ? 'Enabled (True)' : 'Disabled (False)'}
+            </span>
+            <button
+              type="button"
+              onClick={() => onChange(!Boolean(value ?? defaultValue))}
+              onPointerDown={(e) => e.stopPropagation()}
+              onMouseDown={(e) => e.stopPropagation()}
+              className={`w-10 h-5 rounded-full transition-colors relative cursor-pointer nodrag nopan pointer-events-auto ${
+                Boolean(value ?? defaultValue) ? 'bg-[#30d158]' : 'bg-[#2c2c35]'
+              }`}
+            >
+              <span
+                className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${
+                  Boolean(value ?? defaultValue) ? 'left-[22px]' : 'left-0.5'
+                }`}
+                style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.4)' }}
+              />
+            </button>
+          </div>
+        ) : isSelect ? (
           <div className="relative w-full flex items-center">
             <select
               value={strVal}
@@ -491,7 +535,7 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
         onMouseDown={(e) => e.stopPropagation()}
       >
         {def?.fields.map((f) => {
-          const val = (node.data?.[f.key] ?? f.default) as string | number;
+          const val = (node.data?.[f.key] ?? f.default) as string | number | boolean;
           return (
             <InspectorTextField
               key={f.key}

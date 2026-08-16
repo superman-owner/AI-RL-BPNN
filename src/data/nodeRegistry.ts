@@ -29,56 +29,109 @@ export interface NodeItem {
 }
 
 export const GROUPS: NodeGroup[] = [
-  { id: 'stage1', label: 'Data Ingestion', color: '#38bdf8' },
-  { id: 'stage2', label: 'Feature Engineering', color: '#ff9f0a' },
-  { id: 'stage3', label: 'Deep RL Agent', color: '#bf5af2' },
-  { id: 'stage4', label: 'Risk & Guardrails', color: '#ff453a' },
-  { id: 'stage5', label: 'Execution & MT5', color: '#30d158' },
+  { id: 'input', label: '1. Input & Strategy', color: '#38bdf8' },
+  { id: 'fc1', label: '2. Hidden Layer 1 (FC1)', color: '#ff9f0a' },
+  { id: 'regularization', label: '3. Anti-Overfitting & Norm', color: '#30d158' },
+  { id: 'fc2', label: '4. Hidden Layer 2 (FC2)', color: '#bf5af2' },
+  { id: 'reward', label: '5. Reward & Shaping Rules', color: '#f59e0b' },
+  { id: 'output', label: '6. Output & MT5 Compiler', color: '#0a84ff' },
   { id: 'trainer', label: 'Trainer Engine', color: '#6366f1' },
   { id: 'qc', label: 'Quality Control', color: '#10b981' },
-  { id: 'tournament', label: 'Tournament Arena', color: '#f59e0b' },
+  { id: 'tournament', label: 'Tournament Arena', color: '#ec4899' },
   { id: 'live', label: 'Live Broker IPC', color: '#00c7be' },
-  { id: 'remediation', label: 'Remediation', color: '#ec4899' },
-  { id: 'output', label: 'Export Artifact', color: '#0a84ff' },
   { id: 'llm', label: 'Quant LLM Copilot', color: '#8b5cf6' },
 ];
 
 export const NODE_DEFS: Record<string, NodeDef> = {
+  // =========================================================================
+  // 1. 📥 หมวด INPUT NODES (ดึงข้อมูลและเลือกกลยุทธ์)
+  // =========================================================================
+  strategy_preset_return: {
+    group: 'input',
+    label: 'Strategy Preset & Return Window',
+    fields: [
+      {
+        key: 'preset',
+        label: 'Strategy Preset',
+        default: '🥇 Standard Quant (RET [5, 10, 20])',
+        type: 'select',
+        options: [
+          '🥇 Standard Quant (RET [5, 10, 20])',
+          '🌀 Fibonacci Scale (RET [3, 8, 21])',
+          '⚡ Ultra-Fast Scalper (RET [2, 5, 10])',
+          '🌊 Macro Trend Follower (RET [10, 25, 50])',
+          '🛠️ Custom Configuration',
+        ],
+      },
+      {
+        key: 'timeframe',
+        label: 'Timeframe',
+        default: 'M15',
+        type: 'select',
+        options: ['M1', 'M5', 'M15', 'M30', 'H1', 'H4', 'D1'],
+      },
+      { key: 'symbol', label: 'Asset Symbol', default: 'XAUUSD', type: 'string' },
+      {
+        key: 'bars_count',
+        label: 'Bars Count',
+        default: '10,000',
+        type: 'select',
+        options: ['5,000', '10,000', '20,000', '50,000'],
+      },
+    ],
+    hasInput: false,
+    hasOutput: true,
+  },
+  volatility_indicator: {
+    group: 'input',
+    label: 'Volatility & Indicator Node',
+    fields: [
+      { key: 'vol_window', label: 'Volatility Window', default: 10, type: 'number' },
+      { key: 'sma_period', label: 'SMA Baseline Period', default: 20, type: 'number' },
+      {
+        key: 'metric',
+        label: 'Formula Metric',
+        default: 'ATR Normalized',
+        type: 'select',
+        options: ['Standard Deviation %', 'ATR Normalized', 'Bollinger %B'],
+      },
+    ],
+    hasInput: true,
+    hasOutput: true,
+  },
+  position_feedback: {
+    group: 'input',
+    label: 'Position Feedback Node',
+    fields: [
+      {
+        key: 'encoding',
+        label: 'Position Encoding',
+        default: 'Discrete {-1: Short, 0: Flat, +1: Long}',
+        type: 'select',
+        options: [
+          'Discrete {-1: Short, 0: Flat, +1: Long}',
+          'Continuous Lot Size',
+        ],
+      },
+    ],
+    hasInput: true,
+    hasOutput: true,
+  },
+
+  // Legacy Input Aliases
   mt5_feed: {
-    group: 'stage1',
+    group: 'input',
     label: 'MT5 Live Tick Ingestion',
     fields: [
-      { key: 'symbol', label: 'Symbol', default: 'EURUSD' },
-      { key: 'timeframe', label: 'Timeframe', default: 'M15' },
+      { key: 'symbol', label: 'Symbol', default: 'XAUUSD' },
+      { key: 'timeframe', label: 'Timeframe', default: 'M15', type: 'select', options: ['M1', 'M5', 'M15', 'M30', 'H1', 'H4', 'D1'] },
       { key: 'historyBars', label: 'Lookback Bars', default: 50000 },
     ],
     hasInput: false,
     hasOutput: true,
   },
-  binance_feed: {
-    group: 'stage1',
-    label: 'Binance Spot Orderbook',
-    fields: [
-      { key: 'symbol', label: 'Pair', default: 'BTCUSDT' },
-      { key: 'depth', label: 'Book Depth', default: 50 },
-      { key: 'interval', label: 'Interval', default: '1m' },
-    ],
-    hasInput: false,
-    hasOutput: true,
-  },
-  synthetic_noise: {
-    group: 'stage1',
-    label: 'GBM Jump Diffusion Noise',
-    fields: [
-      { key: 'drift', label: 'Drift (μ)', default: 0.0002 },
-      { key: 'volatility', label: 'Sigma (σ)', default: 0.0018 },
-      { key: 'jumps', label: 'Poisson Jumps', default: '5%' },
-    ],
-    hasInput: false,
-    hasOutput: true,
-  },
   fractional_diff: {
-    group: 'stage2',
+    group: 'input',
     label: 'Fractional Differentiation',
     fields: [
       { key: 'd_order', label: 'd (Memory Order)', default: 0.40 },
@@ -89,29 +142,52 @@ export const NODE_DEFS: Record<string, NodeDef> = {
     hasOutput: true,
   },
   feature_pipeline: {
-    group: 'stage2',
+    group: 'input',
     label: 'Stationary State Builder',
     fields: [
       { key: 'features', label: 'State Dim', default: 6 },
-      { key: 'scaling', label: 'Scaler', default: 'Z-Score' },
+      { key: 'scaling', label: 'Scaler', default: 'Z-Score', type: 'select', options: ['Z-Score', 'MinMax', 'RobustScaler'] },
       { key: 'lookback', label: 'Norm Window', default: 20 },
     ],
     hasInput: true,
     hasOutput: true,
   },
-  wavelet_denoise: {
-    group: 'stage2',
-    label: 'Wavelet Transform Filter',
+
+  // =========================================================================
+  // 2. 🧠 หมวด HIDDEN LAYER 1 NODES (สกัดฟีเจอร์ย่อย)
+  // =========================================================================
+  fc1_dense_expansion: {
+    group: 'fc1',
+    label: 'Dense Feature Expansion (FC1)',
     fields: [
-      { key: 'wavelet', label: 'Mother Wavelet', default: 'db4' },
-      { key: 'level', label: 'Decomp Level', default: 3 },
-      { key: 'mode', label: 'Thresholding', default: 'Soft' },
+      {
+        key: 'units',
+        label: 'Neuron Count (Units)',
+        default: '64 ⭐',
+        type: 'select',
+        options: ['32', '64 ⭐', '128'],
+      },
+      {
+        key: 'activation',
+        label: 'Activation Function',
+        default: 'LeakyReLU (alpha=0.1) ⭐',
+        type: 'select',
+        options: ['LeakyReLU (alpha=0.1) ⭐', 'GELU', 'ELU', 'ReLU', 'Mish'],
+      },
+      {
+        key: 'weight_init',
+        label: 'Weight Initialization',
+        default: 'Kaiming Normal (He) ⭐',
+        type: 'select',
+        options: ['Kaiming Normal (He) ⭐', 'Xavier Uniform', 'Orthogonal'],
+      },
+      { key: 'use_bias', label: 'Use Bias', default: true, type: 'boolean' },
     ],
     hasInput: true,
     hasOutput: true,
   },
   hidden_layer: {
-    group: 'stage3',
+    group: 'fc1',
     label: 'Hidden Layer Architecture',
     fields: [
       {
@@ -133,8 +209,95 @@ export const NODE_DEFS: Record<string, NodeDef> = {
     hasInput: true,
     hasOutput: true,
   },
+
+  // =========================================================================
+  // 3. 🛡️ หมวด ANTI-OVERFITTING & REGULARIZATION NODES (กันจำข้อสอบเก่า)
+  // =========================================================================
+  spatial_dropout: {
+    group: 'regularization',
+    label: 'Spatial Dropout Node',
+    fields: [
+      { key: 'rate', label: 'Dropout Rate (p)', default: 0.15, type: 'number' },
+      {
+        key: 'mode',
+        label: 'Dropout Mode',
+        default: 'Standard Dropout',
+        type: 'select',
+        options: ['Standard Dropout', 'Inverted Dropout'],
+      },
+    ],
+    hasInput: true,
+    hasOutput: true,
+  },
+  layer_normalization: {
+    group: 'regularization',
+    label: 'Layer Normalization Node',
+    fields: [
+      {
+        key: 'norm_type',
+        label: 'Norm Type',
+        default: 'LayerNorm (Recommended for RL) ⭐',
+        type: 'select',
+        options: ['LayerNorm (Recommended for RL) ⭐', 'RMSNorm', 'None'],
+      },
+      { key: 'eps', label: 'Epsilon (ε)', default: '1e-5', type: 'string' },
+    ],
+    hasInput: true,
+    hasOutput: true,
+  },
+  l2_weight_decay: {
+    group: 'regularization',
+    label: 'L2 Weight Decay Regularizer',
+    fields: [
+      { key: 'decay', label: 'Weight Decay (λ)', default: '1e-4', type: 'string' },
+    ],
+    hasInput: true,
+    hasOutput: true,
+  },
+  gradient_clipping: {
+    group: 'regularization',
+    label: 'Gradient Clipping Node',
+    fields: [
+      { key: 'max_norm', label: 'Max Gradient Norm', default: 1.0, type: 'number' },
+    ],
+    hasInput: true,
+    hasOutput: true,
+  },
+
+  // =========================================================================
+  // 4. ⚡ หมวด HIDDEN LAYER 2 NODES (สังเคราะห์ภาพรวมกลยุทธ์)
+  // =========================================================================
+  fc2_bottleneck_synthesizer: {
+    group: 'fc2',
+    label: 'Strategy Bottleneck Synthesizer (FC2)',
+    fields: [
+      {
+        key: 'units',
+        label: 'Neuron Count (Units)',
+        default: '32 ⭐',
+        type: 'select',
+        options: ['16', '32 ⭐', '64'],
+      },
+      {
+        key: 'activation',
+        label: 'Activation Function',
+        default: 'LeakyReLU (alpha=0.1)',
+        type: 'select',
+        options: ['LeakyReLU (alpha=0.1)', 'GELU', 'Tanh'],
+      },
+      {
+        key: 'residual',
+        label: 'Residual Connection',
+        default: 'Enable x + F(x)',
+        type: 'select',
+        options: ['Enable x + F(x)', 'Disable'],
+      },
+    ],
+    hasInput: true,
+    hasOutput: true,
+  },
   ppo_policy: {
-    group: 'stage3',
+    group: 'fc2',
     label: 'Deep RL PPO Actor-Critic',
     fields: [
       {
@@ -153,7 +316,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
     hasOutput: true,
   },
   deep_rl_ppo: {
-    group: 'stage3',
+    group: 'fc2',
     label: 'Deep RL PPO Actor-Critic',
     fields: [
       {
@@ -169,8 +332,32 @@ export const NODE_DEFS: Record<string, NodeDef> = {
     hasInput: true,
     hasOutput: true,
   },
+
+  // =========================================================================
+  // 5. 🎯 หมวด REWARD & SHAPING NODES (กฎเกณฑ์การเทรด)
+  // =========================================================================
+  friction_spread_cost: {
+    group: 'reward',
+    label: 'Friction Cost & Spread Node',
+    fields: [
+      { key: 'spread_pip', label: 'Spread (Pips)', default: 0.15, type: 'number' },
+      { key: 'commission', label: 'Commission (USD/Lot)', default: 0.00, type: 'number' },
+    ],
+    hasInput: true,
+    hasOutput: true,
+  },
+  anti_inactivity_reward: {
+    group: 'reward',
+    label: 'Anti-Inactivity & Opportunity Cost',
+    fields: [
+      { key: 'idle_penalty', label: 'Idle Penalty (λ)', default: -0.0005, type: 'number' },
+      { key: 'opp_cost_multiplier', label: 'Opportunity Multiplier', default: '0.50x', type: 'string' },
+    ],
+    hasInput: true,
+    hasOutput: true,
+  },
   reward_shaper: {
-    group: 'stage3',
+    group: 'reward',
     label: 'Differential Sharpe Reward',
     fields: [
       { key: 'metric', label: 'Target', default: 'Diff Sharpe' },
@@ -180,19 +367,8 @@ export const NODE_DEFS: Record<string, NodeDef> = {
     hasInput: true,
     hasOutput: true,
   },
-  risk_guard: {
-    group: 'stage4',
-    label: 'Max Drawdown Guard',
-    fields: [
-      { key: 'maxDd', label: 'Max DD Threshold', default: '10.0%' },
-      { key: 'action', label: 'Breach Action', default: 'Early Stop' },
-      { key: 'penalty', label: 'Penalty Score', default: -5.0 },
-    ],
-    hasInput: true,
-    hasOutput: true,
-  },
   var_guardrail: {
-    group: 'stage4',
+    group: 'reward',
     label: 'VaR Risk Guardrail',
     fields: [
       { key: 'max_drawdown', label: 'Max Drawdown', default: '5.0%' },
@@ -202,19 +378,60 @@ export const NODE_DEFS: Record<string, NodeDef> = {
     hasInput: true,
     hasOutput: true,
   },
-  volatility_killswitch: {
-    group: 'stage4',
-    label: 'Volatility Circuit Breaker',
+  risk_guard: {
+    group: 'reward',
+    label: 'Max Drawdown Guard',
     fields: [
-      { key: 'atrMax', label: 'ATR Multiplier', default: 3.5 },
-      { key: 'cooldown', label: 'Cooldown Bars', default: 12 },
-      { key: 'emergencyClose', label: 'Force Liquidate', default: true },
+      { key: 'maxDd', label: 'Max DD Threshold', default: '10.0%' },
+      { key: 'action', label: 'Breach Action', default: 'Early Stop' },
+      { key: 'penalty', label: 'Penalty Score', default: -5.0 },
     ],
     hasInput: true,
     hasOutput: true,
   },
+
+  // =========================================================================
+  // 6. 🚀 หมวด OUTPUT & DEPLOY NODES (เคาะออเดอร์และส่ง MT5)
+  // =========================================================================
+  fc3_policy_action_head: {
+    group: 'output',
+    label: 'Policy Softmax Action Head (FC3)',
+    fields: [
+      {
+        key: 'classes',
+        label: 'Output Classes',
+        default: '3 [0: BUY, 1: HOLD, 2: SELL]',
+        type: 'string',
+      },
+      { key: 'entropy_beta', label: 'Entropy Bonus (β)', default: 0.08, type: 'number' },
+    ],
+    hasInput: true,
+    hasOutput: true,
+  },
+  onnx_mt5_compiler: {
+    group: 'output',
+    label: '1-Click ONNX MT5 Compiler',
+    fields: [
+      {
+        key: 'export_mode',
+        label: 'Export Mode',
+        default: 'TorchScript Standalone Single-File (.onnx)',
+        type: 'select',
+        options: ['TorchScript Standalone Single-File (.onnx)'],
+      },
+      {
+        key: 'target_folder',
+        label: 'Target Folder',
+        default: '%APPDATA%/MetaQuotes/Terminal/*/MQL5/Files/',
+        type: 'string',
+      },
+      { key: 'opset', label: 'Opset Version', default: 14, type: 'number' },
+    ],
+    hasInput: true,
+    hasOutput: false,
+  },
   mt5_execution: {
-    group: 'stage5',
+    group: 'output',
     label: 'MT5 Execution Router',
     fields: [
       { key: 'magic_number', label: 'Magic Number', default: 888123 },
@@ -230,17 +447,6 @@ export const NODE_DEFS: Record<string, NodeDef> = {
     hasInput: true,
     hasOutput: true,
   },
-  mt5_onnx_deploy: {
-    group: 'stage5',
-    label: 'MT5 MQL5 ONNX Exporter',
-    fields: [
-      { key: 'opset', label: 'ONNX Opset', default: 14 },
-      { key: 'tensorShape', label: 'Input Shape', default: '[1, 6]' },
-      { key: 'eaName', label: 'EA Target', default: 'FXForge_PPO.mq5' },
-    ],
-    hasInput: true,
-    hasOutput: false,
-  },
   onnx_export: {
     group: 'output',
     label: 'ONNX Model Exporter',
@@ -252,6 +458,10 @@ export const NODE_DEFS: Record<string, NodeDef> = {
     hasInput: true,
     hasOutput: false,
   },
+
+  // =========================================================================
+  // Auxiliary Systems
+  // =========================================================================
   distributed_trainer: {
     group: 'trainer',
     label: 'Multi-GPU Vectorized PPO',
@@ -295,28 +505,6 @@ export const NODE_DEFS: Record<string, NodeDef> = {
     ],
     hasInput: true,
     hasOutput: true,
-  },
-  drift_remediator: {
-    group: 'remediation',
-    label: 'Concept Drift Auto-Retrain',
-    fields: [
-      { key: 'driftMetric', label: 'Wasserstein Dist', default: 0.25 },
-      { key: 'trigger', label: 'Auto Trigger', default: 'Retrain PPO' },
-      { key: 'fallback', label: 'Safe Baseline', default: 'Flat Cash' },
-    ],
-    hasInput: true,
-    hasOutput: true,
-  },
-  quant_report: {
-    group: 'output',
-    label: 'Tear Sheet PDF & JSON',
-    fields: [
-      { key: 'format', label: 'Report Format', default: 'QuantStats HTML' },
-      { key: 'benchmark', label: 'Benchmark', default: 'Buy & Hold' },
-      { key: 'savePath', label: 'Export Dir', default: './reports/' },
-    ],
-    hasInput: true,
-    hasOutput: false,
   },
   copilot_advisor: {
     group: 'llm',

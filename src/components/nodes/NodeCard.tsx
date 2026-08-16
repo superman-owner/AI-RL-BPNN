@@ -27,6 +27,12 @@ const STATUS_COLOR: Record<string, string> = {
 };
 
 const GROUP_ICONS: Record<string, React.ComponentType<{ size?: number; color?: string }>> = {
+  input: BarChart2,
+  fc1: Sliders,
+  regularization: Shield,
+  fc2: Brain,
+  reward: Zap,
+  output: Send,
   stage1: BarChart2,
   stage2: Sliders,
   stage3: Brain,
@@ -37,7 +43,6 @@ const GROUP_ICONS: Record<string, React.ComponentType<{ size?: number; color?: s
   tournament: Trophy,
   live: Zap,
   remediation: RefreshCw,
-  output: Send,
   llm: Bot,
 };
 

@@ -23,11 +23,16 @@ import {
   PanelLeftOpen,
 } from 'lucide-react';
 
-// Apple SF Symbols Icon Mapping (Clean, authentic Apple Blue & System Colors)
 const GROUP_ICONS: Record<
   string,
   React.ComponentType<{ size?: number; className?: string; color?: string; style?: React.CSSProperties }>
 > = {
+  input: Database,
+  fc1: SlidersHorizontal,
+  regularization: ShieldAlert,
+  fc2: Brain,
+  reward: Zap,
+  output: FileCode,
   stage1: Database,
   stage2: SlidersHorizontal,
   stage3: Brain,
@@ -38,7 +43,6 @@ const GROUP_ICONS: Record<
   tournament: Trophy,
   live: Radio,
   remediation: RefreshCw,
-  output: FileCode,
   llm: Sparkles,
 };
 
