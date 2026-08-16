@@ -394,8 +394,13 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
               {/*  Child Items (Large & Crisp Text 13.5px font-medium with Generous Breathing Room) */}
               {isExpanded && (
                 <div
-                  className="mt-1 space-y-0.5"
-                  style={{ paddingLeft: '8px' }}
+                  style={{
+                    paddingLeft: '6px',
+                    marginTop: '4px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '2px',
+                  }}
                 >
                   {matchingNodes.map((node) => {
                     const isNodeHovered = hoveredNode === node.type;
@@ -408,28 +413,49 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                         onMouseEnter={() => setHoveredNode(node.type)}
                         onMouseLeave={() => setHoveredNode(null)}
                         title="Drag onto canvas to add module"
-                        className={`py-1.5 min-h-[30px] px-3.5 rounded-lg flex items-center justify-between cursor-grab transition-all select-none ${
-                          isNodeHovered
-                            ? isLight
-                              ? 'bg-black/[0.06] text-[#0071e3]'
-                              : 'bg-white/[0.12] text-white'
-                            : isLight
-                            ? 'text-[#111827]'
-                            : 'text-[#e5e7eb]'
-                        }`}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          minHeight: '32px',
+                          paddingLeft: '16px',
+                          paddingRight: '14px',
+                          paddingTop: '6px',
+                          paddingBottom: '6px',
+                          borderRadius: '8px',
+                          cursor: 'grab',
+                          userSelect: 'none',
+                          transition: 'background-color 0.15s ease, color 0.15s ease',
+                          backgroundColor: isNodeHovered
+                            ? (isLight ? 'rgba(0, 0, 0, 0.06)' : 'rgba(255, 255, 255, 0.12)')
+                            : 'transparent',
+                          color: isNodeHovered
+                            ? (isLight ? '#0071e3' : '#ffffff')
+                            : (isLight ? '#111827' : '#e5e7eb'),
+                        }}
                       >
-                        {/* Left: Crisp Solid Bullet Point with 14px Capsule Clearance */}
-                        <div className="flex items-center gap-3 min-w-0 flex-1">
+                        {/* Left: Crisp Solid Bullet Point with 16px Capsule Clearance */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0, flex: 1 }}>
                           <span
-                            style={{ backgroundColor: isNodeHovered ? (isLight ? '#0071e3' : '#ffffff') : group.color }}
-                            className="w-1.5 h-1.5 rounded-full transition-all flex-shrink-0"
+                            style={{
+                              width: '6px',
+                              height: '6px',
+                              borderRadius: '50%',
+                              flexShrink: 0,
+                              backgroundColor: isNodeHovered ? (isLight ? '#0071e3' : '#ffffff') : group.color,
+                              transition: 'background-color 0.15s ease',
+                            }}
                           />
                           <span
-                            className={`text-[13.5px] tracking-tight truncate leading-normal transition-colors ${
-                              isNodeHovered
-                                ? 'font-semibold'
-                                : 'font-medium'
-                            }`}
+                            style={{
+                              fontSize: '13px',
+                              fontWeight: isNodeHovered ? 600 : 500,
+                              letterSpacing: '-0.01em',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                              lineHeight: '1.2',
+                            }}
                           >
                             {node.label}
                           </span>
@@ -438,9 +464,13 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                         {/* Right: Subtle Add Indicator with 14px Capsule Clearance */}
                         <Plus
                           size={13}
-                          className={`flex-shrink-0 transition-colors ml-2 ${
-                            isNodeHovered ? (isLight ? 'text-[#0071e3]' : 'text-white') : 'text-transparent'
-                          }`}
+                          style={{
+                            flexShrink: 0,
+                            marginLeft: '8px',
+                            opacity: isNodeHovered ? 1 : 0,
+                            color: isLight ? '#0071e3' : '#ffffff',
+                            transition: 'opacity 0.15s ease',
+                          }}
                         />
                       </div>
                     );
