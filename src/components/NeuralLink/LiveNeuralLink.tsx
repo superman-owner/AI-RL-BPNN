@@ -569,6 +569,9 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
 
   // Mouse Drag / Camera Rotation Handlers
   const handleMouseDown = (e: React.MouseEvent) => {
+    if (e.button === 2) {
+      e.preventDefault();
+    }
     isDraggingRef.current = true;
     dragStartRef.current = { x: e.clientX, y: e.clientY };
   };
@@ -592,7 +595,11 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
   };
 
   return (
-    <div ref={containerRef} className="w-full h-full relative overflow-hidden select-none bg-[#08080c]">
+    <div
+      ref={containerRef}
+      onContextMenu={(e) => e.preventDefault()}
+      className="w-full h-full relative overflow-hidden select-none bg-[#08080c]"
+    >
       {/*  Top Floating HUD (Frameless / 0 Capsule Boxes) */}
       <div className="absolute top-4 left-4 z-10 flex items-center gap-2 pointer-events-none select-none">
         <span className="w-2 h-2 rounded-full bg-[#30d158] shadow-[0_0_6px_#30d158] animate-pulse" />
@@ -613,6 +620,7 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
         onWheel={handleWheel}
+        onContextMenu={(e) => e.preventDefault()}
         className="w-full h-full cursor-grab active:cursor-grabbing block"
       />
 
