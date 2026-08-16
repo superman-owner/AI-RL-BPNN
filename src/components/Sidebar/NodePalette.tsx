@@ -29,83 +29,6 @@ const GROUP_ICONS: Record<
   output: FileCode,
 };
 
-function onDragStartNode(event: React.DragEvent, nodeType: string, label: string, color: string, isLight: boolean) {
-  event.dataTransfer.setData('application/fxforge-node', nodeType);
-  event.dataTransfer.effectAllowed = 'move';
-  document.body.classList.add('is-dragging-node');
-
-  // Safety listener to guarantee class is removed on drag finish anywhere
-  const cleanup = () => {
-    document.body.classList.remove('is-dragging-node');
-    window.removeEventListener('dragend', cleanup);
-    window.removeEventListener('drop', cleanup);
-  };
-  window.addEventListener('dragend', cleanup, { once: true });
-  window.addEventListener('drop', cleanup, { once: true });
-
-  //  Create High-Contrast Apple macOS Drag Preview Capsule with Mac '+' Badge
-  const dragGhost = document.createElement('div');
-  dragGhost.style.position = 'absolute';
-  dragGhost.style.top = '-9999px';
-  dragGhost.style.left = '-9999px';
-  dragGhost.style.padding = '7px 12px 7px 10px';
-  dragGhost.style.borderRadius = '12px';
-  dragGhost.style.backgroundColor = isLight ? '#ffffff' : '#14141c';
-  dragGhost.style.color = isLight ? '#111827' : '#ffffff';
-  dragGhost.style.border = isLight ? '1.5px solid #0071e3' : '1.5px solid rgba(0, 122, 255, 0.6)';
-  dragGhost.style.boxShadow = isLight
-    ? '0 12px 36px rgba(0, 113, 227, 0.25), 0 2px 8px rgba(0,0,0,0.08)'
-    : '0 16px 40px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 122, 255, 0.4)';
-  dragGhost.style.fontFamily = '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif';
-  dragGhost.style.fontSize = '12.5px';
-  dragGhost.style.fontWeight = '600';
-  dragGhost.style.display = 'flex';
-  dragGhost.style.alignItems = 'center';
-  dragGhost.style.gap = '7px';
-  dragGhost.style.pointerEvents = 'none';
-  dragGhost.style.zIndex = '999999';
-
-  // Module Color Orb
-  const dot = document.createElement('span');
-  dot.style.width = '7px';
-  dot.style.height = '7px';
-  dot.style.borderRadius = '50%';
-  dot.style.backgroundColor = color || '#0071e3';
-  dot.style.boxShadow = `0 0 6px ${color || '#0071e3'}`;
-  dragGhost.appendChild(dot);
-
-  // Module Title
-  const text = document.createElement('span');
-  text.textContent = label;
-  text.style.marginRight = '3px';
-  dragGhost.appendChild(text);
-
-  // Apple Mac '+' Green Badge
-  const addBadge = document.createElement('span');
-  addBadge.textContent = '+';
-  addBadge.style.width = '16px';
-  addBadge.style.height = '16px';
-  addBadge.style.borderRadius = '50%';
-  addBadge.style.backgroundColor = '#34c759';
-  addBadge.style.color = '#ffffff';
-  addBadge.style.fontSize = '12px';
-  addBadge.style.fontWeight = 'bold';
-  addBadge.style.display = 'flex';
-  addBadge.style.alignItems = 'center';
-  addBadge.style.justifyContent = 'center';
-  addBadge.style.boxShadow = '0 2px 6px rgba(52, 199, 89, 0.4)';
-  dragGhost.appendChild(addBadge);
-
-  document.body.appendChild(dragGhost);
-  event.dataTransfer.setDragImage(dragGhost, 20, 16);
-
-  setTimeout(() => {
-    if (document.body.contains(dragGhost)) {
-      document.body.removeChild(dragGhost);
-    }
-  }, 100);
-}
-
 interface NodePaletteProps {
   onOpenSettings?: () => void;
   isCollapsed?: boolean;
@@ -234,21 +157,48 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
 
   //  Pointer-based Drag Handler (100% Guaranteed Mac Closed Fist Cursor during entire drag)
   const handleItemPointerDown = (e: React.PointerEvent, nodeType: string, label: string, color: string) => {
+    // Only handle primary left click
     if (e.button !== 0) return;
+
+    // Remove any orphaned drag ghosts from DOM
+    document.querySelectorAll('.fxforge-drag-ghost').forEach((el) => el.remove());
 
     const startX = e.clientX;
     const startY = e.clientY;
     let isDragging = false;
     let ghostEl: HTMLDivElement | null = null;
 
+    const cleanup = () => {
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerup', onPointerUp);
+      window.removeEventListener('pointercancel', cleanup);
+      window.removeEventListener('mouseup', onPointerUp);
+      window.removeEventListener('blur', cleanup);
+
+      document.body.classList.remove('is-dragging-node');
+      document.body.style.cursor = '';
+
+      document.querySelectorAll('.fxforge-drag-ghost').forEach((el) => el.remove());
+      ghostEl = null;
+
+      window.dispatchEvent(new CustomEvent('fxforge-drag-hover', { detail: { isOver: false } }));
+    };
+
     const onPointerMove = (moveEvent: PointerEvent) => {
+      // If mouse button is no longer held down, immediately abort & clean up
+      if (moveEvent.buttons === 0) {
+        cleanup();
+        return;
+      }
+
       const dist = Math.hypot(moveEvent.clientX - startX, moveEvent.clientY - startY);
-      if (!isDragging && dist > 3) {
+      if (!isDragging && dist > 5) {
         isDragging = true;
         document.body.classList.add('is-dragging-node');
         document.body.style.cursor = 'var(--mac-cursor-grabbing)';
 
         ghostEl = document.createElement('div');
+        ghostEl.className = 'fxforge-drag-ghost';
         ghostEl.style.position = 'fixed';
         ghostEl.style.top = '0px';
         ghostEl.style.left = '0px';
@@ -314,36 +264,29 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
       }
     };
 
-    const onPointerUp = (upEvent: PointerEvent) => {
-      window.removeEventListener('pointermove', onPointerMove);
-      window.removeEventListener('pointerup', onPointerUp);
+    const onPointerUp = (upEvent: MouseEvent | PointerEvent) => {
+      const wasDragging = isDragging;
+      const dropClientX = upEvent.clientX;
+      const dropClientY = upEvent.clientY;
 
-      document.body.classList.remove('is-dragging-node');
-      document.body.style.cursor = '';
+      cleanup();
 
-      if (ghostEl && document.body.contains(ghostEl)) {
-        document.body.removeChild(ghostEl);
-        ghostEl = null;
-      }
-
-      if (isDragging) {
-        window.dispatchEvent(new CustomEvent('fxforge-drag-hover', { detail: { isOver: false } }));
-
+      if (wasDragging) {
         //  Strict Boundary Check: Must cross divider line into Canvas to allow Drop
         const sidebarEl = document.querySelector('aside');
         const sidebarRect = sidebarEl?.getBoundingClientRect();
-        const hasCrossedDivider = sidebarRect ? upEvent.clientX > sidebarRect.right : upEvent.clientX > 345;
+        const hasCrossedDivider = sidebarRect ? dropClientX > sidebarRect.right : dropClientX > 345;
 
         if (hasCrossedDivider) {
-          const elUnder = document.elementFromPoint(upEvent.clientX, upEvent.clientY);
+          const elUnder = document.elementFromPoint(dropClientX, dropClientY);
           const flowEl = elUnder?.closest('.react-flow');
           if (flowEl) {
             window.dispatchEvent(
               new CustomEvent('fxforge-drop-node', {
                 detail: {
                   nodeType,
-                  clientX: upEvent.clientX,
-                  clientY: upEvent.clientY,
+                  clientX: dropClientX,
+                  clientY: dropClientY,
                 },
               })
             );
@@ -353,7 +296,10 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
     };
 
     window.addEventListener('pointermove', onPointerMove);
-    window.addEventListener('pointerup', onPointerUp);
+    window.addEventListener('pointerup', onPointerUp, { once: true });
+    window.addEventListener('pointercancel', cleanup, { once: true });
+    window.addEventListener('mouseup', onPointerUp, { once: true });
+    window.addEventListener('blur', cleanup, { once: true });
   };
 
   //  2. Full Expanded Sidebar Mode
@@ -566,12 +512,6 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                       <div
                         key={node.type}
                         onPointerDown={(e) => handleItemPointerDown(e, node.type, node.label, group.color)}
-                        draggable
-                        onDragStart={(e) => onDragStartNode(e, node.type, node.label, group.color, isLight)}
-                        onDragEnd={() => {
-                          document.body.classList.remove('is-dragging-node');
-                          setHoveredNode(null);
-                        }}
                         onMouseEnter={() => setHoveredNode(node.type)}
                         onMouseLeave={() => setHoveredNode(null)}
                         title="Drag onto canvas to add module"
