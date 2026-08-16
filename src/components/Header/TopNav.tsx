@@ -246,21 +246,74 @@ export const TopNav: React.FC<TopNavProps> = ({
 
           <div className={`h-3.5 w-[1px] flex-shrink-0 ${isLight ? 'bg-black/10' : 'bg-white/10'}`} />
 
-          {/*  Apple macOS Theme Switcher (Sun ☀️ / Moon 🌙) */}
+          {/*  Apple macOS Sliding Theme Switcher (Orb Morphing Sun ☀️ <-> Moon 🌙) */}
           <button
             onClick={toggleTheme}
-            className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all cursor-pointer flex-shrink-0 ${
-              isLight
-                ? 'text-[#6e6e73] hover:text-[#1d1d1f] hover:bg-black/[0.05]'
-                : 'text-white/60 hover:text-white hover:bg-white/[0.08]'
-            }`}
-            title={isLight ? 'Switch to Dark Mode (macOS Dark Glass)' : 'Switch to Light Mode (macOS Studio Light)'}
+            style={{
+              width: '46px',
+              height: '24px',
+              borderRadius: '9999px',
+              padding: '2px',
+              display: 'flex',
+              alignItems: 'center',
+              cursor: 'var(--mac-cursor-default)',
+              backgroundColor: isLight ? 'rgba(0, 0, 0, 0.08)' : 'rgba(255, 255, 255, 0.12)',
+              border: isLight ? '1px solid rgba(0, 0, 0, 0.12)' : '1px solid rgba(255, 255, 255, 0.18)',
+              boxShadow: isLight
+                ? 'inset 0 1px 2px rgba(0, 0, 0, 0.08)'
+                : 'inset 0 1px 3px rgba(0, 0, 0, 0.5), 0 0 10px rgba(10, 132, 255, 0.15)',
+              position: 'relative',
+              userSelect: 'none',
+              transition: 'background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease',
+            }}
+            className="group flex-shrink-0"
+            title={isLight ? 'Switch to Dark Mode (macOS Obsidian)' : 'Switch to Light Mode (macOS Studio)'}
           >
-            {isLight ? (
-              <LucideIcons.Moon size={14} className="text-[#6e6e73] hover:text-[#1d1d1f] transition-colors" />
-            ) : (
-              <LucideIcons.Sun size={14} className="text-[#ffd60a] hover:text-[#ffe047] transition-colors drop-shadow-[0_0_6px_rgba(255,214,10,0.6)]" />
-            )}
+            {/* Background Track Icons (Sun on Left, Moon on Right) */}
+            <div className="w-full h-full flex items-center justify-between px-1.5 pointer-events-none select-none">
+              <LucideIcons.Sun
+                size={10}
+                className={`transition-opacity duration-200 ${isLight ? 'opacity-0' : 'opacity-40 text-white/50'}`}
+              />
+              <LucideIcons.Moon
+                size={10}
+                className={`transition-opacity duration-200 ${isLight ? 'opacity-40 text-black/40' : 'opacity-0'}`}
+              />
+            </div>
+
+            {/*  Sliding Orb Sphere with Apple Spring Physics */}
+            <div
+              style={{
+                position: 'absolute',
+                top: '2px',
+                left: '2px',
+                width: '18px',
+                height: '18px',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transform: isLight ? 'translateX(0px)' : 'translateX(22px)',
+                backgroundColor: isLight ? '#ffffff' : '#181820',
+                border: isLight ? '0.5px solid rgba(0, 0, 0, 0.08)' : '0.5px solid rgba(255, 255, 255, 0.25)',
+                boxShadow: isLight
+                  ? '0 2px 5px rgba(0, 0, 0, 0.18), 0 0 1px rgba(0, 0, 0, 0.1)'
+                  : '0 2px 6px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.25), 0 0 8px rgba(10, 132, 255, 0.4)',
+                transition: 'transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.3s ease, box-shadow 0.3s ease',
+              }}
+            >
+              {isLight ? (
+                <LucideIcons.Sun
+                  size={10}
+                  className="text-[#f59e0b] drop-shadow-[0_0_2px_rgba(245,158,11,0.5)]"
+                />
+              ) : (
+                <LucideIcons.Moon
+                  size={9.5}
+                  className="text-[#60a5fa] drop-shadow-[0_0_4px_rgba(96,165,250,0.8)]"
+                />
+              )}
+            </div>
           </button>
         </div>
       </div>
