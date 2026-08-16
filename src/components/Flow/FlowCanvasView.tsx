@@ -1,4 +1,5 @@
 import React, { useCallback, useRef, useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   ReactFlow,
   ReactFlowProvider,
@@ -40,124 +41,82 @@ const INITIAL_NODES: Node[] = [
     position: { x: 320, y: 160 },
     data: {
       nodeType: 'fractional_diff',
-      d_order: 0.40,
+      d_order: 0.4,
       threshold: 0.0001,
       stationarity: -4.82,
-      execution: { status: 'passed', detail: 'Stationary test passed (p < 0.001)' },
+      execution: { status: 'passed', detail: 'Stationary Check: ADF -4.82 (p < 0.001)' },
     },
   },
   {
     id: 'node-3',
     type: 'nodeCard',
-    position: { x: 600, y: 80 },
+    position: { x: 600, y: 160 },
     data: {
       nodeType: 'feature_pipeline',
       features: 6,
       scaling: 'Z-Score',
       lookback: 20,
-      execution: { status: 'passed', detail: 'State Vector [1, 6] float32 ready' },
+      execution: { status: 'passed', detail: '6 Features Extracted & Normalized' },
     },
   },
   {
     id: 'node-4',
     type: 'nodeCard',
-    position: { x: 600, y: 280 },
+    position: { x: 880, y: 160 },
     data: {
-      nodeType: 'reward_shaper',
-      metric: 'Diff Sharpe',
-      inactivityPenalty: -0.0005,
-      spreadFriction: 1.2,
-      execution: { status: 'passed', detail: 'Reward Formulation Active' },
+      nodeType: 'ppo_policy',
+      actor_lr: 0.0003,
+      clip_epsilon: 0.2,
+      gamma: 0.99,
+      batch_size: 64,
+      execution: { status: 'passed', detail: 'Epoch 120/120: Convergence Achieved' },
     },
   },
   {
     id: 'node-5',
     type: 'nodeCard',
-    position: { x: 880, y: 160 },
+    position: { x: 1160, y: 160 },
     data: {
-      nodeType: 'deep_rl_ppo',
-      architecture: '6-64-32-3',
-      learningRate: 0.0003,
-      entropyCoef: 0.02,
-      execution: { status: 'passed', detail: 'PPO Training Convergence: Active' },
+      nodeType: 'var_guardrail',
+      max_drawdown: 0.05,
+      var_confidence: 0.99,
+      max_leverage: 3.0,
+      execution: { status: 'passed', detail: 'Risk Limits OK: Max DD < 5%' },
     },
   },
   {
     id: 'node-6',
     type: 'nodeCard',
-    position: { x: 1160, y: 160 },
+    position: { x: 1440, y: 160 },
     data: {
-      nodeType: 'risk_guard',
-      maxDd: '10.0%',
-      action: 'Early Stop',
-      penalty: -5.0,
-      execution: { status: 'passed', detail: 'Drawdown Guard Armed' },
+      nodeType: 'mt5_execution',
+      magic_number: 888123,
+      slippage_max: 2.0,
+      execution_mode: 'DMA_STP',
+      execution: { status: 'passed', detail: 'DMA Order Router Active' },
     },
   },
   {
     id: 'node-7',
     type: 'nodeCard',
-    position: { x: 1440, y: 160 },
+    position: { x: 1720, y: 160 },
     data: {
-      nodeType: 'mt5_onnx_deploy',
+      nodeType: 'onnx_export',
       opset: 14,
-      tensorShape: '[1, 6]',
-      eaName: 'FXForge_PPO.mq5',
-      execution: { status: 'passed', detail: 'MQL5 ONNX Model Compiled' },
+      input_shape: '[1, 6]',
+      target_file: 'FXForge_PPO.mq5',
+      execution: { status: 'passed', detail: 'Ready to Deploy Artifact' },
     },
   },
 ];
 
 const INITIAL_EDGES: Edge[] = [
-  {
-    id: 'e1-2',
-    source: 'node-1',
-    target: 'node-2',
-    animated: true,
-    style: { stroke: '#38bdf8', strokeWidth: 1.5 },
-  },
-  {
-    id: 'e2-3',
-    source: 'node-2',
-    target: 'node-3',
-    animated: true,
-    style: { stroke: '#ff9f0a', strokeWidth: 1.5 },
-  },
-  {
-    id: 'e2-4',
-    source: 'node-2',
-    target: 'node-4',
-    animated: true,
-    style: { stroke: '#ffd60a', strokeWidth: 1.5 },
-  },
-  {
-    id: 'e3-5',
-    source: 'node-3',
-    target: 'node-5',
-    animated: true,
-    style: { stroke: '#bf5af2', strokeWidth: 1.5 },
-  },
-  {
-    id: 'e4-5',
-    source: 'node-4',
-    target: 'node-5',
-    animated: true,
-    style: { stroke: '#bf5af2', strokeWidth: 1.5 },
-  },
-  {
-    id: 'e5-6',
-    source: 'node-5',
-    target: 'node-6',
-    animated: true,
-    style: { stroke: '#ff453a', strokeWidth: 1.5 },
-  },
-  {
-    id: 'e6-7',
-    source: 'node-6',
-    target: 'node-7',
-    animated: true,
-    style: { stroke: '#30d158', strokeWidth: 1.5 },
-  },
+  { id: 'e1-2', source: 'node-1', target: 'node-2', animated: true, style: { stroke: '#38bdf8', strokeWidth: 2 } },
+  { id: 'e2-3', source: 'node-2', target: 'node-3', animated: true, style: { stroke: '#ff9f0a', strokeWidth: 2 } },
+  { id: 'e3-4', source: 'node-3', target: 'node-4', animated: true, style: { stroke: '#bf5af2', strokeWidth: 2 } },
+  { id: 'e4-5', source: 'node-4', target: 'node-5', animated: true, style: { stroke: '#ff453a', strokeWidth: 2 } },
+  { id: 'e5-6', source: 'node-5', target: 'node-6', animated: true, style: { stroke: '#30d158', strokeWidth: 2 } },
+  { id: 'e6-7', source: 'node-6', target: 'node-7', animated: true, style: { stroke: '#0a84ff', strokeWidth: 2 } },
 ];
 
 interface ContextMenuState {
@@ -173,7 +132,6 @@ interface InspectorState {
   y: number;
 }
 
-//  Apple Design System: State-driven Text Field (Default, Focus, Filled, Error)
 interface InspectorTextFieldProps {
   label: string;
   value: string | number;
@@ -190,7 +148,6 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
   const [isFocused, setIsFocused] = useState(false);
   const isNumber = typeof defaultValue === 'number';
 
-  // State checks matching Apple/Figma specs
   const strVal = value !== undefined && value !== null ? String(value) : '';
   const isInvalidNumber = isNumber && (strVal.trim() === '' || isNaN(Number(strVal)));
   const isError = isInvalidNumber;
@@ -198,12 +155,10 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
 
   return (
     <div className="flex flex-col gap-1.5 group">
-      {/* Label above */}
       <label className="text-[11.5px] font-medium text-[#a1a1aa] select-none tracking-tight">
         {label}
       </label>
 
-      {/* Input Container (Frameless Icon / Soft Charcoal Background) */}
       <div
         className={`h-[38px] w-full rounded-[10px] px-3.5 flex items-center transition-all duration-150 bg-[#1e1e26] ${
           isError
@@ -234,12 +189,164 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
         />
       </div>
 
-      {/* Error message indicator */}
       {isError && (
         <span className="text-[10px] text-[#ff453a] font-medium tracking-tight text-center -mt-0.5">
           Invalid numeric value
         </span>
       )}
+    </div>
+  );
+};
+
+interface FloatingInspectorProps {
+  node: Node;
+  position: { x: number; y: number };
+  onPositionChange: (pos: { x: number; y: number }) => void;
+  onClose: () => void;
+  toLocal: (clientX: number, clientY: number) => { x: number; y: number };
+  updateNodeData: (nodeId: string, key: string, value: any) => void;
+  deleteNode: () => void;
+}
+
+const FloatingInspector: React.FC<FloatingInspectorProps> = ({
+  node,
+  position,
+  onPositionChange,
+  onClose,
+  toLocal,
+  updateNodeData,
+  deleteNode,
+}) => {
+  const dragRef = useRef<{ dx: number; dy: number } | null>(null);
+  const stopDragRef = useRef<(() => void) | null>(null);
+
+  useEffect(() => () => stopDragRef.current?.(), []);
+
+  const onHeaderPointerDown = (e: React.PointerEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const local = toLocal(e.clientX, e.clientY);
+    dragRef.current = {
+      dx: local.x - position.x,
+      dy: local.y - position.y,
+    };
+
+    const onPointerMove = (event: PointerEvent) => {
+      if (!dragRef.current) return;
+      const next = toLocal(event.clientX, event.clientY);
+      onPositionChange({
+        x: next.x - dragRef.current.dx,
+        y: next.y - dragRef.current.dy,
+      });
+    };
+
+    const onPointerUp = () => {
+      dragRef.current = null;
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerup', onPointerUp);
+    };
+
+    stopDragRef.current = onPointerUp;
+    window.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointerup', onPointerUp);
+  };
+
+  const nodeType = node.data?.nodeType as string;
+  const def = NODE_DEFS[nodeType];
+  const group = GROUPS.find((g) => g.id === def?.group) || { label: 'Node', color: '#007aff' };
+  const nodeLabel = String(def?.label || node.data?.label || nodeType);
+
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        left: position.x,
+        top: position.y,
+        width: 320,
+        backgroundColor: '#08080c',
+        zIndex: 1000,
+        padding: '16px 18px 14px 18px',
+      }}
+      className="border border-white/[0.14] rounded-2xl shadow-2xl text-xs select-none animate-in fade-in zoom-in-95 duration-150 nopan nodrag cursor-default"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <div
+        onPointerDown={onHeaderPointerDown}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: '12px',
+          cursor: 'grab',
+          userSelect: 'none',
+          borderBottom: 'none',
+        }}
+      >
+        <div className="flex items-center gap-2.5">
+          <span
+            className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+            style={{ background: group.color, boxShadow: `0 0 10px ${group.color}` }}
+          />
+          <div>
+            <span className="text-[10px] font-bold tracking-wider uppercase block" style={{ color: group.color }}>
+              {group.label}
+            </span>
+            <span className="text-[13px] font-semibold text-white block">
+              {nodeLabel}
+            </span>
+          </div>
+        </div>
+
+        <button
+          onClick={onClose}
+          className="text-white/40 hover:text-white transition-all p-1 rounded-lg cursor-pointer hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.7)]"
+        >
+          <LucideIcons.X size={14} />
+        </button>
+      </div>
+
+      <div className="space-y-3 max-h-[300px] overflow-y-auto custom-scrollbar pr-1">
+        {def?.fields.map((f) => {
+          const val = (node.data?.[f.key] ?? f.default) as string | number;
+          return (
+            <InspectorTextField
+              key={f.key}
+              label={f.label}
+              value={val}
+              defaultValue={f.default}
+              onChange={(newVal) => updateNodeData(node.id, f.key, newVal)}
+            />
+          );
+        })}
+      </div>
+
+      <div
+        style={{
+          marginTop: '10px',
+          borderTop: 'none',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingLeft: '2px',
+          paddingRight: '2px',
+        }}
+      >
+        <button
+          onClick={onClose}
+          className="text-[11.5px] text-[#30d158] hover:text-[#5ee387] flex items-center gap-1.5 font-semibold transition-all cursor-pointer hover:drop-shadow-[0_0_8px_rgba(48,209,88,0.85)] hover:scale-105"
+        >
+          <LucideIcons.Check size={13} className="text-[#30d158]" />
+          <span>Update</span>
+        </button>
+        <button
+          onClick={deleteNode}
+          className="text-[11.5px] text-[#ff453a] hover:text-[#ff6961] flex items-center gap-1.5 font-semibold transition-all cursor-pointer hover:drop-shadow-[0_0_8px_rgba(255,69,58,0.85)] hover:scale-105"
+        >
+          <LucideIcons.Trash2 size={13} className="text-[#ff453a]" />
+          <span>Delete Node</span>
+        </button>
+      </div>
     </div>
   );
 };
@@ -409,12 +516,27 @@ const FlowContent: React.FC = () => {
   // ==========================================
   // 8. การ INSPECT (เปิดแผงลอยปรับพารามิเตอร์)
   // ==========================================
-  const openInspector = useCallback((nodeId: string, pos: { x: number; y: number }) => {
-    setInspectors((ins) => {
-      const exists = ins.find((item) => item.nodeId === nodeId);
-      if (exists) return ins.map((item) => (item.nodeId === nodeId ? { ...item, ...pos } : item));
-      return [...ins, { nodeId, ...pos }];
+  // 🎯 คำนวณจุดเกิดข้างๆ Node
+  const openInspectorForNode = useCallback((node: Node, index = 0) => {
+    // กว้างของ Node ปกติประมาณ 210px -> วางเยื้องขวา 230px
+    const spawnX = node.position.x + 230 + (index * 14);
+    const spawnY = node.position.y + (index * 14);
+
+    setInspectors((prev) => {
+      const exists = prev.find((item) => item.nodeId === node.id);
+      if (exists) {
+        // ถ้าเปิดอยู่แล้ว ให้เลื่อนมาโฟกัสที่ตำแหน่งข้าง Node
+        return prev.map((item) => (item.nodeId === node.id ? { ...item, x: spawnX, y: spawnY } : item));
+      }
+      // ถ้ายังไม่เปิด ให้เพิ่มหน้าต่างใหม่ ณ จุดเกิดข้าง Node
+      return [...prev, { nodeId: node.id, x: spawnX, y: spawnY }];
     });
+  }, []);
+
+  const moveInspector = useCallback((nodeId: string, pos: { x: number; y: number }) => {
+    setInspectors((prev) =>
+      prev.map((item) => (item.nodeId === nodeId ? { ...item, ...pos } : item))
+    );
   }, []);
 
   const closeInspector = useCallback((nodeId: string) => {
@@ -441,16 +563,21 @@ const FlowContent: React.FC = () => {
     [setNodes]
   );
 
-  // Double Click opens Inspector
+  // 🖱️ Event เมื่อดับเบิลคลิกที่ Node
   const onNodeDoubleClick = useCallback(
-    (_: React.MouseEvent, node: Node) => {
-      openInspector(node.id, {
-        x: node.position.x + 230,
-        y: node.position.y,
-      });
+    (event: React.MouseEvent, node: Node) => {
+      event.stopPropagation();
+      openInspectorForNode(node);
     },
-    [openInspector]
+    [openInspectorForNode]
   );
+
+  const [viewportElement, setViewportElement] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const el = document.querySelector('.react-flow__viewport') as HTMLElement | null;
+    if (el) setViewportElement(el);
+  }, [nodes]);
 
   // ==========================================
   // 9. Right-Click Context Menus
@@ -637,7 +764,7 @@ const FlowContent: React.FC = () => {
                   onClick={() => {
                     const node = nodes.find((n) => n.id === contextMenu.targetNodeId);
                     if (node) {
-                      openInspector(node.id, { x: node.position.x + 230, y: node.position.y });
+                      openInspectorForNode(node);
                     }
                     setContextMenu(null);
                   }}
@@ -749,107 +876,28 @@ const FlowContent: React.FC = () => {
           </div>
         )}
 
-        {/* Floating Parameter Inspectors */}
-        {inspectors.map((ins) => {
-          const targetNode = nodes.find((n) => n.id === ins.nodeId);
-          if (!targetNode) return null;
-          const nodeType = targetNode.data?.nodeType as string;
-          const def = NODE_DEFS[nodeType];
-          const group = GROUPS.find((g) => g.id === def?.group) || { label: 'Node', color: '#007aff' };
-          const nodeLabel = String(def?.label || targetNode.data?.label || nodeType);
+        {/* Floating Parameter Inspectors (Rendered on Canvas Layer via Portal) */}
+        {viewportElement &&
+          createPortal(
+            inspectors.map((insp) => {
+              const node = nodes.find((n) => n.id === insp.nodeId);
+              if (!node) return null;
 
-          return (
-            <div
-              key={ins.nodeId}
-              style={{
-                position: 'absolute',
-                top: 24,
-                right: 24,
-                zIndex: 40,
-                width: 320,
-                padding: '16px 18px 14px 18px',
-                backgroundColor: '#08080c',
-              }}
-              className="border border-white/[0.14] rounded-2xl shadow-2xl text-xs select-none animate-in fade-in zoom-in-95 duration-150"
-            >
-              {/* Inspector Header (Seamless / No Border) */}
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginBottom: '12px',
-                  borderBottom: 'none',
-                }}
-              >
-                <div className="flex items-center gap-2.5">
-                  <span
-                    className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                    style={{ background: group.color, boxShadow: `0 0 10px ${group.color}` }}
-                  />
-                  <div>
-                    <span className="text-[10px] font-bold tracking-wider uppercase block" style={{ color: group.color }}>
-                      {group.label}
-                    </span>
-                    <span className="text-[13px] font-semibold text-white block">
-                      {nodeLabel}
-                    </span>
-                  </div>
-                </div>
-                <button
-                  onClick={() => closeInspector(ins.nodeId)}
-                  className="text-white/40 hover:text-white transition-all p-1 rounded-lg cursor-pointer hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.7)]"
-                >
-                  <LucideIcons.X size={14} />
-                </button>
-              </div>
-
-              {/* Parameter Inputs */}
-              <div className="space-y-3 max-h-[300px] overflow-y-auto custom-scrollbar pr-1">
-                {def?.fields.map((f) => {
-                  const val = (targetNode.data?.[f.key] ?? f.default) as string | number;
-                  return (
-                    <InspectorTextField
-                      key={f.key}
-                      label={f.label}
-                      value={val}
-                      defaultValue={f.default}
-                      onChange={(newVal) => updateNodeData(ins.nodeId, f.key, newVal)}
-                    />
-                  );
-                })}
-              </div>
-
-              {/* Inspector Footer Actions: Exactly 10px below Edit Fields, No Border, Glowing Text Hover */}
-              <div
-                style={{
-                  marginTop: '10px',
-                  borderTop: 'none',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  paddingLeft: '2px',
-                  paddingRight: '2px',
-                }}
-              >
-                <button
-                  onClick={() => closeInspector(ins.nodeId)}
-                  className="text-[11.5px] text-[#30d158] hover:text-[#5ee387] flex items-center gap-1.5 font-semibold transition-all cursor-pointer hover:drop-shadow-[0_0_8px_rgba(48,209,88,0.85)] hover:scale-105"
-                >
-                  <LucideIcons.Check size={13} className="text-[#30d158]" />
-                  <span>Update</span>
-                </button>
-                <button
-                  onClick={() => deleteNodes([targetNode])}
-                  className="text-[11.5px] text-[#ff453a] hover:text-[#ff6961] flex items-center gap-1.5 font-semibold transition-all cursor-pointer hover:drop-shadow-[0_0_8px_rgba(255,69,58,0.85)] hover:scale-105"
-                >
-                  <LucideIcons.Trash2 size={13} className="text-[#ff453a]" />
-                  <span>Delete Node</span>
-                </button>
-              </div>
-            </div>
-          );
-        })}
+              return (
+                <FloatingInspector
+                  key={insp.nodeId}
+                  node={node}
+                  position={{ x: insp.x, y: insp.y }}
+                  onPositionChange={(pos) => moveInspector(insp.nodeId, pos)}
+                  onClose={() => closeInspector(insp.nodeId)}
+                  toLocal={(cx, cy) => screenToFlowPosition({ x: cx, y: cy })}
+                  updateNodeData={updateNodeData}
+                  deleteNode={() => deleteNodes([node])}
+                />
+              );
+            }),
+            viewportElement
+          )}
       </div>
   );
 };
