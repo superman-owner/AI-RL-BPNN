@@ -48,6 +48,8 @@ interface NodePaletteProps {
 
 export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
   const [query, setQuery] = useState('');
+  const [hoveredNode, setHoveredNode] = useState<string | null>(null);
+  const [hoveredGroup, setHoveredGroup] = useState<string | null>(null);
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(GROUPS.map((g) => [g.id, true]))
   );
@@ -72,8 +74,8 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
         height: '100%',
         maxHeight: '100%',
         flexShrink: 0,
-        background: '#0a0a0f',
-        borderRight: '1px solid #27272a',
+        background: '#07070b',
+        borderRight: '1px solid rgba(255, 255, 255, 0.08)',
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
@@ -84,12 +86,12 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
         zIndex: 20,
       }}
     >
-      {/* 1. Header: Title, Count, Expand/Collapse & Search */}
+      {/* 1. Header: Title, Count, Expand/Collapse & Search (Pure Flat Frameless) */}
       <div
         style={{
-          padding: '12px 14px 10px',
-          borderBottom: '1px solid #27272a',
-          background: '#101017',
+          padding: '14px 16px 10px',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          background: '#0a0a10',
           flexShrink: 0,
           boxSizing: 'border-box',
         }}
@@ -99,69 +101,66 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            marginBottom: 10,
+            marginBottom: 12,
           }}
         >
           <div
             style={{
               fontSize: 13,
               fontWeight: 700,
-              color: '#fafafa',
+              color: '#ffffff',
               display: 'flex',
               alignItems: 'center',
               gap: 8,
+              textShadow: '0 0 10px rgba(56, 189, 248, 0.5)',
             }}
           >
-            <FolderTree size={16} color="#38bdf8" />
+            <FolderTree size={15} color="#38bdf8" />
             <span>AI Node Palette</span>
             <span
               style={{
                 fontSize: 11,
                 color: '#38bdf8',
-                background: 'rgba(56, 189, 248, 0.12)',
-                padding: '2px 7px',
-                borderRadius: 4,
                 fontWeight: 700,
               }}
             >
-              {totalNodesCount}
+              ({totalNodesCount})
             </span>
           </div>
 
           <button
             onClick={toggleAll}
             style={{
-              background: '#1f1f26',
-              border: '1px solid #33333d',
-              borderRadius: 4,
-              color: '#a1a1aa',
+              background: 'transparent',
+              border: 'none',
+              color: '#86868b',
               fontSize: 11,
               fontWeight: 600,
               cursor: 'pointer',
-              padding: '3px 8px',
+              padding: '2px 4px',
               transition: 'all 0.15s ease',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.color = '#ffffff';
-              e.currentTarget.style.borderColor = '#71717a';
+              e.currentTarget.style.textShadow = '0 0 8px rgba(255,255,255,0.8)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.color = '#a1a1aa';
-              e.currentTarget.style.borderColor = '#33333d';
+              e.currentTarget.style.color = '#86868b';
+              e.currentTarget.style.textShadow = 'none';
             }}
           >
             {Object.values(expandedGroups).every(Boolean) ? 'Collapse All' : 'Expand All'}
           </button>
         </div>
 
-        {/* Real-time search */}
+        {/* Flat Underline Search Bar (No Box Enclosure) */}
         <div style={{ position: 'relative' }}>
           <Search
             size={13}
             style={{
               position: 'absolute',
-              left: 10,
-              top: 9,
+              left: 2,
+              top: 8,
               color: '#71717a',
             }}
           />
@@ -172,30 +171,37 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
             style={{
               width: '100%',
               boxSizing: 'border-box',
-              background: '#060609',
-              border: '1px solid #27272a',
-              borderRadius: 6,
-              color: '#fafafa',
+              background: 'transparent',
+              border: 'none',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.15)',
+              borderRadius: 0,
+              color: '#ffffff',
               fontSize: 12,
-              padding: '6px 10px 6px 30px',
+              padding: '6px 8px 6px 24px',
               outline: 'none',
               fontFamily: 'inherit',
+              transition: 'border-color 0.2s ease',
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.borderBottomColor = '#38bdf8';
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderBottomColor = 'rgba(255, 255, 255, 0.15)';
             }}
           />
         </div>
       </div>
 
-      {/* 2. Scrollable Tree */}
+      {/* 2. Pure Frameless Flat Scrollable Tree with Glowing Hover (Zero Box) */}
       <div
         id="node-palette-scroll-container"
         style={{
           flex: 1,
           minHeight: 0,
           overflowY: 'auto',
-          padding: '10px 10px 40px',
+          padding: '8px 14px 40px',
           display: 'flex',
           flexDirection: 'column',
-          gap: 6,
           boxSizing: 'border-box',
         }}
         className="custom-scrollbar"
@@ -209,58 +215,65 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
           if (q && matchingNodes.length === 0) return null;
 
           const isExpanded = expandedGroups[group.id] || Boolean(q);
+          const isGroupHovered = hoveredGroup === group.id;
           const GroupIcon = GROUP_ICONS[group.id] || Layers;
 
           return (
             <div
               key={group.id}
               style={{
-                flexShrink: 0,
-                borderRadius: 6,
-                overflow: 'hidden',
-                border: isExpanded ? '1px solid #27272a' : '1px solid #1a1a20',
-                background: '#111118',
-                transition: 'border-color 0.15s ease',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+                padding: '6px 0',
               }}
             >
-              {/* Group Accordion Header */}
+              {/* Flat Group Header (No Box Background, Pure Glow) */}
               <div
                 onClick={() => toggleGroup(group.id)}
+                onMouseEnter={() => setHoveredGroup(group.id)}
+                onMouseLeave={() => setHoveredGroup(null)}
                 style={{
-                  padding: '8px 10px',
-                  background: isExpanded ? '#181822' : '#111118',
-                  borderBottom: isExpanded ? '1px solid #27272a' : 'none',
+                  padding: '6px 2px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
                   cursor: 'pointer',
                   gap: 8,
+                  transition: 'all 0.15s ease',
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 7, flex: 1, minWidth: 0 }}>
                   {isExpanded ? (
-                    <ChevronDown size={14} color="#a1a1aa" />
+                    <ChevronDown size={13} color={isGroupHovered ? '#ffffff' : '#86868b'} />
                   ) : (
-                    <ChevronRight size={14} color="#a1a1aa" />
+                    <ChevronRight size={13} color={isGroupHovered ? '#ffffff' : '#86868b'} />
                   )}
                   <span
                     style={{
-                      width: 4,
-                      height: 14,
+                      width: 3,
+                      height: 12,
                       background: group.color,
-                      borderRadius: 2,
+                      borderRadius: 1,
                       flexShrink: 0,
+                      boxShadow: isGroupHovered ? `0 0 8px ${group.color}` : 'none',
+                      transition: 'box-shadow 0.2s ease',
                     }}
                   />
-                  <GroupIcon size={14} color={group.color} />
+                  <GroupIcon
+                    size={13}
+                    color={group.color}
+                  />
                   <span
                     style={{
                       fontSize: 12,
                       fontWeight: 700,
-                      color: '#fafafa',
+                      color: isGroupHovered ? '#ffffff' : '#ededed',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',
+                      textShadow: isGroupHovered
+                        ? `0 0 10px ${group.color}, 0 0 20px ${group.color}88`
+                        : 'none',
+                      transition: 'all 0.15s ease',
                     }}
                   >
                     {group.label}
@@ -268,69 +281,80 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
                 </div>
               </div>
 
-              {/* Draggable Child Nodes */}
+              {/* Child Nodes: Pure Text Glow, No Enclosing Boxes */}
               {isExpanded && (
                 <div
                   style={{
-                    padding: '5px 5px 6px',
+                    padding: '3px 0 6px 14px',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: 3,
-                    background: '#0b0b10',
+                    gap: 1,
                   }}
                 >
-                  {matchingNodes.map((node) => (
-                    <div
-                      key={node.type}
-                      draggable
-                      onDragStart={(e) => onDragStartNode(e, node.type)}
-                      title="Drag onto canvas to create node"
-                      style={{
-                        padding: '6px 8px',
-                        borderRadius: 4,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        cursor: 'grab',
-                        background: 'rgba(255,255,255,0.02)',
-                        border: '1px solid transparent',
-                        transition: 'all 0.12s ease',
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background = '#1e1e28';
-                        e.currentTarget.style.borderColor = '#3f3f4e';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background = 'rgba(255,255,255,0.02)';
-                        e.currentTarget.style.borderColor = 'transparent';
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 7, minWidth: 0 }}>
-                        <span
+                  {matchingNodes.map((node) => {
+                    const isNodeHovered = hoveredNode === node.type;
+
+                    return (
+                      <div
+                        key={node.type}
+                        draggable
+                        onDragStart={(e) => onDragStartNode(e, node.type)}
+                        onMouseEnter={() => setHoveredNode(node.type)}
+                        onMouseLeave={() => setHoveredNode(null)}
+                        title="Drag onto canvas to create node"
+                        style={{
+                          padding: '6px 4px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          cursor: 'grab',
+                          background: 'transparent',
+                          border: 'none',
+                          transition: 'all 0.15s ease',
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
+                          <span
+                            style={{
+                              width: 5,
+                              height: 5,
+                              borderRadius: '50%',
+                              background: group.color,
+                              flexShrink: 0,
+                              boxShadow: isNodeHovered ? `0 0 10px ${group.color}, 0 0 15px ${group.color}` : 'none',
+                              transform: isNodeHovered ? 'scale(1.3)' : 'scale(1)',
+                              transition: 'all 0.15s ease',
+                            }}
+                          />
+                          <span
+                            style={{
+                              fontSize: 11.5,
+                              fontWeight: isNodeHovered ? 600 : 500,
+                              color: isNodeHovered ? '#ffffff' : '#a1a1aa',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                              textShadow: isNodeHovered
+                                ? `0 0 8px rgba(255, 255, 255, 0.9), 0 0 16px ${group.color}`
+                                : 'none',
+                              transition: 'all 0.15s ease',
+                            }}
+                          >
+                            {node.label}
+                          </span>
+                        </div>
+                        <Plus
+                          size={12}
+                          color={isNodeHovered ? group.color : '#52525b'}
                           style={{
-                            width: 6,
-                            height: 6,
-                            borderRadius: '50%',
-                            background: group.color,
-                            flexShrink: 0,
+                            filter: isNodeHovered ? `drop-shadow(0 0 6px ${group.color})` : 'none',
+                            transform: isNodeHovered ? 'scale(1.15)' : 'scale(1)',
+                            transition: 'all 0.15s ease',
                           }}
                         />
-                        <span
-                          style={{
-                            fontSize: 11.5,
-                            fontWeight: 500,
-                            color: '#e4e4e7',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                          }}
-                        >
-                          {node.label}
-                        </span>
                       </div>
-                      <Plus size={12} color="#71717a" />
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -338,17 +362,17 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
         })}
       </div>
 
-      {/* 3. Footer */}
+      {/* 3. Flat Footer */}
       <div
         style={{
-          padding: '10px 14px',
-          borderTop: '1px solid #27272a',
-          background: '#101017',
+          padding: '10px 16px',
+          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+          background: '#0a0a10',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           fontSize: 12,
-          color: '#a1a1aa',
+          color: '#86868b',
           flexShrink: 0,
         }}
       >
@@ -360,23 +384,24 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
             alignItems: 'center',
             gap: 6,
             cursor: 'pointer',
-            padding: '3px 6px',
-            borderRadius: 4,
+            padding: '2px 0',
             transition: 'all 0.15s ease',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = '#27272a';
             e.currentTarget.style.color = '#38bdf8';
+            e.currentTarget.style.textShadow = '0 0 8px rgba(56, 189, 248, 0.8)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'transparent';
-            e.currentTarget.style.color = '#a1a1aa';
+            e.currentTarget.style.color = '#86868b';
+            e.currentTarget.style.textShadow = 'none';
           }}
         >
-          <Settings size={14} />
+          <Settings size={13} />
           <span>Settings</span>
         </div>
-        <span style={{ fontSize: 10.5, color: '#10b981', fontWeight: 600 }}>v2.0 Quant AI</span>
+        <span style={{ fontSize: 10.5, color: '#30d158', fontWeight: 600, textShadow: '0 0 6px rgba(48, 209, 88, 0.6)' }}>
+          v2.0 Quant AI
+        </span>
       </div>
     </aside>
   );
