@@ -132,6 +132,7 @@ interface InspectorState {
   y: number;
 }
 
+//  Apple Design System: State-driven Text Field (Default, Focus, Filled, Error)
 interface InspectorTextFieldProps {
   label: string;
   value: string | number;
@@ -148,19 +149,25 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
   const [isFocused, setIsFocused] = useState(false);
   const isNumber = typeof defaultValue === 'number';
 
+  // State checks matching Apple/Figma specs
   const strVal = value !== undefined && value !== null ? String(value) : '';
   const isInvalidNumber = isNumber && (strVal.trim() === '' || isNaN(Number(strVal)));
   const isError = isInvalidNumber;
   const isFilled = strVal.trim() !== '';
 
   return (
-    <div className="flex flex-col gap-1.5 group">
+    <div className="flex flex-col gap-1.5 group nodrag nopan" style={{ pointerEvents: 'all' }}>
+      {/* Label above */}
       <label className="text-[11.5px] font-medium text-[#a1a1aa] select-none tracking-tight">
         {label}
       </label>
 
+      {/* Input Container (Frameless Icon / Soft Charcoal Background) */}
       <div
-        className={`h-[38px] w-full rounded-[10px] px-3.5 flex items-center transition-all duration-150 bg-[#1e1e26] ${
+        style={{ pointerEvents: 'all' }}
+        onPointerDown={(e) => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()}
+        className={`h-[38px] w-full rounded-[10px] px-3.5 flex items-center transition-all duration-150 bg-[#1e1e26] pointer-events-auto ${
           isError
             ? 'border border-[#ff453a] ring-1 ring-[#ff453a]/30 bg-[#261c1e]'
             : isFocused
@@ -175,6 +182,8 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
           value={strVal}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
+          onPointerDown={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
           onChange={(e) => {
             if (isNumber) {
               const val = e.target.value;
@@ -185,10 +194,12 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
             }
           }}
           placeholder={`Enter ${label.toLowerCase()}...`}
-          className="w-full bg-transparent text-[#f4f4f5] font-mono text-[13px] text-center focus:outline-none placeholder:text-[#71717a]"
+          style={{ pointerEvents: 'all' }}
+          className="w-full bg-transparent text-[#f4f4f5] font-mono text-[13px] text-center focus:outline-none placeholder:text-[#71717a] nodrag nopan pointer-events-auto cursor-text"
         />
       </div>
 
+      {/* Error message indicator */}
       {isError && (
         <span className="text-[10px] text-[#ff453a] font-medium tracking-tight text-center -mt-0.5">
           Invalid numeric value
@@ -198,6 +209,7 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
   );
 };
 
+//  Draggable Floating Inspector Component (Pinned to Canvas Layer)
 interface FloatingInspectorProps {
   node: Node;
   position: { x: number; y: number };
@@ -219,13 +231,19 @@ const FloatingInspector: React.FC<FloatingInspectorProps> = ({
 }) => {
   const dragRef = useRef<{ dx: number; dy: number } | null>(null);
   const stopDragRef = useRef<(() => void) | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => () => stopDragRef.current?.(), []);
 
   const onHeaderPointerDown = (e: React.PointerEvent) => {
+    // Don't trigger drag if clicking buttons
+    if ((e.target as HTMLElement).closest('button') || (e.target as HTMLElement).closest('input')) {
+      return;
+    }
     e.preventDefault();
     e.stopPropagation();
 
+    setIsDragging(true);
     const local = toLocal(e.clientX, e.clientY);
     dragRef.current = {
       dx: local.x - position.x,
@@ -243,6 +261,7 @@ const FloatingInspector: React.FC<FloatingInspectorProps> = ({
 
     const onPointerUp = () => {
       dragRef.current = null;
+      setIsDragging(false);
       window.removeEventListener('pointermove', onPointerMove);
       window.removeEventListener('pointerup', onPointerUp);
     };
@@ -265,12 +284,16 @@ const FloatingInspector: React.FC<FloatingInspectorProps> = ({
         top: position.y,
         width: 320,
         backgroundColor: '#08080c',
-        zIndex: 1000,
+        zIndex: 9999,
         padding: '16px 18px 14px 18px',
+        pointerEvents: 'all',
       }}
-      className="border border-white/[0.14] rounded-2xl shadow-2xl text-xs select-none animate-in fade-in zoom-in-95 duration-150 nopan nodrag cursor-default"
+      className="border border-white/[0.14] rounded-2xl shadow-2xl text-xs select-none animate-in fade-in zoom-in-95 duration-150 nodrag nopan nowheel cursor-default pointer-events-auto"
+      onPointerDown={(e) => e.stopPropagation()}
+      onMouseDown={(e) => e.stopPropagation()}
       onClick={(e) => e.stopPropagation()}
     >
+      {/* 🟢 DRAGGABLE HEADER BAR */}
       <div
         onPointerDown={onHeaderPointerDown}
         style={{
@@ -278,12 +301,14 @@ const FloatingInspector: React.FC<FloatingInspectorProps> = ({
           alignItems: 'center',
           justifyContent: 'space-between',
           marginBottom: '12px',
-          cursor: 'grab',
+          cursor: isDragging ? 'grabbing' : 'grab',
           userSelect: 'none',
           borderBottom: 'none',
+          pointerEvents: 'all',
         }}
+        className="nodrag nopan pointer-events-auto"
       >
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2.5 pointer-events-none">
           <span
             className="w-2.5 h-2.5 rounded-full flex-shrink-0"
             style={{ background: group.color, boxShadow: `0 0 10px ${group.color}` }}
@@ -298,15 +323,29 @@ const FloatingInspector: React.FC<FloatingInspectorProps> = ({
           </div>
         </div>
 
+        {/* Close Button */}
         <button
-          onClick={onClose}
-          className="text-white/40 hover:text-white transition-all p-1 rounded-lg cursor-pointer hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.7)]"
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+          }}
+          onPointerDown={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          style={{ pointerEvents: 'all' }}
+          className="text-white/40 hover:text-white transition-all p-1 rounded-lg cursor-pointer hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.7)] pointer-events-auto nodrag nopan"
         >
           <LucideIcons.X size={14} />
         </button>
       </div>
 
-      <div className="space-y-3 max-h-[300px] overflow-y-auto custom-scrollbar pr-1">
+      {/* 📝 BODY: Parameter Inputs */}
+      <div
+        className="space-y-3 max-h-[300px] overflow-y-auto custom-scrollbar pr-1 nodrag nopan"
+        style={{ pointerEvents: 'all' }}
+        onPointerDown={(e) => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()}
+      >
         {def?.fields.map((f) => {
           const val = (node.data?.[f.key] ?? f.default) as string | number;
           return (
@@ -321,6 +360,7 @@ const FloatingInspector: React.FC<FloatingInspectorProps> = ({
         })}
       </div>
 
+      {/* 🟢 FOOTER: Exactly 10px below Edit Fields, No Border, Glowing Text Hover */}
       <div
         style={{
           marginTop: '10px',
@@ -330,18 +370,36 @@ const FloatingInspector: React.FC<FloatingInspectorProps> = ({
           justifyContent: 'space-between',
           paddingLeft: '2px',
           paddingRight: '2px',
+          pointerEvents: 'all',
         }}
+        className="nodrag nopan pointer-events-auto"
+        onPointerDown={(e) => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()}
       >
         <button
-          onClick={onClose}
-          className="text-[11.5px] text-[#30d158] hover:text-[#5ee387] flex items-center gap-1.5 font-semibold transition-all cursor-pointer hover:drop-shadow-[0_0_8px_rgba(48,209,88,0.85)] hover:scale-105"
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+          }}
+          onPointerDown={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          style={{ pointerEvents: 'all' }}
+          className="text-[11.5px] text-[#30d158] hover:text-[#5ee387] flex items-center gap-1.5 font-semibold transition-all cursor-pointer hover:drop-shadow-[0_0_8px_rgba(48,209,88,0.85)] hover:scale-105 pointer-events-auto nodrag nopan"
         >
           <LucideIcons.Check size={13} className="text-[#30d158]" />
           <span>Update</span>
         </button>
         <button
-          onClick={deleteNode}
-          className="text-[11.5px] text-[#ff453a] hover:text-[#ff6961] flex items-center gap-1.5 font-semibold transition-all cursor-pointer hover:drop-shadow-[0_0_8px_rgba(255,69,58,0.85)] hover:scale-105"
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            deleteNode();
+          }}
+          onPointerDown={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          style={{ pointerEvents: 'all' }}
+          className="text-[11.5px] text-[#ff453a] hover:text-[#ff6961] flex items-center gap-1.5 font-semibold transition-all cursor-pointer hover:drop-shadow-[0_0_8px_rgba(255,69,58,0.85)] hover:scale-105 pointer-events-auto nodrag nopan"
         >
           <LucideIcons.Trash2 size={13} className="text-[#ff453a]" />
           <span>Delete Node</span>
@@ -892,7 +950,10 @@ const FlowContent: React.FC = () => {
                   onClose={() => closeInspector(insp.nodeId)}
                   toLocal={(cx, cy) => screenToFlowPosition({ x: cx, y: cy })}
                   updateNodeData={updateNodeData}
-                  deleteNode={() => deleteNodes([node])}
+                  deleteNode={() => {
+                    closeInspector(insp.nodeId);
+                    deleteNodes([node]);
+                  }}
                 />
               );
             }),
