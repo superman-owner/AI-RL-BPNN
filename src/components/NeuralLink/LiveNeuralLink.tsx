@@ -79,7 +79,7 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
     const synapses: BPSynapse[] = [];
 
     const inputLabels = ['Ret(5)', 'Ret(10)', 'Ret(20)', 'Vol(10)', 'DistSMA', 'Pos'];
-    const outputLabels = ['BUY (Long)', 'HOLD (Flat)', 'SELL (Short)'];
+    const outputLabels = ['BUY (LONG)', 'HOLD (FLAT)', 'SELL (SHORT)'];
 
     const layerSpacingX = 240;
     const originX = -((layerSizes.length - 1) * layerSpacingX) / 2;
@@ -145,7 +145,7 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
     synapsesRef.current = synapses;
   }, []);
 
-  // 2. Real-time Activation Update from Global Latest Step
+  // 2. Real-time Activation Update from Global Latest Step (Syncing with Topbar)
   useEffect(() => {
     if (!latestStep) return;
     const neurons = neuronsRef.current;
@@ -173,6 +173,38 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
       if (out0) out0.activation = latestStep.actionProbs[0]; // BUY
       if (out1) out1.activation = latestStep.actionProbs[1]; // HOLD
       if (out2) out2.activation = latestStep.actionProbs[2]; // SELL
+
+      // Trigger synchronized photonic pulse on active action node
+      const chosenNeuron = neurons.find((n) => n.layerIdx === 3 && n.neuronIdx === latestStep.action);
+      if (chosenNeuron) {
+        chosenNeuron.pulse = 1.0;
+
+        // Convergence signal pulses towards selected action
+        const hiddenLayer = neurons.filter((n) => n.layerIdx === 2);
+        const actionColor =
+          latestStep.action === 0
+            ? 'rgba(48, 209, 88, 0.95)'
+            : latestStep.action === 1
+            ? 'rgba(255, 214, 10, 0.95)'
+            : 'rgba(255, 69, 58, 0.95)';
+
+        hiddenLayer.forEach((hn) => {
+          if (Math.random() < 0.6) {
+            particlesRef.current.push({
+              id: `sig_sync_${Date.now()}_${hn.id}_${Math.random()}`,
+              sourceX: hn.x,
+              sourceY: hn.y,
+              sourceZ: hn.z,
+              targetX: chosenNeuron.x,
+              targetY: chosenNeuron.y,
+              targetZ: chosenNeuron.z,
+              progress: 0,
+              speed: 0.045 + Math.random() * 0.02,
+              color: actionColor,
+            });
+          }
+        });
+      }
     }
   }, [latestStep]);
 
@@ -346,6 +378,11 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
 
       // Draw Soma Orbs (Apple Frosted Glass & Specular Photonic Aura)
       neurons.forEach((n) => {
+        // Decay pulse
+        if (n.pulse > 0) {
+          n.pulse = Math.max(0, n.pulse - 0.035);
+        }
+
         const proj = project(n.x, n.y, n.z);
         const isOutput = n.layerIdx === 3;
         const isInput = n.layerIdx === 0;
@@ -358,24 +395,24 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
         // Apple Pro Palette: Monochromatic Glass by default, Subtle Glow ONLY on Active Decision
         let coreColor = '#FFFFFF';
         let outerColor = 'rgba(0, 122, 255, 0.15)';
-        let auraIntensity = 1.25 + n.activation * 0.35;
+        let auraIntensity = 1.25 + n.activation * 0.35 + n.pulse * 0.4;
 
         if (isOutput) {
           if (isSelectedAction) {
             if (n.neuronIdx === 0) {
-              // BUY (Apple Soft Emerald)
+              // BUY (Apple Soft Emerald - Matched with TopNav #30d158)
               coreColor = '#30d158';
-              outerColor = 'rgba(48, 209, 88, 0.28)';
+              outerColor = 'rgba(48, 209, 88, 0.32)';
             } else if (n.neuronIdx === 1) {
-              // HOLD (Apple Electric Cyan)
-              coreColor = '#5ac8fa';
-              outerColor = 'rgba(90, 200, 250, 0.25)';
+              // HOLD (Apple Amber Yellow - Matched with TopNav #ffd60a)
+              coreColor = '#ffd60a';
+              outerColor = 'rgba(255, 214, 10, 0.32)';
             } else {
-              // SELL (Apple Rose Crimson)
+              // SELL (Apple Rose Crimson - Matched with TopNav #ff453a)
               coreColor = '#ff453a';
-              outerColor = 'rgba(255, 69, 58, 0.28)';
+              outerColor = 'rgba(255, 69, 58, 0.32)';
             }
-            auraIntensity = 1.45 + n.activation * 0.4;
+            auraIntensity = 1.45 + n.activation * 0.4 + n.pulse * 0.5;
           } else {
             // Inactive Output Node (Calm Frosted Platinum)
             coreColor = 'rgba(255, 255, 255, 0.42)';
@@ -425,11 +462,20 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
           const textY = proj.py;
 
           if (isOutput) {
-            ctx.fillStyle = isSelectedAction ? coreColor : 'rgba(255, 255, 255, 0.35)';
+            if (isSelectedAction) {
+              ctx.fillStyle = coreColor;
+              ctx.shadowColor = coreColor;
+              ctx.shadowBlur = 8;
+              ctx.fillText(n.label, textX, textY);
+              ctx.shadowBlur = 0;
+            } else {
+              ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+              ctx.fillText(n.label, textX, textY);
+            }
           } else {
             ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+            ctx.fillText(n.label, textX, textY);
           }
-          ctx.fillText(n.label, textX, textY);
         }
       });
 
