@@ -31,41 +31,63 @@ const GROUP_ICONS: Record<
 
 function onDragStartNode(event: React.DragEvent, nodeType: string, label: string, color: string, isLight: boolean) {
   event.dataTransfer.setData('application/fxforge-node', nodeType);
-  event.dataTransfer.effectAllowed = 'move';
+  event.dataTransfer.effectAllowed = 'copy';
 
-  //  Create High-Contrast Apple macOS Drag Preview Capsule
+  //  Create High-Contrast Apple macOS Drag Preview Capsule with Mac '+' Badge
   const dragGhost = document.createElement('div');
   dragGhost.style.position = 'absolute';
   dragGhost.style.top = '-9999px';
   dragGhost.style.left = '-9999px';
-  dragGhost.style.padding = '8px 16px';
-  dragGhost.style.borderRadius = '10px';
-  dragGhost.style.backgroundColor = isLight ? '#1d1d1f' : '#181822';
-  dragGhost.style.color = '#ffffff';
-  dragGhost.style.border = '2px solid #0071e3';
-  dragGhost.style.boxShadow = '0 12px 32px rgba(0, 0, 0, 0.45)';
+  dragGhost.style.padding = '7px 12px 7px 10px';
+  dragGhost.style.borderRadius = '12px';
+  dragGhost.style.backgroundColor = isLight ? '#ffffff' : '#14141c';
+  dragGhost.style.color = isLight ? '#111827' : '#ffffff';
+  dragGhost.style.border = isLight ? '1.5px solid #0071e3' : '1.5px solid rgba(0, 122, 255, 0.6)';
+  dragGhost.style.boxShadow = isLight
+    ? '0 12px 36px rgba(0, 113, 227, 0.25), 0 2px 8px rgba(0,0,0,0.08)'
+    : '0 16px 40px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 122, 255, 0.4)';
   dragGhost.style.fontFamily = '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif';
-  dragGhost.style.fontSize = '13px';
+  dragGhost.style.fontSize = '12.5px';
   dragGhost.style.fontWeight = '600';
   dragGhost.style.display = 'flex';
   dragGhost.style.alignItems = 'center';
-  dragGhost.style.gap = '8px';
+  dragGhost.style.gap = '7px';
   dragGhost.style.pointerEvents = 'none';
   dragGhost.style.zIndex = '999999';
 
+  // Module Color Orb
   const dot = document.createElement('span');
-  dot.style.width = '8px';
-  dot.style.height = '8px';
+  dot.style.width = '7px';
+  dot.style.height = '7px';
   dot.style.borderRadius = '50%';
   dot.style.backgroundColor = color || '#0071e3';
+  dot.style.boxShadow = `0 0 6px ${color || '#0071e3'}`;
   dragGhost.appendChild(dot);
 
+  // Module Title
   const text = document.createElement('span');
   text.textContent = label;
+  text.style.marginRight = '3px';
   dragGhost.appendChild(text);
 
+  // Apple Mac '+' Green Badge
+  const addBadge = document.createElement('span');
+  addBadge.textContent = '+';
+  addBadge.style.width = '16px';
+  addBadge.style.height = '16px';
+  addBadge.style.borderRadius = '50%';
+  addBadge.style.backgroundColor = '#34c759';
+  addBadge.style.color = '#ffffff';
+  addBadge.style.fontSize = '12px';
+  addBadge.style.fontWeight = 'bold';
+  addBadge.style.display = 'flex';
+  addBadge.style.alignItems = 'center';
+  addBadge.style.justifyContent = 'center';
+  addBadge.style.boxShadow = '0 2px 6px rgba(52, 199, 89, 0.4)';
+  dragGhost.appendChild(addBadge);
+
   document.body.appendChild(dragGhost);
-  event.dataTransfer.setDragImage(dragGhost, 24, 18);
+  event.dataTransfer.setDragImage(dragGhost, 20, 16);
 
   setTimeout(() => {
     if (document.body.contains(dragGhost)) {

@@ -1113,14 +1113,23 @@ const FlowContent: React.FC = () => {
   }, [copyNodes, cutNodes, pasteAt, duplicateNodes, disconnectNodes, deleteNodes]);
 
   // Drag-and-Drop from Palette onto Canvas
+  const [isDragOverCanvas, setIsDragOverCanvas] = useState(false);
+
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
-    event.dataTransfer.dropEffect = 'move';
+    event.dataTransfer.dropEffect = 'copy';
+    setIsDragOverCanvas(true);
+  }, []);
+
+  const onDragLeave = useCallback((event: React.DragEvent) => {
+    event.preventDefault();
+    setIsDragOverCanvas(false);
   }, []);
 
   const onDrop = useCallback(
     (event: React.DragEvent) => {
       event.preventDefault();
+      setIsDragOverCanvas(false);
       const nodeType = event.dataTransfer.getData('application/fxforge-node');
       if (!nodeType) return;
 
@@ -1175,10 +1184,19 @@ const FlowContent: React.FC = () => {
 
   return (
     <div
+      style={{
+        boxShadow: isDragOverCanvas
+          ? isLight
+            ? 'inset 0 0 0 2.5px #0071e3, inset 0 0 30px rgba(0, 113, 227, 0.15)'
+            : 'inset 0 0 0 2.5px #0a84ff, inset 0 0 40px rgba(10, 132, 255, 0.25)'
+          : 'none',
+        transition: 'box-shadow 0.2s ease',
+      }}
       className={`w-full h-full relative overflow-hidden transition-colors duration-200 ${
         isLight ? 'bg-[#f5f5f7]' : 'bg-[#040407]'
       }`}
       onMouseMove={onMouseMove}
+      onDragLeave={onDragLeave}
       onContextMenu={(e) => e.preventDefault()}
     >
       <ReactFlow
