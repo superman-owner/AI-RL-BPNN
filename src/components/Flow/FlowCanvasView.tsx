@@ -12,6 +12,7 @@ import {
   useReactFlow,
   SelectionMode,
   ConnectionLineType,
+  MarkerType,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import type { Connection, Edge, Node } from '@xyflow/react';
@@ -112,21 +113,80 @@ const INITIAL_NODES: Node[] = [
 ];
 
 const INITIAL_EDGES: Edge[] = [
-  { id: 'e1-2', source: 'node-1', target: 'node-2', type: 'straight', animated: true, style: { stroke: '#38bdf8', strokeWidth: 2 } },
-  { id: 'e2-3', source: 'node-2', target: 'node-3', type: 'straight', animated: true, style: { stroke: '#ff9f0a', strokeWidth: 2 } },
-  { id: 'e3-4', source: 'node-3', target: 'node-4', type: 'straight', animated: true, style: { stroke: '#bf5af2', strokeWidth: 2 } },
-  { id: 'e4-5', source: 'node-4', target: 'node-5', type: 'straight', animated: true, style: { stroke: '#ff453a', strokeWidth: 2 } },
-  { id: 'e5-6', source: 'node-5', target: 'node-6', type: 'straight', animated: true, style: { stroke: '#30d158', strokeWidth: 2 } },
-  { id: 'e6-7', source: 'node-6', target: 'node-7', type: 'straight', animated: true, style: { stroke: '#0a84ff', strokeWidth: 2 } },
+  {
+    id: 'e1-2',
+    source: 'node-1',
+    target: 'node-2',
+    type: 'smoothstep',
+    animated: true,
+    style: { stroke: '#38bdf8', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(56,189,248,0.55))' },
+    markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: '#38bdf8' },
+  },
+  {
+    id: 'e2-3',
+    source: 'node-2',
+    target: 'node-3',
+    type: 'smoothstep',
+    animated: true,
+    style: { stroke: '#ff9f0a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,159,10,0.55))' },
+    markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: '#ff9f0a' },
+  },
+  {
+    id: 'e3-4',
+    source: 'node-3',
+    target: 'node-4',
+    type: 'smoothstep',
+    animated: true,
+    style: { stroke: '#bf5af2', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(191,90,242,0.55))' },
+    markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: '#bf5af2' },
+  },
+  {
+    id: 'e4-5',
+    source: 'node-4',
+    target: 'node-5',
+    type: 'smoothstep',
+    animated: true,
+    style: { stroke: '#ff453a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,69,58,0.55))' },
+    markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: '#ff453a' },
+  },
+  {
+    id: 'e5-6',
+    source: 'node-5',
+    target: 'node-6',
+    type: 'smoothstep',
+    animated: true,
+    style: { stroke: '#30d158', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(48,209,88,0.55))' },
+    markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: '#30d158' },
+  },
+  {
+    id: 'e6-7',
+    source: 'node-6',
+    target: 'node-7',
+    type: 'smoothstep',
+    animated: true,
+    style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' },
+    markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: '#0a84ff' },
+  },
 ];
 
-// 🟢 กำหนดให้ทุกเส้นที่ลากเชื่อมต่อเป็น "straight" (เส้นตรงดิ่ง)
+// ==========================================
+// 1. กำหนดค่าเริ่มต้นของทุกเส้นเป็น "smoothstep"
+// ==========================================
 const defaultEdgeOptions = {
-  type: 'straight', // 🟢 กำหนดเป็นเส้นตรง
-  animated: true,
+  type: 'smoothstep', // 🟢 เส้นตรงหักมุมฉากแบบมุมมน
+  animated: true,     // 🟢 แอนิเมชันจุดไฟวิ่งบนเส้น
   style: {
-    stroke: '#38bdf8', // สีเส้น (Cyan ฟ้า)
-    strokeWidth: 2,    // ความหนาเส้น 2px
+    stroke: '#38bdf8', // สีเส้นเริ่มต้น (Cyber Cyan)
+    strokeWidth: 2,    // ความหนาของเส้น 2px
+  },
+  pathOptions: {
+    borderRadius: 16,  // 🟢 รัศมีความโค้งมนของมุมเลี้ยว (16px กำลังสวย สบายตา)
+  },
+  markerEnd: {
+    type: MarkerType.ArrowClosed,
+    width: 14,
+    height: 14,
+    color: '#38bdf8',
   },
 };
 
@@ -465,25 +525,34 @@ const FlowContent: React.FC = () => {
   }, [nodes]);
 
   // ==========================================
-  // 1. การเชื่อมต่อสายสัญญาณ (Connect Edge)
+  // 2. จัดการเมื่อผู้ใช้ลากสายเชื่อมต่อ (onConnect)
   // ==========================================
   const onConnect = useCallback(
     (connection: Connection) => {
-      // เลือกสีตามขาที่ลากออกมา (เช่น ลากจากขา True = สีเขียว, ขา False = สีแดง, ขาปกติ = สีฟ้า)
-      const edgeColor =
-        connection.sourceHandle === 'true'
-          ? '#10b981' // เขียว
-          : connection.sourceHandle === 'false'
-            ? '#f43f5e' // แดง
-            : '#38bdf8'; // ฟ้า
+      // 🎨 กำหนดสีตามขาที่ลากออกมา
+      let edgeColor = '#38bdf8'; // สีฟ้าปกติ
+      if (connection.sourceHandle === 'true' || connection.sourceHandle === 'pass') {
+        edgeColor = '#10b981'; // 🟢 ขาผ่าน/สัญญาณซื้อ = สีเขียว Emerald
+      } else if (connection.sourceHandle === 'false' || connection.sourceHandle === 'fail') {
+        edgeColor = '#f43f5e'; // 🔴 ขาไม่ผ่าน/สัญญาณหยุด = สีแดง Rose
+      }
 
-      const newEdge = {
+      const newEdge: Edge = {
         ...connection,
-        type: 'straight', // 🟢 บังคับให้เส้นนี้เป็น "เส้นตรง (Straight Line)"
-        animated: true,   // เส้นวิ่งเคลื่อนไหว (Flowing Animation)
+        id: `e-${connection.source}-${connection.target}-${Date.now()}`,
+        type: 'smoothstep', // 🟢 กำหนดเป็น smoothstep
+        animated: true,     // เส้นไฟวิ่ง
         style: {
           stroke: edgeColor,
           strokeWidth: 2,
+          filter: `drop-shadow(0 0 6px ${edgeColor}88)`, // แสงนีออนฟุ้งเรืองแสง
+        },
+        // หัวลูกศรชี้บอกทิศทาง
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          width: 14,
+          height: 14,
+          color: edgeColor,
         },
       };
 
@@ -858,7 +927,7 @@ const FlowContent: React.FC = () => {
         onPaneScroll={() => setContextMenu(null)}
         nodeTypes={nodeTypes}
         defaultEdgeOptions={defaultEdgeOptions}
-        connectionLineType={ConnectionLineType.Straight}
+        connectionLineType={ConnectionLineType.SmoothStep}
         connectionLineStyle={{ stroke: '#38bdf8', strokeWidth: 2 }}
         selectionOnDrag={true}
         selectionMode={SelectionMode.Partial}
