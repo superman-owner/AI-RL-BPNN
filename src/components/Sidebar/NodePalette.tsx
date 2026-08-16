@@ -3,7 +3,6 @@ import { GROUPS, nodesByGroup } from '../../data/nodeRegistry';
 import { useTheme } from '../../context/ThemeContext';
 import {
   Search,
-  Plus,
   Sliders,
   Brain,
   Zap,
@@ -15,9 +14,63 @@ import {
   FileCode,
   PanelLeftClose,
   PanelLeftOpen,
-  ChevronDown,
-  ChevronRight,
 } from 'lucide-react';
+
+//  Authentic Apple SF Symbol: chevron.down
+const SFSymbolChevronDown: React.FC<{ size?: number; className?: string }> = ({ size = 10, className = '' }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 12 12"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <path d="M2.5 4.5L6 8L9.5 4.5" />
+  </svg>
+);
+
+//  Authentic Apple SF Symbol: chevron.right
+const SFSymbolChevronRight: React.FC<{ size?: number; className?: string }> = ({ size = 10, className = '' }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 12 12"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <path d="M4.5 2.5L8 6L4.5 9.5" />
+  </svg>
+);
+
+//  Authentic Apple SF Symbol: plus
+const SFSymbolPlus: React.FC<{ size?: number; className?: string; style?: React.CSSProperties }> = ({
+  size = 11,
+  className = '',
+  style,
+}) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 12 12"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+    style={style}
+  >
+    <path d="M6 2V10M2 6H10" />
+  </svg>
+);
 
 const GROUP_ICONS: Record<
   string,
@@ -537,17 +590,15 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                   </span>
                 </div>
 
-                {/*  Fold / Open Arrow Indicator: ChevronDown when collapsed (พับ), ChevronRight (>) when open (เปิด) */}
+                {/*  Fold / Open Arrow Indicator: Authentic Apple SF Symbol */}
                 <div className="flex items-center justify-center flex-shrink-0 ml-1.5 opacity-60 group-hover:opacity-100 transition-opacity">
                   {isExpanded ? (
-                    <ChevronRight
-                      size={13}
-                      strokeWidth={2.4}
+                    <SFSymbolChevronRight
+                      size={11}
                     />
                   ) : (
-                    <ChevronDown
-                      size={13}
-                      strokeWidth={2.4}
+                    <SFSymbolChevronDown
+                      size={11}
                     />
                   )}
                 </div>
@@ -622,9 +673,9 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                           </span>
                         </div>
 
-                        {/* Right: Subtle Add Indicator with 12px Clearance */}
-                        <Plus
-                          size={13}
+                        {/* Right: Authentic Apple SF Symbol Plus */}
+                        <SFSymbolPlus
+                          size={11}
                           style={{
                             flexShrink: 0,
                             marginLeft: '6px',
