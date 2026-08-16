@@ -194,6 +194,7 @@ const INITIAL_EDGES: Edge[] = [
 const defaultEdgeOptions = {
   type: 'smoothstep', // 🟢 เส้นตรงหักมุมฉากแบบมุมมน
   animated: true,     // 🟢 แอนิเมชันจุดไฟวิ่งบนเส้น
+  interactionWidth: 20, // 🟢 ขอบจับสัมผัสสำหรับการคลิกและคลิกขวาตัดสาย
   style: {
     stroke: '#38bdf8', // สีเส้นเริ่มต้น (Cyber Cyan)
     strokeWidth: 2,    // ความหนาของเส้น 2px
@@ -886,6 +887,18 @@ const FlowContent: React.FC = () => {
     [screenToFlowPosition]
   );
 
+  // ✂️ Event เมื่อคลิกขวาที่เส้น Edge เพื่อตัดสายเชื่อมต่อทันที (Disconnect Edge)
+  const onEdgeContextMenu = useCallback(
+    (event: React.MouseEvent, edge: Edge) => {
+      event.preventDefault();
+      event.stopPropagation();
+      setContextMenu(null);
+      // ตัดสายสัญญาณนี้ทันที (Disconnect Edge)
+      setEdges((eds) => eds.filter((e) => e.id !== edge.id));
+    },
+    [setEdges]
+  );
+
   // Close context menu on click elsewhere or zoom/wheel scroll
   useEffect(() => {
     const handleDismiss = () => setContextMenu(null);
@@ -1004,7 +1017,11 @@ const FlowContent: React.FC = () => {
   }, [nodes, connectedNodeIds]);
 
   return (
-    <div className="w-full h-full relative overflow-hidden bg-[#040407]" onMouseMove={onMouseMove}>
+    <div
+      className="w-full h-full relative overflow-hidden bg-[#040407]"
+      onMouseMove={onMouseMove}
+      onContextMenu={(e) => e.preventDefault()}
+    >
       <ReactFlow
         nodes={augmentedNodes}
         edges={edges}
@@ -1016,6 +1033,7 @@ const FlowContent: React.FC = () => {
         onNodeDoubleClick={onNodeDoubleClick}
         onNodeContextMenu={onNodeContextMenu}
         onPaneContextMenu={onPaneContextMenu}
+        onEdgeContextMenu={onEdgeContextMenu}
         onMoveStart={() => setContextMenu(null)}
         onPaneClick={() => setContextMenu(null)}
         onPaneScroll={() => setContextMenu(null)}
