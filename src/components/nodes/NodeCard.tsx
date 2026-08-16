@@ -70,7 +70,9 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
         boxShadow: selected
           ? `0 0 0 1px ${accent}, 0 0 22px 2px ${accent}66, 0 8px 24px rgba(0,0,0,0.6)`
           : '0 4px 16px rgba(0,0,0,0.45)',
-        fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, sans-serif',
+        fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, -apple-system, sans-serif',
+        WebkitFontSmoothing: 'antialiased',
+        MozOsxFontSmoothing: 'grayscale',
         transition: 'border 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease',
       }}
     >
@@ -80,7 +82,7 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
           display: 'flex',
           alignItems: 'center',
           gap: 8,
-          padding: '8px 11px',
+          padding: '9px 12px',
           background: 'rgba(255,255,255,0.025)',
           borderBottom: '1px solid rgba(255,255,255,0.07)',
           borderTopLeftRadius: '9px',
@@ -93,10 +95,11 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
             style={{
               fontSize: 9.5,
               fontWeight: 700,
-              letterSpacing: '0.08em',
+              letterSpacing: '0.06em',
               color: isConnected ? accent : `${accent}aa`,
               textTransform: 'uppercase',
               lineHeight: 1.2,
+              fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
             }}
           >
             {group.label}
@@ -105,12 +108,13 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
             style={{
               fontSize: 13,
               fontWeight: 600,
-              letterSpacing: '-0.015em',
+              letterSpacing: '-0.02em',
               color: isConnected ? '#ffffff' : '#a1a1aa',
               whiteSpace: 'nowrap',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               lineHeight: 1.35,
+              fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif',
             }}
           >
             {def.label}
@@ -132,7 +136,7 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
       </div>
 
       {/* Node Body (พารามิเตอร์ย่อ) */}
-      <div style={{ padding: '9px 11px', display: 'flex', flexDirection: 'column', gap: 5 }}>
+      <div style={{ padding: '9px 12px', display: 'flex', flexDirection: 'column', gap: 5.5 }}>
         {def.fields.slice(0, 3).map((f) => {
           const val = data[f.key] ?? f.default;
           return (
@@ -143,6 +147,7 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
                 justifyContent: 'space-between',
                 fontSize: 11,
                 letterSpacing: '-0.01em',
+                fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
               }}
             >
               <span style={{ color: '#86868b', fontWeight: 400 }}>{f.label}:</span>
@@ -150,7 +155,10 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
                 style={{
                   color: '#f5f5f7',
                   fontWeight: 500,
-                  fontFamily: 'SFMono-Regular, Menlo, Monaco, Consolas, monospace',
+                  fontFamily: typeof val === 'number'
+                    ? 'SFMono-Regular, Menlo, Monaco, Consolas, monospace'
+                    : '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
+                  letterSpacing: typeof val === 'number' ? '0' : '-0.01em',
                 }}
               >
                 {String(val)}

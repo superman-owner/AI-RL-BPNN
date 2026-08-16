@@ -67,6 +67,7 @@ const INITIAL_NODES: Node[] = [
     position: { x: 880, y: 160 },
     data: {
       nodeType: 'ppo_policy',
+      hidden_layers: '64 -> 32',
       actor_lr: 0.0003,
       clip_epsilon: 0.2,
       gamma: 0.99,
@@ -203,11 +204,13 @@ interface InspectorState {
   y: number;
 }
 
-//  Apple Design System: State-driven Text Field (Default, Focus, Filled, Error)
+//  Apple Design System: State-driven Text & Dropdown Field (Default, Focus, Filled, Error)
 interface InspectorTextFieldProps {
   label: string;
   value: string | number;
   defaultValue: string | number | boolean;
+  type?: 'string' | 'number' | 'boolean' | 'select';
+  options?: string[];
   onChange: (val: string | number) => void;
 }
 
@@ -215,10 +218,13 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
   label,
   value,
   defaultValue,
+  type,
+  options,
   onChange,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
-  const isNumber = typeof defaultValue === 'number';
+  const isSelect = type === 'select' || (options && options.length > 0);
+  const isNumber = !isSelect && typeof defaultValue === 'number';
 
   // State checks matching Apple/Figma specs
   const strVal = value !== undefined && value !== null ? String(value) : '';
@@ -229,7 +235,10 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
   return (
     <div className="flex flex-col gap-1.5 group nodrag nopan" style={{ pointerEvents: 'all' }}>
       {/* Label above */}
-      <label className="text-[11.5px] font-medium text-[#a1a1aa] select-none tracking-tight">
+      <label
+        className="text-[11.5px] font-medium text-[#a1a1aa] select-none tracking-tight"
+        style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif' }}
+      >
         {label}
       </label>
 
@@ -238,7 +247,7 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
         style={{ pointerEvents: 'all' }}
         onPointerDown={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
-        className={`h-[38px] w-full rounded-[10px] px-3.5 flex items-center transition-all duration-150 bg-[#1e1e26] pointer-events-auto ${
+        className={`h-[38px] w-full rounded-[10px] px-3 flex items-center transition-all duration-150 bg-[#1e1e26] pointer-events-auto relative ${
           isError
             ? 'border border-[#ff453a] ring-1 ring-[#ff453a]/30 bg-[#261c1e]'
             : isFocused
@@ -248,31 +257,70 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
             : 'border border-white/[0.09] hover:border-white/[0.16]'
         }`}
       >
-        <input
-          type={isNumber ? 'number' : 'text'}
-          value={strVal}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          onPointerDown={(e) => e.stopPropagation()}
-          onMouseDown={(e) => e.stopPropagation()}
-          onChange={(e) => {
-            if (isNumber) {
-              const val = e.target.value;
-              const parsed = parseFloat(val);
-              onChange(isNaN(parsed) ? val : parsed);
-            } else {
-              onChange(e.target.value);
-            }
-          }}
-          placeholder={`Enter ${label.toLowerCase()}...`}
-          style={{ pointerEvents: 'all' }}
-          className="w-full bg-transparent text-[#f4f4f5] font-mono text-[13px] text-center focus:outline-none placeholder:text-[#71717a] nodrag nopan pointer-events-auto cursor-text"
-        />
+        {isSelect ? (
+          <div className="relative w-full flex items-center">
+            <select
+              value={strVal}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              onPointerDown={(e) => e.stopPropagation()}
+              onMouseDown={(e) => e.stopPropagation()}
+              onChange={(e) => onChange(e.target.value)}
+              style={{
+                fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
+                pointerEvents: 'all',
+              }}
+              className="w-full bg-transparent text-[#f4f4f5] text-[13px] font-medium focus:outline-none appearance-none nodrag nopan pointer-events-auto cursor-pointer pr-6 text-center"
+            >
+              {(options || ['32 -> 16', '64 -> 32', '128 -> 64 -> 32']).map((opt) => (
+                <option
+                  key={opt}
+                  value={opt}
+                  className="bg-[#181822] text-[#f4f4f5] text-[12.5px] py-1.5"
+                >
+                  {opt}
+                </option>
+              ))}
+            </select>
+            <div className="absolute right-0 pointer-events-none text-white/40 flex items-center">
+              <LucideIcons.ChevronDown size={14} />
+            </div>
+          </div>
+        ) : (
+          <input
+            type={isNumber ? 'number' : 'text'}
+            value={strVal}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            onPointerDown={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
+            onChange={(e) => {
+              if (isNumber) {
+                const val = e.target.value;
+                const parsed = parseFloat(val);
+                onChange(isNaN(parsed) ? val : parsed);
+              } else {
+                onChange(e.target.value);
+              }
+            }}
+            placeholder={`Enter ${label.toLowerCase()}...`}
+            style={{
+              fontFamily: isNumber
+                ? 'SFMono-Regular, Menlo, Monaco, Consolas, monospace'
+                : '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
+              pointerEvents: 'all',
+            }}
+            className="w-full bg-transparent text-[#f4f4f5] text-[13px] text-center focus:outline-none placeholder:text-[#71717a] nodrag nopan pointer-events-auto cursor-text"
+          />
+        )}
       </div>
 
       {/* Error message indicator */}
       {isError && (
-        <span className="text-[10px] text-[#ff453a] font-medium tracking-tight text-center -mt-0.5">
+        <span
+          className="text-[10px] text-[#ff453a] font-medium tracking-tight text-center -mt-0.5"
+          style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif' }}
+        >
           Invalid numeric value
         </span>
       )}
@@ -450,6 +498,8 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
               label={f.label}
               value={val}
               defaultValue={f.default}
+              type={f.type}
+              options={f.options}
               onChange={(newVal) => updateNodeData(node.id, f.key, newVal)}
             />
           );
