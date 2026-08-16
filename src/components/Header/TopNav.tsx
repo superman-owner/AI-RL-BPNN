@@ -97,70 +97,63 @@ export const TopNav: React.FC<TopNavProps> = ({
 
       <div className="h-3.5 w-[1px] bg-white/10 flex-shrink-0" />
 
-      {/* Controls: START / PAUSE / STOP Cluster */}
+      {/* Controls: Shared START / PAUSE Slot + STOP Button (Locked Widths, Zero Jitter) */}
       <div className="flex items-center gap-3.5 text-xs flex-shrink-0">
-        <div className="flex items-center gap-3 font-bold">
-          {/* START Button */}
-          <button
-            onClick={onStartRL}
-            className={`flex items-center gap-1 transition-all cursor-pointer ${
-              rlStatus === 'running'
-                ? 'text-[#30d158] drop-shadow-[0_0_8px_rgba(48,209,88,0.85)]'
-                : 'text-white/40 hover:text-[#30d158]'
-            }`}
-            title="Start / Resume Deep RL Simulation"
-          >
-            <LucideIcons.Play size={11} className={rlStatus === 'running' ? 'fill-[#30d158]' : ''} />
-            <span>START</span>
-          </button>
-
-          {/* PAUSE Button */}
-          <button
-            onClick={onPauseRL}
-            className={`flex items-center gap-1 transition-all cursor-pointer ${
-              rlStatus === 'paused'
-                ? 'text-[#ffd60a] drop-shadow-[0_0_8px_rgba(255,214,10,0.85)]'
-                : 'text-white/40 hover:text-[#ffd60a]'
-            }`}
-            title="Pause Simulation"
-          >
-            <LucideIcons.Pause size={11} className={rlStatus === 'paused' ? 'fill-[#ffd60a]' : ''} />
-            <span>PAUSE</span>
-          </button>
+        <div className="flex items-center gap-2.5 font-bold flex-shrink-0">
+          {/* Combined START / PAUSE Button (Shared Same Position) */}
+          {rlStatus === 'running' ? (
+            <button
+              onClick={onPauseRL}
+              className="w-[66px] inline-flex items-center gap-1.5 text-xs font-bold text-[#ffd60a] hover:text-[#ffe047] drop-shadow-[0_0_8px_rgba(255,214,10,0.85)] transition-all cursor-pointer flex-shrink-0 whitespace-nowrap select-none"
+              title="Pause Simulation"
+            >
+              <LucideIcons.Pause size={11} className="fill-[#ffd60a] flex-shrink-0" />
+              <span>PAUSE</span>
+            </button>
+          ) : (
+            <button
+              onClick={onStartRL}
+              className="w-[66px] inline-flex items-center gap-1.5 text-xs font-bold text-[#30d158] hover:text-[#4cd964] drop-shadow-[0_0_8px_rgba(48,209,88,0.85)] transition-all cursor-pointer flex-shrink-0 whitespace-nowrap select-none"
+              title={rlStatus === 'paused' ? 'Resume Simulation' : 'Start Simulation'}
+            >
+              <LucideIcons.Play size={11} className="fill-[#30d158] flex-shrink-0" />
+              <span>START</span>
+            </button>
+          )}
 
           {/* STOP Button */}
           <button
             onClick={onStopRL}
-            className={`flex items-center gap-1 transition-all cursor-pointer ${
+            className={`w-[56px] inline-flex items-center gap-1.5 text-xs font-bold transition-all cursor-pointer flex-shrink-0 whitespace-nowrap select-none ${
               rlStatus === 'stopped'
                 ? 'text-[#ff453a] drop-shadow-[0_0_8px_rgba(255,69,58,0.85)]'
                 : 'text-white/40 hover:text-[#ff453a]'
             }`}
             title="Stop & Reset Simulation"
           >
-            <LucideIcons.Square size={11} className={rlStatus === 'stopped' ? 'fill-[#ff453a]' : ''} />
+            <LucideIcons.Square size={11} className={`flex-shrink-0 ${rlStatus === 'stopped' ? 'fill-[#ff453a]' : ''}`} />
             <span>STOP</span>
           </button>
         </div>
 
         <div className="h-3.5 w-[1px] bg-white/10 flex-shrink-0" />
 
-        {/* Live Telemetry Stats (Numbers tight to labels, Header start positions locked) */}
+        {/* Live Telemetry Stats (Locked start positions, Zero wrapping, Number close to label) */}
         {rlTelemetry && (
-          <div className="flex items-center gap-3 text-[11px] text-[#86868b] select-none">
-            <div className="w-[82px] inline-flex items-center gap-1 flex-shrink-0">
+          <div className="flex items-center gap-3 text-[11px] text-[#86868b] select-none flex-shrink-0">
+            <div className="w-[82px] inline-flex items-center gap-1 flex-shrink-0 whitespace-nowrap">
               <span className="text-[#86868b]">Episodes:</span>
               <strong className="text-white tabular-nums">{formatEpisodes(rlTelemetry.episodes)}</strong>
             </div>
 
-            <div className="w-[88px] inline-flex items-center gap-1 flex-shrink-0">
-              <span className="text-[#86868b]">Win Rate:</span>
-              <strong className="text-[#30d158] tabular-nums drop-shadow-[0_0_6px_rgba(48,209,88,0.5)]">
+            <div className="w-[98px] inline-flex items-center gap-1 flex-shrink-0 whitespace-nowrap">
+              <span className="text-[#86868b] whitespace-nowrap">Win Rate:</span>
+              <strong className="text-[#30d158] tabular-nums whitespace-nowrap drop-shadow-[0_0_6px_rgba(48,209,88,0.5)]">
                 {typeof rlTelemetry.winRate === 'number' ? rlTelemetry.winRate.toFixed(1) : rlTelemetry.winRate}%
               </strong>
             </div>
 
-            <div className="w-[72px] inline-flex items-center gap-1 flex-shrink-0">
+            <div className="w-[76px] inline-flex items-center gap-1 flex-shrink-0 whitespace-nowrap">
               <span className="text-[#86868b]">Sharpe:</span>
               <strong className="text-[#00c7be] tabular-nums drop-shadow-[0_0_6px_rgba(0,199,190,0.5)]">
                 {typeof rlTelemetry.annualizedSharpe === 'number'
@@ -169,7 +162,7 @@ export const TopNav: React.FC<TopNavProps> = ({
               </strong>
             </div>
 
-            <div className="w-[110px] inline-flex items-center gap-1 flex-shrink-0">
+            <div className="w-[118px] inline-flex items-center gap-1 flex-shrink-0 whitespace-nowrap">
               <span className="text-[#86868b]">Reward:</span>
               <strong className="text-[#ffd60a] tabular-nums drop-shadow-[0_0_6px_rgba(255,214,10,0.5)]">
                 {typeof rlTelemetry.totalReward === 'number'
@@ -182,8 +175,8 @@ export const TopNav: React.FC<TopNavProps> = ({
           </div>
         )}
 
-        {/* Action Probability Indicator: Locked 92px Fixed Width */}
-        <div className="w-[94px] inline-flex items-center gap-1.5 text-xs font-bold tabular-nums flex-shrink-0">
+        {/* Action Probability Indicator: Locked 96px Fixed Width, Zero wrap */}
+        <div className="w-[96px] inline-flex items-center gap-1.5 text-xs font-bold tabular-nums flex-shrink-0 whitespace-nowrap">
           {rlLatestStep && (
             <>
               <span
