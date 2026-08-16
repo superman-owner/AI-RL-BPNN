@@ -4,11 +4,15 @@ import { TopNav } from './components/Header/TopNav';
 import { TrainingConfigSidebar } from './components/Sidebar/TrainingConfigSidebar';
 import { MT5DeployModal } from './components/Modals/MT5DeployModal';
 import { LiveNeuralLink } from './components/NeuralLink/LiveNeuralLink';
+import { FlowCanvasView } from './components/Flow/FlowCanvasView';
 import { INITIAL_LOGS } from './data/mockAnalytics';
 import { fxforgeEngine, DEFAULT_TRAINING_CONFIG } from './services/fxforgeEngine';
 import type { QuantTelemetry, RLEnvironmentStep, RLTrainingConfig } from './services/fxforgeEngine';
 
 export function App() {
+  // Dual View Mode: 'studio' (Flow DAG) vs 'bpnn' (Live 3D BPNN)
+  const [activeView, setActiveView] = useState<'studio' | 'bpnn'>('studio');
+
   // Sidebar Open/Close State
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
@@ -90,6 +94,8 @@ export function App() {
     <div className="h-screen w-screen flex flex-col bg-[#040407] text-slate-100 overflow-hidden font-sans select-none antialiased">
       {/*  Top Navigation Bar */}
       <TopNav
+        activeView={activeView}
+        onViewChange={setActiveView}
         isSidebarOpen={isSidebarOpen}
         onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
         rlStatus={rlStatus}
@@ -114,13 +120,17 @@ export function App() {
           isRunning={rlStatus === 'running'}
         />
 
-        {/* Center: Full-Stage 3D Neural Link BPNN Visualizer */}
+        {/* Center: Full-Stage Flow DAG or 3D BPNN Visualizer */}
         <main className="flex-1 h-full relative overflow-hidden bg-[#040407]">
-          <LiveNeuralLink
-            isTraining={rlStatus === 'running'}
-            latestStep={rlLatestStep}
-            cameraResetTrigger={cameraResetTrigger}
-          />
+          {activeView === 'studio' ? (
+            <FlowCanvasView />
+          ) : (
+            <LiveNeuralLink
+              isTraining={rlStatus === 'running'}
+              latestStep={rlLatestStep}
+              cameraResetTrigger={cameraResetTrigger}
+            />
+          )}
         </main>
       </div>
 
