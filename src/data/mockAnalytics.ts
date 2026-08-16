@@ -11,6 +11,55 @@ export const MOCK_METRICS: MetricSummary = {
   avgTradeReturn: 0.84,
 };
 
+export interface RLRewardPoint {
+  episode: string;
+  cumulativeReward: number;
+  rewardMa10: number;
+  marketBaseline: number;
+  rMarket: number;
+  rSpread: number;
+  rInactivity: number;
+  rOppCost: number;
+}
+
+// Generate realistic simulated RL Reward Curve
+export const generateRLRewardData = (): RLRewardPoint[] => {
+  const points: RLRewardPoint[] = [];
+  let cumReward = 0;
+  let cumMarket = 0;
+  const recentRewards: number[] = [];
+
+  for (let ep = 1; ep <= 60; ep++) {
+    const stepPriceDelta = (Math.random() - 0.45) * 0.025;
+    const isLong = Math.random() > 0.35;
+    const rMarket = isLong ? 10.0 * stepPriceDelta * 4 : 0;
+    const rSpread = Math.random() < 0.25 ? 0.15 : 0;
+    const rInactivity = isLong ? 0 : 0.005;
+    const rOppCost = !isLong && Math.abs(stepPriceDelta) > 0.012 ? 0.5 * Math.abs(stepPriceDelta) * 10 : 0;
+
+    const stepReward = rMarket - rSpread - rInactivity - rOppCost + (ep > 15 ? 0.42 : 0.15);
+    cumReward += stepReward;
+    cumMarket += stepPriceDelta * 80;
+
+    recentRewards.push(stepReward);
+    if (recentRewards.length > 10) recentRewards.shift();
+    const ma10 = recentRewards.reduce((a, b) => a + b, 0) / recentRewards.length;
+
+    points.push({
+      episode: `Ep ${ep}`,
+      cumulativeReward: Number(cumReward.toFixed(2)),
+      rewardMa10: Number((cumReward * 0.94 + ma10).toFixed(2)),
+      marketBaseline: Number(cumMarket.toFixed(2)),
+      rMarket: Number(rMarket.toFixed(3)),
+      rSpread: Number(rSpread.toFixed(3)),
+      rInactivity: Number(rInactivity.toFixed(4)),
+      rOppCost: Number(rOppCost.toFixed(3)),
+    });
+  }
+
+  return points;
+};
+
 // Generate realistic simulated Equity Curve
 export const generateEquityData = (): EquityPoint[] => {
   const points: EquityPoint[] = [];

@@ -15,7 +15,7 @@ import {
 } from 'recharts';
 import {
   MOCK_METRICS,
-  generateEquityData,
+  generateRLRewardData,
   generateLossData,
   FEATURE_IMPORTANCE,
 } from '../../data/mockAnalytics';
@@ -81,63 +81,64 @@ const MiniRadialGauge: React.FC<MiniRadialGaugeProps> = ({
         >
           {/* Background Track */}
           <circle
-            cx={isMaximized ? 37 : 24}
-            cy={isMaximized ? 37 : 24}
+            cx={isMaximized ? '37' : '24'}
+            cy={isMaximized ? '37' : '24'}
             r={radius}
             fill="none"
             stroke="rgba(255, 255, 255, 0.08)"
-            strokeWidth={isMaximized ? 5 : 3.5}
-            strokeDasharray={`${arcLength} ${circumference}`}
+            strokeWidth={isMaximized ? 4.5 : 3.5}
+            strokeDasharray={arcLength}
+            strokeDashoffset={0}
             strokeLinecap="round"
           />
-          {/* Glowing Value Arc */}
+
+          {/* Active Gradient Arc */}
           <circle
-            cx={isMaximized ? 37 : 24}
-            cy={isMaximized ? 37 : 24}
+            cx={isMaximized ? '37' : '24'}
+            cy={isMaximized ? '37' : '24'}
             r={radius}
             fill="none"
             stroke={color}
             strokeWidth={isMaximized ? 5.5 : 4}
-            strokeDasharray={`${arcLength} ${circumference}`}
+            strokeDasharray={arcLength}
             strokeDashoffset={strokeDashoffset}
             strokeLinecap="round"
             style={{
-              filter: `drop-shadow(0 0 ${isMaximized ? '8px' : '5px'} ${glowColor})`,
-              transition: 'stroke-dashoffset 0.6s ease',
+              filter: `drop-shadow(0 0 6px ${glowColor})`,
+              transition: 'stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
             }}
           />
         </svg>
 
         {/* Center Icon */}
-        <div className="absolute flex items-center justify-center pointer-events-none" style={{ color }}>
+        <div className="absolute inset-0 flex items-center justify-center text-white/90 z-20">
           {icon}
         </div>
       </div>
 
-      {/*  Bottom Digital Readout & Label */}
-      <div className={`flex flex-col items-center justify-center z-10 min-w-0 ${isMaximized ? 'mt-3' : 'mt-1'}`}>
-        <div
-          className={`font-black tracking-tight leading-none transition-all ${
-            isMaximized ? 'text-3xl' : 'text-lg'
-          }`}
-          style={{ color }}
-        >
-          {value}
-        </div>
-        <span
-          className={`font-bold tracking-widest text-[#86868b] uppercase ${
-            isMaximized ? 'text-[11px] mt-1.5' : 'text-[9px] mt-0.5'
-          }`}
-        >
-          {label}
-        </span>
-        <span
-          className={`text-[#636366] font-medium leading-none truncate max-w-full ${
-            isMaximized ? 'text-[11px] mt-1' : 'text-[9px] mt-0.5'
-          }`}
-        >
-          {sublabel}
-        </span>
+      {/*  Gauge Value & Label Cluster */}
+      <div
+        className={`font-mono font-bold tracking-tight text-white z-10 leading-none ${
+          isMaximized ? 'text-lg mt-2 mb-0.5' : 'text-xs mt-1 mb-0.5'
+        }`}
+      >
+        {value}
+      </div>
+
+      <div
+        className={`font-semibold text-white/80 z-10 tracking-tight leading-none ${
+          isMaximized ? 'text-xs mb-0.5' : 'text-[10px] mb-0.5'
+        }`}
+      >
+        {label}
+      </div>
+
+      <div
+        className={`font-mono text-[#86868b] z-10 truncate max-w-full px-1 ${
+          isMaximized ? 'text-[10px]' : 'text-[8px]'
+        }`}
+      >
+        {sublabel}
       </div>
     </div>
   );
@@ -151,7 +152,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
   const [activeTab, setActiveTab] = useState<'equity' | 'loss' | 'features' | 'logs'>('equity');
   const [isMinimized, setIsMinimized] = useState(true); // Default minimized so it never overlaps DAG canvas
   const isMaximized = false;
-  const [equityData, setEquityData] = useState(generateEquityData());
+  const [rewardData, setRewardData] = useState(generateRLRewardData());
   const [lossData, setLossData] = useState(generateLossData());
   const logEndRef = useRef<HTMLDivElement>(null);
 
@@ -164,7 +165,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
   useEffect(() => {
     if (isRunning) {
       const interval = setInterval(() => {
-        setEquityData(generateEquityData());
+        setRewardData(generateRLRewardData());
         setLossData(generateLossData());
       }, 2500);
       return () => clearInterval(interval);
@@ -195,7 +196,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
             }`}
           >
             <span className="relative">
-              HUD Telemetry & Gauges
+              RL Reward Curve & Telemetry
               {activeTab === 'equity' && !isMinimized && (
                 <span className="absolute -bottom-[3px] left-0 right-0 h-[2px] bg-[#007aff] rounded-full shadow-[0_0_8px_#007aff]" />
               )}
@@ -502,14 +503,14 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                 </div>
               </div>
 
-              {/*  Right Cluster: Apple Stocks Dark Horizon Area Curve (Generous Safe Insets) */}
+              {/*  Right Cluster: RL Cumulative Reward Curve & Policy Telemetry */}
               <div
                 className={`flex-1 h-full min-h-0 bg-gradient-to-b from-[#14141d]/95 to-[#0c0c12]/95 border border-white/[0.08] flex flex-col shadow-[0_10px_25px_rgba(0,0,0,0.6)] relative overflow-hidden transition-all duration-200 ${
                   isMaximized ? 'rounded-3xl' : 'rounded-2xl'
                 }`}
                 style={{ padding: isMaximized ? '22px 28px 16px 28px' : '16px 22px 10px 22px' }}
               >
-                {/* Header Legend (Safely in from top/left/right borders) */}
+                {/* Header Legend */}
                 <div
                   className={`flex items-center justify-between z-10 flex-shrink-0 ${
                     isMaximized ? 'text-xs mb-3' : 'text-[11px] mb-2'
@@ -517,22 +518,25 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                 >
                   <span className="font-bold text-white flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-[#30d158] shadow-[0_0_8px_#30d158]" />
-                    Real-time Equity Telemetry Curve
+                    RL Reward Curve & Telemetry
                   </span>
                   <div className="flex items-center gap-4 text-[#86868b]">
                     <span className="text-[#30d158] font-semibold flex items-center gap-1.5">
-                      <span className="w-2 h-0.5 bg-[#30d158]" /> Alpha AI ($284.2K)
+                      <span className="w-2 h-0.5 bg-[#30d158]" /> Cumulative Reward (+248.6 R)
+                    </span>
+                    <span className="text-[#00c7be] font-medium flex items-center gap-1.5">
+                      <span className="w-2 h-0.5 bg-[#00c7be]" /> 10-Ep MA
                     </span>
                     <span className="text-[#636366] font-medium flex items-center gap-1.5">
-                      <span className="w-2 h-0.5 bg-[#636366]" /> Buy & Hold ($100K)
+                      <span className="w-2 h-0.5 bg-[#636366]" /> Market Baseline
                     </span>
                   </div>
                 </div>
 
-                {/* Area Chart */}
+                {/* RL Reward Area Chart */}
                 <div className="flex-1 w-full min-h-0 z-10">
                   <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={equityData} margin={{ top: 12, right: 10, left: -10, bottom: 0 }}>
+                    <AreaChart data={rewardData} margin={{ top: 12, right: 10, left: -10, bottom: 0 }}>
                       <defs>
                         <linearGradient id="hudEquityGrad" x1="0" y1="0" x2="0" y2="1">
                           <stop offset="5%" stopColor="#30d158" stopOpacity={0.45} />
@@ -541,7 +545,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-                      <XAxis dataKey="date" stroke="#636366" tick={{ fontSize: isMaximized ? 11 : 9 }} />
+                      <XAxis dataKey="episode" stroke="#636366" tick={{ fontSize: isMaximized ? 11 : 9 }} />
                       <YAxis stroke="#636366" tick={{ fontSize: isMaximized ? 11 : 9 }} domain={['auto', 'auto']} />
                       <Tooltip
                         contentStyle={{
@@ -552,11 +556,19 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                           boxShadow: '0 10px 25px rgba(0,0,0,0.8)',
                           backdropFilter: 'blur(25px)',
                         }}
-                        formatter={(val: any) => [`$${Number(val).toLocaleString()}`, 'Portfolio']}
+                        formatter={(val: any, name: any) => [
+                          `${Number(val) > 0 ? '+' : ''}${Number(val).toFixed(2)} R`,
+                          name === 'cumulativeReward'
+                            ? 'Cum Reward'
+                            : name === 'rewardMa10'
+                            ? '10-Ep MA'
+                            : 'Market Return',
+                        ]}
                       />
                       <Area
                         type="monotone"
-                        dataKey="portfolio"
+                        dataKey="cumulativeReward"
+                        name="cumulativeReward"
                         stroke="#30d158"
                         strokeWidth={isMaximized ? 3 : 2}
                         fillOpacity={1}
@@ -565,9 +577,18 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                       />
                       <Line
                         type="monotone"
-                        dataKey="benchmark"
-                        stroke="#636366"
+                        dataKey="rewardMa10"
+                        name="rewardMa10"
+                        stroke="#00c7be"
                         strokeWidth={1.8}
+                        dot={false}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="marketBaseline"
+                        name="marketBaseline"
+                        stroke="#636366"
+                        strokeWidth={1.5}
                         strokeDasharray="4 4"
                         dot={false}
                       />
