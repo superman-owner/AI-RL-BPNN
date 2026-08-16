@@ -30,9 +30,9 @@ export interface NodeItem {
 
 export const GROUPS: NodeGroup[] = [
   { id: 'input', label: 'Input & Strategy', color: '#0a84ff' },
-  { id: 'fc1', label: 'Feature Expansion (FC1)', color: '#ff9f0a' },
+  { id: 'fc1', label: 'Feature Expansion', color: '#ff9f0a' },
   { id: 'regularization', label: 'Regularization & Norm', color: '#30d158' },
-  { id: 'fc2', label: 'Bottleneck Synthesis (FC2)', color: '#bf5af2' },
+  { id: 'fc2', label: 'Bottleneck Synthesis', color: '#bf5af2' },
   { id: 'reward', label: 'Reward & Shaping Rules', color: '#ffd60a' },
   { id: 'output', label: 'Output & Deployment', color: '#0a84ff' },
 ];
@@ -118,7 +118,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
   // =========================================================================
   fc1_dense_expansion: {
     group: 'fc1',
-    label: 'Dense Feature Expansion Node (FC1)',
+    label: 'Dense Feature Expansion Node',
     fields: [
       {
         key: 'units',
@@ -206,7 +206,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
   // =========================================================================
   fc2_bottleneck_synthesizer: {
     group: 'fc2',
-    label: 'Strategy Bottleneck Synthesizer Node (FC2)',
+    label: 'Strategy Bottleneck Synthesizer Node',
     fields: [
       {
         key: 'units',
@@ -263,7 +263,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
   // =========================================================================
   fc3_policy_action_head: {
     group: 'output',
-    label: 'Policy Softmax Action Head (FC3)',
+    label: 'Policy Softmax Action Head',
     fields: [
       {
         key: 'classes',

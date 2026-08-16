@@ -145,19 +145,19 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
     <aside
       onWheel={(e) => e.stopPropagation()}
       style={{
-        width: '295px',
-        minWidth: '295px',
+        width: '335px',
+        minWidth: '335px',
         transition: 'width 0.22s cubic-bezier(0.16, 1, 0.3, 1)',
       }}
       className="h-full flex flex-col flex-shrink-0 bg-[#08080c] border-r border-white/[0.08] text-[#c7c7cc] select-none z-20 font-sans"
     >
-      {/* 1.  Apple macOS Header & Spotlight Search (Exact 10px Spacing, Seamless Background) */}
+      {/* 1.  Apple macOS Header & Spotlight Search */}
       <div
         style={{
           paddingTop: '10px',
           paddingBottom: '10px',
-          paddingLeft: '14px',
-          paddingRight: '14px',
+          paddingLeft: '10px',
+          paddingRight: '10px',
           borderBottom: 'none',
           backgroundColor: 'transparent',
           flexShrink: 0,
@@ -235,7 +235,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
             size={13}
             style={{
               position: 'absolute',
-              left: '12px',
+              left: '10px',
               color: '#86868b',
               pointerEvents: 'none',
               zIndex: 10,
@@ -248,8 +248,8 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
             style={{
               width: '100%',
               height: '34px',
-              paddingLeft: '34px',
-              paddingRight: '12px',
+              paddingLeft: '32px',
+              paddingRight: '10px',
               backgroundColor: 'rgba(255, 255, 255, 0.05)',
               border: '1px solid rgba(255, 255, 255, 0.08)',
               borderRadius: '8px',
@@ -262,8 +262,16 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
         </div>
       </div>
 
-      {/* 2.  Apple Mac Mail / Finder Sidebar List (space-y-[36px]: +50% Section Gap = 36px) */}
-      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar px-3.5 py-4 space-y-[36px]">
+      {/* 2.  Apple Mac Mail / Finder Sidebar List (Left offset 10px) */}
+      <div
+        style={{
+          paddingLeft: '10px',
+          paddingRight: '10px',
+          paddingTop: '12px',
+          paddingBottom: '16px',
+        }}
+        className="flex-1 min-h-0 overflow-y-auto custom-scrollbar space-y-[36px]"
+      >
         {GROUPS.map((group) => {
           const allNodes = nodesByGroup(group.id);
           const matchingNodes = allNodes.filter(
@@ -280,7 +288,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
               {/*  Section Header (Clean Icon & Label, No Down Arrow) */}
               <div
                 onClick={() => toggleGroup(group.id)}
-                className="group px-1 py-1 flex items-center justify-between cursor-pointer transition-colors"
+                className="group py-1 flex items-center justify-between cursor-pointer transition-colors"
               >
                 <div className="flex items-center gap-2 min-w-0 flex-1">
                   {/* SF Symbol on Main Header (Distinct Group Color) */}
@@ -301,7 +309,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
               {isExpanded && (
                 <div
                   className="mt-1.5 space-y-1.5"
-                  style={{ paddingLeft: '22px' }}
+                  style={{ paddingLeft: '18px' }}
                 >
                   {matchingNodes.map((node) => {
                     const isNodeHovered = hoveredNode === node.type;
@@ -314,13 +322,13 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                         onMouseEnter={() => setHoveredNode(node.type)}
                         onMouseLeave={() => setHoveredNode(null)}
                         title="Drag onto canvas to add module"
-                        className="h-[18px] flex items-center justify-between cursor-grab transition-colors pr-2"
+                        className="h-[20px] flex items-center justify-between cursor-grab transition-colors pr-1"
                       >
-                        {/* Left: Mid Dot (·) directly aligned at 45px mark under Header text */}
+                        {/* Left: Mid Dot (·) */}
                         <div className="flex items-center gap-2 min-w-0 flex-1">
                           <span
                             style={{ color: isNodeHovered ? '#ffffff' : group.color }}
-                            className="text-[15px] font-bold leading-none select-none transition-colors flex-shrink-0"
+                            className="text-[14px] font-bold leading-none select-none transition-colors flex-shrink-0"
                           >
                             ·
                           </span>
