@@ -173,6 +173,106 @@ interface InspectorState {
   y: number;
 }
 
+//  Apple Design System: State-driven Text Field (Default, Focus, Filled, Error)
+interface InspectorTextFieldProps {
+  label: string;
+  value: string | number;
+  defaultValue: string | number | boolean;
+  onChange: (val: string | number) => void;
+}
+
+const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
+  label,
+  value,
+  defaultValue,
+  onChange,
+}) => {
+  const [isFocused, setIsFocused] = useState(false);
+  const isNumber = typeof defaultValue === 'number';
+
+  // State checks matching Apple/Figma specs
+  const strVal = value !== undefined && value !== null ? String(value) : '';
+  const isInvalidNumber = isNumber && (strVal.trim() === '' || isNaN(Number(strVal)));
+  const isError = isInvalidNumber;
+  const isFilled = strVal.trim() !== '';
+
+  return (
+    <div className="flex flex-col gap-1.5 group">
+      {/* Label above */}
+      <label className="text-[11.5px] font-medium text-[#86868b] select-none tracking-tight">
+        {label}
+      </label>
+
+      {/* Input Container (Default, Focus, Filled, Error) */}
+      <div
+        className={`h-[38px] w-full rounded-[10px] px-3 flex items-center gap-2.5 transition-all duration-150 bg-[#161622] ${
+          isError
+            ? 'border border-[#ff453a] ring-1 ring-[#ff453a]/30 bg-[#ff453a]/[0.05]'
+            : isFocused
+            ? 'border border-[#007aff] ring-1 ring-[#007aff]/35 bg-[#181828]'
+            : isFilled
+            ? 'border border-white/[0.14] hover:border-white/[0.22]'
+            : 'border border-white/[0.08] hover:border-white/[0.16]'
+        }`}
+      >
+        {/* Left Icon with matching state colors */}
+        {isNumber ? (
+          <LucideIcons.Hash
+            size={14}
+            className={`flex-shrink-0 transition-colors ${
+              isError
+                ? 'text-[#ff453a]'
+                : isFocused
+                ? 'text-[#007aff]'
+                : isFilled
+                ? 'text-[#86868b]'
+                : 'text-[#636366]'
+            }`}
+          />
+        ) : (
+          <LucideIcons.SlidersHorizontal
+            size={14}
+            className={`flex-shrink-0 transition-colors ${
+              isError
+                ? 'text-[#ff453a]'
+                : isFocused
+                ? 'text-[#007aff]'
+                : isFilled
+                ? 'text-[#86868b]'
+                : 'text-[#636366]'
+            }`}
+          />
+        )}
+
+        <input
+          type={isNumber ? 'number' : 'text'}
+          value={strVal}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          onChange={(e) => {
+            if (isNumber) {
+              const val = e.target.value;
+              const parsed = parseFloat(val);
+              onChange(isNaN(parsed) ? val : parsed);
+            } else {
+              onChange(e.target.value);
+            }
+          }}
+          placeholder={`Enter ${label.toLowerCase()}...`}
+          className="w-full bg-transparent text-white font-mono text-[12.5px] focus:outline-none placeholder:text-[#636366]"
+        />
+      </div>
+
+      {/* Error message indicator */}
+      {isError && (
+        <span className="text-[10px] text-[#ff453a] font-medium tracking-tight -mt-0.5">
+          Invalid numeric value
+        </span>
+      )}
+    </div>
+  );
+};
+
 const FlowContent: React.FC = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(INITIAL_NODES);
   const [edges, setEdges, onEdgesChange] = useEdgesState(INITIAL_EDGES);
@@ -725,25 +825,17 @@ const FlowContent: React.FC = () => {
               </div>
 
               {/* Parameter Inputs */}
-              <div className="space-y-3 max-h-[300px] overflow-y-auto custom-scrollbar pr-1">
+              <div className="space-y-3.5 max-h-[300px] overflow-y-auto custom-scrollbar pr-1">
                 {def?.fields.map((f) => {
                   const val = (targetNode.data?.[f.key] ?? f.default) as string | number;
                   return (
-                    <div key={f.key}>
-                      <label className="text-[11px] font-medium text-[#86868b] block mb-1.5">{f.label}</label>
-                      <input
-                        type={typeof f.default === 'number' ? 'number' : 'text'}
-                        value={val}
-                        onChange={(e) =>
-                          updateNodeData(
-                            ins.nodeId,
-                            f.key,
-                            typeof f.default === 'number' ? parseFloat(e.target.value) || 0 : e.target.value
-                          )
-                        }
-                        className="w-full bg-[#161622] border border-white/[0.12] rounded-lg px-3 py-1.5 text-white font-mono text-xs focus:outline-none focus:border-[#007aff] transition-colors"
-                      />
-                    </div>
+                    <InspectorTextField
+                      key={f.key}
+                      label={f.label}
+                      value={val}
+                      defaultValue={f.default}
+                      onChange={(newVal) => updateNodeData(ins.nodeId, f.key, newVal)}
+                    />
                   );
                 })}
               </div>
