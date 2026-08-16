@@ -177,8 +177,8 @@ export const TopNav: React.FC<TopNavProps> = ({
 
         <div className="h-3.5 w-[1px] bg-white/10" />
 
-        {/* MT5 Connected Status Indicator */}
-        <div className="flex items-center gap-1.5 text-[11px] text-[#86868b]">
+        {/* MT5 Connected Status Indicator (20px offset from left separator) */}
+        <div className="flex items-center gap-1.5 text-[11px] text-[#86868b] pl-5">
           <span className="w-1.5 h-1.5 rounded-full bg-[#30d158] shadow-[0_0_6px_#30d158]" />
           <span className="text-[#d1d1d6] font-medium">MT5 Connected</span>
         </div>

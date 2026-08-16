@@ -194,16 +194,11 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
             }}
             className={`h-full flex items-center text-xs transition-all cursor-pointer ${
               activeTab === 'equity' && !isMinimized
-                ? 'text-white font-bold'
-                : 'text-[#86868b] hover:text-white font-medium'
+                ? 'text-[#007aff] font-bold drop-shadow-[0_0_8px_rgba(0,122,255,0.7)]'
+                : 'text-white/50 hover:text-white font-medium'
             }`}
           >
-            <span className="relative">
-              RL Reward Curve & Telemetry
-              {activeTab === 'equity' && !isMinimized && (
-                <span className="absolute -bottom-[3px] left-0 right-0 h-[2px] bg-[#007aff] rounded-full shadow-[0_0_8px_#007aff]" />
-              )}
-            </span>
+            <span>RL Reward Curve & Telemetry</span>
           </button>
 
           <button
@@ -213,16 +208,11 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
             }}
             className={`h-full flex items-center text-xs transition-all cursor-pointer ${
               activeTab === 'loss' && !isMinimized
-                ? 'text-white font-bold'
-                : 'text-[#86868b] hover:text-white font-medium'
+                ? 'text-[#007aff] font-bold drop-shadow-[0_0_8px_rgba(0,122,255,0.7)]'
+                : 'text-white/50 hover:text-white font-medium'
             }`}
           >
-            <span className="relative">
-              Model Convergence
-              {activeTab === 'loss' && !isMinimized && (
-                <span className="absolute -bottom-[3px] left-0 right-0 h-[2px] bg-[#007aff] rounded-full shadow-[0_0_8px_#007aff]" />
-              )}
-            </span>
+            <span>Model Convergence</span>
           </button>
 
           <button
@@ -232,16 +222,11 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
             }}
             className={`h-full flex items-center text-xs transition-all cursor-pointer ${
               activeTab === 'features' && !isMinimized
-                ? 'text-white font-bold'
-                : 'text-[#86868b] hover:text-white font-medium'
+                ? 'text-[#007aff] font-bold drop-shadow-[0_0_8px_rgba(0,122,255,0.7)]'
+                : 'text-white/50 hover:text-white font-medium'
             }`}
           >
-            <span className="relative">
-              Signal Weight Matrix
-              {activeTab === 'features' && !isMinimized && (
-                <span className="absolute -bottom-[3px] left-0 right-0 h-[2px] bg-[#007aff] rounded-full shadow-[0_0_8px_#007aff]" />
-              )}
-            </span>
+            <span>Signal Weight Matrix</span>
           </button>
 
           <button
@@ -251,16 +236,11 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
             }}
             className={`h-full flex items-center text-xs transition-all cursor-pointer ${
               activeTab === 'logs' && !isMinimized
-                ? 'text-white font-bold'
-                : 'text-[#86868b] hover:text-white font-medium'
+                ? 'text-[#007aff] font-bold drop-shadow-[0_0_8px_rgba(0,122,255,0.7)]'
+                : 'text-white/50 hover:text-white font-medium'
             }`}
           >
-            <span className="relative">
-              MT5 Experts Journal ({logs.length})
-              {activeTab === 'logs' && !isMinimized && (
-                <span className="absolute -bottom-[3px] left-0 right-0 h-[2px] bg-[#007aff] rounded-full shadow-[0_0_8px_#007aff]" />
-              )}
-            </span>
+            <span>MT5 Experts Journal ({logs.length})</span>
           </button>
         </div>
 
