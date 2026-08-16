@@ -29,12 +29,12 @@ export interface NodeItem {
 }
 
 export const GROUPS: NodeGroup[] = [
-  { id: 'input', label: 'Input Nodes', color: '#38bdf8' },
-  { id: 'fc1', label: 'Hidden Layer 1 Nodes', color: '#ff9f0a' },
-  { id: 'regularization', label: 'Anti-Overfitting & Regularization Nodes', color: '#30d158' },
-  { id: 'fc2', label: 'Hidden Layer 2 Nodes', color: '#bf5af2' },
-  { id: 'reward', label: 'Reward & Shaping Nodes', color: '#f59e0b' },
-  { id: 'output', label: 'Output & Deploy Nodes', color: '#0a84ff' },
+  { id: 'input', label: 'Input & Strategy', color: '#0a84ff' },
+  { id: 'fc1', label: 'Feature Expansion (FC1)', color: '#ff9f0a' },
+  { id: 'regularization', label: 'Regularization & Norm', color: '#30d158' },
+  { id: 'fc2', label: 'Bottleneck Synthesis (FC2)', color: '#bf5af2' },
+  { id: 'reward', label: 'Reward & Shaping Rules', color: '#ffd60a' },
+  { id: 'output', label: 'Output & Deployment', color: '#0a84ff' },
 ];
 
 export const NODE_DEFS: Record<string, NodeDef> = {
@@ -48,14 +48,14 @@ export const NODE_DEFS: Record<string, NodeDef> = {
       {
         key: 'preset',
         label: 'Strategy Preset',
-        default: '🥇 Standard Quant',
+        default: 'Standard Quant',
         type: 'select',
         options: [
-          '🥇 Standard Quant',
-          '🌀 Fibonacci Scale',
-          '⚡ Ultra-Fast Scalper',
-          '🌊 Macro Trend Follower',
-          '🛠️ Custom Configuration',
+          'Standard Quant',
+          'Fibonacci Scale',
+          'Ultra-Fast Scalper',
+          'Macro Trend Follower',
+          'Custom Configuration',
         ],
       },
       {
@@ -123,23 +123,23 @@ export const NODE_DEFS: Record<string, NodeDef> = {
       {
         key: 'units',
         label: 'Neuron Count (Units)',
-        default: '64 ⭐',
+        default: '64',
         type: 'select',
-        options: ['32', '64 ⭐', '128'],
+        options: ['32', '64', '128'],
       },
       {
         key: 'activation',
         label: 'Activation Function',
-        default: 'LeakyReLU (alpha=0.1) ⭐',
+        default: 'LeakyReLU (alpha=0.1)',
         type: 'select',
-        options: ['LeakyReLU (alpha=0.1) ⭐', 'GELU', 'ELU', 'ReLU', 'Mish'],
+        options: ['LeakyReLU (alpha=0.1)', 'GELU', 'ELU', 'ReLU', 'Mish'],
       },
       {
         key: 'weight_init',
         label: 'Weight Initialization',
-        default: 'Kaiming Normal (He) ⭐',
+        default: 'Kaiming Normal (He)',
         type: 'select',
-        options: ['Kaiming Normal (He) ⭐', 'Xavier Uniform', 'Orthogonal'],
+        options: ['Kaiming Normal (He)', 'Xavier Uniform', 'Orthogonal'],
       },
       { key: 'use_bias', label: 'Use Bias', default: true, type: 'boolean' },
     ],
@@ -173,9 +173,9 @@ export const NODE_DEFS: Record<string, NodeDef> = {
       {
         key: 'norm_type',
         label: 'Norm Type',
-        default: 'LayerNorm (แนะนำสำหรับ RL) ⭐',
+        default: 'LayerNorm (Recommended for RL)',
         type: 'select',
-        options: ['LayerNorm (แนะนำสำหรับ RL) ⭐', 'RMSNorm', 'None'],
+        options: ['LayerNorm (Recommended for RL)', 'RMSNorm', 'None'],
       },
       { key: 'eps', label: 'Epsilon (ε)', default: '1e-5', type: 'string' },
     ],
@@ -211,9 +211,9 @@ export const NODE_DEFS: Record<string, NodeDef> = {
       {
         key: 'units',
         label: 'Neuron Count (Units)',
-        default: '32 ⭐',
+        default: '32',
         type: 'select',
-        options: ['16', '32 ⭐', '64'],
+        options: ['16', '32', '64'],
       },
       {
         key: 'activation',
@@ -268,7 +268,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
       {
         key: 'classes',
         label: 'Output Classes',
-        default: '3 [0: BUY, 1: HOLD, 2: SELL]',
+        default: '3 (BUY, HOLD, SELL)',
         type: 'string',
       },
       { key: 'entropy_beta', label: 'Entropy Regularization Bonus (β)', default: 0.08, type: 'number' },

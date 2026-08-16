@@ -31,7 +31,7 @@ const INITIAL_NODES: Node[] = [
     position: { x: 40, y: 160 },
     data: {
       nodeType: 'strategy_preset_return',
-      preset: '🥇 Standard Quant (RET [5, 10, 20])',
+      preset: 'Standard Quant',
       timeframe: 'M15',
       symbol: 'XAUUSD',
       bars_count: '10,000',
@@ -56,9 +56,9 @@ const INITIAL_NODES: Node[] = [
     position: { x: 640, y: 160 },
     data: {
       nodeType: 'fc1_dense_expansion',
-      units: '64 ⭐',
-      activation: 'LeakyReLU (alpha=0.1) ⭐',
-      weight_init: 'Kaiming Normal (He) ⭐',
+      units: '64',
+      activation: 'LeakyReLU (alpha=0.1)',
+      weight_init: 'Kaiming Normal (He)',
       use_bias: true,
       execution: { status: 'passed', detail: 'FC1 Linear Expansion: [6, 64]' },
     },
@@ -80,7 +80,7 @@ const INITIAL_NODES: Node[] = [
     position: { x: 1240, y: 160 },
     data: {
       nodeType: 'fc2_bottleneck_synthesizer',
-      units: '32 ⭐',
+      units: '32',
       activation: 'LeakyReLU (alpha=0.1)',
       residual: 'Enable x + F(x)',
       execution: { status: 'passed', detail: 'FC2 Bottleneck: [64, 32] + Residual' },
@@ -103,7 +103,7 @@ const INITIAL_NODES: Node[] = [
     position: { x: 1840, y: 160 },
     data: {
       nodeType: 'fc3_policy_action_head',
-      classes: '3 [0: BUY, 1: HOLD, 2: SELL]',
+      classes: '3 (BUY, HOLD, SELL)',
       entropy_beta: 0.08,
       execution: { status: 'passed', detail: 'Policy Softmax: 3 Actions (β=0.08)' },
     },
@@ -256,31 +256,31 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
     <div className="flex flex-col gap-1.5 group nodrag nopan" style={{ pointerEvents: 'all' }}>
       {/* Label above */}
       <label
-        className="text-[11.5px] font-medium text-[#a1a1aa] select-none tracking-tight"
+        className="text-[11px] font-medium text-[#86868b] select-none tracking-tight"
         style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif' }}
       >
         {label}
       </label>
 
-      {/* Input Container (Frameless Icon / Soft Charcoal Background) */}
+      {/* Input Container (Apple Charcoal Glass Background) */}
       <div
         style={{ pointerEvents: 'all' }}
         onPointerDown={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
-        className={`h-[38px] w-full rounded-[10px] px-3 flex items-center transition-all duration-150 bg-[#1e1e26] pointer-events-auto relative ${
+        className={`h-[34px] w-full rounded-[8px] px-3 flex items-center transition-all duration-150 bg-white/[0.04] pointer-events-auto relative ${
           isError
-            ? 'border border-[#ff453a] ring-1 ring-[#ff453a]/30 bg-[#261c1e]'
+            ? 'border border-[#ff453a] ring-2 ring-[#ff453a]/25 bg-[#261c1e]'
             : isFocused
-            ? 'border border-[#007aff] ring-1 ring-[#007aff]/35 bg-[#1e1e28]'
+            ? 'border border-[#0a84ff] ring-2 ring-[#0a84ff]/25 bg-white/[0.07]'
             : isFilled
-            ? 'border border-white/[0.14] hover:border-white/[0.22]'
-            : 'border border-white/[0.09] hover:border-white/[0.16]'
+            ? 'border border-white/[0.12] hover:border-white/[0.2]'
+            : 'border border-white/[0.08] hover:border-white/[0.15]'
         }`}
       >
         {isBoolean ? (
-          <div className="w-full flex items-center justify-between px-1">
+          <div className="w-full flex items-center justify-between px-0.5">
             <span
-              className="text-[12.5px] font-medium text-[#f4f4f5]"
+              className="text-[12px] font-medium text-[#f5f5f7]"
               style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif' }}
             >
               {Boolean(value ?? defaultValue) ? 'Enabled (True)' : 'Disabled (False)'}
@@ -290,13 +290,13 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
               onClick={() => onChange(!Boolean(value ?? defaultValue))}
               onPointerDown={(e) => e.stopPropagation()}
               onMouseDown={(e) => e.stopPropagation()}
-              className={`w-10 h-5 rounded-full transition-colors relative cursor-pointer nodrag nopan pointer-events-auto ${
+              className={`w-9 h-5 rounded-full transition-colors relative cursor-pointer nodrag nopan pointer-events-auto ${
                 Boolean(value ?? defaultValue) ? 'bg-[#30d158]' : 'bg-[#2c2c35]'
               }`}
             >
               <span
                 className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${
-                  Boolean(value ?? defaultValue) ? 'left-[22px]' : 'left-0.5'
+                  Boolean(value ?? defaultValue) ? 'left-[18px]' : 'left-0.5'
                 }`}
                 style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.4)' }}
               />
@@ -315,20 +315,20 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
                 fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
                 pointerEvents: 'all',
               }}
-              className="w-full bg-transparent text-[#f4f4f5] text-[13px] font-medium focus:outline-none appearance-none nodrag nopan pointer-events-auto cursor-pointer pr-6 text-center"
+              className="w-full bg-transparent text-[#f5f5f7] text-[12.5px] font-medium focus:outline-none appearance-none nodrag nopan pointer-events-auto cursor-pointer pr-6 text-center"
             >
-              {(options || ['32 -> 16', '64 -> 32', '128 -> 64 -> 32']).map((opt) => (
+              {(options || ['32', '64', '128']).map((opt) => (
                 <option
                   key={opt}
                   value={opt}
-                  className="bg-[#181822] text-[#f4f4f5] text-[12.5px] py-1.5"
+                  className="bg-[#1c1c22] text-[#f5f5f7] text-[12.5px] py-1.5"
                 >
                   {opt}
                 </option>
               ))}
             </select>
             <div className="absolute right-0 pointer-events-none text-white/40 flex items-center">
-              <LucideIcons.ChevronDown size={14} />
+              <LucideIcons.ChevronDown size={13} />
             </div>
           </div>
         ) : (
@@ -355,7 +355,7 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
                 : '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
               pointerEvents: 'all',
             }}
-            className="w-full bg-transparent text-[#f4f4f5] text-[13px] text-center focus:outline-none placeholder:text-[#71717a] nodrag nopan pointer-events-auto cursor-text"
+            className="w-full bg-transparent text-[#f5f5f7] text-[12.5px] text-center focus:outline-none placeholder:text-[#71717a] nodrag nopan pointer-events-auto cursor-text"
           />
         )}
       </div>
@@ -471,13 +471,16 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
         top: 0,
         transform: `translate3d(${position.x}px, ${position.y}px, 0)`,
         willChange: 'transform',
-        width: 320,
-        backgroundColor: '#08080c',
+        width: 310,
+        backgroundColor: 'rgba(22, 22, 28, 0.96)',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
         zIndex: 9999,
-        padding: '16px 18px 14px 18px',
+        padding: '14px 16px 12px 16px',
         pointerEvents: 'all',
+        boxShadow: '0 24px 48px rgba(0, 0, 0, 0.6), 0 1px 0 rgba(255, 255, 255, 0.08) inset',
       }}
-      className="border border-white/[0.14] rounded-2xl shadow-2xl text-xs select-none nodrag nopan nowheel cursor-default pointer-events-auto"
+      className="border border-white/[0.12] rounded-2xl text-xs select-none nodrag nopan nowheel cursor-default pointer-events-auto"
       onPointerDown={(e) => e.stopPropagation()}
       onMouseDown={(e) => e.stopPropagation()}
       onClick={(e) => e.stopPropagation()}
@@ -497,16 +500,28 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
         }}
         className="nodrag nopan pointer-events-auto"
       >
-        <div className="flex items-center gap-2.5 pointer-events-none">
+        <div className="flex items-center gap-2 pointer-events-none">
           <span
-            className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-            style={{ background: group.color, boxShadow: `0 0 10px ${group.color}` }}
+            className="w-2 h-2 rounded-full flex-shrink-0"
+            style={{ background: group.color, boxShadow: `0 0 8px ${group.color}` }}
           />
           <div>
-            <span className="text-[10px] font-bold tracking-wider uppercase block" style={{ color: group.color }}>
+            <span
+              className="text-[9.5px] font-bold tracking-wider uppercase block"
+              style={{
+                color: group.color,
+                fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
+              }}
+            >
               {group.label}
             </span>
-            <span className="text-[13px] font-semibold text-white block">
+            <span
+              className="text-[12.5px] font-semibold text-white block"
+              style={{
+                fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif',
+                letterSpacing: '-0.015em',
+              }}
+            >
               {nodeLabel}
             </span>
           </div>
@@ -522,9 +537,9 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
           onPointerDown={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
           style={{ pointerEvents: 'all' }}
-          className="text-white/40 hover:text-white transition-all p-1 rounded-lg cursor-pointer hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.7)] pointer-events-auto nodrag nopan"
+          className="text-white/40 hover:text-white transition-all p-1 rounded-md hover:bg-white/[0.08] cursor-pointer pointer-events-auto nodrag nopan"
         >
-          <LucideIcons.X size={14} />
+          <LucideIcons.X size={13} />
         </button>
       </div>
 
@@ -551,16 +566,15 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
         })}
       </div>
 
-      {/* 🟢 FOOTER: Exactly 10px below Edit Fields, No Border, Glowing Text Hover */}
+      {/* 🟢 FOOTER: Clean Apple Action Buttons */}
       <div
         style={{
-          marginTop: '10px',
-          borderTop: 'none',
+          marginTop: '12px',
+          paddingTop: '10px',
+          borderTop: '1px solid rgba(255, 255, 255, 0.06)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          paddingLeft: '2px',
-          paddingRight: '2px',
           pointerEvents: 'all',
         }}
         className="nodrag nopan pointer-events-auto"
@@ -575,8 +589,11 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
           }}
           onPointerDown={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
-          style={{ pointerEvents: 'all' }}
-          className="text-[11.5px] text-[#30d158] hover:text-[#5ee387] flex items-center gap-1.5 font-semibold transition-all cursor-pointer hover:drop-shadow-[0_0_8px_rgba(48,209,88,0.85)] hover:scale-105 pointer-events-auto nodrag nopan"
+          style={{
+            fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
+            pointerEvents: 'all',
+          }}
+          className="text-[12px] text-[#30d158] hover:text-[#5ee387] flex items-center gap-1.5 font-medium transition-colors cursor-pointer pointer-events-auto nodrag nopan"
         >
           <LucideIcons.Check size={13} className="text-[#30d158]" />
           <span>Update</span>
@@ -589,8 +606,11 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
           }}
           onPointerDown={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
-          style={{ pointerEvents: 'all' }}
-          className="text-[11.5px] text-[#ff453a] hover:text-[#ff6961] flex items-center gap-1.5 font-semibold transition-all cursor-pointer hover:drop-shadow-[0_0_8px_rgba(255,69,58,0.85)] hover:scale-105 pointer-events-auto nodrag nopan"
+          style={{
+            fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
+            pointerEvents: 'all',
+          }}
+          className="text-[12px] text-[#ff453a] hover:text-[#ff6961] flex items-center gap-1.5 font-medium transition-colors cursor-pointer pointer-events-auto nodrag nopan"
         >
           <LucideIcons.Trash2 size={13} className="text-[#ff453a]" />
           <span>Delete Node</span>
