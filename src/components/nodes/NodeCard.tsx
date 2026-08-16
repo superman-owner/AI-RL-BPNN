@@ -2,13 +2,8 @@ import React from 'react';
 import { Handle, Position } from '@xyflow/react';
 import { GROUPS, NODE_DEFS } from '../../data/nodeRegistry';
 import {
-  Cpu,
-  ShieldCheck,
-  Trophy,
   Zap,
-  RefreshCw,
   Send,
-  Bot,
   Layers,
   BarChart2,
   Sliders,
@@ -33,17 +28,6 @@ const GROUP_ICONS: Record<string, React.ComponentType<{ size?: number; color?: s
   fc2: Brain,
   reward: Zap,
   output: Send,
-  stage1: BarChart2,
-  stage2: Sliders,
-  stage3: Brain,
-  stage4: Shield,
-  stage5: Zap,
-  trainer: Cpu,
-  qc: ShieldCheck,
-  tournament: Trophy,
-  live: Zap,
-  remediation: RefreshCw,
-  llm: Bot,
 };
 
 export default function NodeCard({ data, selected }: { data: any; selected?: boolean }) {
