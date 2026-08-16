@@ -131,15 +131,96 @@ export const FEATURE_IMPORTANCE: FeatureImportanceItem[] = [
   { feature: 'orderbook_imbalance_l2', importance: 0.035, category: 'Microstructure' },
 ];
 
+export interface MT5LogItem {
+  id: string;
+  time: string;
+  source: string;
+  message: string;
+  level?: 'info' | 'trade' | 'warn' | 'error';
+}
+
+export const INITIAL_MT5_LOGS: MT5LogItem[] = [
+  {
+    id: 'log-1',
+    time: '2026.08.16 20:29:08.112',
+    source: 'Terminal',
+    message: 'MetaTrader 5 x64 build 4360 started (MetaQuotes Software Corp.)',
+    level: 'info',
+  },
+  {
+    id: 'log-2',
+    time: '2026.08.16 20:29:08.450',
+    source: 'Network',
+    message: 'Authorized on Binance-Direct-Server via WebSocket IPC',
+    level: 'info',
+  },
+  {
+    id: 'log-3',
+    time: '2026.08.16 20:29:09.012',
+    source: 'Tester',
+    message: 'FXFORGE Deep RL Policy Engine loaded from buffer: rl_trading_model.onnx',
+    level: 'info',
+  },
+  {
+    id: 'log-4',
+    time: '2026.08.16 20:29:09.048',
+    source: 'Tester',
+    message: 'ONNX input tensor [1, 6] float32 mapped to State Vector s_t',
+    level: 'info',
+  },
+  {
+    id: 'log-5',
+    time: '2026.08.16 20:29:09.048',
+    source: 'Tester',
+    message: 'Local network farm connected (CUDA 12.4 Device: RTX 4090 active)',
+    level: 'info',
+  },
+  {
+    id: 'log-6',
+    time: '2026.08.16 20:29:10.155',
+    source: 'FXForge Expert',
+    message: 'M15 BTCUSDT tick received (Spread: 1.2 pips). Computing State: [0.45, 0.82, 1.15, 0.28, 0.35, 0.0]',
+    level: 'info',
+  },
+  {
+    id: 'log-7',
+    time: '2026.08.16 20:29:10.162',
+    source: 'FXForge Expert',
+    message: '[ONNX RUN] Action Probabilities: BUY=84.5%, HOLD=10.2%, SELL=5.3% -> Decision: BUY (Confidence: 84.5%)',
+    level: 'trade',
+  },
+  {
+    id: 'log-8',
+    time: '2026.08.16 20:29:10.198',
+    source: 'FXForge Expert',
+    message: 'OrderSend: BUY 0.10 BTCUSDT at market 65,420.00 (Slippage: 0.2 pips, Magic: 888666)',
+    level: 'trade',
+  },
+  {
+    id: 'log-9',
+    time: '2026.08.16 20:29:11.520',
+    source: 'FXForge Expert',
+    message: 'Deal #489102 BUY 0.10 executed at 65,420.00. Reward R_market: +0.48 R (Spread Cost: -0.015 R)',
+    level: 'trade',
+  },
+  {
+    id: 'log-10',
+    time: '2026.08.16 20:29:12.804',
+    source: 'Tester',
+    message: 'Annualized Sharpe: 2.84 | Sortino: 3.42 | Max DD: -9.2% | Win Rate: 63.4%',
+    level: 'info',
+  },
+];
+
 export const INITIAL_LOGS: string[] = [
-  '[SYSTEM] AlphaFlow AI Core Engine v1.0.4 initialized.',
+  '[SYSTEM] FXFORGE AI Core Engine v2.0 initialized.',
   '[CUDA] Device detected: NVIDIA GeForce RTX (Driver 555.85, CUDA 12.4)',
   '[IPC] Connected to Local Python Execution Server (127.0.0.1:8765)',
   '[DAG] Graph parsed: 7 nodes, 9 sockets verified without circular dependencies.',
   '[DATA] Binance OHLCV: 50,000 candles loaded in 342ms. Zero missing timestamps.',
   '[FEAT] Calculating Technical Indicators & Fractional Diff (d=0.45)...',
   '[LABEL] Triple Barrier: 42% Long, 39% Short, 19% Neutral (Horizontal Barrier 24 bars).',
-  '[TRAIN] LightGBM Classifier: 600 trees, learning_rate=0.03. Best Val AUC: 0.742',
-  '[BACKTEST] VectorBT Execution simulated: Sharpe=2.84, MDD=-9.2%, Profit Factor=2.18',
-  '[READY] Strategy Ready for Export / Paper Trading deployment.',
+  '[TRAIN] Deep RL Policy (PPO): 6D State Vector -> 3 Actions. Best Sharpe: 2.84',
+  '[BACKTEST] MT5 ONNX Execution simulated: Sharpe=2.84, MDD=-9.2%, Profit Factor=2.18',
+  '[READY] Strategy Ready for MT5 ONNX / Live Trading deployment.',
 ];

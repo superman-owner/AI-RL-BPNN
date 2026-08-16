@@ -256,7 +256,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
             }`}
           >
             <span className="relative">
-              Runtime Console ({logs.length})
+              MT5 Experts Journal ({logs.length})
               {activeTab === 'logs' && !isMinimized && (
                 <span className="absolute -bottom-[3px] left-0 right-0 h-[2px] bg-[#007aff] rounded-full shadow-[0_0_8px_#007aff]" />
               )}
@@ -718,30 +718,105 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
             </div>
           )}
 
-          {/* TAB 4: CONSOLE */}
+          {/* TAB 4: MT5 EXPERTS JOURNAL */}
           {activeTab === 'logs' && (
             <div
-              className={`h-full bg-[#07070a] font-mono border border-white/[0.06] overflow-y-auto custom-scrollbar space-y-1 shadow-inner min-h-0 ${
-                isMaximized ? 'rounded-3xl p-5 text-xs' : 'rounded-2xl p-3.5 text-[11px]'
+              className={`h-full bg-[#0a0a0f] border border-white/[0.08] flex flex-col shadow-inner min-h-0 overflow-hidden ${
+                isMaximized ? 'rounded-3xl' : 'rounded-2xl'
               }`}
             >
-              {logs.map((log, index) => {
-                let colorClass = 'text-[#86868b]';
-                if (log.includes('[ERROR]')) colorClass = 'text-[#ff375f] font-semibold';
-                else if (log.includes('[READY]') || log.includes('[✓]')) colorClass = 'text-[#34c759]';
-                else if (log.includes('[TRAIN]') || log.includes('[BACKTEST]')) colorClass = 'text-[#ffd60a]';
-                else if (log.includes('[CUDA]') || log.includes('[IPC]')) colorClass = 'text-[#00c7be]';
-
-                return (
-                  <div key={index} className={`leading-relaxed ${colorClass}`}>
-                    <span className="text-[#636366] select-none mr-2">
-                      {String(index + 1).padStart(2, '0')}
+              {/* MT5 Table Header */}
+              <div className="h-8 bg-[#13131b] border-b border-white/[0.08] flex items-center text-xs font-semibold text-[#86868b] select-none flex-shrink-0">
+                <div className="w-[210px] px-3.5 border-r border-white/[0.08] flex items-center gap-1.5">
+                  <span>Time</span>
+                </div>
+                <div className="w-[150px] px-3.5 border-r border-white/[0.08] flex items-center">
+                  <span>Source</span>
+                </div>
+                <div className="flex-1 px-3.5 flex items-center justify-between">
+                  <span>Message</span>
+                  <div className="flex items-center gap-3 text-[10px] text-[#636366]">
+                    <span className="flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#30d158]" /> Real-time IPC
                     </span>
-                    {log}
+                    <button
+                      onClick={onClearLogs}
+                      className="hover:text-white transition-colors cursor-pointer text-[10px] text-[#86868b] underline"
+                    >
+                      Clear
+                    </button>
                   </div>
-                );
-              })}
-              <div ref={logEndRef} />
+                </div>
+              </div>
+
+              {/* MT5 Table Body Rows */}
+              <div className="flex-1 overflow-y-auto custom-scrollbar font-mono text-[11px] select-text divide-y divide-white/[0.04]">
+                {logs.map((log, index) => {
+                  const now = new Date();
+                  const timeStr = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(
+                    now.getDate()
+                  ).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(
+                    now.getMinutes()
+                  ).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}.${String(
+                    ((index + 1) * 48) % 900 + 100
+                  ).padStart(3, '0')}`;
+
+                  let source = 'Tester';
+                  let message = log;
+                  let msgColor = 'text-white/90';
+
+                  if (log.includes('[SYSTEM]')) {
+                    source = 'Terminal';
+                    message = log.replace('[SYSTEM]', '').trim();
+                  } else if (log.includes('[CUDA]') || log.includes('[IPC]')) {
+                    source = 'Tester';
+                    message = log.replace(/\[CUDA\]|\[IPC\]/g, '').trim();
+                    msgColor = 'text-[#00c7be]';
+                  } else if (log.includes('[DAG]') || log.includes('[DATA]')) {
+                    source = 'DataFeed';
+                    message = log.replace(/\[DAG\]|\[DATA\]/g, '').trim();
+                  } else if (log.includes('[FEAT]') || log.includes('[LABEL]')) {
+                    source = 'FXForge Engine';
+                    message = log.replace(/\[FEAT\]|\[LABEL\]/g, '').trim();
+                  } else if (log.includes('[TRAIN]') || log.includes('[ONNX]')) {
+                    source = 'ONNX Policy';
+                    message = log.replace(/\[TRAIN\]|\[ONNX\]/g, '').trim();
+                    msgColor = 'text-[#ffd60a]';
+                  } else if (log.includes('[BACKTEST]') || log.includes('[TRADE]') || log.includes('[READY]')) {
+                    source = 'FXForge Expert';
+                    message = log.replace(/\[BACKTEST\]|\[TRADE\]|\[READY\]/g, '').trim();
+                    msgColor = 'text-[#30d158] font-semibold';
+                  } else if (log.includes('[ERROR]')) {
+                    source = 'Expert';
+                    message = log.replace('[ERROR]', '').trim();
+                    msgColor = 'text-[#ff453a] font-semibold';
+                  }
+
+                  return (
+                    <div
+                      key={index}
+                      className="flex items-center min-h-[26px] py-1 hover:bg-white/[0.04] transition-colors"
+                    >
+                      {/* Time Column with MT5 Bullet */}
+                      <div className="w-[210px] px-3.5 border-r border-white/[0.06] text-[#d1d1d6] flex items-center gap-2 flex-shrink-0">
+                        <span className="text-[#86868b] text-[10px] select-none">•</span>
+                        <span>{timeStr}</span>
+                      </div>
+
+                      {/* Source Column */}
+                      <div className="w-[150px] px-3.5 border-r border-white/[0.06] text-[#a1a1aa] flex-shrink-0 truncate font-medium">
+                        {source}
+                      </div>
+
+                      {/* Message Column */}
+                      <div className={`flex-1 px-3.5 ${msgColor} truncate pr-4`}>
+                        {message}
+                      </div>
+                    </div>
+                  );
+                })}
+                <div ref={logEndRef} />
+              </div>
             </div>
           )}
         </div>
