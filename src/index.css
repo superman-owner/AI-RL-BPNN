@@ -480,6 +480,16 @@ input[type='number'] {
   cursor: var(--mac-cursor-crosshair) !important;
 }
 
+/*  Seamless Edge Cursor: Matches Canvas to eliminate jitter/flickering near wire boundaries */
+.react-flow__edge,
+.react-flow__edge *,
+.react-flow__edge-path,
+.react-flow__edge-interaction,
+.react-flow__connection-path,
+.react-flow__edges {
+  cursor: var(--mac-cursor-grab) !important;
+}
+
 /*  Absolute Highest Specificity: Global Dragging State across Entire Window (Grabbing Fist) */
 html.is-dragging-node,
 html.is-dragging-node *,
@@ -491,6 +501,8 @@ body.is-dragging-node .react-flow__pane,
 body.is-dragging-node .react-flow__pane *,
 body.is-dragging-node .react-flow__node,
 body.is-dragging-node .react-flow__node *,
+body.is-dragging-node .react-flow__edge,
+body.is-dragging-node .react-flow__edge *,
 body.is-dragging-node .react-flow__viewport,
 body.is-dragging-node .react-flow__viewport * {
   cursor: var(--mac-cursor-grabbing) !important;
