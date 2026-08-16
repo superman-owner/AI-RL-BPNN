@@ -437,7 +437,7 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
 const FlowContent: React.FC = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(INITIAL_NODES);
   const [edges, setEdges, onEdgesChange] = useEdgesState(INITIAL_EDGES);
-  const { fitView, screenToFlowPosition } = useReactFlow();
+  const { screenToFlowPosition } = useReactFlow();
 
   // Floating Context Menu & Inspector States
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
@@ -816,19 +816,11 @@ const FlowContent: React.FC = () => {
           />
         </ReactFlow>
 
-        {/* Floating Controls Bar */}
-        <div className="absolute top-4 right-4 z-10 flex items-center gap-3 bg-[#0c0c14]/90 backdrop-blur-md border border-white/[0.08] px-3.5 py-1.5 rounded-lg shadow-2xl text-xs select-none">
-          <button
-            onClick={() => fitView({ duration: 400, padding: 0.15 })}
-            className="text-[#86868b] hover:text-white flex items-center gap-1 font-medium transition-colors cursor-pointer"
-          >
-            <LucideIcons.Maximize size={12} />
-            <span>Fit View</span>
-          </button>
-          <span className="text-white/20">|</span>
+        {/* Status Indicator */}
+        <div className="absolute top-4 right-4 z-10 flex items-center gap-2 bg-[#0c0c14]/90 backdrop-blur-md border border-white/[0.08] px-3 py-1.5 rounded-lg shadow-2xl text-xs select-none">
           <span className="text-[#30d158] font-mono text-[11px] flex items-center gap-1.5 font-semibold">
             <span className="w-1.5 h-1.5 rounded-full bg-[#30d158] animate-pulse" />
-            {nodes.length} Nodes · Marquee Active
+            {nodes.length} Nodes Active
           </span>
         </div>
 
@@ -932,34 +924,19 @@ const FlowContent: React.FC = () => {
                 </button>
               </>
             ) : (
-              <>
-                <button
-                  onClick={() => {
-                    pasteAt(contextMenu.flowPos);
-                    setContextMenu(null);
-                  }}
-                  className="w-full px-3 py-2 rounded-lg flex items-center justify-between hover:bg-white/[0.08] hover:text-white transition-all cursor-pointer text-left"
-                >
-                  <span className="flex items-center gap-2.5 text-[12px] font-medium">
-                    <LucideIcons.ClipboardPaste size={13} className="text-[#007aff] flex-shrink-0" />
-                    <span>Paste Here</span>
-                  </span>
-                  <span className="text-[11px] text-white/45 font-mono pl-4 flex-shrink-0">Ctrl+V</span>
-                </button>
-                <button
-                  onClick={() => {
-                    fitView({ duration: 400, padding: 0.15 });
-                    setContextMenu(null);
-                  }}
-                  className="w-full px-3 py-2 rounded-lg flex items-center justify-between hover:bg-white/[0.08] hover:text-white transition-all cursor-pointer text-left"
-                >
-                  <span className="flex items-center gap-2.5 text-[12px] font-medium">
-                    <LucideIcons.Maximize size={13} className="text-[#30d158] flex-shrink-0" />
-                    <span>Fit View</span>
-                  </span>
-                  <span className="text-[11px] text-white/45 font-mono pl-4 flex-shrink-0">F</span>
-                </button>
-              </>
+              <button
+                onClick={() => {
+                  pasteAt(contextMenu.flowPos);
+                  setContextMenu(null);
+                }}
+                className="w-full px-3 py-2 rounded-lg flex items-center justify-between hover:bg-white/[0.08] hover:text-white transition-all cursor-pointer text-left"
+              >
+                <span className="flex items-center gap-2.5 text-[12px] font-medium">
+                  <LucideIcons.ClipboardPaste size={13} className="text-[#007aff] flex-shrink-0" />
+                  <span>Paste Here</span>
+                </span>
+                <span className="text-[11px] text-white/45 font-mono pl-4 flex-shrink-0">Ctrl+V</span>
+              </button>
             )}
           </div>
         )}
