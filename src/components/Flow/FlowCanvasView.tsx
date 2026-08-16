@@ -114,8 +114,8 @@ const INITIAL_NODES: Node[] = [
     position: { x: 2140, y: 160 },
     data: {
       nodeType: 'onnx_mt5_compiler',
-      export_mode: 'TorchScript Standalone Single-File (.onnx)',
-      target_folder: '%APPDATA%/MetaQuotes/Terminal/*/MQL5/Files/',
+      export_mode: 'TorchScript Standalone (.onnx)',
+      target_folder: 'MQL5/Files/',
       opset: 14,
       execution: { status: 'passed', detail: 'Compiled ONNX Standalone Ready' },
     },

@@ -101,10 +101,10 @@ export const NODE_DEFS: Record<string, NodeDef> = {
       {
         key: 'encoding',
         label: 'Position Encoding',
-        default: 'Discrete {-1: Short, 0: Flat, +1: Long}',
+        default: 'Discrete (-1, 0, +1)',
         type: 'select',
         options: [
-          'Discrete {-1: Short, 0: Flat, +1: Long}',
+          'Discrete (-1, 0, +1)',
           'Continuous Lot Size',
         ],
       },
@@ -173,9 +173,9 @@ export const NODE_DEFS: Record<string, NodeDef> = {
       {
         key: 'norm_type',
         label: 'Norm Type',
-        default: 'LayerNorm (Recommended for RL)',
+        default: 'LayerNorm',
         type: 'select',
-        options: ['LayerNorm (Recommended for RL)', 'RMSNorm', 'None'],
+        options: ['LayerNorm', 'RMSNorm', 'None'],
       },
       { key: 'eps', label: 'Epsilon (ε)', default: '1e-5', type: 'string' },
     ],
@@ -283,14 +283,14 @@ export const NODE_DEFS: Record<string, NodeDef> = {
       {
         key: 'export_mode',
         label: 'Export Mode',
-        default: 'TorchScript Standalone Single-File (.onnx)',
+        default: 'TorchScript Standalone (.onnx)',
         type: 'select',
-        options: ['TorchScript Standalone Single-File (.onnx)'],
+        options: ['TorchScript Standalone (.onnx)'],
       },
       {
         key: 'target_folder',
         label: 'Target Folder',
-        default: '%APPDATA%/MetaQuotes/Terminal/*/MQL5/Files/',
+        default: 'MQL5/Files/',
         type: 'string',
       },
       { key: 'opset', label: 'Opset Version', default: 14, type: 'number' },

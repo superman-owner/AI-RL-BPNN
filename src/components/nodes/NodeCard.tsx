@@ -50,14 +50,16 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
   return (
     <div
       style={{
-        minWidth: 215,
+        minWidth: 235,
         position: 'relative',
-        background: '#121218',
-        opacity: executionMode === 'off' ? 0.55 : (isConnected ? 1 : 0.82),
-        border: `1.5px solid ${selected ? accent : (isConnected ? accent : `${accent}77`)}`,
+        background: '#14141a',
+        opacity: executionMode === 'off' ? 0.55 : (isConnected ? 1 : 0.8),
+        border: selected
+          ? `1.5px solid ${accent}`
+          : (isConnected ? '1px solid rgba(255,255,255,0.12)' : '1px solid rgba(255,255,255,0.06)'),
         borderRadius: '10px',
         boxShadow: selected
-          ? `0 0 0 1px ${accent}, 0 0 22px 2px ${accent}66, 0 8px 24px rgba(0,0,0,0.6)`
+          ? `0 0 0 1px ${accent}, 0 8px 24px rgba(0,0,0,0.6)`
           : '0 4px 16px rgba(0,0,0,0.45)',
         fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, -apple-system, sans-serif',
         WebkitFontSmoothing: 'antialiased',
@@ -78,14 +80,14 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
           borderTopRightRadius: '9px',
         }}
       >
-        <GroupIcon size={14} color={isConnected ? accent : `${accent}99`} />
+        <GroupIcon size={14} color={isConnected ? accent : '#86868b'} />
         <div style={{ flex: 1, minWidth: 0 }}>
           <div
             style={{
               fontSize: 9.5,
               fontWeight: 700,
               letterSpacing: '0.06em',
-              color: isConnected ? accent : `${accent}aa`,
+              color: isConnected ? accent : '#86868b',
               textTransform: 'uppercase',
               lineHeight: 1.2,
               fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
@@ -95,9 +97,9 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
           </div>
           <div
             style={{
-              fontSize: 13,
+              fontSize: 12.5,
               fontWeight: 600,
-              letterSpacing: '-0.02em',
+              letterSpacing: '-0.015em',
               color: isConnected ? '#ffffff' : '#a1a1aa',
               whiteSpace: 'nowrap',
               overflow: 'hidden',
@@ -113,12 +115,12 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
         {/* Execution Status Badge: Only lit green when isConnected is true */}
         <span
           style={{
-            width: 8,
-            height: 8,
+            width: 7,
+            height: 7,
             borderRadius: '50%',
             background: isConnected && statusColor ? statusColor : '#3f3f46',
-            boxShadow: isConnected && statusColor ? `0 0 8px ${statusColor}` : 'none',
-            opacity: isConnected ? 1 : 0.45,
+            boxShadow: isConnected && statusColor ? `0 0 6px ${statusColor}` : 'none',
+            opacity: isConnected ? 1 : 0.4,
           }}
           title={isConnected ? (execution?.detail || 'Connected & Active') : 'Disconnected / Standby (Not Active)'}
         />
@@ -133,24 +135,29 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
               key={f.key}
               style={{
                 display: 'flex',
+                alignItems: 'center',
                 justifyContent: 'space-between',
+                gap: 8,
                 fontSize: 11,
                 letterSpacing: '-0.01em',
                 fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
               }}
             >
-              <span style={{ color: '#86868b', fontWeight: 400 }}>{f.label}:</span>
+              <span style={{ color: '#86868b', fontWeight: 400, flexShrink: 0 }}>{f.label}:</span>
               <span
                 style={{
                   color: '#f5f5f7',
                   fontWeight: 500,
-                  fontFamily: typeof val === 'number'
-                    ? 'SFMono-Regular, Menlo, Monaco, Consolas, monospace'
-                    : '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
-                  letterSpacing: typeof val === 'number' ? '0' : '-0.01em',
+                  textAlign: 'right',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
+                  fontFeatureSettings: typeof val === 'number' ? '"tnum"' : 'normal',
+                  letterSpacing: '-0.01em',
                 }}
               >
-                {String(val)}
+                {typeof val === 'boolean' ? (val ? 'True' : 'False') : String(val)}
               </span>
             </div>
           );
