@@ -1201,14 +1201,20 @@ const FlowContent: React.FC = () => {
         />
       </ReactFlow>
 
-      {/* Status Indicator */}
-      <div className="absolute top-4 right-4 z-10 flex items-center gap-2 bg-[#0c0c14]/90 backdrop-blur-md border border-white/[0.08] px-3 py-1.5 rounded-lg shadow-2xl text-xs select-none">
-        <span className="text-[#30d158] font-mono text-[11px] flex items-center gap-1.5 font-semibold">
+      {/* Status Indicator (Frameless, Bottom-Right) */}
+      <div className="absolute bottom-4 right-4 z-10 flex items-center gap-2 select-none pointer-events-none">
+        <span
+          className="text-[#30d158] text-[11.5px] flex items-center gap-1.5 font-medium tracking-tight"
+          style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif' }}
+        >
           <span className="w-1.5 h-1.5 rounded-full bg-[#30d158] animate-pulse" />
           {activeNodesCount} Nodes Active
         </span>
         {nodes.length > activeNodesCount && (
-          <span className="text-[#86868b] font-mono text-[10.5px]">
+          <span
+            className="text-[#86868b] text-[11px]"
+            style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif' }}
+          >
             ({nodes.length - activeNodesCount} Idle)
           </span>
         )}
