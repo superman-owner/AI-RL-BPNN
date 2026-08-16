@@ -69,11 +69,11 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
       onWheel={(e) => e.stopPropagation()}
       className="w-[290px] h-full flex flex-col flex-shrink-0 bg-[#08080c]/98 border-r border-white/[0.08] text-[#c7c7cc] select-none z-20 font-sans"
     >
-      {/* 1.  Apple macOS Header & Spotlight Search (Generous Spacing) */}
+      {/* 1.  Apple macOS Header & Spotlight Search (Exact 10px Spacing) */}
       <div
         style={{
-          paddingTop: '36px',
-          paddingBottom: '24px',
+          paddingTop: '10px',
+          paddingBottom: '10px',
           paddingLeft: '18px',
           paddingRight: '18px',
           borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
@@ -86,7 +86,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            marginBottom: '28px',
+            marginBottom: '10px',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -122,7 +122,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
           </button>
         </div>
 
-        {/*  macOS Spotlight-style Search Field (h-34px rounded-8) */}
+        {/*  macOS Spotlight-style Search Field (h-34px) */}
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', width: '100%' }}>
           <Search
             size={13}
