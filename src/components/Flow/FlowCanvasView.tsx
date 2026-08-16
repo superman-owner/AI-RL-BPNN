@@ -720,9 +720,9 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
             border: 'none',
             padding: 0,
           }}
-          className="text-[12px] text-[#0a84ff] hover:text-white flex items-center gap-1.5 font-medium transition-colors duration-150 cursor-pointer pointer-events-auto nodrag nopan select-none group"
+          className="text-[12px] text-[#86868b] hover:text-[#0a84ff] flex items-center gap-1.5 font-medium transition-colors duration-150 cursor-pointer pointer-events-auto nodrag nopan select-none group"
         >
-          <LucideIcons.Check size={13} className="transition-colors group-hover:text-white" />
+          <LucideIcons.Check size={13} className="text-[#86868b] group-hover:text-[#0a84ff] transition-colors duration-150" />
           <span>Update</span>
         </button>
         <button
@@ -740,9 +740,9 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
             border: 'none',
             padding: 0,
           }}
-          className="text-[12px] text-[#ff453a] hover:text-white flex items-center gap-1.5 font-medium transition-colors duration-150 cursor-pointer pointer-events-auto nodrag nopan select-none group"
+          className="text-[12px] text-[#86868b] hover:text-[#ff453a] flex items-center gap-1.5 font-medium transition-colors duration-150 cursor-pointer pointer-events-auto nodrag nopan select-none group"
         >
-          <LucideIcons.Trash2 size={13} className="transition-colors group-hover:text-white" />
+          <LucideIcons.Trash2 size={13} className="text-[#86868b] group-hover:text-[#ff453a] transition-colors duration-150" />
           <span>Delete Node</span>
         </button>
       </div>
