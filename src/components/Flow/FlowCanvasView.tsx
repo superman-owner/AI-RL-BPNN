@@ -1175,7 +1175,9 @@ const FlowContent: React.FC = () => {
 
   return (
     <div
-      className="w-full h-full relative overflow-hidden bg-[#040407]"
+      className={`w-full h-full relative overflow-hidden transition-colors duration-200 ${
+        isLight ? 'bg-[#f5f5f7]' : 'bg-[#040407]'
+      }`}
       onMouseMove={onMouseMove}
       onContextMenu={(e) => e.preventDefault()}
     >
@@ -1197,7 +1199,7 @@ const FlowContent: React.FC = () => {
         nodeTypes={nodeTypes}
         defaultEdgeOptions={defaultEdgeOptions}
         connectionLineType={ConnectionLineType.SmoothStep}
-        connectionLineStyle={{ stroke: '#38bdf8', strokeWidth: 2 }}
+        connectionLineStyle={{ stroke: isLight ? '#0071e3' : '#38bdf8', strokeWidth: 2.5 }}
         selectionOnDrag={true}
         selectionMode={SelectionMode.Partial}
         panOnDrag={[1, 2]}

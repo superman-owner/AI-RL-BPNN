@@ -29,9 +29,49 @@ const GROUP_ICONS: Record<
   output: FileCode,
 };
 
-function onDragStartNode(event: React.DragEvent, nodeType: string) {
+function onDragStartNode(event: React.DragEvent, nodeType: string, label: string, color: string, isLight: boolean) {
   event.dataTransfer.setData('application/fxforge-node', nodeType);
   event.dataTransfer.effectAllowed = 'move';
+
+  //  Create High-Contrast Apple macOS Drag Preview Capsule
+  const dragGhost = document.createElement('div');
+  dragGhost.style.position = 'absolute';
+  dragGhost.style.top = '-9999px';
+  dragGhost.style.left = '-9999px';
+  dragGhost.style.padding = '8px 16px';
+  dragGhost.style.borderRadius = '10px';
+  dragGhost.style.backgroundColor = isLight ? '#ffffff' : '#181822';
+  dragGhost.style.color = isLight ? '#111827' : '#ffffff';
+  dragGhost.style.border = isLight ? '1.5px solid #0071e3' : '1.5px solid rgba(255, 255, 255, 0.25)';
+  dragGhost.style.boxShadow = isLight ? '0 10px 25px rgba(0, 0, 0, 0.18)' : '0 10px 30px rgba(0, 0, 0, 0.7)';
+  dragGhost.style.fontFamily = '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif';
+  dragGhost.style.fontSize = '13px';
+  dragGhost.style.fontWeight = '600';
+  dragGhost.style.display = 'flex';
+  dragGhost.style.alignItems = 'center';
+  dragGhost.style.gap = '8px';
+  dragGhost.style.pointerEvents = 'none';
+  dragGhost.style.zIndex = '999999';
+
+  const dot = document.createElement('span');
+  dot.style.width = '8px';
+  dot.style.height = '8px';
+  dot.style.borderRadius = '50%';
+  dot.style.backgroundColor = color || '#0071e3';
+  dragGhost.appendChild(dot);
+
+  const text = document.createElement('span');
+  text.textContent = label;
+  dragGhost.appendChild(text);
+
+  document.body.appendChild(dragGhost);
+  event.dataTransfer.setDragImage(dragGhost, 24, 18);
+
+  setTimeout(() => {
+    if (document.body.contains(dragGhost)) {
+      document.body.removeChild(dragGhost);
+    }
+  }, 100);
 }
 
 interface NodePaletteProps {
@@ -364,7 +404,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                       <div
                         key={node.type}
                         draggable
-                        onDragStart={(e) => onDragStartNode(e, node.type)}
+                        onDragStart={(e) => onDragStartNode(e, node.type, node.label, group.color, isLight)}
                         onMouseEnter={() => setHoveredNode(node.type)}
                         onMouseLeave={() => setHoveredNode(null)}
                         title="Drag onto canvas to add module"
