@@ -6,6 +6,7 @@ import {
   Background,
   BackgroundVariant,
   Controls,
+  MiniMap,
   useNodesState,
   useEdgesState,
   addEdge,
@@ -782,14 +783,24 @@ const FlowContent: React.FC = () => {
   const [inspectors, setInspectors] = useState<InspectorState[]>([]);
 
   // Clipboard Reference for Multi-Node Copy / Cut / Paste
+  const [hasClipboard, setHasClipboard] = useState(false);
   const clipboardRef = useRef<{ nodes: Node[]; edges: Edge[] } | null>(null);
   const pasteCountRef = useRef(0);
   const mousePosRef = useRef<{ x: number; y: number }>({ x: 400, y: 300 });
 
+  const nodesRef = useRef(nodes);
+  nodesRef.current = nodes;
+  const edgesRef = useRef(edges);
+  edgesRef.current = edges;
+
   // Get currently selected nodes helper
-  const selectedNodes = useCallback(() => {
-    return nodes.filter((n) => n.selected);
-  }, [nodes]);
+  const selectedNodes = useCallback((specificNodeId: string | null = null) => {
+    if (specificNodeId) {
+      const node = nodesRef.current.find((n) => n.id === specificNodeId);
+      return node ? [node] : [];
+    }
+    return nodesRef.current.filter((n) => n.selected);
+  }, []);
 
   // ==========================================
   // 2. จัดการเมื่อผู้ใช้ลากสายเชื่อมต่อ (onConnect)
@@ -826,7 +837,7 @@ const FlowContent: React.FC = () => {
   // ==========================================
   const copyNodes = useCallback(
     (nodesToCopy: Node[] | null = null) => {
-      const targets = nodesToCopy || selectedNodes();
+      const targets = nodesToCopy && nodesToCopy.length ? nodesToCopy : selectedNodes();
       if (!targets.length) return false;
       const selectedIds = new Set(targets.map((n) => n.id));
 
@@ -837,14 +848,15 @@ const FlowContent: React.FC = () => {
           selected: false,
           data: { ...node.data },
         })),
-        edges: edges
+        edges: edgesRef.current
           .filter((edge) => selectedIds.has(edge.source) && selectedIds.has(edge.target))
           .map((edge) => ({ ...edge })),
       };
       pasteCountRef.current = 0;
+      setHasClipboard(true);
       return true;
     },
-    [edges, selectedNodes]
+    [selectedNodes]
   );
 
   // ==========================================
@@ -852,7 +864,7 @@ const FlowContent: React.FC = () => {
   // ==========================================
   const deleteNodes = useCallback(
     (nodesToDelete: Node[] | null = null) => {
-      const targets = nodesToDelete || selectedNodes();
+      const targets = nodesToDelete && nodesToDelete.length ? nodesToDelete : selectedNodes();
       if (!targets.length) return;
       const targetIds = new Set(targets.map((n) => n.id));
 
@@ -868,9 +880,11 @@ const FlowContent: React.FC = () => {
   // ==========================================
   const cutNodes = useCallback(
     (nodesToCut: Node[] | null = null) => {
-      const targets = nodesToCut || selectedNodes();
+      const targets = nodesToCut && nodesToCut.length ? nodesToCut : selectedNodes();
+      if (!targets.length) return;
       copyNodes(targets);
       deleteNodes(targets);
+      setHasClipboard(true);
     },
     [copyNodes, deleteNodes, selectedNodes]
   );
@@ -924,7 +938,8 @@ const FlowContent: React.FC = () => {
   // ==========================================
   const duplicateNodes = useCallback(
     (nodesToDup: Node[] | null = null) => {
-      const targets = nodesToDup || selectedNodes();
+      const targets = nodesToDup && nodesToDup.length ? nodesToDup : selectedNodes();
+      if (!targets.length) return;
       copyNodes(targets);
       pasteAt(null);
     },
@@ -936,7 +951,7 @@ const FlowContent: React.FC = () => {
   // ==========================================
   const disconnectNodes = useCallback(
     (nodesToDisconnect: Node[] | null = null) => {
-      const targets = nodesToDisconnect || selectedNodes();
+      const targets = nodesToDisconnect && nodesToDisconnect.length ? nodesToDisconnect : selectedNodes();
       if (!targets.length) return;
       const ids = new Set(targets.map((n) => n.id));
 
@@ -1084,33 +1099,45 @@ const FlowContent: React.FC = () => {
   );
 
   // ==========================================
-  // 10. Global Keyboard Shortcuts
+  // 10. Global Keyboard Shortcuts (Supports all keyboard layouts & codes)
   // ==========================================
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Ignore if typing inside input / textarea
-      if (['INPUT', 'TEXTAREA', 'SELECT'].includes((e.target as HTMLElement)?.tagName)) {
+      // Ignore if typing inside input / textarea / editable fields
+      const activeEl = document.activeElement as HTMLElement | null;
+      const targetEl = e.target as HTMLElement | null;
+      if (
+        ['INPUT', 'TEXTAREA', 'SELECT'].includes(targetEl?.tagName || '') ||
+        ['INPUT', 'TEXTAREA', 'SELECT'].includes(activeEl?.tagName || '') ||
+        targetEl?.isContentEditable ||
+        activeEl?.isContentEditable
+      ) {
         return;
       }
 
       const isCmdOrCtrl = e.metaKey || e.ctrlKey;
+      const key = e.key.toLowerCase();
+      const code = e.code;
 
-      if (isCmdOrCtrl && e.key.toLowerCase() === 'c') {
+      if (isCmdOrCtrl && (code === 'KeyC' || key === 'c')) {
         e.preventDefault();
         copyNodes();
-      } else if (isCmdOrCtrl && e.key.toLowerCase() === 'x') {
+      } else if (isCmdOrCtrl && (code === 'KeyX' || key === 'x')) {
         e.preventDefault();
         cutNodes();
-      } else if (isCmdOrCtrl && e.key.toLowerCase() === 'v') {
+      } else if (isCmdOrCtrl && (code === 'KeyV' || key === 'v')) {
         e.preventDefault();
         pasteAt(mousePosRef.current);
-      } else if (isCmdOrCtrl && e.key.toLowerCase() === 'd') {
+      } else if (isCmdOrCtrl && (code === 'KeyD' || key === 'd')) {
         e.preventDefault();
         duplicateNodes();
-      } else if (isCmdOrCtrl && e.key.toLowerCase() === 'k') {
+      } else if (isCmdOrCtrl && (code === 'KeyK' || key === 'k')) {
         e.preventDefault();
         disconnectNodes();
-      } else if (e.key === 'Delete' || e.key === 'Backspace') {
+      } else if (isCmdOrCtrl && (code === 'KeyA' || key === 'a')) {
+        e.preventDefault();
+        setNodes((nds) => nds.map((n) => ({ ...n, selected: true })));
+      } else if (e.key === 'Delete' || e.key === 'Backspace' || code === 'Delete' || code === 'Backspace') {
         e.preventDefault();
         deleteNodes();
       }
@@ -1118,7 +1145,7 @@ const FlowContent: React.FC = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [copyNodes, cutNodes, pasteAt, duplicateNodes, disconnectNodes, deleteNodes]);
+  }, [copyNodes, cutNodes, pasteAt, duplicateNodes, disconnectNodes, deleteNodes, setNodes]);
 
   // Drag-and-Drop from Palette onto Canvas
   const [isDragOverCanvas, setIsDragOverCanvas] = useState(false);
@@ -1322,17 +1349,28 @@ const FlowContent: React.FC = () => {
           }
           showInteractive={false}
         />
+        <MiniMap
+          nodeColor={isLight ? '#0071e3' : '#0a84ff'}
+          maskColor={isLight ? 'rgba(245, 245, 247, 0.75)' : 'rgba(4, 4, 7, 0.8)'}
+          className={
+            isLight
+              ? 'bg-white/80 border border-black/[0.08] rounded-xl shadow-lg'
+              : 'bg-[#0f0f18]/80 border border-white/[0.08] rounded-xl shadow-xl'
+          }
+        />
       </ReactFlow>
 
-      {/* Status Indicator (Frameless, Bottom-Right) */}
-      <div className="absolute bottom-4 right-4 z-10 flex items-center gap-2 select-none pointer-events-none">
+      {/* Real-time Status Badge */}
+      <div
+        className={`absolute bottom-6 left-6 z-10 px-3 py-1.5 rounded-full border backdrop-blur-md flex items-center gap-2 select-none shadow-sm ${
+          isLight ? 'bg-white/90 border-black/[0.08]' : 'bg-[#12121a]/90 border-white/[0.08]'
+        }`}
+      >
+        <div className="w-2 h-2 rounded-full bg-[#30d158] animate-pulse" />
         <span
-          className={`text-[11.5px] flex items-center gap-1.5 font-medium tracking-tight ${
-            isLight ? 'text-[#28cd41]' : 'text-[#30d158]'
-          }`}
+          className={`text-xs font-semibold tracking-tight ${isLight ? 'text-[#1d1d1f]' : 'text-white'}`}
           style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif' }}
         >
-          <span className={`w-1.5 h-1.5 rounded-full ${isLight ? 'bg-[#28cd41]' : 'bg-[#30d158]'} animate-pulse`} />
           {activeNodesCount} Nodes Active
         </span>
         {nodes.length > activeNodesCount && (
@@ -1350,7 +1388,7 @@ const FlowContent: React.FC = () => {
         <div
           style={{
             position: 'fixed',
-            top: Math.min(contextMenu.y, window.innerHeight - 240),
+            top: Math.min(contextMenu.y, window.innerHeight - 260),
             left: Math.min(contextMenu.x, window.innerWidth - 240),
             zIndex: 100,
             minWidth: '220px',
@@ -1372,15 +1410,16 @@ const FlowContent: React.FC = () => {
               {/* Duplicate */}
               <button
                 onClick={() => {
-                  duplicateNodes();
+                  const target = nodes.filter((n) => n.id === contextMenu.targetNodeId);
+                  duplicateNodes(target.length ? target : null);
                   setContextMenu(null);
                 }}
-                style={{ cursor: 'var(--mac-cursor-pointer)' }}
                 className={`w-full px-3 py-1.5 rounded-lg flex items-center justify-between transition-all text-left ${
                   isLight
                     ? 'text-[#111827] hover:bg-black/[0.06] hover:text-[#0071e3]'
                     : 'text-white/90 hover:bg-white/[0.08] hover:text-[#ffd60a]'
                 }`}
+                style={{ cursor: 'var(--mac-cursor-pointer)' }}
               >
                 <span className="flex items-center gap-2.5 text-[12.5px] font-medium">
                   <LucideIcons.CopyPlus size={14} className="text-[#ffd60a] flex-shrink-0" />
@@ -1394,15 +1433,16 @@ const FlowContent: React.FC = () => {
               {/* Copy */}
               <button
                 onClick={() => {
-                  copyNodes();
+                  const target = nodes.filter((n) => n.id === contextMenu.targetNodeId);
+                  copyNodes(target.length ? target : null);
                   setContextMenu(null);
                 }}
-                style={{ cursor: 'var(--mac-cursor-pointer)' }}
                 className={`w-full px-3 py-1.5 rounded-lg flex items-center justify-between transition-all text-left ${
                   isLight
                     ? 'text-[#111827] hover:bg-black/[0.06] hover:text-[#0071e3]'
                     : 'text-white/90 hover:bg-white/[0.08] hover:text-white'
                 }`}
+                style={{ cursor: 'var(--mac-cursor-pointer)' }}
               >
                 <span className="flex items-center gap-2.5 text-[12.5px] font-medium">
                   <LucideIcons.Copy size={14} className={isLight ? 'text-[#4b5563] flex-shrink-0' : 'text-white/70 flex-shrink-0'} />
@@ -1416,15 +1456,16 @@ const FlowContent: React.FC = () => {
               {/* Cut */}
               <button
                 onClick={() => {
-                  cutNodes();
+                  const target = nodes.filter((n) => n.id === contextMenu.targetNodeId);
+                  cutNodes(target.length ? target : null);
                   setContextMenu(null);
                 }}
-                style={{ cursor: 'var(--mac-cursor-pointer)' }}
                 className={`w-full px-3 py-1.5 rounded-lg flex items-center justify-between transition-all text-left ${
                   isLight
                     ? 'text-[#111827] hover:bg-black/[0.06] hover:text-[#0071e3]'
                     : 'text-white/90 hover:bg-white/[0.08] hover:text-white'
                 }`}
+                style={{ cursor: 'var(--mac-cursor-pointer)' }}
               >
                 <span className="flex items-center gap-2.5 text-[12.5px] font-medium">
                   <LucideIcons.Scissors size={14} className={isLight ? 'text-[#4b5563] flex-shrink-0' : 'text-white/70 flex-shrink-0'} />
@@ -1435,21 +1476,53 @@ const FlowContent: React.FC = () => {
                 </span>
               </button>
 
+              {/* Paste (Grayed out if clipboard is empty) */}
+              <button
+                disabled={!hasClipboard}
+                onClick={() => {
+                  if (!hasClipboard) return;
+                  pasteAt(contextMenu.flowPos);
+                  setContextMenu(null);
+                }}
+                className={`w-full px-3 py-1.5 rounded-lg flex items-center justify-between transition-all text-left ${
+                  !hasClipboard
+                    ? isLight
+                      ? 'opacity-35 text-black/30 cursor-not-allowed pointer-events-none'
+                      : 'opacity-35 text-white/30 cursor-not-allowed pointer-events-none'
+                    : isLight
+                    ? 'text-[#111827] hover:bg-black/[0.06] hover:text-[#0071e3]'
+                    : 'text-white/90 hover:bg-white/[0.08] hover:text-[#007aff]'
+                }`}
+                style={{ cursor: 'var(--mac-cursor-pointer)' }}
+              >
+                <span className="flex items-center gap-2.5 text-[12.5px] font-medium">
+                  <LucideIcons.ClipboardPaste
+                    size={14}
+                    className={`${!hasClipboard ? (isLight ? 'text-black/30' : 'text-white/30') : 'text-[#0071e3]'} flex-shrink-0`}
+                  />
+                  <span>Paste</span>
+                </span>
+                <span className={`text-[11px] font-mono pl-4 flex-shrink-0 ${isLight ? 'text-black/30' : 'text-white/30'}`}>
+                  Ctrl+V
+                </span>
+              </button>
+
               {/* Divider */}
               <div className={`my-1 border-t mx-2 ${isLight ? 'border-black/[0.08]' : 'border-white/[0.08]'}`} />
 
               {/* Disconnect */}
               <button
                 onClick={() => {
-                  disconnectNodes();
+                  const target = nodes.filter((n) => n.id === contextMenu.targetNodeId);
+                  disconnectNodes(target.length ? target : null);
                   setContextMenu(null);
                 }}
-                style={{ cursor: 'var(--mac-cursor-pointer)' }}
                 className={`w-full px-3 py-1.5 rounded-lg flex items-center justify-between transition-all text-left text-[#ff9f0a] ${
                   isLight
                     ? 'hover:bg-[#ff9f0a]/10'
                     : 'hover:bg-white/[0.08]'
                 }`}
+                style={{ cursor: 'var(--mac-cursor-pointer)' }}
               >
                 <span className="flex items-center gap-2.5 text-[12.5px] font-medium">
                   <LucideIcons.Unlink size={14} className="text-[#ff9f0a] flex-shrink-0" />
@@ -1463,15 +1536,16 @@ const FlowContent: React.FC = () => {
               {/* Delete */}
               <button
                 onClick={() => {
-                  deleteNodes();
+                  const target = nodes.filter((n) => n.id === contextMenu.targetNodeId);
+                  deleteNodes(target.length ? target : null);
                   setContextMenu(null);
                 }}
-                style={{ cursor: 'var(--mac-cursor-pointer)' }}
                 className={`w-full px-3 py-1.5 rounded-lg flex items-center justify-between transition-all text-left text-[#ff453a] ${
                   isLight
                     ? 'hover:bg-[#ff453a]/10'
                     : 'hover:bg-white/[0.08]'
                 }`}
+                style={{ cursor: 'var(--mac-cursor-pointer)' }}
               >
                 <span className="flex items-center gap-2.5 text-[12.5px] font-medium">
                   <LucideIcons.Trash2 size={14} className="text-[#ff453a] flex-shrink-0" />
@@ -1483,9 +1557,11 @@ const FlowContent: React.FC = () => {
               </button>
             </>
           ) : (
-            /* Paste Here */
+            /* Paste Here (Grayed out if clipboard is empty) */
             <button
+              disabled={!hasClipboard}
               onClick={() => {
+                if (!hasClipboard) return;
                 pasteAt(contextMenu.flowPos);
                 setContextMenu(null);
               }}
