@@ -196,9 +196,9 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
         isMinimized ? 'h-10' : isMaximized ? 'h-[580px]' : 'h-[350px]'
       }`}
     >
-      {/*  Top Segmented HUD Navigation Bar (Pixel-perfect aligned with number 6 below) */}
+      {/*  Top Segmented HUD Navigation Bar (Seamless borderless glass) */}
       <div
-        className="h-10 border-b border-white/[0.08] bg-[#0c0c12] flex items-center justify-between select-none flex-shrink-0 transition-all duration-200"
+        className="h-10 bg-[#07070b] flex items-center justify-between select-none flex-shrink-0 transition-all duration-200"
         style={{ paddingLeft: isMaximized ? '42px' : '36px', paddingRight: '24px' }}
       >
         <div className="flex items-center gap-6 h-full">
