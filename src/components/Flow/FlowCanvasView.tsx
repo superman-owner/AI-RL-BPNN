@@ -653,7 +653,7 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
           onPointerDown={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
           style={{ pointerEvents: 'all' }}
-          className="text-white/40 hover:text-white transition-all p-1 rounded-md hover:bg-white/[0.08] cursor-pointer pointer-events-auto nodrag nopan flex-shrink-0"
+          className="text-white/40 hover:text-white hover:drop-shadow-[0_0_6px_rgba(255,255,255,0.5)] transition-all cursor-pointer pointer-events-auto nodrag nopan flex-shrink-0"
         >
           <LucideIcons.X size={13} />
         </button>
@@ -692,18 +692,16 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
         })}
       </div>
 
-      {/* 🟢 FOOTER: Clean Apple Action Buttons (No Inner Divider Line, 10px Spacing) */}
+      {/* 🟢 FOOTER: Clean Apple Action Buttons (Pure Text + Subtle Glow, No Highlight Box) */}
       <div
         style={{
-          marginTop: '10px',
-          paddingTop: '4px',
-          borderTop: 'none',
+          marginTop: '12px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           pointerEvents: 'all',
         }}
-        className="nodrag nopan pointer-events-auto"
+        className="nodrag nopan pointer-events-auto px-1 select-none"
         onPointerDown={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
       >
@@ -718,8 +716,11 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
           style={{
             fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
             pointerEvents: 'all',
+            background: 'transparent',
+            border: 'none',
+            padding: 0,
           }}
-          className="text-[12px] text-[#0a84ff] hover:text-[#409cff] flex items-center gap-1.5 font-medium transition-colors cursor-pointer pointer-events-auto nodrag nopan px-2 py-1 rounded-md hover:bg-white/[0.06]"
+          className="text-[12px] text-[#0a84ff] hover:text-[#40a9ff] hover:drop-shadow-[0_0_8px_rgba(10,132,255,0.7)] flex items-center gap-1.5 font-medium transition-all cursor-pointer pointer-events-auto nodrag nopan select-none"
         >
           <LucideIcons.Check size={13} />
           <span>Update</span>
@@ -735,8 +736,11 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
           style={{
             fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
             pointerEvents: 'all',
+            background: 'transparent',
+            border: 'none',
+            padding: 0,
           }}
-          className="text-[12px] text-[#ff453a] hover:text-[#ff6961] flex items-center gap-1.5 font-medium transition-colors cursor-pointer pointer-events-auto nodrag nopan px-2 py-1 rounded-md hover:bg-[#ff453a]/10"
+          className="text-[12px] text-[#ff453a] hover:text-[#ff6961] hover:drop-shadow-[0_0_8px_rgba(255,69,58,0.7)] flex items-center gap-1.5 font-medium transition-all cursor-pointer pointer-events-auto nodrag nopan select-none"
         >
           <LucideIcons.Trash2 size={13} />
           <span>Delete Node</span>
