@@ -42,6 +42,28 @@ interface LiveNeuralLinkProps {
   cameraResetTrigger?: number;
 }
 
+//  Apple-style Rounded Rectangle helper
+function drawRoundedRect(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  radius: number
+) {
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + width - radius, y);
+  ctx.arcTo(x + width, y, x + width, y + radius, radius);
+  ctx.lineTo(x + width, y + height - radius);
+  ctx.arcTo(x + width, y + height, x + width - radius, y + height, radius);
+  ctx.lineTo(x + radius, y + height);
+  ctx.arcTo(x, y + height, x, y + height - radius, radius);
+  ctx.lineTo(x, y + radius);
+  ctx.arcTo(x, y, x + radius, y, radius);
+  ctx.closePath();
+}
+
 export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
   isTraining = true,
   latestStep = null,
@@ -83,7 +105,7 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
     const neurons: BPNeuron[] = [];
     const synapses: BPSynapse[] = [];
 
-    const inputLabels = ['Ret(5)', 'Ret(10)', 'Ret(20)', 'Vol(10)', 'DistSMA', 'Pos'];
+    const inputLabels = ['Ret (5d)', 'Ret (10d)', 'Ret (20d)', 'Vol (10d)', 'Dist SMA', 'Position'];
     const outputLabels = ['BUY (LONG)', 'HOLD (FLAT)', 'SELL (SHORT)'];
 
     const layerSpacingX = 240;
@@ -300,8 +322,18 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
       ctx.save();
       ctx.scale(dpr, dpr);
 
-      // Deep Luxury Obsidian Canvas
-      ctx.fillStyle = '#040407';
+      // Deep Luxury Obsidian Canvas with Subtle Ambient Center Glow
+      const bgGrad = ctx.createRadialGradient(
+        width / 2,
+        height / 2,
+        50,
+        width / 2,
+        height / 2,
+        Math.max(width, height) * 0.75
+      );
+      bgGrad.addColorStop(0, '#0b0b14');
+      bgGrad.addColorStop(1, '#040407');
+      ctx.fillStyle = bgGrad;
       ctx.fillRect(0, 0, width, height);
 
       // Camera Matrix Transformations
@@ -374,7 +406,7 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
             syn.weight > 0
               ? `rgba(160, 210, 255, ${alpha})`
               : `rgba(220, 225, 245, ${alpha * 0.85})`;
-          ctx.lineWidth = (0.9 + Math.abs(syn.weight) * 0.3) * avgScale;
+          ctx.lineWidth = (0.85 + Math.abs(syn.weight) * 0.25) * avgScale;
           ctx.beginPath();
           ctx.moveTo(p1.px, p1.py);
           ctx.lineTo(p2.px, p2.py);
@@ -483,43 +515,121 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
         ctx.arc(proj.px, proj.py, radius * 0.85, 0, Math.PI * 2);
         ctx.stroke();
 
-        // Elegant Apple Typography Labels for Input & Output (Smooth Subpixel Matrix Scaling)
+        //  5. Apple macOS / iOS Frosted Glass Capsule Badges for Input & Output
         if (isOutput || isInput) {
           ctx.save();
-          const baseFontSize = 11;
-          ctx.font = `600 ${baseFontSize}px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif`;
-          ctx.textBaseline = 'middle';
-
-          const textOffset = (radius + 8 * proj.scale) * (isInput ? -1 : 1);
-          const anchorX = proj.px + textOffset;
-          const anchorY = proj.py;
-
-          ctx.translate(anchorX, anchorY);
           
-          // Continuous floating-point scale (No integer font snapping)
-          const smoothScale = Math.max(0.75, Math.min(1.25, proj.scale));
-          ctx.scale(smoothScale, smoothScale);
+          // Continuous floating-point scale
+          const smoothScale = Math.max(0.75, Math.min(1.15, proj.scale));
+          const depthAlpha = Math.max(0.4, Math.min(1.0, 1 - (proj.depth - 400) / 700));
 
-          ctx.textAlign = isInput ? 'right' : 'left';
+          if (isInput) {
+            // Input State Badges (Left Side)
+            const text = n.label;
+            const font = `600 11px -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Mono", system-ui, sans-serif`;
+            ctx.font = font;
+            const textMetrics = ctx.measureText(text);
+            const badgeWidth = textMetrics.width + 16;
+            const badgeHeight = 22;
+            const badgeX = proj.px - (radius + 8 * proj.scale) - badgeWidth * smoothScale;
+            const badgeY = proj.py - (badgeHeight * smoothScale) / 2;
 
-          // Smooth Depth-based Alpha
-          const depthAlpha = Math.max(0.3, Math.min(1.0, 1 - (proj.depth - 400) / 600));
+            ctx.save();
+            ctx.translate(badgeX, badgeY);
+            ctx.scale(smoothScale, smoothScale);
 
-          if (isOutput) {
-            if (isSelectedAction) {
+            // Frosted Pill Background
+            drawRoundedRect(ctx, 0, 0, badgeWidth, badgeHeight, 6);
+            ctx.fillStyle = 'rgba(18, 18, 28, 0.75)';
+            ctx.fill();
+            ctx.strokeStyle = `rgba(255, 255, 255, ${0.1 * depthAlpha})`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            // Text Label (Muted Silver -> Crisp Apple Typography)
+            ctx.fillStyle = `rgba(220, 220, 230, ${0.85 * depthAlpha})`;
+            ctx.font = font;
+            ctx.textBaseline = 'middle';
+            ctx.textAlign = 'left';
+            ctx.fillText(text, 8, badgeHeight / 2);
+
+            ctx.restore();
+          } else if (isOutput) {
+            // Output Action Badges (Right Side)
+            const isSelected = isSelectedAction;
+            const actionProb = currentStep ? (currentStep.actionProbs[n.neuronIdx] * 100).toFixed(1) : '33.3';
+            const actionText = `${n.label} · ${actionProb}%`;
+
+            const font = isSelected
+              ? `700 11.5px -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif`
+              : `500 10.5px -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif`;
+            
+            ctx.font = font;
+            const textMetrics = ctx.measureText(actionText);
+            const badgeWidth = textMetrics.width + 24;
+            const badgeHeight = 24;
+            const badgeX = proj.px + (radius + 8 * proj.scale);
+            const badgeY = proj.py - (badgeHeight * smoothScale) / 2;
+
+            ctx.save();
+            ctx.translate(badgeX, badgeY);
+            ctx.scale(smoothScale, smoothScale);
+
+            // Frosted Action Pill Capsule
+            drawRoundedRect(ctx, 0, 0, badgeWidth, badgeHeight, 8);
+            if (isSelected) {
+              ctx.fillStyle = n.neuronIdx === 0
+                ? 'rgba(48, 209, 88, 0.16)'
+                : n.neuronIdx === 1
+                ? 'rgba(255, 214, 10, 0.16)'
+                : 'rgba(255, 69, 58, 0.16)';
+              ctx.fill();
+
+              ctx.strokeStyle = n.neuronIdx === 0
+                ? 'rgba(48, 209, 88, 0.55)'
+                : n.neuronIdx === 1
+                ? 'rgba(255, 214, 10, 0.55)'
+                : 'rgba(255, 69, 58, 0.55)';
+              ctx.lineWidth = 1.2;
+              ctx.stroke();
+
+              // Status Active Indicator Dot
               ctx.fillStyle = coreColor;
-              ctx.shadowColor = coreColor;
-              ctx.shadowBlur = 6;
-              ctx.fillText(n.label, 0, 0);
-              ctx.shadowBlur = 0;
+              ctx.beginPath();
+              ctx.arc(10, badgeHeight / 2, 3, 0, Math.PI * 2);
+              ctx.fill();
+
+              // Text (Apple System Colors)
+              ctx.fillStyle = coreColor;
+              ctx.font = font;
+              ctx.textBaseline = 'middle';
+              ctx.textAlign = 'left';
+              ctx.fillText(actionText, 18, badgeHeight / 2);
             } else {
-              ctx.fillStyle = `rgba(255, 255, 255, ${0.38 * depthAlpha})`;
-              ctx.fillText(n.label, 0, 0);
+              ctx.fillStyle = 'rgba(18, 18, 28, 0.6)';
+              ctx.fill();
+
+              ctx.strokeStyle = `rgba(255, 255, 255, ${0.08 * depthAlpha})`;
+              ctx.lineWidth = 1;
+              ctx.stroke();
+
+              // Inactive Indicator Dot
+              ctx.fillStyle = `rgba(255, 255, 255, ${0.2 * depthAlpha})`;
+              ctx.beginPath();
+              ctx.arc(10, badgeHeight / 2, 2.5, 0, Math.PI * 2);
+              ctx.fill();
+
+              // Inactive Muted Text
+              ctx.fillStyle = `rgba(142, 142, 147, ${0.75 * depthAlpha})`;
+              ctx.font = font;
+              ctx.textBaseline = 'middle';
+              ctx.textAlign = 'left';
+              ctx.fillText(actionText, 18, badgeHeight / 2);
             }
-          } else {
-            ctx.fillStyle = `rgba(255, 255, 255, ${0.45 * depthAlpha})`;
-            ctx.fillText(n.label, 0, 0);
+
+            ctx.restore();
           }
+
           ctx.restore();
         }
       });
@@ -562,6 +672,22 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
 
   return (
     <div ref={containerRef} className="w-full h-full relative overflow-hidden select-none bg-[#08080c]">
+      {/*  Top Floating HUD Badges */}
+      <div className="absolute top-4 left-4 z-10 flex items-center gap-2 pointer-events-none">
+        <div className="px-3 py-1.5 rounded-lg bg-[#0c0c14]/85 backdrop-blur-md border border-white/[0.08] shadow-xl flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-[#30d158] shadow-[0_0_6px_#30d158] animate-pulse" />
+          <span className="text-[12px] font-bold text-white tracking-tight">BPNN Policy Network</span>
+          <span className="text-[11px] text-[#86868b] font-medium font-mono">PPO Actor-Critic</span>
+        </div>
+      </div>
+
+      <div className="absolute top-4 right-4 z-10 hidden sm:flex items-center gap-2 pointer-events-none">
+        <div className="px-3 py-1.5 rounded-lg bg-[#0c0c14]/85 backdrop-blur-md border border-white/[0.08] shadow-xl flex items-center gap-1.5 text-[11px] font-mono text-[#86868b]">
+          <span className="text-white font-medium">Architecture:</span>
+          <span>6 In ➔ 12 Dense ➔ 8 Dense ➔ 3 Action</span>
+        </div>
+      </div>
+
       {/* 3D Canvas */}
       <canvas
         ref={canvasRef}
@@ -572,6 +698,13 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
         onWheel={handleWheel}
         className="w-full h-full cursor-grab active:cursor-grabbing block"
       />
+
+      {/*  Bottom Orbital Helper Hint */}
+      <div className="absolute bottom-3 right-4 z-10 pointer-events-none text-[10.5px] text-[#86868b] font-medium tracking-tight bg-[#0c0c14]/70 backdrop-blur-sm px-2.5 py-1 rounded-md border border-white/[0.06]">
+        Drag to Orbit · Scroll to Zoom
+      </div>
     </div>
   );
 };
+
+export default LiveNeuralLink;
