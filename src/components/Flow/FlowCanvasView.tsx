@@ -1117,7 +1117,7 @@ const FlowContent: React.FC = () => {
 
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
-    event.dataTransfer.dropEffect = 'copy';
+    event.dataTransfer.dropEffect = 'move';
     setIsDragOverCanvas(true);
   }, []);
 
@@ -1130,6 +1130,7 @@ const FlowContent: React.FC = () => {
     (event: React.DragEvent) => {
       event.preventDefault();
       setIsDragOverCanvas(false);
+      document.body.classList.remove('is-dragging-node');
       const nodeType = event.dataTransfer.getData('application/fxforge-node');
       if (!nodeType) return;
 

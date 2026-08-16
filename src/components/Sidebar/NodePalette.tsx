@@ -31,7 +31,17 @@ const GROUP_ICONS: Record<
 
 function onDragStartNode(event: React.DragEvent, nodeType: string, label: string, color: string, isLight: boolean) {
   event.dataTransfer.setData('application/fxforge-node', nodeType);
-  event.dataTransfer.effectAllowed = 'copy';
+  event.dataTransfer.effectAllowed = 'move';
+  document.body.classList.add('is-dragging-node');
+
+  // Safety listener to guarantee class is removed on drag finish anywhere
+  const cleanup = () => {
+    document.body.classList.remove('is-dragging-node');
+    window.removeEventListener('dragend', cleanup);
+    window.removeEventListener('drop', cleanup);
+  };
+  window.addEventListener('dragend', cleanup, { once: true });
+  window.addEventListener('drop', cleanup, { once: true });
 
   //  Create High-Contrast Apple macOS Drag Preview Capsule with Mac '+' Badge
   const dragGhost = document.createElement('div');
@@ -433,6 +443,10 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                         key={node.type}
                         draggable
                         onDragStart={(e) => onDragStartNode(e, node.type, node.label, group.color, isLight)}
+                        onDragEnd={() => {
+                          document.body.classList.remove('is-dragging-node');
+                          setHoveredNode(null);
+                        }}
                         onMouseEnter={() => setHoveredNode(node.type)}
                         onMouseLeave={() => setHoveredNode(null)}
                         title="Drag onto canvas to add module"

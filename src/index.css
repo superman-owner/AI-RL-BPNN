@@ -63,12 +63,14 @@ button, a, [role="button"], .cursor-pointer, [onclick] {
   cursor: var(--mac-cursor-grabbing) !important;
 }
 
-* {
-  cursor: inherit;
-}
-
-button, a, [role="button"], .cursor-pointer {
-  cursor: var(--mac-cursor-pointer) !important;
+/*  Unified Dragging State across Entire Window (Matches Canvas Node Dragging) */
+body.is-dragging-node,
+body.is-dragging-node *,
+.is-dragging-node,
+.is-dragging-node *,
+[draggable]:active,
+[draggable]:active * {
+  cursor: var(--mac-cursor-grabbing) !important;
 }
 
 /*  Number & Metric typography utility classes */
