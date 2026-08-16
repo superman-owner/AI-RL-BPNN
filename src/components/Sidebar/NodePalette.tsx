@@ -86,7 +86,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
         zIndex: 20,
       }}
     >
-      {/* 1. Header: Title, Count, Expand/Collapse & Search (Pure Flat Frameless) */}
+      {/* 1. Header: Pure Minimalist Crisp Typography */}
       <div
         style={{
           padding: '14px 16px 10px',
@@ -112,7 +112,6 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
               display: 'flex',
               alignItems: 'center',
               gap: 8,
-              textShadow: '0 0 10px rgba(56, 189, 248, 0.5)',
             }}
           >
             <FolderTree size={15} color="#38bdf8" />
@@ -138,22 +137,20 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
               fontWeight: 600,
               cursor: 'pointer',
               padding: '2px 4px',
-              transition: 'all 0.15s ease',
+              transition: 'color 0.15s ease',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.color = '#ffffff';
-              e.currentTarget.style.textShadow = '0 0 8px rgba(255,255,255,0.8)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.color = '#86868b';
-              e.currentTarget.style.textShadow = 'none';
             }}
           >
             {Object.values(expandedGroups).every(Boolean) ? 'Collapse All' : 'Expand All'}
           </button>
         </div>
 
-        {/* Flat Underline Search Bar (No Box Enclosure) */}
+        {/* Flat Minimalist Search Bar */}
         <div style={{ position: 'relative' }}>
           <Search
             size={13}
@@ -173,7 +170,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
               boxSizing: 'border-box',
               background: 'transparent',
               border: 'none',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.15)',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
               borderRadius: 0,
               color: '#ffffff',
               fontSize: 12,
@@ -183,16 +180,16 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
               transition: 'border-color 0.2s ease',
             }}
             onFocus={(e) => {
-              e.currentTarget.style.borderBottomColor = '#38bdf8';
+              e.currentTarget.style.borderBottomColor = 'rgba(255, 255, 255, 0.4)';
             }}
             onBlur={(e) => {
-              e.currentTarget.style.borderBottomColor = 'rgba(255, 255, 255, 0.15)';
+              e.currentTarget.style.borderBottomColor = 'rgba(255, 255, 255, 0.12)';
             }}
           />
         </div>
       </div>
 
-      {/* 2. Pure Frameless Flat Scrollable Tree with Glowing Hover (Zero Box) */}
+      {/* 2. Flat List: Gray Default -> White on Hover */}
       <div
         id="node-palette-scroll-container"
         style={{
@@ -226,7 +223,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
                 padding: '6px 0',
               }}
             >
-              {/* Flat Group Header (No Box Background, Pure Glow) */}
+              {/* Group Header (Gray -> White) */}
               <div
                 onClick={() => toggleGroup(group.id)}
                 onMouseEnter={() => setHoveredGroup(group.id)}
@@ -238,14 +235,13 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
                   justifyContent: 'space-between',
                   cursor: 'pointer',
                   gap: 8,
-                  transition: 'all 0.15s ease',
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 7, flex: 1, minWidth: 0 }}>
                   {isExpanded ? (
-                    <ChevronDown size={13} color={isGroupHovered ? '#ffffff' : '#86868b'} />
+                    <ChevronDown size={13} color={isGroupHovered ? '#ffffff' : '#71717a'} />
                   ) : (
-                    <ChevronRight size={13} color={isGroupHovered ? '#ffffff' : '#86868b'} />
+                    <ChevronRight size={13} color={isGroupHovered ? '#ffffff' : '#71717a'} />
                   )}
                   <span
                     style={{
@@ -254,8 +250,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
                       background: group.color,
                       borderRadius: 1,
                       flexShrink: 0,
-                      boxShadow: isGroupHovered ? `0 0 8px ${group.color}` : 'none',
-                      transition: 'box-shadow 0.2s ease',
+                      opacity: isGroupHovered ? 1 : 0.7,
                     }}
                   />
                   <GroupIcon
@@ -265,15 +260,12 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
                   <span
                     style={{
                       fontSize: 12,
-                      fontWeight: 700,
-                      color: isGroupHovered ? '#ffffff' : '#ededed',
+                      fontWeight: 600,
+                      color: isGroupHovered ? '#ffffff' : '#a1a1aa',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',
-                      textShadow: isGroupHovered
-                        ? `0 0 10px ${group.color}, 0 0 20px ${group.color}88`
-                        : 'none',
-                      transition: 'all 0.15s ease',
+                      transition: 'color 0.15s ease',
                     }}
                   >
                     {group.label}
@@ -281,7 +273,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
                 </div>
               </div>
 
-              {/* Child Nodes: Pure Text Glow, No Enclosing Boxes */}
+              {/* Child Nodes (Gray -> White on Hover, No Frame/Box) */}
               {isExpanded && (
                 <div
                   style={{
@@ -310,7 +302,6 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
                           cursor: 'grab',
                           background: 'transparent',
                           border: 'none',
-                          transition: 'all 0.15s ease',
                         }}
                       >
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
@@ -321,23 +312,19 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
                               borderRadius: '50%',
                               background: group.color,
                               flexShrink: 0,
-                              boxShadow: isNodeHovered ? `0 0 10px ${group.color}, 0 0 15px ${group.color}` : 'none',
-                              transform: isNodeHovered ? 'scale(1.3)' : 'scale(1)',
-                              transition: 'all 0.15s ease',
+                              opacity: isNodeHovered ? 1 : 0.5,
+                              transition: 'opacity 0.15s ease',
                             }}
                           />
                           <span
                             style={{
                               fontSize: 11.5,
-                              fontWeight: isNodeHovered ? 600 : 500,
-                              color: isNodeHovered ? '#ffffff' : '#a1a1aa',
+                              fontWeight: 500,
+                              color: isNodeHovered ? '#ffffff' : '#8e8e93',
                               overflow: 'hidden',
                               textOverflow: 'ellipsis',
                               whiteSpace: 'nowrap',
-                              textShadow: isNodeHovered
-                                ? `0 0 8px rgba(255, 255, 255, 0.9), 0 0 16px ${group.color}`
-                                : 'none',
-                              transition: 'all 0.15s ease',
+                              transition: 'color 0.15s ease',
                             }}
                           >
                             {node.label}
@@ -345,11 +332,9 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
                         </div>
                         <Plus
                           size={12}
-                          color={isNodeHovered ? group.color : '#52525b'}
+                          color={isNodeHovered ? '#ffffff' : '#52525b'}
                           style={{
-                            filter: isNodeHovered ? `drop-shadow(0 0 6px ${group.color})` : 'none',
-                            transform: isNodeHovered ? 'scale(1.15)' : 'scale(1)',
-                            transition: 'all 0.15s ease',
+                            transition: 'color 0.15s ease',
                           }}
                         />
                       </div>
@@ -362,7 +347,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
         })}
       </div>
 
-      {/* 3. Flat Footer */}
+      {/* 3. Flat Minimal Footer */}
       <div
         style={{
           padding: '10px 16px',
@@ -385,21 +370,19 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
             gap: 6,
             cursor: 'pointer',
             padding: '2px 0',
-            transition: 'all 0.15s ease',
+            transition: 'color 0.15s ease',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.color = '#38bdf8';
-            e.currentTarget.style.textShadow = '0 0 8px rgba(56, 189, 248, 0.8)';
+            e.currentTarget.style.color = '#ffffff';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.color = '#86868b';
-            e.currentTarget.style.textShadow = 'none';
           }}
         >
           <Settings size={13} />
           <span>Settings</span>
         </div>
-        <span style={{ fontSize: 10.5, color: '#30d158', fontWeight: 600, textShadow: '0 0 6px rgba(48, 209, 88, 0.6)' }}>
+        <span style={{ fontSize: 10.5, color: '#30d158', fontWeight: 600 }}>
           v2.0 Quant AI
         </span>
       </div>
