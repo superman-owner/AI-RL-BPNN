@@ -15,6 +15,8 @@ import {
   FileCode,
   PanelLeftClose,
   PanelLeftOpen,
+  ChevronDown,
+  ChevronRight,
 } from 'lucide-react';
 
 const GROUP_ICONS: Record<
@@ -508,29 +510,46 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
 
           return (
             <div key={group.id}>
-              {/*  Section Header (High-contrast, Clear Typography) */}
+              {/*  Section Header (Solid Apple Typography, Zero Hover Effect, Fold/Open Indicators) */}
               <div
                 onClick={() => toggleGroup(group.id)}
-                style={{ cursor: 'var(--mac-cursor-pointer)' }}
-                className="group py-1.5 px-2 -mx-2 rounded-lg flex items-center justify-between transition-all hover:bg-white/[0.04] dark:hover:bg-white/[0.04]"
+                style={{ cursor: 'var(--mac-cursor-default)' }}
+                className="py-1.5 px-2 -mx-2 rounded-lg flex items-center justify-between select-none"
               >
                 <div className="flex items-center gap-2.5 min-w-0 flex-1">
                   {/* SF Symbol on Main Header */}
                   <GroupIcon
                     size={16}
                     style={{ color: group.color }}
-                    className="flex-shrink-0 transition-transform duration-150 group-hover:scale-110"
+                    className="flex-shrink-0"
                   />
 
                   {/* Section Label */}
                   <span
-                    className={`text-[12px] font-bold uppercase tracking-wider truncate transition-colors ${
-                      isLight ? 'text-[#1f2937] group-hover:text-[#000000]' : 'text-[#e5e7eb] group-hover:text-white'
+                    className={`text-[12px] font-bold uppercase tracking-wider truncate ${
+                      isLight ? 'text-[#1f2937]' : 'text-[#e5e7eb]'
                     }`}
                     style={{ letterSpacing: '0.03em' }}
                   >
                     {group.label}
                   </span>
+                </div>
+
+                {/*  Fold / Open Arrow Indicator: ChevronDown when collapsed (พับ), ChevronRight (>) when open (เปิด) */}
+                <div className="flex items-center justify-center flex-shrink-0 ml-1.5">
+                  {isExpanded ? (
+                    <ChevronRight
+                      size={14}
+                      strokeWidth={2.4}
+                      className={isLight ? 'text-black/50' : 'text-white/50'}
+                    />
+                  ) : (
+                    <ChevronDown
+                      size={14}
+                      strokeWidth={2.4}
+                      className={isLight ? 'text-black/50' : 'text-white/50'}
+                    />
+                  )}
                 </div>
               </div>
 

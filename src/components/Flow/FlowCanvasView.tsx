@@ -1419,7 +1419,7 @@ const FlowContent: React.FC = () => {
                     ? 'text-[#111827] hover:bg-black/[0.06] hover:text-[#0071e3]'
                     : 'text-white/90 hover:bg-white/[0.08] hover:text-[#ffd60a]'
                 }`}
-                style={{ cursor: 'var(--mac-cursor-pointer)' }}
+                style={{ cursor: 'var(--mac-cursor-default)' }}
               >
                 <span className="flex items-center gap-2.5 text-[12.5px] font-medium">
                   <LucideIcons.CopyPlus size={14} className="text-[#ffd60a] flex-shrink-0" />
@@ -1442,7 +1442,7 @@ const FlowContent: React.FC = () => {
                     ? 'text-[#111827] hover:bg-black/[0.06] hover:text-[#0071e3]'
                     : 'text-white/90 hover:bg-white/[0.08] hover:text-white'
                 }`}
-                style={{ cursor: 'var(--mac-cursor-pointer)' }}
+                style={{ cursor: 'var(--mac-cursor-default)' }}
               >
                 <span className="flex items-center gap-2.5 text-[12.5px] font-medium">
                   <LucideIcons.Copy size={14} className={isLight ? 'text-[#4b5563] flex-shrink-0' : 'text-white/70 flex-shrink-0'} />
@@ -1465,7 +1465,7 @@ const FlowContent: React.FC = () => {
                     ? 'text-[#111827] hover:bg-black/[0.06] hover:text-[#0071e3]'
                     : 'text-white/90 hover:bg-white/[0.08] hover:text-white'
                 }`}
-                style={{ cursor: 'var(--mac-cursor-pointer)' }}
+                style={{ cursor: 'var(--mac-cursor-default)' }}
               >
                 <span className="flex items-center gap-2.5 text-[12.5px] font-medium">
                   <LucideIcons.Scissors size={14} className={isLight ? 'text-[#4b5563] flex-shrink-0' : 'text-white/70 flex-shrink-0'} />
@@ -1484,25 +1484,43 @@ const FlowContent: React.FC = () => {
                   pasteAt(contextMenu.flowPos);
                   setContextMenu(null);
                 }}
+                style={{ cursor: hasClipboard ? 'var(--mac-cursor-default)' : 'not-allowed' }}
                 className={`w-full px-3 py-1.5 rounded-lg flex items-center justify-between transition-all text-left ${
                   !hasClipboard
                     ? isLight
-                      ? 'opacity-35 text-black/30 cursor-not-allowed pointer-events-none'
-                      : 'opacity-35 text-white/30 cursor-not-allowed pointer-events-none'
+                      ? 'opacity-35 text-black/30 cursor-not-allowed pointer-events-none hover:bg-transparent'
+                      : 'opacity-35 text-white/30 cursor-not-allowed pointer-events-none hover:bg-transparent'
                     : isLight
                     ? 'text-[#111827] hover:bg-black/[0.06] hover:text-[#0071e3]'
                     : 'text-white/90 hover:bg-white/[0.08] hover:text-[#007aff]'
                 }`}
-                style={{ cursor: 'var(--mac-cursor-pointer)' }}
               >
                 <span className="flex items-center gap-2.5 text-[12.5px] font-medium">
                   <LucideIcons.ClipboardPaste
                     size={14}
-                    className={`${!hasClipboard ? (isLight ? 'text-black/30' : 'text-white/30') : 'text-[#0071e3]'} flex-shrink-0`}
+                    className={`${
+                      !hasClipboard
+                        ? isLight
+                          ? 'text-black/30'
+                          : 'text-white/30'
+                        : isLight
+                        ? 'text-[#0071e3]'
+                        : 'text-[#0a84ff]'
+                    } flex-shrink-0`}
                   />
                   <span>Paste</span>
                 </span>
-                <span className={`text-[11px] font-mono pl-4 flex-shrink-0 ${isLight ? 'text-black/30' : 'text-white/30'}`}>
+                <span
+                  className={`text-[11px] font-mono pl-4 flex-shrink-0 ${
+                    !hasClipboard
+                      ? isLight
+                        ? 'text-black/20'
+                        : 'text-white/20'
+                      : isLight
+                      ? 'text-black/40'
+                      : 'text-white/40'
+                  }`}
+                >
                   Ctrl+V
                 </span>
               </button>
@@ -1522,7 +1540,7 @@ const FlowContent: React.FC = () => {
                     ? 'hover:bg-[#ff9f0a]/10'
                     : 'hover:bg-white/[0.08]'
                 }`}
-                style={{ cursor: 'var(--mac-cursor-pointer)' }}
+                style={{ cursor: 'var(--mac-cursor-default)' }}
               >
                 <span className="flex items-center gap-2.5 text-[12.5px] font-medium">
                   <LucideIcons.Unlink size={14} className="text-[#ff9f0a] flex-shrink-0" />
@@ -1545,7 +1563,7 @@ const FlowContent: React.FC = () => {
                     ? 'hover:bg-[#ff453a]/10'
                     : 'hover:bg-white/[0.08]'
                 }`}
-                style={{ cursor: 'var(--mac-cursor-pointer)' }}
+                style={{ cursor: 'var(--mac-cursor-default)' }}
               >
                 <span className="flex items-center gap-2.5 text-[12.5px] font-medium">
                   <LucideIcons.Trash2 size={14} className="text-[#ff453a] flex-shrink-0" />
@@ -1565,18 +1583,43 @@ const FlowContent: React.FC = () => {
                 pasteAt(contextMenu.flowPos);
                 setContextMenu(null);
               }}
-              style={{ cursor: 'var(--mac-cursor-pointer)' }}
+              style={{ cursor: hasClipboard ? 'var(--mac-cursor-default)' : 'not-allowed' }}
               className={`w-full px-3 py-1.5 rounded-lg flex items-center justify-between transition-all text-left ${
-                isLight
+                !hasClipboard
+                  ? isLight
+                    ? 'opacity-35 text-black/30 cursor-not-allowed pointer-events-none hover:bg-transparent'
+                    : 'opacity-35 text-white/30 cursor-not-allowed pointer-events-none hover:bg-transparent'
+                  : isLight
                   ? 'text-[#111827] hover:bg-black/[0.06] hover:text-[#0071e3]'
                   : 'text-white/90 hover:bg-white/[0.08] hover:text-[#007aff]'
               }`}
             >
               <span className="flex items-center gap-2.5 text-[12.5px] font-medium">
-                <LucideIcons.ClipboardPaste size={14} className="text-[#0071e3] flex-shrink-0" />
+                <LucideIcons.ClipboardPaste
+                  size={14}
+                  className={`${
+                    !hasClipboard
+                      ? isLight
+                        ? 'text-black/30'
+                        : 'text-white/30'
+                      : isLight
+                      ? 'text-[#0071e3]'
+                      : 'text-[#0a84ff]'
+                  } flex-shrink-0`}
+                />
                 <span>Paste Here</span>
               </span>
-              <span className={`text-[11px] font-mono pl-4 flex-shrink-0 ${isLight ? 'text-black/40' : 'text-white/40'}`}>
+              <span
+                className={`text-[11px] font-mono pl-4 flex-shrink-0 ${
+                  !hasClipboard
+                    ? isLight
+                      ? 'text-black/20'
+                      : 'text-white/20'
+                    : isLight
+                    ? 'text-black/40'
+                    : 'text-white/40'
+                }`}
+              >
                 Ctrl+V
               </span>
             </button>
