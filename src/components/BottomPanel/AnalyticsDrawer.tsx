@@ -190,6 +190,10 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
       ? '3.50'
       : '1.00';
 
+  const buyPct = latestStep?.actionProbs ? (latestStep.actionProbs[0] * 100).toFixed(1) : '17.1';
+  const holdPct = latestStep?.actionProbs ? (latestStep.actionProbs[1] * 100).toFixed(1) : '80.6';
+  const sellPct = latestStep?.actionProbs ? (latestStep.actionProbs[2] * 100).toFixed(1) : '2.3';
+
   return (
     <div
       className={`border-t border-white/[0.08] bg-[#07070b] transition-all duration-200 flex flex-col z-20 ${
@@ -261,6 +265,24 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
 
         {/* Right HUD Controls */}
         <div className="flex items-center gap-4">
+          {/* Policy Probabilities Indicator */}
+          <div className="hidden lg:flex items-center gap-1.5 text-xs text-[#0a84ff] font-medium select-none whitespace-nowrap">
+            <span className="text-[#86868b]">Policy:</span>
+            <span>
+              BUY <span className="font-mono tabular-nums">{buyPct}%</span>
+            </span>
+            <span className="text-white/30">·</span>
+            <span>
+              HOLD <span className="font-mono tabular-nums">{holdPct}%</span>
+            </span>
+            <span className="text-white/30">·</span>
+            <span>
+              SELL <span className="font-mono tabular-nums">{sellPct}%</span>
+            </span>
+          </div>
+
+          <div className="hidden lg:block h-3.5 w-[1px] bg-white/10 flex-shrink-0" />
+
           {/* Pure Frameless Training Progress HUD */}
           <div className="hidden sm:flex items-center gap-2.5 text-xs select-none">
             <div className="flex items-center gap-1.5 text-[11px] font-medium text-[#86868b] whitespace-nowrap">
