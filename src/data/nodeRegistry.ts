@@ -29,11 +29,11 @@ export interface NodeItem {
 }
 
 export const GROUPS: NodeGroup[] = [
-  { id: 'stage1', label: '1. Data Ingestion', color: '#38bdf8' },
-  { id: 'stage2', label: '2. Feature Engineering', color: '#ff9f0a' },
-  { id: 'stage3', label: '3. Deep RL Agent', color: '#bf5af2' },
-  { id: 'stage4', label: '4. Risk & Guardrails', color: '#ff453a' },
-  { id: 'stage5', label: '5. Execution & MT5', color: '#30d158' },
+  { id: 'stage1', label: 'Data Ingestion', color: '#38bdf8' },
+  { id: 'stage2', label: 'Feature Engineering', color: '#ff9f0a' },
+  { id: 'stage3', label: 'Deep RL Agent', color: '#bf5af2' },
+  { id: 'stage4', label: 'Risk & Guardrails', color: '#ff453a' },
+  { id: 'stage5', label: 'Execution & MT5', color: '#30d158' },
   { id: 'trainer', label: 'Trainer Engine', color: '#6366f1' },
   { id: 'qc', label: 'Quality Control', color: '#10b981' },
   { id: 'tournament', label: 'Tournament Arena', color: '#f59e0b' },

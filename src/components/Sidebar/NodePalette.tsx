@@ -140,10 +140,6 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
                     {group.label}
                   </span>
                 </div>
-
-                <span className="text-[10px] font-medium text-[#636366]">
-                  {matchingNodes.length}
-                </span>
               </div>
 
               {/*  Child Items (Mid Dot for Draggable Nodes) */}
