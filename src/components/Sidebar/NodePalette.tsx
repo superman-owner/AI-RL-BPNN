@@ -144,9 +144,9 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
                 </div>
               </div>
 
-              {/*  Child Items (h-[18px]: -50% Row Height, mt-2 gap) */}
+              {/*  Child Items (Mid Dot aligns directly under first letter of Header) */}
               {isExpanded && (
-                <div className="mt-2 space-y-1.5 pl-4">
+                <div className="mt-2 space-y-1.5 pl-[36px]">
                   {matchingNodes.map((node) => {
                     const isNodeHovered = hoveredNode === node.type;
 
@@ -158,10 +158,10 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
                         onMouseEnter={() => setHoveredNode(node.type)}
                         onMouseLeave={() => setHoveredNode(null)}
                         title="Drag onto canvas to add module"
-                        className="h-[18px] px-1 flex items-center justify-between cursor-grab transition-colors"
+                        className="h-[18px] flex items-center justify-between cursor-grab transition-colors pr-1"
                       >
-                        {/* Left: Mid Dot (·) + Label */}
-                        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                        {/* Left: Mid Dot (·) directly aligned under Header text */}
+                        <div className="flex items-center gap-2 min-w-0 flex-1">
                           <span
                             className={`text-[15px] font-bold leading-none select-none transition-colors flex-shrink-0 ${
                               isNodeHovered ? 'text-white' : 'text-[#71717a]'
