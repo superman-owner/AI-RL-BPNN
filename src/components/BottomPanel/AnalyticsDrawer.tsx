@@ -116,27 +116,30 @@ const MiniRadialGauge: React.FC<MiniRadialGaugeProps> = ({
         </div>
       </div>
 
-      {/*  Gauge Value & Label Cluster */}
+      {/*  Apple SF Pro Gauge Value & Label Cluster */}
       <div
-        className={`font-mono font-bold tracking-tight text-white z-10 leading-none ${
-          isMaximized ? 'text-lg mt-2 mb-0.5' : 'text-xs mt-1 mb-0.5'
+        className={`font-black tracking-tight leading-tight z-10 transition-all ${
+          isMaximized ? 'text-2xl mt-2 mb-0.5' : 'text-base mt-1.5 mb-0.5'
         }`}
+        style={{ color, fontFamily: 'var(--font-sans)' }}
       >
         {value}
       </div>
 
       <div
-        className={`font-semibold text-white/80 z-10 tracking-tight leading-none ${
-          isMaximized ? 'text-xs mb-0.5' : 'text-[10px] mb-0.5'
+        className={`font-bold uppercase tracking-wider text-[#86868b] z-10 leading-tight ${
+          isMaximized ? 'text-xs mb-0.5' : 'text-[9px] mb-0.5'
         }`}
+        style={{ fontFamily: 'var(--font-sans)' }}
       >
         {label}
       </div>
 
       <div
-        className={`font-mono text-[#86868b] z-10 truncate max-w-full px-1 ${
-          isMaximized ? 'text-[10px]' : 'text-[8px]'
+        className={`font-medium text-[#636366] z-10 truncate max-w-full px-1 leading-tight ${
+          isMaximized ? 'text-[11px]' : 'text-[9px]'
         }`}
+        style={{ fontFamily: 'var(--font-sans)' }}
       >
         {sublabel}
       </div>
