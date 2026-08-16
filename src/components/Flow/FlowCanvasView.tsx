@@ -1255,96 +1255,155 @@ const FlowContent: React.FC = () => {
             left: Math.min(contextMenu.x, window.innerWidth - 240),
             zIndex: 100,
             minWidth: '220px',
-            backgroundColor: isLight ? '#ffffff' : '#08080c',
-            padding: '8px 6px',
+            backgroundColor: isLight ? 'rgba(255, 255, 255, 0.96)' : 'rgba(18, 18, 26, 0.96)',
+            backdropFilter: 'blur(28px)',
+            WebkitBackdropFilter: 'blur(28px)',
+            padding: '6px',
+            boxShadow: isLight
+              ? '0 16px 40px rgba(0, 0, 0, 0.14), 0 0 0 1px rgba(0, 0, 0, 0.1)'
+              : '0 24px 60px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.14)',
           }}
-          className={`rounded-xl shadow-2xl text-xs select-none animate-in fade-in zoom-in-95 duration-100 flex flex-col gap-1 ${
-            isLight ? 'border border-black/[0.12] text-[#1d1d1f]' : 'border border-white/[0.14] text-slate-200'
+          className={`rounded-2xl text-xs select-none animate-in fade-in zoom-in-95 duration-100 flex flex-col gap-0.5 ${
+            isLight ? 'text-[#111827]' : 'text-slate-200'
           }`}
           onClick={(e) => e.stopPropagation()}
         >
           {contextMenu.targetNodeId ? (
             <>
+              {/* Duplicate */}
               <button
                 onClick={() => {
                   duplicateNodes();
                   setContextMenu(null);
                 }}
-                className="w-full px-3 py-1.5 rounded-lg flex items-center justify-between bg-transparent text-white/80 hover:text-[#ffd60a] hover:drop-shadow-[0_0_8px_rgba(255,214,10,0.85)] transition-all cursor-pointer text-left"
+                style={{ cursor: 'var(--mac-cursor-pointer)' }}
+                className={`w-full px-3 py-1.5 rounded-lg flex items-center justify-between transition-all text-left ${
+                  isLight
+                    ? 'text-[#111827] hover:bg-black/[0.06] hover:text-[#0071e3]'
+                    : 'text-white/90 hover:bg-white/[0.08] hover:text-[#ffd60a]'
+                }`}
               >
-                <span className="flex items-center gap-2.5 text-[12px] font-medium">
-                  <LucideIcons.CopyPlus size={13} className="text-[#ffd60a] flex-shrink-0" />
+                <span className="flex items-center gap-2.5 text-[12.5px] font-medium">
+                  <LucideIcons.CopyPlus size={14} className="text-[#ffd60a] flex-shrink-0" />
                   <span>Duplicate</span>
                 </span>
-                <span className="text-[11px] text-white/40 font-mono pl-4 flex-shrink-0">Ctrl+D</span>
+                <span className={`text-[11px] font-mono pl-4 flex-shrink-0 ${isLight ? 'text-black/40' : 'text-white/40'}`}>
+                  Ctrl+D
+                </span>
               </button>
+
+              {/* Copy */}
               <button
                 onClick={() => {
                   copyNodes();
                   setContextMenu(null);
                 }}
-                className="w-full px-3 py-1.5 rounded-lg flex items-center justify-between bg-transparent text-white/80 hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.9)] transition-all cursor-pointer text-left"
+                style={{ cursor: 'var(--mac-cursor-pointer)' }}
+                className={`w-full px-3 py-1.5 rounded-lg flex items-center justify-between transition-all text-left ${
+                  isLight
+                    ? 'text-[#111827] hover:bg-black/[0.06] hover:text-[#0071e3]'
+                    : 'text-white/90 hover:bg-white/[0.08] hover:text-white'
+                }`}
               >
-                <span className="flex items-center gap-2.5 text-[12px] font-medium">
-                  <LucideIcons.Copy size={13} className="text-white/70 flex-shrink-0" />
+                <span className="flex items-center gap-2.5 text-[12.5px] font-medium">
+                  <LucideIcons.Copy size={14} className={isLight ? 'text-[#4b5563] flex-shrink-0' : 'text-white/70 flex-shrink-0'} />
                   <span>Copy</span>
                 </span>
-                <span className="text-[11px] text-white/40 font-mono pl-4 flex-shrink-0">Ctrl+C</span>
+                <span className={`text-[11px] font-mono pl-4 flex-shrink-0 ${isLight ? 'text-black/40' : 'text-white/40'}`}>
+                  Ctrl+C
+                </span>
               </button>
+
+              {/* Cut */}
               <button
                 onClick={() => {
                   cutNodes();
                   setContextMenu(null);
                 }}
-                className="w-full px-3 py-1.5 rounded-lg flex items-center justify-between bg-transparent text-white/80 hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.9)] transition-all cursor-pointer text-left"
+                style={{ cursor: 'var(--mac-cursor-pointer)' }}
+                className={`w-full px-3 py-1.5 rounded-lg flex items-center justify-between transition-all text-left ${
+                  isLight
+                    ? 'text-[#111827] hover:bg-black/[0.06] hover:text-[#0071e3]'
+                    : 'text-white/90 hover:bg-white/[0.08] hover:text-white'
+                }`}
               >
-                <span className="flex items-center gap-2.5 text-[12px] font-medium">
-                  <LucideIcons.Scissors size={13} className="text-white/70 flex-shrink-0" />
+                <span className="flex items-center gap-2.5 text-[12.5px] font-medium">
+                  <LucideIcons.Scissors size={14} className={isLight ? 'text-[#4b5563] flex-shrink-0' : 'text-white/70 flex-shrink-0'} />
                   <span>Cut</span>
                 </span>
-                <span className="text-[11px] text-white/40 font-mono pl-4 flex-shrink-0">Ctrl+X</span>
+                <span className={`text-[11px] font-mono pl-4 flex-shrink-0 ${isLight ? 'text-black/40' : 'text-white/40'}`}>
+                  Ctrl+X
+                </span>
               </button>
-              <div className="my-0.5 border-t border-white/[0.08] mx-2" />
+
+              {/* Divider */}
+              <div className={`my-1 border-t mx-2 ${isLight ? 'border-black/[0.08]' : 'border-white/[0.08]'}`} />
+
+              {/* Disconnect */}
               <button
                 onClick={() => {
                   disconnectNodes();
                   setContextMenu(null);
                 }}
-                className="w-full px-3 py-1.5 rounded-lg flex items-center justify-between bg-transparent text-[#ff9f0a]/90 hover:text-[#ff9f0a] hover:drop-shadow-[0_0_8px_rgba(255,159,10,0.85)] transition-all cursor-pointer text-left"
+                style={{ cursor: 'var(--mac-cursor-pointer)' }}
+                className={`w-full px-3 py-1.5 rounded-lg flex items-center justify-between transition-all text-left text-[#ff9f0a] ${
+                  isLight
+                    ? 'hover:bg-[#ff9f0a]/10'
+                    : 'hover:bg-white/[0.08]'
+                }`}
               >
-                <span className="flex items-center gap-2.5 text-[12px] font-medium">
-                  <LucideIcons.Unlink size={13} className="text-[#ff9f0a] flex-shrink-0" />
+                <span className="flex items-center gap-2.5 text-[12.5px] font-medium">
+                  <LucideIcons.Unlink size={14} className="text-[#ff9f0a] flex-shrink-0" />
                   <span>Disconnect Edges</span>
                 </span>
-                <span className="text-[11px] text-white/40 font-mono pl-4 flex-shrink-0">Ctrl+K</span>
+                <span className={`text-[11px] font-mono pl-4 flex-shrink-0 ${isLight ? 'text-[#ff9f0a]/60' : 'text-[#ff9f0a]/60'}`}>
+                  Ctrl+K
+                </span>
               </button>
+
+              {/* Delete */}
               <button
                 onClick={() => {
                   deleteNodes();
                   setContextMenu(null);
                 }}
-                className="w-full px-3 py-1.5 rounded-lg flex items-center justify-between bg-transparent text-[#ff453a]/90 hover:text-[#ff453a] hover:drop-shadow-[0_0_8px_rgba(255,69,58,0.85)] transition-all cursor-pointer text-left"
+                style={{ cursor: 'var(--mac-cursor-pointer)' }}
+                className={`w-full px-3 py-1.5 rounded-lg flex items-center justify-between transition-all text-left text-[#ff453a] ${
+                  isLight
+                    ? 'hover:bg-[#ff453a]/10'
+                    : 'hover:bg-white/[0.08]'
+                }`}
               >
-                <span className="flex items-center gap-2.5 text-[12px] font-medium">
-                  <LucideIcons.Trash2 size={13} className="text-[#ff453a] flex-shrink-0" />
+                <span className="flex items-center gap-2.5 text-[12.5px] font-medium">
+                  <LucideIcons.Trash2 size={14} className="text-[#ff453a] flex-shrink-0" />
                   <span>Delete</span>
                 </span>
-                <span className="text-[11px] text-white/40 font-mono pl-4 flex-shrink-0">Del</span>
+                <span className={`text-[11px] font-mono pl-4 flex-shrink-0 ${isLight ? 'text-[#ff453a]/60' : 'text-[#ff453a]/60'}`}>
+                  Del
+                </span>
               </button>
             </>
           ) : (
+            /* Paste Here */
             <button
               onClick={() => {
                 pasteAt(contextMenu.flowPos);
                 setContextMenu(null);
               }}
-              className="w-full px-3 py-1.5 rounded-lg flex items-center justify-between bg-transparent text-white/80 hover:text-[#007aff] hover:drop-shadow-[0_0_8px_rgba(0,122,255,0.85)] transition-all cursor-pointer text-left"
+              style={{ cursor: 'var(--mac-cursor-pointer)' }}
+              className={`w-full px-3 py-1.5 rounded-lg flex items-center justify-between transition-all text-left ${
+                isLight
+                  ? 'text-[#111827] hover:bg-black/[0.06] hover:text-[#0071e3]'
+                  : 'text-white/90 hover:bg-white/[0.08] hover:text-[#007aff]'
+              }`}
             >
-              <span className="flex items-center gap-2.5 text-[12px] font-medium">
-                <LucideIcons.ClipboardPaste size={13} className="text-[#007aff] flex-shrink-0" />
+              <span className="flex items-center gap-2.5 text-[12.5px] font-medium">
+                <LucideIcons.ClipboardPaste size={14} className="text-[#0071e3] flex-shrink-0" />
                 <span>Paste Here</span>
               </span>
-              <span className="text-[11px] text-white/40 font-mono pl-4 flex-shrink-0">Ctrl+V</span>
+              <span className={`text-[11px] font-mono pl-4 flex-shrink-0 ${isLight ? 'text-black/40' : 'text-white/40'}`}>
+                Ctrl+V
+              </span>
             </button>
           )}
         </div>
