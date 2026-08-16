@@ -16,15 +16,15 @@
   /*  Official Apple macOS Monterey/Ventura/Sonoma Cursors Pack */
   --mac-cursor-default: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cfilter id='s' x='-20%25' y='-20%25' width='140%25' height='140%25'%3E%3CfeDropShadow dx='1' dy='2' stdDeviation='1.2' flood-color='%23000000' flood-opacity='0.35'/%3E%3C/filter%3E%3Cg filter='url(%23s)'%3E%3Cpath d='M6 3 L6 24.5 L11.8 19 L16.8 28.5 L20.5 26.8 L15.5 17.5 L23 17.5 Z' fill='%23000000' stroke='%23ffffff' stroke-width='1.5' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E") 6 3, auto;
   
-  --mac-cursor-pointer: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cfilter id='s' x='-20%25' y='-20%25' width='140%25' height='140%25'%3E%3CfeDropShadow dx='1' dy='2' stdDeviation='1.2' flood-color='%23000000' flood-opacity='0.35'/%3E%3C/filter%3E%3Cg filter='url(%23s)'%3E%3Cpath d='M10 3 A 2.5 2.5 0 0 0 7.5 5.5 L 7.5 15.5 L 5.5 13.5 A 2.5 2.5 0 0 0 2 17 L 9 24 A 8 8 0 0 0 14.5 26.5 L 20 26.5 A 6 6 0 0 0 26 20.5 L 26 13 A 2.5 2.5 0 0 0 23.5 10.5 A 2.5 2.5 0 0 0 21 13 L 21 11 A 2.5 2.5 0 0 0 18.5 8.5 A 2.5 2.5 0 0 0 16 11 L 16 9 A 2.5 2.5 0 0 0 13.5 6.5 A 2.5 2.5 0 0 0 11 9 L 11 5.5 A 2.5 2.5 0 0 0 8.5 3 Z' fill='%23ffffff' stroke='%23000000' stroke-width='1.5' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E") 8 3, pointer;
+  /*  2-Cursor System: Pointing finger & Open hand unified to Mac Arrow Cursor */
+  --mac-cursor-pointer: var(--mac-cursor-default);
+  --mac-cursor-grab: var(--mac-cursor-default);
+  --mac-cursor-crosshair: var(--mac-cursor-default);
 
-  --mac-cursor-grab: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cfilter id='s' x='-20%25' y='-20%25' width='140%25' height='140%25'%3E%3CfeDropShadow dx='1' dy='2' stdDeviation='1.2' flood-color='%23000000' flood-opacity='0.35'/%3E%3C/filter%3E%3Cg filter='url(%23s)'%3E%3Cpath d='M22 14 L 22 7 A 2 2 0 0 0 20 5 A 2 2 0 0 0 18 7 L 18 11.5 A 2 2 0 0 0 16 9.5 A 2 2 0 0 0 14 11.5 L 14 11 A 2 2 0 0 0 12 9 A 2 2 0 0 0 10 11 L 10 10.5 A 2 2 0 0 0 8 8.5 A 2 2 0 0 0 6 10.5 L 6 18.5 A 7 7 0 0 0 13 25.5 L 15 25.5 A 7 7 0 0 0 22 18.5 L 22 14 Z' fill='%23ffffff' stroke='%23000000' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/g%3E%3C/svg%3E") 14 14, grab;
-
+  /*  Mac Grabbing Closed Fist (มือกำ) */
   --mac-cursor-grabbing: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cfilter id='s' x='-20%25' y='-20%25' width='140%25' height='140%25'%3E%3CfeDropShadow dx='1' dy='2' stdDeviation='1.2' flood-color='%23000000' flood-opacity='0.35'/%3E%3C/filter%3E%3Cg filter='url(%23s)'%3E%3Cpath d='M8 13 L 8 9 A 2 2 0 0 1 10 7 L 18 7 A 2 2 0 0 1 20 9 L 20 13 A 4 4 0 0 1 24 17 L 24 18 A 6 6 0 0 1 18 24 L 10 24 A 6 6 0 0 1 4 18 L 4 15 A 4 4 0 0 1 8 13 Z' fill='%23ffffff' stroke='%23000000' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/g%3E%3C/svg%3E") 14 14, grabbing;
 
   --mac-cursor-text: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M12 6 h8 M16 6 v20 M12 26 h8' fill='none' stroke='%23000000' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M12 6 h8 M16 6 v20 M12 26 h8' fill='none' stroke='%23ffffff' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") 16 16, text;
-
-  --mac-cursor-crosshair: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M12 2v6m0 8v6M2 12h6m8 0h6' stroke='%23000000' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M12 2v6m0 8v6M2 12h6m8 0h6' stroke='%23ffffff' stroke-width='1.25' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='12' r='1.5' fill='%23000000'/%3E%3C/svg%3E") 12 12, crosshair;
 }
 
 *, *::before, *::after {
@@ -37,40 +37,19 @@
   font-feature-settings: "tnum" 1, "cv01" 1, "cv02" 1;
 }
 
-html, body, #root {
-  width: 100vw;
-  height: 100vh;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  background-color: #000000;
-  font-family: var(--font-apple-text);
-  font-weight: 500; /* iPhone Text Medium standard */
-  color: #ffffff;
-  letter-spacing: -0.015em;
-  font-variant-numeric: tabular-nums;
+/*  Everything uses the sleek Apple macOS Arrow Cursor by default (Buttons, links, text, cards, panes) */
+html, body, #root,
+button, button *, a, a *, [role="button"], [role="button"] *, .cursor-pointer, [onclick], input[type="checkbox"], input[type="radio"], select, option,
+label, span, p, h1, h2, h3, h4, h5, h6, div, aside, header, footer, section, nav, article, .cursor-default, [data-cursor="default"], .cursor-grab {
   cursor: var(--mac-cursor-default) !important;
 }
 
-/*  Standard Non-Interactive Text & Structural Elements lock to Mac Default Arrow Cursor */
-label, span, p, h1, h2, h3, h4, h5, h6, div, aside, header, footer, section, nav, article, .cursor-default, [data-cursor="default"] {
-  cursor: var(--mac-cursor-default);
-}
-
-/*  Interactive Clickable Elements lock to Mac Pointer */
-button, button *, a, a *, [role="button"], [role="button"] *, .cursor-pointer, [onclick], input[type="checkbox"], input[type="radio"], select, option {
-  cursor: var(--mac-cursor-pointer) !important;
-}
-
-/*  Editable Text Inputs lock to Mac Text I-Beam Cursor */
+/*  Editable Text Inputs use Mac Text I-Beam Cursor */
 input[type="text"], input[type="number"], input[type="password"], input[type="search"], input[type="email"], textarea, [contenteditable="true"], .cursor-text {
   cursor: var(--mac-cursor-text) !important;
 }
 
-.cursor-grab {
-  cursor: var(--mac-cursor-grab) !important;
-}
-
+/*  Grabbing State: Mac Closed Fist Cursor */
 .cursor-grabbing,
 .active\:cursor-grabbing:active {
   cursor: var(--mac-cursor-grabbing) !important;
@@ -458,41 +437,31 @@ input[type='number'] {
 }
 
 /*  Official Apple macOS Cursors for ReactFlow */
-.react-flow__pane {
-  cursor: var(--mac-cursor-crosshair) !important;
-}
-.react-flow__pane.dragging {
-  cursor: var(--mac-cursor-grabbing) !important;
-}
+/*  Official Apple macOS 2-Cursor System for ReactFlow */
+.react-flow__pane,
 .react-flow__pane.selection,
 .react-flow__selection,
-.react-flow__nodesselection-rect {
-  cursor: var(--mac-cursor-crosshair) !important;
-}
-.react-flow__node {
-  cursor: var(--mac-cursor-grab) !important;
-}
-.react-flow__node.dragging,
-.react-flow__node.dragging * {
-  cursor: var(--mac-cursor-grabbing) !important;
-  opacity: 0.94;
-  filter: drop-shadow(0 15px 30px rgba(0, 113, 227, 0.35)) !important;
-}
-.react-flow__handle {
-  cursor: var(--mac-cursor-crosshair) !important;
-}
-
-/*  Seamless Edge Cursor: Matches Canvas Selection/Crosshair so touching edges never flickers */
+.react-flow__nodesselection-rect,
+.react-flow__node,
+.react-flow__handle,
 .react-flow__edge,
 .react-flow__edge *,
 .react-flow__edge-path,
 .react-flow__edge-interaction,
 .react-flow__connection-path,
 .react-flow__edges {
-  cursor: var(--mac-cursor-crosshair) !important;
+  cursor: var(--mac-cursor-default) !important;
 }
 
-/*  Active Canvas Selection State (คลุม Canvas) - 100% Crosshair across everything */
+.react-flow__pane.dragging,
+.react-flow__node.dragging,
+.react-flow__node.dragging * {
+  cursor: var(--mac-cursor-grabbing) !important;
+  opacity: 0.94;
+  filter: drop-shadow(0 15px 30px rgba(0, 113, 227, 0.35)) !important;
+}
+
+/*  Active Canvas Selection State (คลุม Canvas) - Mac Arrow Cursor */
 html.is-selecting-canvas,
 html.is-selecting-canvas *,
 body.is-selecting-canvas,
@@ -512,7 +481,7 @@ body.is-selecting-canvas .react-flow__selection,
 body.is-selecting-canvas .react-flow__selection *,
 body.is-selecting-canvas .react-flow__viewport,
 body.is-selecting-canvas .react-flow__viewport * {
-  cursor: var(--mac-cursor-crosshair) !important;
+  cursor: var(--mac-cursor-default) !important;
 }
 
 /*  Absolute Highest Specificity: Global Dragging State across Entire Window (Grabbing Fist) */
