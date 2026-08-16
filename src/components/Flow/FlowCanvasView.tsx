@@ -275,7 +275,7 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
     }
   };
 
-  // Close dropdown on click outside or scroll (Allows 1-click opening of another dropdown)
+  // Close dropdown on click outside anywhere (including on nodes) or scroll
   useEffect(() => {
     if (!isOpen) return;
     const handleOutsidePointerDown = (e: PointerEvent | MouseEvent) => {
@@ -290,10 +290,12 @@ const InspectorTextField: React.FC<InspectorTextFieldProps> = ({
     };
 
     const handleScroll = () => onToggleOpen?.(false);
-    window.addEventListener('pointerdown', handleOutsidePointerDown);
+    window.addEventListener('pointerdown', handleOutsidePointerDown, { capture: true });
+    window.addEventListener('mousedown', handleOutsidePointerDown, { capture: true });
     window.addEventListener('scroll', handleScroll, true);
     return () => {
-      window.removeEventListener('pointerdown', handleOutsidePointerDown);
+      window.removeEventListener('pointerdown', handleOutsidePointerDown, { capture: true });
+      window.removeEventListener('mousedown', handleOutsidePointerDown, { capture: true });
       window.removeEventListener('scroll', handleScroll, true);
     };
   }, [isOpen, onToggleOpen]);
@@ -510,7 +512,8 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
   useEffect(() => {
     currentPosRef.current = position;
     if (containerRef.current && !isDraggingRef.current) {
-      containerRef.current.style.transform = `translate3d(${position.x}px, ${position.y}px, 0)`;
+      containerRef.current.style.left = `${position.x}px`;
+      containerRef.current.style.top = `${position.y}px`;
     }
   }, [position.x, position.y]);
 
@@ -542,9 +545,10 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
       const nextY = nextLocal.y - dragRef.current.dy;
       currentPosRef.current = { x: nextX, y: nextY };
 
-      // 🚀 GPU-Direct Hardware Acceleration: Zero layout thrashing / 120 FPS
+      // Ultra-sharp vector positioning: Zero blurriness on zoom
       if (containerRef.current) {
-        containerRef.current.style.transform = `translate3d(${nextX}px, ${nextY}px, 0)`;
+        containerRef.current.style.left = `${nextX}px`;
+        containerRef.current.style.top = `${nextY}px`;
       }
     };
 
@@ -576,10 +580,8 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
       ref={containerRef}
       style={{
         position: 'absolute',
-        left: 0,
-        top: 0,
-        transform: `translate3d(${position.x}px, ${position.y}px, 0)`,
-        willChange: 'transform',
+        left: `${position.x}px`,
+        top: `${position.y}px`,
         width: 310,
         backgroundColor: 'rgba(22, 22, 28, 0.96)',
         backdropFilter: 'blur(24px)',
@@ -588,6 +590,9 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
         padding: '14px 16px 12px 16px',
         pointerEvents: 'all',
         boxShadow: '0 24px 48px rgba(0, 0, 0, 0.6), 0 1px 0 rgba(255, 255, 255, 0.08) inset',
+        WebkitFontSmoothing: 'antialiased',
+        MozOsxFontSmoothing: 'grayscale',
+        textRendering: 'geometricPrecision',
       }}
       className="border border-white/[0.12] rounded-2xl text-xs select-none nodrag nopan nowheel cursor-default pointer-events-auto"
       onPointerDown={(e) => e.stopPropagation()}
