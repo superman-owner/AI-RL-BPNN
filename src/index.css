@@ -450,12 +450,23 @@ input[type='number'] {
   cursor: var(--mac-cursor-default) !important;
 }
 
-.react-flow__pane.dragging,
-.react-flow__node.dragging,
+.react-flow__pane.dragging {
+  cursor: var(--mac-cursor-grabbing) !important;
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+.react-flow__node.dragging {
+  cursor: var(--mac-cursor-grabbing) !important;
+  z-index: 9999 !important;
+  opacity: 1 !important;
+  filter: drop-shadow(0 14px 32px rgba(0, 113, 227, 0.5)) drop-shadow(0 0 16px rgba(0, 113, 227, 0.35)) !important;
+}
+
 .react-flow__node.dragging * {
   cursor: var(--mac-cursor-grabbing) !important;
-  opacity: 0.94;
-  filter: drop-shadow(0 15px 30px rgba(0, 113, 227, 0.35)) !important;
+  opacity: 1 !important;
+  filter: none !important;
 }
 
 /*  Active Canvas Selection State (คลุม Canvas) - Mac Arrow Cursor */
