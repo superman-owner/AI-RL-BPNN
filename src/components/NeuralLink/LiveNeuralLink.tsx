@@ -42,28 +42,6 @@ interface LiveNeuralLinkProps {
   cameraResetTrigger?: number;
 }
 
-//  Apple-style Rounded Rectangle helper
-function drawRoundedRect(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  radius: number
-) {
-  ctx.beginPath();
-  ctx.moveTo(x + radius, y);
-  ctx.lineTo(x + width - radius, y);
-  ctx.arcTo(x + width, y, x + width, y + radius, radius);
-  ctx.lineTo(x + width, y + height - radius);
-  ctx.arcTo(x + width, y + height, x + width - radius, y + height, radius);
-  ctx.lineTo(x + radius, y + height);
-  ctx.arcTo(x, y + height, x, y + height - radius, radius);
-  ctx.lineTo(x, y + radius);
-  ctx.arcTo(x, y, x + radius, y, radius);
-  ctx.closePath();
-}
-
 export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
   isTraining = true,
   latestStep = null,
@@ -515,116 +493,59 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
         ctx.arc(proj.px, proj.py, radius * 0.85, 0, Math.PI * 2);
         ctx.stroke();
 
-        //  5. Apple macOS / iOS Frosted Glass Capsule Badges for Input & Output
+        //  5. Apple macOS Frameless Typography (No Capsules / 0 Boxes)
         if (isOutput || isInput) {
           ctx.save();
-          
-          // Continuous floating-point scale
-          const smoothScale = Math.max(0.75, Math.min(1.15, proj.scale));
-          const depthAlpha = Math.max(0.4, Math.min(1.0, 1 - (proj.depth - 400) / 700));
+
+          const smoothScale = Math.max(0.8, Math.min(1.2, proj.scale));
+          const depthAlpha = Math.max(0.35, Math.min(1.0, 1 - (proj.depth - 400) / 700));
 
           if (isInput) {
-            // Input State Badges (Left Side)
-            const text = n.label;
-            const font = `600 11px -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Mono", system-ui, sans-serif`;
-            ctx.font = font;
-            const textMetrics = ctx.measureText(text);
-            const badgeWidth = textMetrics.width + 16;
-            const badgeHeight = 22;
-            const badgeX = proj.px - (radius + 8 * proj.scale) - badgeWidth * smoothScale;
-            const badgeY = proj.py - (badgeHeight * smoothScale) / 2;
+            // Input State Text (Left Side - Right Aligned with Clean Apple Typography)
+            const textOffset = radius + 10 * smoothScale;
+            const anchorX = proj.px - textOffset;
+            const anchorY = proj.py;
 
             ctx.save();
-            ctx.translate(badgeX, badgeY);
+            ctx.translate(anchorX, anchorY);
             ctx.scale(smoothScale, smoothScale);
 
-            // Frosted Pill Background
-            drawRoundedRect(ctx, 0, 0, badgeWidth, badgeHeight, 6);
-            ctx.fillStyle = 'rgba(18, 18, 28, 0.75)';
-            ctx.fill();
-            ctx.strokeStyle = `rgba(255, 255, 255, ${0.1 * depthAlpha})`;
-            ctx.lineWidth = 1;
-            ctx.stroke();
-
-            // Text Label (Muted Silver -> Crisp Apple Typography)
-            ctx.fillStyle = `rgba(220, 220, 230, ${0.85 * depthAlpha})`;
-            ctx.font = font;
+            ctx.font = '500 11.5px -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Mono", system-ui, sans-serif';
             ctx.textBaseline = 'middle';
-            ctx.textAlign = 'left';
-            ctx.fillText(text, 8, badgeHeight / 2);
+            ctx.textAlign = 'right';
+
+            // Apple Muted Silver Typography
+            ctx.fillStyle = `rgba(220, 220, 230, ${0.8 * depthAlpha})`;
+            ctx.fillText(n.label, 0, 0);
 
             ctx.restore();
           } else if (isOutput) {
-            // Output Action Badges (Right Side)
+            // Output Action Text (Right Side - Left Aligned with Apple System Colors)
             const isSelected = isSelectedAction;
-            const actionProb = currentStep ? (currentStep.actionProbs[n.neuronIdx] * 100).toFixed(1) : '33.3';
-            const actionText = `${n.label} · ${actionProb}%`;
-
-            const font = isSelected
-              ? `700 11.5px -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif`
-              : `500 10.5px -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif`;
-            
-            ctx.font = font;
-            const textMetrics = ctx.measureText(actionText);
-            const badgeWidth = textMetrics.width + 24;
-            const badgeHeight = 24;
-            const badgeX = proj.px + (radius + 8 * proj.scale);
-            const badgeY = proj.py - (badgeHeight * smoothScale) / 2;
+            const textOffset = radius + 10 * smoothScale;
+            const anchorX = proj.px + textOffset;
+            const anchorY = proj.py;
 
             ctx.save();
-            ctx.translate(badgeX, badgeY);
+            ctx.translate(anchorX, anchorY);
             ctx.scale(smoothScale, smoothScale);
 
-            // Frosted Action Pill Capsule
-            drawRoundedRect(ctx, 0, 0, badgeWidth, badgeHeight, 8);
+            ctx.textBaseline = 'middle';
+            ctx.textAlign = 'left';
+
             if (isSelected) {
-              ctx.fillStyle = n.neuronIdx === 0
-                ? 'rgba(48, 209, 88, 0.16)'
-                : n.neuronIdx === 1
-                ? 'rgba(255, 214, 10, 0.16)'
-                : 'rgba(255, 69, 58, 0.16)';
-              ctx.fill();
-
-              ctx.strokeStyle = n.neuronIdx === 0
-                ? 'rgba(48, 209, 88, 0.55)'
-                : n.neuronIdx === 1
-                ? 'rgba(255, 214, 10, 0.55)'
-                : 'rgba(255, 69, 58, 0.55)';
-              ctx.lineWidth = 1.2;
-              ctx.stroke();
-
-              // Status Active Indicator Dot
+              // Active Decision (Apple Primary Accent: Green / Amber / Red with delicate soft glow)
+              ctx.font = '700 12px -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif';
               ctx.fillStyle = coreColor;
-              ctx.beginPath();
-              ctx.arc(10, badgeHeight / 2, 3, 0, Math.PI * 2);
-              ctx.fill();
-
-              // Text (Apple System Colors)
-              ctx.fillStyle = coreColor;
-              ctx.font = font;
-              ctx.textBaseline = 'middle';
-              ctx.textAlign = 'left';
-              ctx.fillText(actionText, 18, badgeHeight / 2);
+              ctx.shadowColor = coreColor;
+              ctx.shadowBlur = 6;
+              ctx.fillText(n.label, 0, 0);
+              ctx.shadowBlur = 0;
             } else {
-              ctx.fillStyle = 'rgba(18, 18, 28, 0.6)';
-              ctx.fill();
-
-              ctx.strokeStyle = `rgba(255, 255, 255, ${0.08 * depthAlpha})`;
-              ctx.lineWidth = 1;
-              ctx.stroke();
-
-              // Inactive Indicator Dot
-              ctx.fillStyle = `rgba(255, 255, 255, ${0.2 * depthAlpha})`;
-              ctx.beginPath();
-              ctx.arc(10, badgeHeight / 2, 2.5, 0, Math.PI * 2);
-              ctx.fill();
-
-              // Inactive Muted Text
-              ctx.fillStyle = `rgba(142, 142, 147, ${0.75 * depthAlpha})`;
-              ctx.font = font;
-              ctx.textBaseline = 'middle';
-              ctx.textAlign = 'left';
-              ctx.fillText(actionText, 18, badgeHeight / 2);
+              // Inactive Action (Apple Muted Tertiary Text)
+              ctx.font = '500 11px -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif';
+              ctx.fillStyle = `rgba(142, 142, 147, ${0.45 * depthAlpha})`;
+              ctx.fillText(n.label, 0, 0);
             }
 
             ctx.restore();
