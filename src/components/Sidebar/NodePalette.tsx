@@ -115,12 +115,12 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
 
           return (
             <div key={group.id} className="space-y-1">
-              {/*  Section Header (Clean Apple Mail Style Header) */}
+              {/*  Section Header (SF Symbol on Header) */}
               <div
                 onClick={() => toggleGroup(group.id)}
-                className="px-2 py-1 flex items-center justify-between cursor-pointer rounded-[6px] hover:bg-white/[0.04] transition-colors"
+                className="px-2 py-1.5 flex items-center justify-between cursor-pointer rounded-[6px] hover:bg-white/[0.04] transition-colors"
               >
-                <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                <div className="flex items-center gap-2 min-w-0 flex-1">
                   {/* Rotating Chevron */}
                   <ChevronRight
                     size={11}
@@ -129,8 +129,14 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
                     }`}
                   />
 
+                  {/* SF Symbol on Main Header */}
+                  <GroupIcon
+                    size={14}
+                    className="text-[#0a84ff] flex-shrink-0"
+                  />
+
                   {/* Section Label */}
-                  <span className="text-[11px] font-bold text-[#86868b] uppercase tracking-wider truncate">
+                  <span className="text-[11.5px] font-bold text-[#e5e5ea] uppercase tracking-wider truncate">
                     {group.label}
                   </span>
                 </div>
@@ -140,9 +146,9 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
                 </span>
               </div>
 
-              {/*  Child Items (Mac Mail Native Spacing: 30px Row, 15px SF Symbol, 12px Gap) */}
+              {/*  Child Items (Mid Dot for Draggable Nodes) */}
               {isExpanded && (
-                <div className="space-y-0.5 pl-1.5">
+                <div className="space-y-0.5 pl-3.5">
                   {matchingNodes.map((node) => {
                     const isNodeHovered = hoveredNode === node.type;
 
@@ -160,17 +166,18 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
                             : 'text-[#d1d1d6] hover:bg-white/[0.04]'
                         }`}
                       >
-                        {/* Left: SF Symbol Icon + Label with 12px Breathing Gap */}
-                        <div className="flex items-center gap-3 min-w-0 flex-1">
-                          <GroupIcon
-                            size={15}
-                            className={`flex-shrink-0 transition-colors ${
-                              isNodeHovered ? 'text-[#0a84ff]' : 'text-[#0a84ff]/80'
+                        {/* Left: Mid Dot (·) + Label */}
+                        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                          <span
+                            className={`text-[17px] font-bold leading-none select-none transition-colors flex-shrink-0 ${
+                              isNodeHovered ? 'text-[#0a84ff]' : 'text-[#71717a]'
                             }`}
-                          />
+                          >
+                            ·
+                          </span>
                           <span
                             className={`text-[13px] tracking-tight truncate leading-tight ${
-                              isNodeHovered ? 'font-medium text-white' : 'font-normal text-[#e5e5ea]'
+                              isNodeHovered ? 'font-medium text-white' : 'font-normal text-[#d1d1d6]'
                             }`}
                           >
                             {node.label}
@@ -179,7 +186,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({ onOpenSettings }) => {
 
                         {/* Right: Subtle Add Indicator */}
                         <Plus
-                          size={13}
+                          size={12}
                           className={`flex-shrink-0 transition-opacity ${
                             isNodeHovered ? 'opacity-100 text-white' : 'opacity-0'
                           }`}
