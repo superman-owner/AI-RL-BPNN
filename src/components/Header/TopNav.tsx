@@ -143,22 +143,22 @@ export const TopNav: React.FC<TopNavProps> = ({
 
           <div className="h-3.5 w-[1px] bg-white/10 flex-shrink-0" />
 
-          {/* Live Telemetry Stats (Locked Label Positions & Right-Aligned Tabular Values) */}
+          {/* Live Telemetry Stats (Numbers tight to labels, Header start positions locked) */}
           {rlTelemetry && (
-            <div className="flex items-center gap-5 text-[11px] text-[#86868b] select-none">
-              <div className="w-[84px] inline-flex items-center justify-between flex-shrink-0">
+            <div className="flex items-center gap-4 text-[11px] text-[#86868b] select-none">
+              <div className="w-[82px] inline-flex items-center gap-1.5 flex-shrink-0">
                 <span className="text-[#86868b]">Episodes:</span>
                 <strong className="text-white tabular-nums">{rlTelemetry.episodes}</strong>
               </div>
 
-              <div className="w-[104px] inline-flex items-center justify-between flex-shrink-0">
+              <div className="w-[102px] inline-flex items-center gap-1.5 flex-shrink-0">
                 <span className="text-[#86868b]">Win Rate:</span>
                 <strong className="text-[#30d158] tabular-nums drop-shadow-[0_0_6px_rgba(48,209,88,0.5)]">
                   {typeof rlTelemetry.winRate === 'number' ? rlTelemetry.winRate.toFixed(1) : rlTelemetry.winRate}%
                 </strong>
               </div>
 
-              <div className="w-[86px] inline-flex items-center justify-between flex-shrink-0">
+              <div className="w-[84px] inline-flex items-center gap-1.5 flex-shrink-0">
                 <span className="text-[#86868b]">Sharpe:</span>
                 <strong className="text-[#00c7be] tabular-nums drop-shadow-[0_0_6px_rgba(0,199,190,0.5)]">
                   {typeof rlTelemetry.annualizedSharpe === 'number'
@@ -167,7 +167,7 @@ export const TopNav: React.FC<TopNavProps> = ({
                 </strong>
               </div>
 
-              <div className="w-[126px] inline-flex items-center justify-between flex-shrink-0">
+              <div className="w-[124px] inline-flex items-center gap-1.5 flex-shrink-0">
                 <span className="text-[#86868b]">Reward:</span>
                 <strong className="text-[#ffd60a] tabular-nums drop-shadow-[0_0_6px_rgba(255,214,10,0.5)]">
                   {typeof rlTelemetry.totalReward === 'number'
