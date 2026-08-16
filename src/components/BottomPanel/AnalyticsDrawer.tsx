@@ -725,15 +725,15 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
             >
               {/* MT5 Table Header */}
               <div className="h-8 bg-[#13131b] border-b border-white/[0.08] flex items-center text-xs font-semibold text-[#86868b] select-none flex-shrink-0">
-                <div className="w-[210px] px-3.5 border-r border-white/[0.08] flex items-center gap-1.5">
+                <div className="w-[230px] pl-6 pr-4 border-r border-white/[0.08] flex items-center gap-1.5">
                   <span>Time</span>
                 </div>
-                <div className="w-[150px] px-3.5 border-r border-white/[0.08] flex items-center">
+                <div className="w-[160px] px-4 border-r border-white/[0.08] flex items-center">
                   <span>Source</span>
                 </div>
-                <div className="flex-1 px-3.5 flex items-center justify-between">
+                <div className="flex-1 px-4 flex items-center justify-between">
                   <span>Message</span>
-                  <div className="flex items-center gap-3 text-[10px] text-[#636366]">
+                  <div className="flex items-center gap-3 text-[10px] text-[#636366] pr-4">
                     <span className="flex items-center gap-1">
                       <span className="w-1.5 h-1.5 rounded-full bg-[#30d158]" /> Real-time IPC
                     </span>
@@ -796,18 +796,18 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                       className="flex items-center min-h-[26px] py-1 hover:bg-white/[0.04] transition-colors"
                     >
                       {/* Time Column with MT5 Bullet */}
-                      <div className="w-[210px] px-3.5 border-r border-white/[0.06] text-[#d1d1d6] flex items-center gap-2 flex-shrink-0">
+                      <div className="w-[230px] pl-6 pr-4 border-r border-white/[0.06] text-[#d1d1d6] flex items-center gap-2 flex-shrink-0">
                         <span className="text-[#86868b] text-[10px] select-none">•</span>
                         <span>{timeStr}</span>
                       </div>
 
                       {/* Source Column */}
-                      <div className="w-[150px] px-3.5 border-r border-white/[0.06] text-[#a1a1aa] flex-shrink-0 truncate font-medium">
+                      <div className="w-[160px] px-4 border-r border-white/[0.06] text-[#a1a1aa] flex-shrink-0 truncate font-medium">
                         {source}
                       </div>
 
                       {/* Message Column */}
-                      <div className={`flex-1 px-3.5 ${msgColor} truncate pr-4`}>
+                      <div className={`flex-1 px-4 ${msgColor} truncate pr-6`}>
                         {message}
                       </div>
                     </div>
