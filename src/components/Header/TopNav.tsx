@@ -207,10 +207,10 @@ export const TopNav: React.FC<TopNavProps> = ({
                   }`}
                 >
                   {rlLatestStep.action === 0
-                    ? 'BUY (LONG)'
+                    ? 'BUY'
                     : rlLatestStep.action === 2
-                    ? 'SELL (SHORT)'
-                    : 'HOLD (FLAT)'}
+                    ? 'SELL'
+                    : 'HOLD'}
                 </span>
               </>
             )}

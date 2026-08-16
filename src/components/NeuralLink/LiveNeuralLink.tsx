@@ -93,7 +93,7 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
     const synapses: BPSynapse[] = [];
 
     const inputLabels = ['Ret (5d)', 'Ret (10d)', 'Ret (20d)', 'Vol (10d)', 'Dist SMA', 'Position'];
-    const outputLabels = ['BUY (LONG)', 'HOLD (FLAT)', 'SELL (SHORT)'];
+    const outputLabels = ['BUY', 'HOLD', 'SELL'];
 
     const layerSpacingX = 240;
     const originX = -((layerSizes.length - 1) * layerSpacingX) / 2;
