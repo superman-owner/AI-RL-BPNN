@@ -53,9 +53,9 @@ export const TopNav: React.FC<TopNavProps> = ({
           </span>
         </div>
 
-        {/*  Vertical Divider right next to Brand on the Left */}
+        {/*  Vertical Divider with perfectly balanced symmetrical spacing on both sides */}
         <div
-          style={{ marginLeft: '6px' }}
+          style={{ marginRight: '14px' }}
           className={`h-4 w-[1px] flex-shrink-0 ${isLight ? 'bg-black/15' : 'bg-white/15'}`}
         />
       </div>
