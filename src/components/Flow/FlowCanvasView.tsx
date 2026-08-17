@@ -739,10 +739,17 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
             padding: 0,
             cursor: 'var(--mac-cursor-pointer)',
           }}
-          className="text-[12px] text-[#0a84ff] hover:text-[#409cff] flex items-center gap-1.5 font-medium transition-colors duration-150 pointer-events-auto nodrag nopan select-none group"
+          className={`text-[12px] flex items-center gap-1.5 font-medium transition-colors duration-150 pointer-events-auto nodrag nopan select-none group ${
+            isLight
+              ? 'text-[#111827] hover:text-[#28cd41]'
+              : 'text-white/90 hover:text-[#30d158]'
+          }`}
         >
-          <LucideIcons.Check size={13} className="text-[#0a84ff] group-hover:text-[#409cff] transition-colors duration-150" />
-          <span>Update</span>
+          <LucideIcons.Check
+            size={13}
+            className={`${isLight ? 'text-[#28cd41]' : 'text-[#30d158]'} flex-shrink-0 group-hover:drop-shadow-[0_0_6px_rgba(48,209,88,0.6)] transition-colors duration-150`}
+          />
+          <span className="group-hover:drop-shadow-[0_0_6px_rgba(48,209,88,0.6)]">Update</span>
         </button>
         <button
           type="button"
@@ -760,10 +767,17 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
             padding: 0,
             cursor: 'var(--mac-cursor-pointer)',
           }}
-          className="text-[12px] text-[#ff453a] hover:text-[#ff6961] flex items-center gap-1.5 font-medium transition-colors duration-150 pointer-events-auto nodrag nopan select-none group"
+          className={`text-[12px] flex items-center gap-1.5 font-medium transition-colors duration-150 pointer-events-auto nodrag nopan select-none group ${
+            isLight
+              ? 'text-[#111827] hover:text-[#ff453a]'
+              : 'text-white/90 hover:text-[#ff453a]'
+          }`}
         >
-          <LucideIcons.Trash2 size={13} className="text-[#ff453a] group-hover:text-[#ff6961] transition-colors duration-150" />
-          <span>Delete Node</span>
+          <LucideIcons.Trash2
+            size={13}
+            className="text-[#ff453a] flex-shrink-0 group-hover:drop-shadow-[0_0_6px_rgba(255,69,58,0.6)] transition-colors duration-150"
+          />
+          <span className="group-hover:drop-shadow-[0_0_6px_rgba(255,69,58,0.6)]">Delete Node</span>
         </button>
       </div>
     </div>
