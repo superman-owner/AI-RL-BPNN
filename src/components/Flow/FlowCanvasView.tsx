@@ -1412,7 +1412,7 @@ const FlowContent: React.FC = () => {
                   duplicateNodes(target.length ? target : null);
                   setContextMenu(null);
                 }}
-                className={`w-full px-2 py-1.5 rounded-none bg-transparent hover:bg-transparent flex items-center justify-between transition-colors text-left ${
+                className={`group w-full px-2 py-1.5 rounded-none bg-transparent hover:bg-transparent flex items-center justify-between transition-colors text-left ${
                   isLight
                     ? 'text-[#111827] hover:text-[#d97706]'
                     : 'text-white/90 hover:text-[#ffd60a]'
@@ -1420,22 +1420,24 @@ const FlowContent: React.FC = () => {
                 style={{ cursor: 'var(--mac-cursor-default)' }}
               >
                 <span className="flex items-center gap-2 text-[12px] font-medium">
-                  <LucideIcons.CopyPlus size={13.5} className="text-[#ffd60a] flex-shrink-0" />
-                  <span>Duplicate</span>
+                  <LucideIcons.CopyPlus size={13.5} className="text-[#ffd60a] flex-shrink-0 group-hover:drop-shadow-[0_0_6px_rgba(255,214,10,0.6)]" />
+                  <span className="group-hover:drop-shadow-[0_0_6px_rgba(255,214,10,0.6)]">Duplicate</span>
                 </span>
-                <span className={`text-[11px] font-mono pl-3 flex-shrink-0 ${isLight ? 'text-black/40' : 'text-white/40'}`}>
+                <span className={`text-[11px] font-mono pl-3 flex-shrink-0 transition-colors ${
+                  isLight ? 'text-black/40 group-hover:text-[#d97706]' : 'text-white/40 group-hover:text-[#ffd60a]'
+                }`}>
                   Ctrl+D
                 </span>
               </button>
 
-              {/* Copy */}
+              {/* Copy (Matching Paste with Blue Icon and White/Blue Typography) */}
               <button
                 onClick={() => {
                   const target = nodes.filter((n) => n.id === contextMenu.targetNodeId);
                   copyNodes(target.length ? target : null);
                   setContextMenu(null);
                 }}
-                className={`w-full px-2 py-1.5 rounded-none bg-transparent hover:bg-transparent flex items-center justify-between transition-colors text-left ${
+                className={`group w-full px-2 py-1.5 rounded-none bg-transparent hover:bg-transparent flex items-center justify-between transition-colors text-left ${
                   isLight
                     ? 'text-[#111827] hover:text-[#0071e3]'
                     : 'text-white/90 hover:text-[#0a84ff]'
@@ -1443,22 +1445,27 @@ const FlowContent: React.FC = () => {
                 style={{ cursor: 'var(--mac-cursor-default)' }}
               >
                 <span className="flex items-center gap-2 text-[12px] font-medium">
-                  <LucideIcons.Copy size={13.5} className={isLight ? 'text-[#4b5563] flex-shrink-0' : 'text-white/70 flex-shrink-0'} />
-                  <span>Copy</span>
+                  <LucideIcons.Copy
+                    size={13.5}
+                    className={`${isLight ? 'text-[#0071e3]' : 'text-[#0a84ff]'} flex-shrink-0 group-hover:drop-shadow-[0_0_6px_rgba(10,132,255,0.6)]`}
+                  />
+                  <span className="group-hover:drop-shadow-[0_0_6px_rgba(10,132,255,0.6)]">Copy</span>
                 </span>
-                <span className={`text-[11px] font-mono pl-3 flex-shrink-0 ${isLight ? 'text-black/40' : 'text-white/40'}`}>
+                <span className={`text-[11px] font-mono pl-3 flex-shrink-0 transition-colors ${
+                  isLight ? 'text-black/40 group-hover:text-[#0071e3]' : 'text-white/40 group-hover:text-[#0a84ff]'
+                }`}>
                   Ctrl+C
                 </span>
               </button>
 
-              {/* Cut */}
+              {/* Cut (Matching Paste with Blue Icon and White/Blue Typography) */}
               <button
                 onClick={() => {
                   const target = nodes.filter((n) => n.id === contextMenu.targetNodeId);
                   cutNodes(target.length ? target : null);
                   setContextMenu(null);
                 }}
-                className={`w-full px-2 py-1.5 rounded-none bg-transparent hover:bg-transparent flex items-center justify-between transition-colors text-left ${
+                className={`group w-full px-2 py-1.5 rounded-none bg-transparent hover:bg-transparent flex items-center justify-between transition-colors text-left ${
                   isLight
                     ? 'text-[#111827] hover:text-[#0071e3]'
                     : 'text-white/90 hover:text-[#0a84ff]'
@@ -1466,10 +1473,15 @@ const FlowContent: React.FC = () => {
                 style={{ cursor: 'var(--mac-cursor-default)' }}
               >
                 <span className="flex items-center gap-2 text-[12px] font-medium">
-                  <LucideIcons.Scissors size={13.5} className={isLight ? 'text-[#4b5563] flex-shrink-0' : 'text-white/70 flex-shrink-0'} />
-                  <span>Cut</span>
+                  <LucideIcons.Scissors
+                    size={13.5}
+                    className={`${isLight ? 'text-[#0071e3]' : 'text-[#0a84ff]'} flex-shrink-0 group-hover:drop-shadow-[0_0_6px_rgba(10,132,255,0.6)]`}
+                  />
+                  <span className="group-hover:drop-shadow-[0_0_6px_rgba(10,132,255,0.6)]">Cut</span>
                 </span>
-                <span className={`text-[11px] font-mono pl-3 flex-shrink-0 ${isLight ? 'text-black/40' : 'text-white/40'}`}>
+                <span className={`text-[11px] font-mono pl-3 flex-shrink-0 transition-colors ${
+                  isLight ? 'text-black/40 group-hover:text-[#0071e3]' : 'text-white/40 group-hover:text-[#0a84ff]'
+                }`}>
                   Ctrl+X
                 </span>
               </button>
@@ -1483,7 +1495,7 @@ const FlowContent: React.FC = () => {
                   setContextMenu(null);
                 }}
                 style={{ cursor: hasClipboard ? 'var(--mac-cursor-default)' : 'not-allowed' }}
-                className={`w-full px-2 py-1.5 rounded-none bg-transparent hover:bg-transparent flex items-center justify-between transition-colors text-left ${
+                className={`group w-full px-2 py-1.5 rounded-none bg-transparent hover:bg-transparent flex items-center justify-between transition-colors text-left ${
                   !hasClipboard
                     ? isLight
                       ? 'opacity-35 text-black/30 cursor-not-allowed pointer-events-none'
@@ -1504,19 +1516,19 @@ const FlowContent: React.FC = () => {
                         : isLight
                         ? 'text-[#0071e3]'
                         : 'text-[#0a84ff]'
-                    } flex-shrink-0`}
+                    } flex-shrink-0 ${hasClipboard ? 'group-hover:drop-shadow-[0_0_6px_rgba(10,132,255,0.6)]' : ''}`}
                   />
-                  <span>Paste</span>
+                  <span className={hasClipboard ? 'group-hover:drop-shadow-[0_0_6px_rgba(10,132,255,0.6)]' : ''}>Paste</span>
                 </span>
                 <span
-                  className={`text-[11px] font-mono pl-3 flex-shrink-0 ${
+                  className={`text-[11px] font-mono pl-3 flex-shrink-0 transition-colors ${
                     !hasClipboard
                       ? isLight
                         ? 'text-black/20'
                         : 'text-white/20'
                       : isLight
-                      ? 'text-black/40'
-                      : 'text-white/40'
+                      ? 'text-black/40 group-hover:text-[#0071e3]'
+                      : 'text-white/40 group-hover:text-[#0a84ff]'
                   }`}
                 >
                   Ctrl+V
