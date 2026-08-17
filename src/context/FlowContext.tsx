@@ -7,6 +7,7 @@ export interface ArchitectureSpec {
   timeframe: string;
   barsCount: number;
   strategyPreset: string;
+  totalEpisodes: number;
   
   // Layer dimensions
   inputDimension: number;
@@ -32,10 +33,11 @@ export interface ArchitectureSpec {
 }
 
 export const DEFAULT_ARCHITECTURE_SPEC: ArchitectureSpec = {
-  symbol: 'EURUSD',
+  symbol: 'XAUUSD',
   timeframe: 'M15',
   barsCount: 10000,
   strategyPreset: 'Standard Quant',
+  totalEpisodes: 400,
   inputDimension: 6,
   inputLabels: ['Ret (5d)', 'Ret (10d)', 'Ret (20d)', 'Vol (10d)', 'Dist SMA', 'Position'],
   hidden1Units: 64,
@@ -49,7 +51,7 @@ export const DEFAULT_ARCHITECTURE_SPEC: ArchitectureSpec = {
   hasL2Decay: true,
   l2DecayRate: 0.0001,
   hasResidual: true,
-  spreadPips: 1.2,
+  spreadPips: 0.15,
   inactivityPenalty: 0.0005,
   entropyBeta: 0.08,
 };
@@ -83,6 +85,14 @@ export const FlowProvider: React.FC<{ children: React.ReactNode }> = ({ children
           if (d.timeframe) spec.timeframe = String(d.timeframe);
           if (d.bars_count) spec.barsCount = Number(d.bars_count) || 10000;
           if (d.preset) spec.strategyPreset = String(d.preset);
+          if (d.training_episodes) spec.totalEpisodes = Number(d.training_episodes) || 400;
+          break;
+
+        case 'training_episodes_config':
+          if (d.target_episodes) {
+            const rawVal = String(d.target_episodes).replace(/,/g, '').trim();
+            spec.totalEpisodes = Number(rawVal) || 400;
+          }
           break;
 
         case 'fc1_dense_expansion':

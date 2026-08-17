@@ -134,7 +134,7 @@ function AppContent() {
         spread_pips: architectureSpec.spreadPips,
         inactivity_penalty: architectureSpec.inactivityPenalty,
         entropy_beta: architectureSpec.entropyBeta,
-        total_episodes: 100,
+        total_episodes: architectureSpec.totalEpisodes || 400,
       });
     }
   }, [architectureSpec]);

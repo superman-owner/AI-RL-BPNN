@@ -16,6 +16,7 @@ import {
 import type { QuantTelemetry, RLEnvironmentStep } from '../../services/fxforgeEngine';
 import { fxforgeEngine } from '../../services/fxforgeEngine';
 import { useTheme } from '../../context/ThemeContext';
+import { useFlow } from '../../context/FlowContext';
 
 interface AnalyticsDrawerProps {
   logs: string[];
@@ -160,6 +161,8 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
   const { theme } = useTheme();
   const isLight = theme === 'light';
 
+  const { architectureSpec } = useFlow();
+
   const [activeTab, setActiveTab] = useState<'equity' | 'loss' | 'features' | 'stress' | 'logs'>('equity');
   const [isMinimized, setIsMinimized] = useState(true); // Default minimized so it never overlaps DAG canvas
   const isMaximized = false;
@@ -201,11 +204,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
   const holdPct = latestStep?.actionProbs ? (latestStep.actionProbs[1] * 100).toFixed(1) : '100.0';
   const sellPct = latestStep?.actionProbs ? (latestStep.actionProbs[2] * 100).toFixed(1) : '0.0';
 
-  const targetEpisodesFromConfig = fxforgeEngine.getConfig().targetEpisodes || 10000;
-  const totalEpisodesTarget =
-    currentTelemetry.episodes > targetEpisodesFromConfig
-      ? Math.ceil(currentTelemetry.episodes / targetEpisodesFromConfig) * targetEpisodesFromConfig
-      : targetEpisodesFromConfig;
+  const totalEpisodesTarget = architectureSpec?.totalEpisodes || 400;
   const progressPct = ((currentTelemetry.episodes / totalEpisodesTarget) * 100).toFixed(1);
 
   return (

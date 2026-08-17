@@ -234,6 +234,12 @@ export const NODE_DEFS: Record<string, NodeDef> = {
         default: 10000,
         type: 'number',
       },
+      {
+        key: 'training_episodes',
+        label: 'Training Episodes',
+        default: 400,
+        type: 'number',
+      },
     ],
     hasInput: false,
     hasOutput: true,
@@ -277,9 +283,9 @@ export const NODE_DEFS: Record<string, NodeDef> = {
       {
         key: 'target_episodes',
         label: 'Target Episodes',
-        default: '10,000',
+        default: '400',
         type: 'select',
-        options: ['2,000', '5,000', '10,000', '20,000', '50,000', '100,000'],
+        options: ['100', '300', '400', '500', '1,000', '2,000', '5,000', '10,000'],
       },
       {
         key: 'batch_size',
