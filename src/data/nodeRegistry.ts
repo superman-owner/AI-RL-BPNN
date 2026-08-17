@@ -318,12 +318,6 @@ export const NODE_DEFS: Record<string, NodeDef> = {
     label: 'ONNX MT5 Compiler',
     fields: [
       {
-        key: 'export_mode',
-        label: 'Export Mode',
-        default: 'TorchScript Standalone',
-        type: 'string',
-      },
-      {
         key: 'target_folder',
         label: 'Target Folder',
         default: 'MQL5/Files/',

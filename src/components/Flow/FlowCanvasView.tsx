@@ -115,7 +115,6 @@ const INITIAL_NODES: Node[] = [
     position: { x: 1080, y: 350 },
     data: {
       nodeType: 'onnx_mt5_compiler',
-      export_mode: 'TorchScript Standalone',
       target_folder: 'MQL5/Files/',
       opset: 14,
       execution: { status: 'passed', detail: 'Compiled ONNX Standalone Ready' },
@@ -227,50 +226,16 @@ const InspectorTextField: React.FC<{
   const [isFocused, setIsFocused] = useState(false);
   const triggerButtonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-  const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({});
 
   const isBoolean = type === 'boolean' || typeof defaultValue === 'boolean';
   const isSelect = !isBoolean && (type === 'select' || (options && options.length > 0));
   const isNumber = !isBoolean && !isSelect && (type === 'number' || typeof defaultValue === 'number');
 
-  // Calculate portal position on open
-  const updateMenuPosition = useCallback(() => {
-    if (!triggerButtonRef.current) return;
-    const rect = triggerButtonRef.current.getBoundingClientRect();
-    const spaceBelow = window.innerHeight - rect.bottom;
-    const estimatedHeight = Math.min((options?.length || 3) * 32 + 10, 220);
-    const openUpwards = spaceBelow < estimatedHeight && rect.top > estimatedHeight;
-
-    setMenuStyle({
-      position: 'fixed',
-      top: openUpwards ? Math.max(10, rect.top - estimatedHeight - 4) : rect.bottom + 4,
-      left: rect.left,
-      width: rect.width,
-      backgroundColor: isLight ? 'rgba(255, 255, 255, 0.98)' : 'rgba(28, 28, 34, 0.98)',
-      backdropFilter: 'blur(28px)',
-      WebkitBackdropFilter: 'blur(28px)',
-      borderRadius: '8px',
-      border: isLight ? '1px solid rgba(0, 0, 0, 0.12)' : '1px solid rgba(255, 255, 255, 0.16)',
-      boxShadow: isLight
-        ? '0 16px 40px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.05)'
-        : '0 20px 48px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(0, 0, 0, 0.4)',
-      padding: '4px',
-      zIndex: 999999,
-      maxHeight: `${estimatedHeight}px`,
-      overflowY: 'auto',
-    });
-  }, [options, isLight]);
-
   const toggleDropdown = () => {
-    if (!isOpen) {
-      updateMenuPosition();
-      onToggleOpen?.(true);
-    } else {
-      onToggleOpen?.(false);
-    }
+    onToggleOpen?.(!isOpen);
   };
 
-  // Close dropdown on click outside anywhere (including on nodes) or scroll
+  // Close dropdown on click outside anywhere
   useEffect(() => {
     if (!isOpen) return;
     const handleOutsidePointerDown = (e: PointerEvent | MouseEvent) => {
@@ -284,20 +249,15 @@ const InspectorTextField: React.FC<{
       onToggleOpen?.(false);
     };
 
-    const handleScrollOrZoom = () => onToggleOpen?.(false);
     window.addEventListener('pointerdown', handleOutsidePointerDown, { capture: true });
     window.addEventListener('mousedown', handleOutsidePointerDown, { capture: true });
-    window.addEventListener('scroll', handleScrollOrZoom, true);
-    window.addEventListener('wheel', handleScrollOrZoom, { passive: true });
     return () => {
       window.removeEventListener('pointerdown', handleOutsidePointerDown, { capture: true });
       window.removeEventListener('mousedown', handleOutsidePointerDown, { capture: true });
-      window.removeEventListener('scroll', handleScrollOrZoom, true);
-      window.removeEventListener('wheel', handleScrollOrZoom);
     };
   }, [isOpen, onToggleOpen]);
 
-  //  Frameless Apple Settings Toggle Switch (Aligned with standard 10px field text)
+  //  Frameless Apple Settings Toggle Switch (Borderless, Clean Text Align)
   if (isBoolean) {
     const isChecked = Boolean(value ?? defaultValue);
     return (
@@ -305,14 +265,13 @@ const InspectorTextField: React.FC<{
         className="flex items-center justify-between nodrag nopan select-none"
         style={{
           pointerEvents: 'all',
-          height: '28px',
-          paddingLeft: '10px',
-          paddingRight: '8px',
-          borderRadius: '6px',
-          backgroundColor: isLight ? '#f0f0f2' : 'rgba(255, 255, 255, 0.05)',
-          border: isLight ? '1px solid rgba(0, 0, 0, 0.08)' : '1px solid rgba(255, 255, 255, 0.10)',
-          marginTop: '1px',
-          marginBottom: '1px',
+          height: '24px',
+          paddingLeft: '0px',
+          paddingRight: '0px',
+          backgroundColor: 'transparent',
+          border: 'none',
+          marginTop: '2px',
+          marginBottom: '2px',
         }}
         onPointerDown={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
@@ -365,7 +324,7 @@ const InspectorTextField: React.FC<{
         {label}
       </label>
 
-      {/*  macOS Apple Dropdown Select (Instant 1-Click Switchable) */}
+      {/*  macOS Apple Dropdown Select (Instant 1-Click Switchable, In-Canvas Scaled) */}
       {isSelect ? (
         <div className="relative w-full">
           <button
@@ -399,47 +358,63 @@ const InspectorTextField: React.FC<{
             <LucideIcons.ChevronsUpDown size={12} className={`flex-shrink-0 ml-1.5 ${isLight ? 'text-black/40' : 'text-white/50'}`} />
           </button>
 
-          {/*  macOS Floating Dark/Light Glass Menu Portal */}
-          {isOpen &&
-            createPortal(
-              <div
-                ref={menuRef}
-                style={menuStyle}
-                className="custom-scrollbar nodrag nopan select-none"
-                onPointerDown={(e) => e.stopPropagation()}
-                onMouseDown={(e) => e.stopPropagation()}
-              >
-                {selectOptions.map((opt) => {
-                  const isSelected = opt === (strVal || selectOptions[0]);
-                  return (
-                    <div
-                      key={opt}
-                      onClick={() => {
-                        onChange(opt);
-                        onToggleOpen?.(false);
-                      }}
-                      style={{
-                        fontFamily: 'var(--font-apple-text)',
-                        paddingLeft: '8px',
-                        paddingRight: '10px',
-                        height: '28px',
-                      }}
-                      className={`flex items-center gap-2 rounded-[5px] text-[12px] cursor-pointer transition-colors select-none ${
-                        isSelected
-                          ? isLight ? 'bg-[#0071e3] text-white font-medium shadow-sm' : 'bg-[#0a84ff] text-white font-medium shadow-sm'
-                          : isLight ? 'text-[#1d1d1f] hover:bg-black/[0.05] hover:text-[#0071e3] font-normal' : 'text-[#e5e5ea] hover:bg-white/[0.08] hover:text-white font-normal'
-                      }`}
-                    >
-                      <span className="w-3.5 flex items-center justify-center flex-shrink-0">
-                        {isSelected && <LucideIcons.Check size={12} strokeWidth={2.5} className="text-white" />}
-                      </span>
-                      <span className="truncate">{opt}</span>
-                    </div>
-                  );
-                })}
-              </div>,
-              document.body
-            )}
+          {/*  macOS Floating Dark/Light Glass Menu (Positioned Absolutely within Canvas, Zero Zoom Distortion) */}
+          {isOpen && (
+            <div
+              ref={menuRef}
+              style={{
+                position: 'absolute',
+                top: 'calc(100% + 4px)',
+                left: 0,
+                width: '100%',
+                backgroundColor: isLight ? 'rgba(255, 255, 255, 0.98)' : 'rgba(28, 28, 34, 0.98)',
+                backdropFilter: 'blur(28px)',
+                WebkitBackdropFilter: 'blur(28px)',
+                borderRadius: '8px',
+                border: isLight ? '1px solid rgba(0, 0, 0, 0.12)' : '1px solid rgba(255, 255, 255, 0.16)',
+                boxShadow: isLight
+                  ? '0 16px 40px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.05)'
+                  : '0 20px 48px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(0, 0, 0, 0.4)',
+                padding: '4px',
+                zIndex: 999999,
+                maxHeight: '180px',
+                overflowY: 'auto',
+              }}
+              className="custom-scrollbar nodrag nopan select-none"
+              onPointerDown={(e) => e.stopPropagation()}
+              onMouseDown={(e) => e.stopPropagation()}
+            >
+              {selectOptions.map((opt) => {
+                const isSelected = opt === (strVal || selectOptions[0]);
+                return (
+                  <div
+                    key={opt}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onChange(opt);
+                      onToggleOpen?.(false);
+                    }}
+                    style={{
+                      fontFamily: 'var(--font-apple-text)',
+                      paddingLeft: '8px',
+                      paddingRight: '10px',
+                      height: '28px',
+                    }}
+                    className={`flex items-center gap-2 rounded-[5px] text-[12px] cursor-pointer transition-colors select-none ${
+                      isSelected
+                        ? isLight ? 'bg-[#0071e3] text-white font-medium shadow-sm' : 'bg-[#0a84ff] text-white font-medium shadow-sm'
+                        : isLight ? 'text-[#1d1d1f] hover:bg-black/[0.05] hover:text-[#0071e3] font-normal' : 'text-[#e5e5ea] hover:bg-white/[0.08] hover:text-white font-normal'
+                    }`}
+                  >
+                    <span className="w-3.5 flex items-center justify-center flex-shrink-0">
+                      {isSelected && <LucideIcons.Check size={12} strokeWidth={2.5} className="text-white" />}
+                    </span>
+                    <span className="truncate">{opt}</span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       ) : (
         /* Text / Number Input Container */
@@ -720,13 +695,11 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
           display: 'flex',
           flexDirection: 'column',
           gap: '10px',
-          maxHeight: '320px',
-          overflowY: 'auto',
-          paddingRight: '4px',
+          overflow: 'visible',
           pointerEvents: 'all',
           cursor: 'var(--mac-cursor-default)',
         }}
-        className="custom-scrollbar nodrag nopan"
+        className="nodrag nopan"
         onPointerDown={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
       >
