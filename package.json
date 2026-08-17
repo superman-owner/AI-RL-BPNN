@@ -9,6 +9,7 @@
   "main": "electron/main.cjs",
   "scripts": {
     "dev": "vite",
+    "train": "python train_fxforge_rl.py",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
