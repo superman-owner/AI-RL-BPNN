@@ -3,18 +3,17 @@ import { useTheme } from '../../context/ThemeContext';
 import { autoTunePipelineNodes } from '../Flow/FlowCanvasView';
 import type { Node, Edge } from '@xyflow/react';
 import {
-  FolderGit2,
-  Brain,
-  Search,
-  Plus,
-  Download,
-  Trash2,
-  CheckCircle2,
-  PanelLeftClose,
-  PanelLeftOpen,
-  X,
-  FileUp,
-} from 'lucide-react';
+  SFSymbolFolder,
+  SFSymbolBrain,
+  SFSymbolSearch,
+  SFSymbolPlus,
+  SFSymbolDownload,
+  SFSymbolUpload,
+  SFSymbolTrash,
+  SFSymbolCheck,
+  SFSymbolXmark,
+} from '../Common/AppleSFSymbols';
+import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 
 export interface SavedBlueprintItem {
   id: string;
@@ -474,7 +473,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                 : 'text-white/50 hover:text-white hover:bg-white/10'
             }`}
           >
-            <FolderGit2 size={16} />
+            <SFSymbolFolder size={16} />
           </button>
 
           <button
@@ -493,7 +492,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                 : 'text-white/50 hover:text-white hover:bg-white/10'
             }`}
           >
-            <Brain size={16} />
+            <SFSymbolBrain size={16} />
           </button>
 
           <button
@@ -504,7 +503,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
             title="Save Current Flow (+)"
             className={`p-2.5 rounded-xl transition-all cursor-pointer text-[#30d158] hover:bg-[#30d158]/10`}
           >
-            <Plus size={16} />
+            <SFSymbolPlus size={16} />
           </button>
         </div>
 
@@ -555,7 +554,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
               isLight ? 'bg-[#0071e3]/10 text-[#0071e3]' : 'bg-[#0a84ff]/20 text-[#0a84ff]'
             }`}
           >
-            <FolderGit2 size={13} />
+            <SFSymbolFolder size={13} />
           </div>
           <div>
             <span
@@ -586,7 +585,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                 : 'text-[#0a84ff] hover:bg-[#0a84ff]/20'
             }`}
           >
-            <Plus size={15} />
+            <SFSymbolPlus size={14} />
           </button>
 
           {/* Import File Button */}
@@ -599,7 +598,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                 : 'text-white/60 hover:text-white hover:bg-white/10'
             }`}
           >
-            <FileUp size={14} />
+            <SFSymbolUpload size={14} />
           </button>
 
           {/* Collapse Toggle */}
@@ -629,7 +628,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
       >
         {/* Apple Spotlight Search Input */}
         <div className="relative w-full">
-          <Search
+          <SFSymbolSearch
             size={12}
             className={`absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none ${
               isLight ? 'text-black/40' : 'text-white/40'
@@ -656,7 +655,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
               onClick={() => setSearchQuery('')}
               className="absolute right-2 top-1/2 -translate-y-1/2 text-white/40 hover:text-white"
             >
-              <X size={11} />
+              <SFSymbolXmark size={11} />
             </button>
           )}
         </div>
@@ -679,7 +678,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                 : 'text-white/50 hover:text-white'
             }`}
           >
-            <FolderGit2 size={11} />
+            <SFSymbolFolder size={11} />
             <span>Blueprints</span>
           </button>
 
@@ -695,7 +694,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                 : 'text-white/50 hover:text-white'
             }`}
           >
-            <Brain size={11} />
+            <SFSymbolBrain size={11} />
             <span>Weights</span>
           </button>
         </div>
@@ -824,7 +823,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                       title="Download .fxgraph"
                       className="p-1 text-white/70 hover:text-white hover:bg-white/10 rounded"
                     >
-                      <Download size={11} />
+                      <SFSymbolDownload size={11} />
                     </button>
                     {item.category === 'custom' && (
                       <button
@@ -832,7 +831,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                         title="Delete Blueprint"
                         className="p-1 text-[#ff453a] hover:bg-[#ff453a]/20 rounded"
                       >
-                        <Trash2 size={11} />
+                        <SFSymbolTrash size={11} />
                       </button>
                     )}
                   </div>
@@ -934,7 +933,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
               : 'bg-[#0a84ff] text-white hover:bg-[#007aff] shadow-[0_0_12px_rgba(10,132,255,0.4)]'
           }`}
         >
-          <Plus size={13} />
+          <SFSymbolPlus size={13} />
           <span>Save Current Flow</span>
         </button>
       </div>
@@ -942,7 +941,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
       {/* 🟢 5. TOAST NOTIFICATION (Apple Capsule Overlay) */}
       {toastMessage && (
         <div className="absolute bottom-16 left-1/2 -translate-x-1/2 bg-black/90 text-white text-[11px] font-medium px-3 py-1.5 rounded-full shadow-2xl border border-white/15 backdrop-blur-xl z-50 flex items-center gap-1.5 pointer-events-none animate-fade-in">
-          <CheckCircle2 size={12} className="text-[#30d158]" />
+          <SFSymbolCheck size={12} className="text-[#30d158]" />
           <span>{toastMessage}</span>
         </div>
       )}
@@ -965,7 +964,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
             <div className="flex items-center justify-between mb-3.5">
               <div className="flex items-center gap-2">
                 <div className="w-6 h-6 rounded-lg bg-[#0a84ff]/20 text-[#0a84ff] flex items-center justify-center">
-                  <FolderGit2 size={13} />
+                  <SFSymbolFolder size={13} />
                 </div>
                 <h3 className="text-sm font-bold tracking-tight">Save Strategy Blueprint</h3>
               </div>
@@ -973,7 +972,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                 onClick={() => setIsSaveModalOpen(false)}
                 className="text-white/40 hover:text-white"
               >
-                <X size={14} />
+                <SFSymbolXmark size={14} />
               </button>
             </div>
 

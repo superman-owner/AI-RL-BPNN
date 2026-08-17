@@ -3,14 +3,13 @@ import { Handle, Position } from '@xyflow/react';
 import { GROUPS, NODE_DEFS } from '../../data/nodeRegistry';
 import { useTheme } from '../../context/ThemeContext';
 import {
-  Zap,
-  Send,
-  Layers,
-  BarChart2,
-  Sliders,
-  Brain,
-  Shield,
-} from 'lucide-react';
+  SFSymbolChartBar,
+  SFSymbolSliders,
+  SFSymbolShield,
+  SFSymbolBrain,
+  SFSymbolBolt,
+  SFSymbolPaperplane,
+} from '../Common/AppleSFSymbols';
 
 const groupById = Object.fromEntries(GROUPS.map((g) => [g.id, g]));
 
@@ -22,13 +21,13 @@ const STATUS_COLOR: Record<string, string> = {
   blocked: 'var(--text-faint, #64748b)',
 };
 
-const GROUP_ICONS: Record<string, React.ComponentType<{ size?: number; color?: string }>> = {
-  input: BarChart2,
-  fc1: Sliders,
-  regularization: Shield,
-  fc2: Brain,
-  reward: Zap,
-  output: Send,
+const GROUP_ICONS: Record<string, React.ComponentType<{ size?: number; color?: string; className?: string }>> = {
+  input: SFSymbolChartBar,
+  fc1: SFSymbolSliders,
+  regularization: SFSymbolShield,
+  fc2: SFSymbolBrain,
+  reward: SFSymbolBolt,
+  output: SFSymbolPaperplane,
 };
 
 export default function NodeCard({ data, selected }: { data: any; selected?: boolean }) {
@@ -49,7 +48,7 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
   const isConnected = data.isConnected !== false;
   const statusColor = isConnected ? (STATUS_COLOR[execution?.status] || 'var(--accent-green, #5fd390)') : null;
   const executionMode = data.executionMode || 'on';
-  const GroupIcon = GROUP_ICONS[def.group] || Layers;
+  const GroupIcon = GROUP_ICONS[def.group] || SFSymbolSliders;
 
   const displayTitle = (def.label || '').replace(/\s+Node$/i, '');
 

@@ -19,6 +19,12 @@ import type { Connection, Edge, Node } from '@xyflow/react';
 import NodeCard from '../nodes/NodeCard';
 import { NODE_DEFS, GROUPS, STRATEGY_PRESET_CONFIGS } from '../../data/nodeRegistry';
 import * as LucideIcons from 'lucide-react';
+import {
+  SFSymbolXmark,
+  SFSymbolCheck,
+  SFSymbolTrash,
+  SFSymbolChevronDown,
+} from '../Common/AppleSFSymbols';
 import { useTheme } from '../../context/ThemeContext';
 import { useFlow } from '../../context/FlowContext';
 
@@ -735,7 +741,7 @@ const InspectorTextField: React.FC<{
             <span className={`text-[12px] font-medium truncate ${isLight ? 'text-[#1d1d1f]' : 'text-[#f5f5f7]'}`}>
               {strVal || selectOptions[0]}
             </span>
-            <LucideIcons.ChevronsUpDown size={12} className={`flex-shrink-0 ml-1.5 ${isLight ? 'text-black/40' : 'text-white/50'}`} />
+            <SFSymbolChevronDown size={10} className={`flex-shrink-0 ml-1.5 ${isLight ? 'text-black/40' : 'text-white/50'}`} />
           </button>
 
           {/*  macOS Floating Dark/Light Glass Menu (Positioned Absolutely within Canvas, Zero Zoom Distortion) */}
@@ -787,7 +793,7 @@ const InspectorTextField: React.FC<{
                     }`}
                   >
                     <span className="w-3.5 flex items-center justify-center flex-shrink-0">
-                      {isSelected && <LucideIcons.Check size={12} strokeWidth={2.5} className="text-white" />}
+                      {isSelected && <SFSymbolCheck size={11} className="text-white" />}
                     </span>
                     <span className="truncate">{opt}</span>
                   </div>
@@ -1065,7 +1071,7 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
             isLight ? 'text-black/40 hover:text-[#1d1d1f]' : 'text-white/40 hover:text-white'
           }`}
         >
-          <LucideIcons.X size={13} />
+          <SFSymbolXmark size={12} />
         </button>
       </div>
 
@@ -1138,8 +1144,8 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
               : 'text-white/90 hover:text-[#30d158]'
           }`}
         >
-          <LucideIcons.Check
-            size={13}
+          <SFSymbolCheck
+            size={12}
             className={`${isLight ? 'text-[#28cd41]' : 'text-[#30d158]'} flex-shrink-0 group-hover:drop-shadow-[0_0_6px_rgba(48,209,88,0.6)] transition-colors duration-150`}
           />
           <span className="group-hover:drop-shadow-[0_0_6px_rgba(48,209,88,0.6)]">Update</span>
@@ -1166,8 +1172,8 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
               : 'text-white/90 hover:text-[#ff453a]'
           }`}
         >
-          <LucideIcons.Trash2
-            size={13}
+          <SFSymbolTrash
+            size={12}
             className="text-[#ff453a] flex-shrink-0 group-hover:drop-shadow-[0_0_6px_rgba(255,69,58,0.6)] transition-colors duration-150"
           />
           <span className="group-hover:drop-shadow-[0_0_6px_rgba(255,69,58,0.6)]">Delete Node</span>

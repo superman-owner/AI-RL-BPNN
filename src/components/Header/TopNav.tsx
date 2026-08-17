@@ -1,7 +1,16 @@
 import React from 'react';
-import * as LucideIcons from 'lucide-react';
 import type { QuantTelemetry, RLEnvironmentStep } from '../../services/fxforgeEngine';
 import { useTheme } from '../../context/ThemeContext';
+import {
+  SFSymbolNetwork,
+  SFSymbolBrain,
+  SFSymbolPlay,
+  SFSymbolPause,
+  SFSymbolStop,
+  SFSymbolRocket,
+  SFSymbolSun,
+  SFSymbolMoon,
+} from '../Common/AppleSFSymbols';
 
 interface TopNavProps {
   activeView?: 'studio' | 'bpnn';
@@ -77,7 +86,7 @@ export const TopNav: React.FC<TopNavProps> = ({
                   : 'text-white/50 hover:text-white font-medium'
               }`}
             >
-              <LucideIcons.Network size={13} />
+              <SFSymbolNetwork size={13} />
               <span>Flow DAG</span>
             </button>
             <button
@@ -92,7 +101,7 @@ export const TopNav: React.FC<TopNavProps> = ({
                   : 'text-white/50 hover:text-white font-medium'
               }`}
             >
-              <LucideIcons.Brain size={13} />
+              <SFSymbolBrain size={13} />
               <span>Live 3D BPNN</span>
             </button>
           </div>
@@ -114,7 +123,7 @@ export const TopNav: React.FC<TopNavProps> = ({
                 }`}
                 title="Pause Simulation"
               >
-                <LucideIcons.Pause size={11} className={`flex-shrink-0 ${isLight ? 'fill-[#d97706]' : 'fill-[#ffd60a]'}`} />
+                <SFSymbolPause size={11} className="flex-shrink-0" />
                 <span>PAUSE</span>
               </button>
             ) : (
@@ -127,7 +136,7 @@ export const TopNav: React.FC<TopNavProps> = ({
                 }`}
                 title={rlStatus === 'paused' ? 'Resume Simulation' : 'Start Simulation'}
               >
-                <LucideIcons.Play size={11} className={`flex-shrink-0 ${isLight ? 'fill-[#28cd41]' : 'fill-[#30d158]'}`} />
+                <SFSymbolPlay size={11} className="flex-shrink-0" />
                 <span>START</span>
               </button>
             )}
@@ -146,12 +155,7 @@ export const TopNav: React.FC<TopNavProps> = ({
               }`}
               title="Stop & Reset Simulation"
             >
-              <LucideIcons.Square
-                size={11}
-                className={`flex-shrink-0 ${
-                  rlStatus === 'stopped' ? (isLight ? 'fill-[#d70015]' : 'fill-[#ff453a]') : ''
-                }`}
-              />
+              <SFSymbolStop size={11} className="flex-shrink-0" />
               <span>STOP</span>
             </button>
           </div>
@@ -231,7 +235,7 @@ export const TopNav: React.FC<TopNavProps> = ({
               isLight ? 'text-[#6e6e73] hover:text-[#1d1d1f]' : 'text-[#86868b] hover:text-white'
             }`}
           >
-            <LucideIcons.Rocket
+            <SFSymbolRocket
               size={13}
               className={`transition-all duration-150 ${
                 isLight
@@ -277,11 +281,11 @@ export const TopNav: React.FC<TopNavProps> = ({
           >
             {/* Background Track Icons (Sun on Left, Moon on Right) */}
             <div className="w-full h-full flex items-center justify-between px-1.5 pointer-events-none select-none">
-              <LucideIcons.Sun
+              <SFSymbolSun
                 size={10}
                 className={`transition-opacity duration-200 ${isLight ? 'opacity-0' : 'opacity-40 text-white/50'}`}
               />
-              <LucideIcons.Moon
+              <SFSymbolMoon
                 size={10}
                 className={`transition-opacity duration-200 ${isLight ? 'opacity-40 text-black/40' : 'opacity-0'}`}
               />
@@ -309,12 +313,12 @@ export const TopNav: React.FC<TopNavProps> = ({
               }}
             >
               {isLight ? (
-                <LucideIcons.Sun
+                <SFSymbolSun
                   size={10}
                   className="text-[#f59e0b] drop-shadow-[0_0_2px_rgba(245,158,11,0.5)]"
                 />
               ) : (
-                <LucideIcons.Moon
+                <SFSymbolMoon
                   size={9.5}
                   className="text-[#60a5fa] drop-shadow-[0_0_4px_rgba(96,165,250,0.8)]"
                 />
