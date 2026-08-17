@@ -306,15 +306,15 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
           >
             <span className={isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}>Policy:</span>
             <span>
-              BUY <span className="font-mono tabular-nums">{buyPct}%</span>
+              BUY <span className="font-sans tabular-nums font-semibold">{buyPct}%</span>
             </span>
             <span className={isLight ? 'text-black/20' : 'text-white/30'}>·</span>
             <span>
-              HOLD <span className="font-mono tabular-nums">{holdPct}%</span>
+              HOLD <span className="font-sans tabular-nums font-semibold">{holdPct}%</span>
             </span>
             <span className={isLight ? 'text-black/20' : 'text-white/30'}>·</span>
             <span>
-              SELL <span className="font-mono tabular-nums">{sellPct}%</span>
+              SELL <span className="font-sans tabular-nums font-semibold">{sellPct}%</span>
             </span>
           </div>
 
@@ -343,7 +343,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
             </div>
 
             <strong
-              className={`text-[11px] font-mono font-bold whitespace-nowrap ${
+              className={`text-[11px] font-sans tabular-nums font-semibold whitespace-nowrap ${
                 isLight ? 'text-[#28cd41]' : 'text-[#30d158] drop-shadow-[0_0_6px_rgba(48,209,88,0.4)]'
               }`}
             >
@@ -354,11 +354,11 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
 
             <div className="flex items-center gap-1 text-[11px] whitespace-nowrap">
               <span className={isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}>Episodes:</span>
-              <strong className={`font-mono tabular-nums font-bold ${isLight ? 'text-[#1d1d1f]' : 'text-white'}`}>
+              <strong className={`font-sans tabular-nums font-semibold ${isLight ? 'text-[#1d1d1f]' : 'text-white'}`}>
                 {currentTelemetry.episodes.toLocaleString()}
               </strong>
-              <span className={`font-mono ${isLight ? 'text-black/30' : 'text-white/40'}`}>/</span>
-              <span className={`font-mono ${isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}`}>
+              <span className={`font-sans ${isLight ? 'text-black/30' : 'text-white/40'}`}>/</span>
+              <span className={`font-sans tabular-nums ${isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}`}>
                 {totalEpisodesTarget.toLocaleString()}
               </span>
             </div>

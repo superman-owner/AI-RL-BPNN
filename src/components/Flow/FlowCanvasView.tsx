@@ -307,7 +307,7 @@ const InspectorTextField: React.FC<{
       >
         <span
           className={`text-[12px] font-medium tracking-tight ${isLight ? 'text-[#1d1d1f]' : 'text-[#f5f5f7]'}`}
-          style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif' }}
+          style={{ fontFamily: 'var(--font-apple-text)' }}
         >
           {label}
         </span>
@@ -346,7 +346,7 @@ const InspectorTextField: React.FC<{
       <label
         className={`text-[11px] font-medium select-none tracking-tight ${isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}`}
         style={{
-          fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
+          fontFamily: 'var(--font-apple-text)',
           cursor: 'var(--mac-cursor-default)',
         }}
       >
@@ -366,7 +366,7 @@ const InspectorTextField: React.FC<{
             onPointerDown={(e) => e.stopPropagation()}
             onMouseDown={(e) => e.stopPropagation()}
             style={{
-              fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
+              fontFamily: 'var(--font-apple-text)',
               pointerEvents: 'all',
               paddingLeft: '10px',
               paddingRight: '10px',
@@ -407,7 +407,7 @@ const InspectorTextField: React.FC<{
                         onToggleOpen?.(false);
                       }}
                       style={{
-                        fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
+                        fontFamily: 'var(--font-apple-text)',
                         paddingLeft: '8px',
                         paddingRight: '10px',
                         height: '28px',
@@ -463,9 +463,8 @@ const InspectorTextField: React.FC<{
             }}
             placeholder={`Enter ${label.toLowerCase()}...`}
             style={{
-              fontFamily: isNumber
-                ? 'SFMono-Regular, Menlo, Monaco, Consolas, monospace'
-                : '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
+              fontFamily: 'var(--font-apple-text)',
+              fontVariantNumeric: isNumber ? 'tabular-nums' : 'normal',
               pointerEvents: 'all',
             }}
             className={`w-full bg-transparent text-[12px] font-medium focus:outline-none nodrag nopan pointer-events-auto cursor-text px-0 ${
@@ -479,7 +478,7 @@ const InspectorTextField: React.FC<{
       {isError && (
         <span
           className="text-[10px] text-[#ff453a] font-medium tracking-tight -mt-0.5"
-          style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif' }}
+          style={{ fontFamily: 'var(--font-apple-text)' }}
         >
           Invalid numeric value
         </span>
@@ -637,7 +636,7 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
               className="text-[9px] font-bold tracking-wider uppercase block truncate"
               style={{
                 color: group.color,
-                fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
+                fontFamily: 'var(--font-apple-text)',
                 whiteSpace: 'nowrap',
               }}
             >
@@ -646,7 +645,7 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
             <span
               className={`text-[12px] font-semibold block truncate ${isLight ? 'text-[#1d1d1f]' : 'text-white'}`}
               style={{
-                fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif',
+                fontFamily: 'var(--font-apple-text)',
                 letterSpacing: '-0.015em',
                 whiteSpace: 'nowrap',
               }}
@@ -732,7 +731,7 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
           onPointerDown={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
           style={{
-            fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
+            fontFamily: 'var(--font-apple-text)',
             pointerEvents: 'all',
             background: 'transparent',
             border: 'none',
@@ -760,7 +759,7 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
           onPointerDown={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
           style={{
-            fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
+            fontFamily: 'var(--font-apple-text)',
             pointerEvents: 'all',
             background: 'transparent',
             border: 'none',
@@ -1379,14 +1378,14 @@ const FlowContent: React.FC = () => {
         <div className="w-2 h-2 rounded-full bg-[#30d158] animate-pulse flex-shrink-0" />
         <span
           className={`text-[12px] font-semibold tracking-tight ${isLight ? 'text-[#1d1d1f]' : 'text-white'}`}
-          style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif' }}
+          style={{ fontFamily: 'var(--font-apple-text)' }}
         >
           {activeNodesCount} Nodes Active
         </span>
         {nodes.length > activeNodesCount && (
           <span
             className={`text-[11px] font-medium ${isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}`}
-            style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif' }}
+            style={{ fontFamily: 'var(--font-apple-text)' }}
           >
             ({nodes.length - activeNodesCount} Idle)
           </span>
@@ -1437,7 +1436,7 @@ const FlowContent: React.FC = () => {
                   <LucideIcons.CopyPlus size={13.5} className="text-[#ffd60a] flex-shrink-0 group-hover:drop-shadow-[0_0_6px_rgba(255,214,10,0.6)]" />
                   <span className="group-hover:drop-shadow-[0_0_6px_rgba(255,214,10,0.6)]">Duplicate</span>
                 </span>
-                <span className={`text-[11px] font-mono pl-3 flex-shrink-0 transition-colors ${
+                <span className={`text-[11px] font-sans font-medium pl-3 flex-shrink-0 transition-colors ${
                   isLight ? 'text-black/40 group-hover:text-[#d97706]' : 'text-white/40 group-hover:text-[#ffd60a]'
                 }`}>
                   Ctrl+D
@@ -1465,7 +1464,7 @@ const FlowContent: React.FC = () => {
                   />
                   <span className="group-hover:drop-shadow-[0_0_6px_rgba(10,132,255,0.6)]">Copy</span>
                 </span>
-                <span className={`text-[11px] font-mono pl-3 flex-shrink-0 transition-colors ${
+                <span className={`text-[11px] font-sans font-medium pl-3 flex-shrink-0 transition-colors ${
                   isLight ? 'text-black/40 group-hover:text-[#0071e3]' : 'text-white/40 group-hover:text-[#0a84ff]'
                 }`}>
                   Ctrl+C
@@ -1493,7 +1492,7 @@ const FlowContent: React.FC = () => {
                   />
                   <span className="group-hover:drop-shadow-[0_0_6px_rgba(10,132,255,0.6)]">Cut</span>
                 </span>
-                <span className={`text-[11px] font-mono pl-3 flex-shrink-0 transition-colors ${
+                <span className={`text-[11px] font-sans font-medium pl-3 flex-shrink-0 transition-colors ${
                   isLight ? 'text-black/40 group-hover:text-[#0071e3]' : 'text-white/40 group-hover:text-[#0a84ff]'
                 }`}>
                   Ctrl+X
@@ -1535,7 +1534,7 @@ const FlowContent: React.FC = () => {
                   <span className={hasClipboard ? 'group-hover:drop-shadow-[0_0_6px_rgba(10,132,255,0.6)]' : ''}>Paste</span>
                 </span>
                 <span
-                  className={`text-[11px] font-mono pl-3 flex-shrink-0 transition-colors ${
+                  className={`text-[11px] font-sans font-medium pl-3 flex-shrink-0 transition-colors ${
                     !hasClipboard
                       ? isLight
                         ? 'text-black/20'
@@ -1570,7 +1569,7 @@ const FlowContent: React.FC = () => {
                   <LucideIcons.Unlink size={13.5} className="text-[#ff9f0a] flex-shrink-0 group-hover:drop-shadow-[0_0_6px_rgba(255,159,10,0.6)]" />
                   <span className="group-hover:drop-shadow-[0_0_6px_rgba(255,159,10,0.6)]">Disconnect Edges</span>
                 </span>
-                <span className={`text-[11px] font-mono pl-3 flex-shrink-0 transition-colors ${
+                <span className={`text-[11px] font-sans font-medium pl-3 flex-shrink-0 transition-colors ${
                   isLight ? 'text-black/40 group-hover:text-[#ff9f0a]' : 'text-white/40 group-hover:text-[#ff9f0a]'
                 }`}>
                   Ctrl+K
@@ -1595,7 +1594,7 @@ const FlowContent: React.FC = () => {
                   <LucideIcons.Trash2 size={13.5} className="text-[#ff453a] flex-shrink-0 group-hover:drop-shadow-[0_0_6px_rgba(255,69,58,0.6)]" />
                   <span className="group-hover:drop-shadow-[0_0_6px_rgba(255,69,58,0.6)]">Delete</span>
                 </span>
-                <span className={`text-[11px] font-mono pl-3 flex-shrink-0 transition-colors ${
+                <span className={`text-[11px] font-sans font-medium pl-3 flex-shrink-0 transition-colors ${
                   isLight ? 'text-black/40 group-hover:text-[#ff453a]' : 'text-white/40 group-hover:text-[#ff453a]'
                 }`}>
                   Del
@@ -1638,7 +1637,7 @@ const FlowContent: React.FC = () => {
                 <span>Paste Here</span>
               </span>
               <span
-                className={`text-[11px] font-mono pl-3 flex-shrink-0 ${
+                className={`text-[11px] font-sans font-medium pl-3 flex-shrink-0 ${
                   !hasClipboard
                     ? isLight
                       ? 'text-black/20'

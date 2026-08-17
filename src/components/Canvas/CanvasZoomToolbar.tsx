@@ -54,7 +54,7 @@ export const CanvasZoomToolbar: React.FC<CanvasZoomToolbarProps> = ({
         <button
           onClick={() => zoomTo(1, { duration: 250 })}
           title="Reset to 100% (Ctrl + 0)"
-          className={`px-2 py-1 rounded-md text-[11px] font-mono font-bold transition-colors cursor-pointer ${
+          className={`px-2 py-1 rounded-md text-[11.5px] font-sans tabular-nums font-semibold transition-colors cursor-pointer ${
             isLight ? 'text-[#1d1d1f] hover:bg-black/[0.06]' : 'text-white/90 hover:text-white hover:bg-white/[0.08]'
           }`}
         >

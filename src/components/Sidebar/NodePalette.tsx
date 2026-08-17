@@ -243,7 +243,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
       ghostEl.style.boxShadow = isLight
         ? '0 14px 34px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.05)'
         : '0 18px 44px rgba(0, 0, 0, 0.8), 0 0 1px rgba(255, 255, 255, 0.2)';
-      ghostEl.style.fontFamily = '-apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, sans-serif';
+      ghostEl.style.fontFamily = 'var(--font-apple-text)';
       ghostEl.style.fontSize = '12px';
       ghostEl.style.fontWeight = '600';
       ghostEl.style.letterSpacing = '-0.01em';
@@ -351,7 +351,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
 
         const sidebarEl = document.querySelector('aside');
         const sidebarRect = sidebarEl?.getBoundingClientRect();
-        const hasCrossedDivider = sidebarRect ? moveEvent.clientX > sidebarRect.right : moveEvent.clientX > 345;
+        const hasCrossedDivider = sidebarRect ? moveEvent.clientX > sidebarRect.right : moveEvent.clientX > 260;
 
         const elUnder = document.elementFromPoint(moveEvent.clientX, moveEvent.clientY);
         const isOverCanvas = hasCrossedDivider && Boolean(elUnder?.closest('.react-flow'));
@@ -370,7 +370,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
         //  Strict Boundary Check: Must cross divider line into Canvas to allow Drop
         const sidebarEl = document.querySelector('aside');
         const sidebarRect = sidebarEl?.getBoundingClientRect();
-        const hasCrossedDivider = sidebarRect ? dropClientX > sidebarRect.right : dropClientX > 345;
+        const hasCrossedDivider = sidebarRect ? dropClientX > sidebarRect.right : dropClientX > 260;
 
         if (hasCrossedDivider) {
           const elUnder = document.elementFromPoint(dropClientX, dropClientY);
@@ -402,14 +402,15 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
     <aside
       onWheel={(e) => e.stopPropagation()}
       style={{
-        width: '345px',
-        minWidth: '345px',
+        width: '260px',
+        minWidth: '260px',
+        fontFamily: 'var(--font-apple-text)',
         transition: 'width 0.22s cubic-bezier(0.16, 1, 0.3, 1)',
         WebkitFontSmoothing: 'antialiased',
         MozOsxFontSmoothing: 'grayscale',
         textRendering: 'geometricPrecision',
       }}
-      className={`h-full flex flex-col flex-shrink-0 border-r select-none z-20 font-sans transition-colors duration-200 ${
+      className={`h-full flex flex-col flex-shrink-0 border-r select-none z-20 transition-colors duration-200 ${
         isLight ? 'bg-[#f5f5f7] border-black/[0.08] text-[#111827]' : 'bg-[#08080c] border-white/[0.08] text-[#e5e7eb]'
       }`}
     >
@@ -720,7 +721,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
           <Settings size={14} />
           <span>Settings</span>
         </button>
-        <span className={`text-[11.5px] font-mono font-bold ${isLight ? 'text-[#16a34a]' : 'text-[#30d158]'}`}>
+        <span className={`text-[11.5px] font-sans font-semibold ${isLight ? 'text-[#16a34a]' : 'text-[#30d158]'}`}>
           v2.0 Quant AI
         </span>
       </div>

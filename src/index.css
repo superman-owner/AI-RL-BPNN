@@ -8,10 +8,10 @@
 
 :root {
   color-scheme: dark;
-  --font-apple-text: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "SF Pro", "Inter", -apple-system, sans-serif;
-  --font-apple-numbers: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro", "Inter", sans-serif;
+  --font-apple-text: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "SF Pro", system-ui, -apple-system, sans-serif;
+  --font-apple-numbers: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro", system-ui, -apple-system, sans-serif;
   --font-sans: var(--font-apple-text);
-  --font-mono: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro", "Inter", "JetBrains Mono", monospace;
+  --font-mono: var(--font-apple-text);
 
   /*  Official Apple macOS Monterey/Ventura/Sonoma Cursors Pack */
   --mac-cursor-default: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cfilter id='s' x='-20%25' y='-20%25' width='140%25' height='140%25'%3E%3CfeDropShadow dx='1' dy='2' stdDeviation='1.2' flood-color='%23000000' flood-opacity='0.35'/%3E%3C/filter%3E%3Cg filter='url(%23s)'%3E%3Cpath d='M6 3 L6 24.5 L11.8 19 L16.8 28.5 L20.5 26.8 L15.5 17.5 L23 17.5 Z' fill='%23000000' stroke='%23ffffff' stroke-width='1.5' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E") 6 3, auto;
@@ -35,6 +35,10 @@
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   font-feature-settings: "tnum" 1, "cv01" 1, "cv02" 1;
+}
+
+input, select, textarea, button {
+  font-family: var(--font-apple-text) !important;
 }
 
 /*  Everything uses the sleek Apple macOS Arrow Cursor by default (Buttons, links, text, cards, panes) */

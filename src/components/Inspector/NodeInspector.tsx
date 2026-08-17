@@ -139,7 +139,7 @@ export const NodeInspector: React.FC<NodeInspectorProps> = ({
                   {theme.label}
                 </span>
                 <span className="text-white/30 text-xs">•</span>
-                <span className="text-[10px] font-mono text-white/40">{selectedNode.id}</span>
+                <span className="text-[10px] font-sans font-medium text-white/40">{selectedNode.id}</span>
               </div>
               <h3 className="text-base font-bold text-white tracking-tight leading-tight truncate mt-0.5">
                 {data.title}
@@ -260,7 +260,7 @@ export const NodeInspector: React.FC<NodeInspectorProps> = ({
 
                       {!isTimeframe && (
                         <span
-                          className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-white/[0.06] border border-white/10"
+                          className="font-sans tabular-nums text-xs font-semibold px-2 py-0.5 rounded-md bg-white/[0.06] border border-white/10"
                           style={{ color: theme.neon }}
                         >
                           {isBoolean ? (val ? 'TRUE' : 'FALSE') : isArray ? `[${val.length}]` : String(val)}
@@ -285,7 +285,7 @@ export const NodeInspector: React.FC<NodeInspectorProps> = ({
                           <button
                             key={tf}
                             onClick={() => handleParamChange(key, tf)}
-                            className={`py-1 px-2.5 rounded-md text-[11px] font-bold font-mono transition-all cursor-pointer ${
+                            className={`py-1 px-2.5 rounded-md text-[11px] font-semibold font-sans transition-all cursor-pointer ${
                               val === tf
                                 ? 'bg-[#007aff] text-white'
                                 : 'text-white/40 hover:text-white hover:bg-white/[0.06]'
@@ -301,14 +301,14 @@ export const NodeInspector: React.FC<NodeInspectorProps> = ({
                           type="text"
                           value={String(val ?? '')}
                           onChange={(e) => handleParamChange(key, e.target.value)}
-                          className="w-full px-3.5 py-2.5 bg-black/40 border border-white/[0.08] rounded-xl text-xs text-white font-mono focus:outline-none focus:border-[#007aff]"
+                          className="w-full px-3.5 py-2.5 bg-black/40 border border-white/[0.08] rounded-xl text-xs text-white font-sans font-medium focus:outline-none focus:border-[#007aff]"
                         />
                         <div className="flex items-center gap-2 overflow-x-auto custom-scrollbar pb-1">
                           {SYMBOL_PRESETS.map((sym) => (
                             <button
                               key={sym}
                               onClick={() => handleParamChange(key, sym)}
-                              className={`px-2.5 py-1 rounded-md text-[11px] font-bold font-mono whitespace-nowrap transition-all cursor-pointer ${
+                              className={`px-2.5 py-1 rounded-md text-[11px] font-semibold font-sans whitespace-nowrap transition-all cursor-pointer ${
                                 val === sym
                                   ? 'bg-[#007aff]/20 text-[#64d2ff]'
                                   : 'text-white/40 hover:text-white hover:bg-white/[0.06]'
@@ -325,7 +325,7 @@ export const NodeInspector: React.FC<NodeInspectorProps> = ({
                           {val.map((item: any, idx: number) => (
                             <span
                               key={idx}
-                              className="px-2.5 py-0.5 rounded-md bg-white/[0.06] text-white font-mono text-[10px]"
+                              className="px-2.5 py-0.5 rounded-md bg-white/[0.06] text-white font-sans font-medium text-[10px]"
                             >
                               {item}
                             </span>
@@ -340,7 +340,7 @@ export const NodeInspector: React.FC<NodeInspectorProps> = ({
                               e.target.value.split(',').map((s) => s.trim())
                             )
                           }
-                          className="w-full px-3.5 py-2.5 bg-black/40 border border-white/[0.08] rounded-xl text-xs text-white font-mono focus:outline-none focus:border-[#007aff]"
+                          className="w-full px-3.5 py-2.5 bg-black/40 border border-white/[0.08] rounded-xl text-xs text-white font-sans font-medium focus:outline-none focus:border-[#007aff]"
                           placeholder="Comma separated values"
                         />
                       </div>
@@ -360,7 +360,7 @@ export const NodeInspector: React.FC<NodeInspectorProps> = ({
                             step={val < 1 ? '0.01' : '1'}
                             value={Number(val)}
                             onChange={(e) => handleParamChange(key, parseFloat(e.target.value) || 0)}
-                            className="flex-1 text-center bg-transparent font-mono text-xs text-white font-bold focus:outline-none"
+                            className="flex-1 text-center bg-transparent font-sans tabular-nums text-xs text-white font-semibold focus:outline-none"
                           />
 
                           <button
@@ -452,15 +452,15 @@ export const NodeInspector: React.FC<NodeInspectorProps> = ({
               >
                 <div className="flex items-center justify-between">
                   <span className="text-white/60">Execution Latency</span>
-                  <span className="font-mono text-white font-bold">12.4 ms</span>
+                  <span className="font-sans tabular-nums text-white font-semibold">12.4 ms</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-white/60">VRAM Allocation</span>
-                  <span className="font-mono text-white font-bold">24.8 MB (CUDA)</span>
+                  <span className="font-sans tabular-nums text-white font-semibold">24.8 MB (CUDA)</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-white/60">Stationarity Degree</span>
-                  <span className="font-mono text-[#30d158] font-bold">99.4% (p &lt; 0.01)</span>
+                  <span className="font-sans tabular-nums text-[#30d158] font-semibold">99.4% (p &lt; 0.01)</span>
                 </div>
               </div>
             </div>
@@ -489,7 +489,7 @@ export const NodeInspector: React.FC<NodeInspectorProps> = ({
                         />
                         <span className="text-white font-semibold text-xs">{inp.label}</span>
                       </div>
-                      <span className="font-mono text-[9px] uppercase px-2.5 py-0.5 rounded-md bg-white/10 text-white/80 border border-white/10">
+                      <span className="font-sans text-[9px] font-semibold uppercase px-2.5 py-0.5 rounded-md bg-white/10 text-white/80 border border-white/10">
                         {inp.type}
                       </span>
                     </div>
@@ -519,7 +519,7 @@ export const NodeInspector: React.FC<NodeInspectorProps> = ({
                         />
                         <span className="text-white font-semibold text-xs">{out.label}</span>
                       </div>
-                      <span className="font-mono text-[9px] uppercase px-2.5 py-0.5 rounded-md bg-white/10 text-white/80 border border-white/10">
+                      <span className="font-sans text-[9px] font-semibold uppercase px-2.5 py-0.5 rounded-md bg-white/10 text-white/80 border border-white/10">
                         {out.type}
                       </span>
                     </div>
