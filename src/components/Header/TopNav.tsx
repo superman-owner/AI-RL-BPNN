@@ -39,7 +39,7 @@ export const TopNav: React.FC<TopNavProps> = ({
           : 'vision-glass apple-specular border-white/[0.08] text-slate-200'
       }`}
     >
-      {/* Left: macOS Traffic Lights + Brand */}
+      {/* Left: macOS Traffic Lights + Brand + Left Divider */}
       <div className="flex items-center gap-3.5 flex-shrink-0 min-w-max">
         <div className="flex items-center gap-1.5 pr-1">
           <div className="w-3 h-3 rounded-full bg-[#ff5f56] border border-[#e0443e]/50 cursor-pointer hover:opacity-80 transition-opacity" />
@@ -52,13 +52,13 @@ export const TopNav: React.FC<TopNavProps> = ({
             FXFORGE <span className={isLight ? 'text-[#0071e3]' : 'text-[#007aff]'}>LAB</span>
           </span>
         </div>
-      </div>
 
-      {/*  Vertical Divider Barrier with guaranteed 16px margins on both sides */}
-      <div
-        style={{ marginLeft: '16px', marginRight: '16px' }}
-        className={`h-4 w-[1px] flex-shrink-0 ${isLight ? 'bg-black/15' : 'bg-white/15'}`}
-      />
+        {/*  Vertical Divider right next to Brand on the Left */}
+        <div
+          style={{ marginLeft: '6px' }}
+          className={`h-4 w-[1px] flex-shrink-0 ${isLight ? 'bg-black/15' : 'bg-white/15'}`}
+        />
+      </div>
 
       {/* Main Suite (Shifted to the Right: 'Connected' & Theme Toggle end exactly 20px from right edge) */}
       <div className="flex items-center gap-4 flex-shrink-0 ml-auto">
