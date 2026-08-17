@@ -215,6 +215,7 @@ function AppContent() {
         <NodePalette
           isCollapsed={isSidebarCollapsed}
           onToggleCollapse={() => setIsSidebarCollapsed((prev) => !prev)}
+          isTraining={rlStatus === 'running'}
         />
 
         <main
@@ -223,7 +224,7 @@ function AppContent() {
           }`}
         >
           <div className={`w-full h-full ${activeView === 'studio' ? 'block' : 'hidden'}`}>
-            <FlowCanvasView />
+            <FlowCanvasView isTraining={rlStatus === 'running'} />
           </div>
           <div className={`w-full h-full ${activeView === 'bpnn' ? 'block' : 'hidden'}`}>
             <LiveNeuralLink

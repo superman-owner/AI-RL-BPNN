@@ -88,12 +88,14 @@ interface NodePaletteProps {
   onOpenSettings?: () => void;
   isCollapsed?: boolean;
   onToggleCollapse?: () => void;
+  isTraining?: boolean;
 }
 
 export const NodePalette: React.FC<NodePaletteProps> = ({
   onOpenSettings,
   isCollapsed = false,
   onToggleCollapse,
+  isTraining = false,
 }) => {
   const { theme } = useTheme();
   const isLight = theme === 'light';
@@ -207,6 +209,9 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
 
   //  Pointer-based Drag Handler (100% Guaranteed Mac Closed Fist Cursor during entire drag)
   const handleItemPointerDown = (e: React.PointerEvent, nodeType: string, label: string, color: string) => {
+    // Block dragging when training is active
+    if (isTraining) return;
+
     // Only handle primary left click (No right-click or middle-click)
     if (e.button !== 0) return;
 
@@ -598,7 +603,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                         onPointerDown={(e) => handleItemPointerDown(e, node.type, node.label, group.color)}
                         onMouseEnter={() => setHoveredNode(node.type)}
                         onMouseLeave={() => setHoveredNode(null)}
-                        title="Drag onto canvas to add module"
+                        title={isTraining ? 'Pipeline Locked during active training' : 'Drag onto canvas to add module'}
                         style={{
                           display: 'flex',
                           alignItems: 'center',
@@ -609,13 +614,14 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                           paddingTop: '5px',
                           paddingBottom: '5px',
                           borderRadius: '4px',
-                          cursor: 'var(--mac-cursor-grab)',
+                          cursor: isTraining ? 'not-allowed' : 'var(--mac-cursor-grab)',
+                          opacity: isTraining ? 0.45 : 1,
                           userSelect: 'none',
-                          transition: 'color 0.15s ease',
+                          transition: 'color 0.15s ease, opacity 0.15s ease',
                           backgroundColor: 'transparent',
                           boxShadow: 'none',
                           border: 'none',
-                          color: isNodeHovered
+                          color: isNodeHovered && !isTraining
                             ? (isLight ? '#0071e3' : '#ffffff')
                             : (isLight ? '#111827' : '#9ca3af'),
                         }}

@@ -1241,7 +1241,7 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
   );
 });
 
-const FlowContent: React.FC = () => {
+const FlowContent: React.FC<{ isTraining?: boolean }> = ({ isTraining = false }) => {
   const { theme } = useTheme();
   const isLight = theme === 'light';
   const { syncArchitectureToEngine } = useFlow();
@@ -1249,6 +1249,18 @@ const FlowContent: React.FC = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(getInitialNodes());
   const [edges, setEdges, onEdgesChange] = useEdgesState(getInitialEdges());
   const { screenToFlowPosition } = useReactFlow();
+
+  // Floating Context Menu & Inspector States
+  const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
+  const [inspectors, setInspectors] = useState<InspectorState[]>([]);
+
+  // 🔒 Lock: Close any active inspector modals and context menus immediately when training starts
+  useEffect(() => {
+    if (isTraining) {
+      setInspectors([]);
+      setContextMenu(null);
+    }
+  }, [isTraining]);
 
   // Sync initial DAG architecture with RL Engine and 3D BPNN Visualizer on mount
   useEffect(() => {
@@ -1287,9 +1299,7 @@ const FlowContent: React.FC = () => {
     return () => window.removeEventListener('fxforge-load-blueprint', handleLoadBlueprint);
   }, [setNodes, setEdges, syncArchitectureToEngine]);
 
-  // Floating Context Menu & Inspector States
-  const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
-  const [inspectors, setInspectors] = useState<InspectorState[]>([]);
+
 
   // Clipboard Reference for Multi-Node Copy / Cut / Paste
   const [hasClipboard, setHasClipboard] = useState(false);
@@ -1320,6 +1330,9 @@ const FlowContent: React.FC = () => {
   // ==========================================
   const onConnect = useCallback(
     (connection: Connection) => {
+      // 🔒 Block connecting edges when training is active
+      if (isTraining) return;
+
       // 🎨 กำหนดสีตามขาที่ลากออกมา
       let edgeColor = '#38bdf8'; // สีฟ้าปกติ
       if (connection.sourceHandle === 'true' || connection.sourceHandle === 'pass') {
@@ -1342,7 +1355,7 @@ const FlowContent: React.FC = () => {
 
       setEdges((eds) => addEdge(newEdge, eds));
     },
-    [setEdges]
+    [isTraining, setEdges]
   );
 
   // ==========================================
@@ -1483,6 +1496,9 @@ const FlowContent: React.FC = () => {
   // ==========================================
   // 🎯 คำนวณจุดเกิดข้างขวาของ Node ห่าง 10px ไม่ทับบน Node
   const openInspectorForNode = useCallback((node: Node, index = 0) => {
+    // 🔒 Block opening inspector modal when training is active
+    if (isTraining) return;
+
     const nodeWidth = (node.measured?.width as number) || (typeof node.width === 'number' ? node.width : 270);
     const spawnX = node.position.x + nodeWidth + 10 + (index * 14);
     const spawnY = node.position.y + (index * 14);
@@ -1496,7 +1512,7 @@ const FlowContent: React.FC = () => {
       // ถ้ายังไม่เปิด ให้เพิ่มหน้าต่างใหม่ ณ จุดเกิดข้างขวาของ Node
       return [...prev, { nodeId: node.id, x: spawnX, y: spawnY }];
     });
-  }, []);
+  }, [isTraining]);
 
   const moveInspector = useCallback((nodeId: string, pos: { x: number; y: number }) => {
     setInspectors((prev) =>
@@ -1510,6 +1526,8 @@ const FlowContent: React.FC = () => {
 
   const updateNodeData = useCallback(
     (nodeId: string, keyOrObj: string | Record<string, any>, value?: any) => {
+      if (isTraining) return;
+
       setNodes((nds) => {
         let updated = nds.map((n) => {
           if (n.id === nodeId) {
@@ -1538,16 +1556,18 @@ const FlowContent: React.FC = () => {
         return updated;
       });
     },
-    [setNodes, syncArchitectureToEngine]
+    [isTraining, setNodes, syncArchitectureToEngine]
   );
 
   // 🖱️ Event เมื่อดับเบิลคลิกที่ Node
   const onNodeDoubleClick = useCallback(
     (event: React.MouseEvent, node: Node) => {
       event.stopPropagation();
+      // 🔒 Block opening inspector modal when training is active
+      if (isTraining) return;
       openInspectorForNode(node);
     },
-    [openInspectorForNode]
+    [isTraining, openInspectorForNode]
   );
 
   const [viewportElement, setViewportElement] = useState<HTMLElement | null>(null);
@@ -1581,6 +1601,9 @@ const FlowContent: React.FC = () => {
   const onNodeContextMenu = useCallback(
     (event: React.MouseEvent, node: Node) => {
       event.preventDefault();
+      // 🔒 Block context menu editing when training is active
+      if (isTraining) return;
+
       // If right-clicked node is NOT in the selection, select only this node.
       // If it IS in the selection, keep the entire multi-selection intact!
       if (!node.selected) {
@@ -1594,12 +1617,15 @@ const FlowContent: React.FC = () => {
         targetNodeId: node.id,
       });
     },
-    [screenToFlowPosition, setNodes]
+    [isTraining, screenToFlowPosition, setNodes]
   );
 
   const onPaneContextMenu = useCallback(
     (event: MouseEvent | React.MouseEvent) => {
       event.preventDefault();
+      // 🔒 Block context menu editing when training is active
+      if (isTraining) return;
+
       const flowPos = screenToFlowPosition({ x: event.clientX, y: event.clientY });
       setContextMenu({
         x: event.clientX,
@@ -1608,7 +1634,7 @@ const FlowContent: React.FC = () => {
         targetNodeId: null,
       });
     },
-    [screenToFlowPosition]
+    [isTraining, screenToFlowPosition]
   );
 
   // ✂️ Event เมื่อคลิกขวาที่เส้น Edge เพื่อตัดสายเชื่อมต่อทันที (Disconnect Edge)
@@ -1617,10 +1643,13 @@ const FlowContent: React.FC = () => {
       event.preventDefault();
       event.stopPropagation();
       setContextMenu(null);
+      // 🔒 Block disconnecting edge when training is active
+      if (isTraining) return;
+
       // ตัดสายสัญญาณนี้ทันที (Disconnect Edge)
       setEdges((eds) => eds.filter((e) => e.id !== edge.id));
     },
-    [setEdges]
+    [isTraining, setEdges]
   );
 
   // Close context menu on click elsewhere or zoom/wheel scroll
@@ -1697,6 +1726,9 @@ const FlowContent: React.FC = () => {
   // Listen to custom Pointer-based Drag & Drop for 100% Theme-locked Mac Cursors
   useEffect(() => {
     const handleCustomDrop = (e: Event) => {
+      // 🔒 Block dropping new nodes when training is active
+      if (isTraining) return;
+
       const customEvent = e as CustomEvent<{ nodeType: string; clientX: number; clientY: number }>;
       if (!customEvent.detail) return;
       const { nodeType, clientX, clientY } = customEvent.detail;
@@ -1715,6 +1747,7 @@ const FlowContent: React.FC = () => {
     };
 
     const handleCustomHover = (e: Event) => {
+      if (isTraining) return;
       const customEvent = e as CustomEvent<{ isOver: boolean }>;
       if (customEvent.detail) {
         setIsDragOverCanvas(Boolean(customEvent.detail.isOver));
@@ -1727,13 +1760,14 @@ const FlowContent: React.FC = () => {
       window.removeEventListener('fxforge-drop-node', handleCustomDrop);
       window.removeEventListener('fxforge-drag-hover', handleCustomHover);
     };
-  }, [screenToFlowPosition, setNodes]);
+  }, [isTraining, screenToFlowPosition, setNodes]);
 
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
+    if (isTraining) return;
     event.dataTransfer.dropEffect = 'move';
     setIsDragOverCanvas(true);
-  }, []);
+  }, [isTraining]);
 
   const onDragLeave = useCallback((event: React.DragEvent) => {
     event.preventDefault();
@@ -1745,6 +1779,8 @@ const FlowContent: React.FC = () => {
       event.preventDefault();
       setIsDragOverCanvas(false);
       document.body.classList.remove('is-dragging-node');
+      // 🔒 Block dropping new nodes when training is active
+      if (isTraining) return;
 
       // Strict Boundary Check: Must cross divider line into Canvas
       const sidebarEl = document.querySelector('aside');
@@ -1871,7 +1907,11 @@ const FlowContent: React.FC = () => {
             ? 'drop-shadow(0 0 8px rgba(0, 113, 227, 0.75))'
             : 'drop-shadow(0 0 10px rgba(10, 132, 255, 0.9))',
         }}
-        selectionOnDrag={true}
+        nodesDraggable={!isTraining}
+        nodesConnectable={!isTraining}
+        elementsSelectable={!isTraining}
+        deleteKeyCode={isTraining ? null : ['Backspace', 'Delete']}
+        selectionOnDrag={!isTraining}
         selectionMode={SelectionMode.Partial}
         panOnDrag={[1, 2]}
         minZoom={0.4}
@@ -1924,6 +1964,28 @@ const FlowContent: React.FC = () => {
           }}
         />
       </ReactFlow>
+
+      {/* 🔒 Training Lock Badge (Center Top) */}
+      {isTraining && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 14,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 30,
+            pointerEvents: 'none',
+          }}
+          className={`px-3.5 py-1.5 rounded-full flex items-center gap-2 text-[11.5px] font-semibold select-none shadow-lg backdrop-blur-xl border transition-all ${
+            isLight
+              ? 'bg-amber-500/10 border-amber-500/30 text-amber-900 shadow-amber-500/5'
+              : 'bg-[#1a1608]/90 border-amber-400/30 text-amber-300 shadow-black/60'
+          }`}
+        >
+          <LucideIcons.Lock size={12} className="text-amber-400 animate-pulse flex-shrink-0" />
+          <span>Pipeline Locked · Training in Progress</span>
+        </div>
+      )}
 
       {/* Real-time Status Indicator (Top-Left, Clean Typography, Zero Capsule Frame) */}
       <div className="absolute top-4 left-5 z-10 flex items-center gap-2 select-none pointer-events-none">
@@ -2235,10 +2297,14 @@ const FlowContent: React.FC = () => {
   );
 };
 
-export const FlowCanvasView: React.FC = () => {
+export interface FlowCanvasViewProps {
+  isTraining?: boolean;
+}
+
+export const FlowCanvasView: React.FC<FlowCanvasViewProps> = ({ isTraining = false }) => {
   return (
     <ReactFlowProvider>
-      <FlowContent />
+      <FlowContent isTraining={isTraining} />
     </ReactFlowProvider>
   );
 };
