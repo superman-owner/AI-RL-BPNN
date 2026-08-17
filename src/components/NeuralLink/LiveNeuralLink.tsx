@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useCallback, useState } from 'react';
-import { Minus, Plus, RotateCcw, RotateCw } from 'lucide-react';
+import { Plus, Minus, Scan } from 'lucide-react';
 import type { RLEnvironmentStep } from '../../services/fxforgeEngine';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -64,21 +64,15 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
   const synapsesRef = useRef<BPSynapse[]>([]);
   const particlesRef = useRef<SignalParticle[]>([]);
 
-  // Camera 3D Orbital Controls (Auto-rotation OFF by default)
-  const cameraRef = useRef({ rotX: 0.14, rotY: -0.22, zoom: 1.05, panX: 0, panY: 0 });
+  // Camera 3D Orbital Controls (Default Zoom: 75%, Auto-rotation OFF)
+  const cameraRef = useRef({ rotX: 0.14, rotY: -0.22, zoom: 0.75, panX: 0, panY: 0 });
   const isDraggingRef = useRef(false);
   const dragStartRef = useRef({ x: 0, y: 0 });
   const isTrainingRef = useRef(isTraining);
   const latestStepRef = useRef<RLEnvironmentStep | null>(latestStep);
 
-  // Zoom & Auto-rotate States
-  const [zoomDisplay, setZoomDisplay] = useState(105);
-  const [autoRotate, setAutoRotate] = useState(false);
-  const autoRotateRef = useRef(false);
-
-  useEffect(() => {
-    autoRotateRef.current = autoRotate;
-  }, [autoRotate]);
+  // Zoom State (Default: 75%)
+  const [, setZoomDisplay] = useState(75);
 
   // Sync refs
   useEffect(() => {
@@ -89,19 +83,19 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
     latestStepRef.current = latestStep;
   }, [latestStep]);
 
-  // Camera Reset Handlers
+  // Camera Reset Handlers (Reset to Default 75%)
   const handleResetView = useCallback(() => {
-    cameraRef.current = { rotX: 0.14, rotY: -0.22, zoom: 1.05, panX: 0, panY: 0 };
-    setZoomDisplay(105);
+    cameraRef.current = { rotX: 0.14, rotY: -0.22, zoom: 0.75, panX: 0, panY: 0 };
+    setZoomDisplay(75);
   }, []);
 
   const handleZoomIn = useCallback(() => {
-    cameraRef.current.zoom = Math.min(3.0, Math.round((cameraRef.current.zoom + 0.15) * 100) / 100);
+    cameraRef.current.zoom = Math.min(2.5, Math.round((cameraRef.current.zoom + 0.12) * 100) / 100);
     setZoomDisplay(Math.round(cameraRef.current.zoom * 100));
   }, []);
 
   const handleZoomOut = useCallback(() => {
-    cameraRef.current.zoom = Math.max(0.4, Math.round((cameraRef.current.zoom - 0.15) * 100) / 100);
+    cameraRef.current.zoom = Math.max(0.35, Math.round((cameraRef.current.zoom - 0.12) * 100) / 100);
     setZoomDisplay(Math.round(cameraRef.current.zoom * 100));
   }, []);
 
@@ -377,9 +371,6 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
 
       // Camera Matrix Transformations
       const cam = cameraRef.current;
-      if (autoRotateRef.current && !isDraggingRef.current) {
-        cam.rotY += 0.0010; // Subtle Apple Keynote Auto-rotation when explicitly enabled
-      }
 
       const cosX = Math.cos(cam.rotX);
       const sinX = Math.sin(cam.rotX);
@@ -721,80 +712,54 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
         className="w-full h-full cursor-grab active:cursor-grabbing block"
       />
 
-      {/*  Bottom-Right Floating Camera & Zoom Controls */}
-      <div className="absolute bottom-4 right-4 z-20 flex items-center gap-1.5 p-1 rounded-xl backdrop-blur-xl shadow-lg border transition-colors select-none bg-white/85 dark:bg-[#121218]/85 border-black/10 dark:border-white/10">
-        {/* Zoom Out Button */}
-        <button
-          onClick={handleZoomOut}
-          title="Zoom Out (ย่อมุมมอง)"
-          className={`p-1.5 rounded-lg transition-colors cursor-pointer flex items-center justify-center ${
-            isLight
-              ? 'hover:bg-black/5 text-[#4b5563] hover:text-[#111827]'
-              : 'hover:bg-white/10 text-[#a1a1aa] hover:text-white'
-          }`}
-        >
-          <Minus size={13} />
-        </button>
-
-        {/* Zoom Percentage / Quick Reset */}
-        <button
-          onClick={handleResetView}
-          title="Reset Zoom to 105% (คลิกเพื่อรีเซ็ตขนาด)"
-          className={`px-2 py-1 rounded-lg text-[11.5px] font-sans font-semibold tabular-nums tracking-tight transition-colors cursor-pointer ${
-            isLight
-              ? 'hover:bg-black/5 text-[#111827]'
-              : 'hover:bg-white/10 text-white'
-          }`}
-        >
-          {zoomDisplay}%
-        </button>
-
-        {/* Zoom In Button */}
+      {/*  Apple Maps Style Vertical Viewport Controller (Matches User Reference Image) */}
+      <div
+        className={`absolute bottom-5 right-5 z-20 flex flex-col items-center p-1 rounded-2xl backdrop-blur-2xl shadow-xl border select-none transition-colors ${
+          isLight
+            ? 'bg-white/80 border-black/10 text-[#4b5563]'
+            : 'bg-[#18181f]/80 border-white/10 text-[#a1a1aa]'
+        }`}
+      >
+        {/* Zoom In Button (+) */}
         <button
           onClick={handleZoomIn}
-          title="Zoom In (ขยายมุมมอง)"
-          className={`p-1.5 rounded-lg transition-colors cursor-pointer flex items-center justify-center ${
+          title="Zoom In"
+          style={{ width: 28, height: 28 }}
+          className={`rounded-xl flex items-center justify-center transition-all cursor-pointer ${
             isLight
-              ? 'hover:bg-black/5 text-[#4b5563] hover:text-[#111827]'
-              : 'hover:bg-white/10 text-[#a1a1aa] hover:text-white'
+              ? 'hover:bg-black/5 hover:text-[#111827] active:scale-95'
+              : 'hover:bg-white/10 hover:text-white active:scale-95'
           }`}
         >
-          <Plus size={13} />
+          <Plus size={16} strokeWidth={2.2} />
         </button>
 
-        {/* Divider */}
-        <div className={`w-[1px] h-3.5 mx-0.5 ${isLight ? 'bg-black/10' : 'bg-white/10'}`} />
+        {/* Zoom Out Button (-) */}
+        <button
+          onClick={handleZoomOut}
+          title="Zoom Out"
+          style={{ width: 28, height: 28 }}
+          className={`rounded-xl flex items-center justify-center transition-all cursor-pointer ${
+            isLight
+              ? 'hover:bg-black/5 hover:text-[#111827] active:scale-95'
+              : 'hover:bg-white/10 hover:text-white active:scale-95'
+          }`}
+        >
+          <Minus size={16} strokeWidth={2.2} />
+        </button>
 
-        {/* Reset View Button */}
+        {/* Reset Viewport to 75% ([ ]) */}
         <button
           onClick={handleResetView}
-          title="Reset Camera View (รีเซ็ตมุมมองกล้อง)"
-          className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-sans font-semibold transition-colors cursor-pointer ${
+          title="Reset View (75%)"
+          style={{ width: 28, height: 28 }}
+          className={`rounded-xl flex items-center justify-center transition-all cursor-pointer ${
             isLight
-              ? 'hover:bg-black/5 text-[#4b5563] hover:text-[#111827]'
-              : 'hover:bg-white/10 text-[#a1a1aa] hover:text-white'
+              ? 'hover:bg-black/5 hover:text-[#111827] active:scale-95'
+              : 'hover:bg-white/10 hover:text-white active:scale-95'
           }`}
         >
-          <RotateCcw size={12} />
-          <span>Reset</span>
-        </button>
-
-        {/* Divider */}
-        <div className={`w-[1px] h-3.5 mx-0.5 ${isLight ? 'bg-black/10' : 'bg-white/10'}`} />
-
-        {/* Auto-Rotate Toggle Button */}
-        <button
-          onClick={() => setAutoRotate((prev) => !prev)}
-          title={autoRotate ? 'Pause Auto-Rotation (หยุดหมุนอัตโนมัติ)' : 'Enable Auto-Rotation (เปิดหมุนอัตโนมัติ)'}
-          className={`p-1.5 rounded-lg transition-colors cursor-pointer flex items-center justify-center ${
-            autoRotate
-              ? 'bg-[#007aff]/15 text-[#007aff]'
-              : isLight
-              ? 'hover:bg-black/5 text-[#4b5563] hover:text-[#111827]'
-              : 'hover:bg-white/10 text-[#a1a1aa] hover:text-white'
-          }`}
-        >
-          <RotateCw size={13} className={autoRotate ? 'animate-spin' : ''} />
+          <Scan size={14} strokeWidth={2.2} />
         </button>
       </div>
 
