@@ -180,25 +180,20 @@ class MarketDataLoader:
 
     @staticmethod
     def compute_state_features(df: pd.DataFrame, ret_lookbacks: list = [5, 10, 20], vol_window: int = 10, sma_period: int = 20) -> np.ndarray:
-        p = df['close'].values.astype(np.float64)
+        p = df['close'].values.astype(np.float32)
         n = len(p)
-        
-        ret_a, ret_b, ret_c = ret_lookbacks[0], ret_lookbacks[1], ret_lookbacks[2]
-        max_lookback = max(ret_c, vol_window, sma_period) + 5
-        
-        feat_matrix = np.zeros((n, 6), dtype=np.float32)
-        
-        for idx in range(max_lookback, n):
-            r_a = (p[idx] - p[idx - ret_a]) / p[idx - ret_a] * 100.0
-            r_b = (p[idx] - p[idx - ret_b]) / p[idx - ret_b] * 100.0
-            r_c = (p[idx] - p[idx - ret_c]) / p[idx - ret_c] * 100.0
-            
-            volat = (np.std(p[idx - vol_window:idx + 1]) / p[idx]) * 100.0
-            sma_val = np.mean(p[idx - sma_period:idx + 1])
-            dist_sma = ((p[idx] - sma_val) / p[idx]) * 100.0
-            
-            feat_matrix[idx] = [r_a, r_b, r_c, volat, dist_sma, 0.0]
-            
+        series = pd.Series(p)
+
+        ret_a = (series.pct_change(ret_lookbacks[0]) * 100.0).fillna(0.0).values
+        ret_b = (series.pct_change(ret_lookbacks[1]) * 100.0).fillna(0.0).values
+        ret_c = (series.pct_change(ret_lookbacks[2]) * 100.0).fillna(0.0).values
+
+        volat = (series.rolling(vol_window).std() / (series + 1e-6) * 100.0).fillna(0.0).values
+        sma = series.rolling(sma_period).mean()
+        dist_sma = ((series - sma) / (series + 1e-6) * 100.0).fillna(0.0).values
+        pos = np.zeros(n, dtype=np.float32)
+
+        feat_matrix = np.column_stack([ret_a, ret_b, ret_c, volat, dist_sma, pos]).astype(np.float32)
         return feat_matrix
 
 # =========================================================================
@@ -218,7 +213,10 @@ class FXForgeRLEnvironment:
         self.reset()
 
     def reset(self):
-        self.current_step = 30
+        max_start = max(35, self.n_steps - 300)
+        self.current_step = np.random.randint(30, max_start)
+        self.episode_steps = 0
+        self.max_episode_steps = 250
         self.position = 0 # -1 SHORT, 0 FLAT, +1 LONG
         self.entry_price = 0.0
         self.capital = 100000.0
@@ -235,6 +233,7 @@ class FXForgeRLEnvironment:
     def step(self, action: int):
         price_now = self.prices[self.current_step]
         self.current_step += 1
+        self.episode_steps += 1
         price_next = self.prices[self.current_step]
         
         target_pos = 0
@@ -259,9 +258,9 @@ class FXForgeRLEnvironment:
         market_move = (price_next - price_now) / price_now
         reward = 0.0
         if target_pos == 1:
-            reward += market_move * 10.0
+            reward += market_move * 100.0
         elif target_pos == -1:
-            reward -= market_move * 10.0
+            reward -= market_move * 100.0
         else:
             reward -= self.idle_penalty * 10.0
             if abs(market_move) > 0.0015:
@@ -271,7 +270,7 @@ class FXForgeRLEnvironment:
             reward -= self.spread * 10.0
 
         self.position = target_pos
-        done = (self.current_step >= self.n_steps - 2)
+        done = (self.episode_steps >= self.max_episode_steps) or (self.current_step >= self.n_steps - 2)
         return self._get_state(), reward, done, {'capital': self.capital, 'trade_pnl': trade_pnl}
 
 # =========================================================================
@@ -471,23 +470,22 @@ def main():
         std = np.std(trades) if len(trades) > 0 else 0.0
         sharpe = (np.mean(trades) / (std + 1e-7)) * np.sqrt(252.0) if std > 0 else 0.0
 
-        if ep % 5 == 0 or ep == 1 or ep == episodes:
-            elapsed = time.time() - start_time
-            print(f"Episode {ep:03d}/{episodes} | Loss: {total_loss.item():.4f} | Reward: {sum(rewards):+6.2f} R | WinRate: {win_rate:5.1f}% | Sharpe: {sharpe:4.2f} | PnL: {cum_ret:+6.2f}% | Elapsed: {elapsed:.1f}s", flush=True)
-            
-            # Emit structured JSON event line for UI IPC Listeners
-            progress_payload = {
-                "type": "progress",
-                "episode": ep,
-                "max_episodes": episodes,
-                "loss": round(total_loss.item(), 4),
-                "reward": round(sum(rewards), 2),
-                "win_rate": round(win_rate, 1),
-                "sharpe": round(sharpe, 2),
-                "cum_return": round(cum_ret, 2),
-                "trades": total_t
-            }
-            print(json.dumps(progress_payload), flush=True)
+        elapsed = time.time() - start_time
+        print(f"Episode {ep:04d}/{episodes} | Loss: {total_loss.item():.4f} | Reward: {sum(rewards):+6.2f} R | WinRate: {win_rate:5.1f}% | Sharpe: {sharpe:4.2f} | PnL: {cum_ret:+6.2f}% | Elapsed: {elapsed:.1f}s", flush=True)
+        
+        # Emit structured JSON event line for UI IPC Listeners
+        progress_payload = {
+            "type": "progress",
+            "episode": ep,
+            "max_episodes": episodes,
+            "loss": round(total_loss.item(), 4),
+            "reward": round(sum(rewards), 2),
+            "win_rate": round(win_rate, 1),
+            "sharpe": round(sharpe, 2),
+            "cum_return": round(cum_ret, 2),
+            "trades": total_t
+        }
+        print(json.dumps(progress_payload), flush=True)
 
     # Export Model
     export_standalone_onnx_to_mt5(model, state_dim=6, export_name="rl_trading_model.onnx")
