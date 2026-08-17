@@ -220,8 +220,8 @@ svg:focus-visible,
   width: 16px !important;
   height: 16px !important;
   border-radius: 50% !important;
-  border: 2px solid #000000 !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35) !important;
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
   z-index: 20 !important;
   transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.18s ease, filter 0.18s ease !important;
 }
