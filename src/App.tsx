@@ -48,12 +48,9 @@ function AppContent() {
     return () => clearInterval(interval);
   }, [rlStatus]);
 
-  // Real-time PyTorch Backend Process Listeners (via Electron IPC)
+  // Real-time PyTorch Backend Process Listeners (via Electron IPC & Web Server SSE)
   useEffect(() => {
-    const electron = (window as any).electronAPI;
-    if (!electron) return;
-
-    const unsubOut = electron.on('training-stdout', (text: string) => {
+    const processStdout = (text: string) => {
       const lines = text.split('\n').filter((l: string) => l.trim().length > 0);
       setLogs((prev) => [...prev.slice(-150), ...lines]);
 
@@ -74,23 +71,47 @@ function AppContent() {
           } catch (e) {}
         }
       });
-    });
+    };
 
-    const unsubErr = electron.on('training-stderr', (text: string) => {
+    const processStderr = (text: string) => {
       setLogs((prev) => [...prev.slice(-150), `[PYTORCH] ${text.trim()}`]);
-    });
+    };
 
-    const unsubDone = electron.on('training-finished', ({ code }: { code: number }) => {
+    const processFinished = (code: number) => {
       setLogs((prev) => [
         ...prev,
         `[PYTORCH] ✅ Real Training completed (Code: ${code}). Single-file ONNX model exported to MT5.`,
       ]);
-    });
+    };
+
+    // 1. Electron IPC Listener
+    const electron = (window as any).electronAPI;
+    let unsubOut: any, unsubErr: any, unsubDone: any;
+    if (electron && typeof electron.on === 'function') {
+      unsubOut = electron.on('training-stdout', processStdout);
+      unsubErr = electron.on('training-stderr', processStderr);
+      unsubDone = electron.on('training-finished', ({ code }: { code: number }) => processFinished(code));
+    }
+
+    // 2. Web Browser SSE Stream Listener
+    let eventSource: EventSource | null = null;
+    try {
+      eventSource = new EventSource('/api/train/stream');
+      eventSource.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.type === 'stdout') processStdout(data.text);
+          else if (data.type === 'stderr') processStderr(data.text);
+          else if (data.type === 'finished') processFinished(data.code);
+        } catch (e) {}
+      };
+    } catch (e) {}
 
     return () => {
       if (typeof unsubOut === 'function') unsubOut();
       if (typeof unsubErr === 'function') unsubErr();
       if (typeof unsubDone === 'function') unsubDone();
+      if (eventSource) eventSource.close();
     };
   }, []);
 
@@ -111,31 +132,40 @@ function AppContent() {
       ...prev,
       `[NODE PIPELINE] Applying Node Config: ${architectureSpec.strategyPreset} (${architectureSpec.symbol} ${architectureSpec.timeframe})`,
       `[NODE PIPELINE] Layers: 6 -> ${architectureSpec.hidden1Units} (${architectureSpec.hidden1Activation}) -> Dropout(${architectureSpec.dropoutRate}) -> ${architectureSpec.hidden2Units} -> 3 Actions`,
-      `[RL ENGINE] Launching Real PyTorch Training Engine...`,
+      `[RL ENGINE] Launching Real PyTorch Training Engine (${architectureSpec.totalEpisodes || 400} Episodes)...`,
     ]);
+
+    const payload = {
+      symbol: architectureSpec.symbol,
+      timeframe: architectureSpec.timeframe,
+      bars_count: architectureSpec.barsCount,
+      strategy_preset: architectureSpec.strategyPreset,
+      hidden1_units: architectureSpec.hidden1Units,
+      hidden1_activation: architectureSpec.hidden1Activation,
+      has_dropout: architectureSpec.hasDropout,
+      dropout_rate: architectureSpec.dropoutRate,
+      has_layer_norm: architectureSpec.hasLayerNorm,
+      has_l2_decay: architectureSpec.hasL2Decay,
+      l2_decay_rate: architectureSpec.l2DecayRate,
+      hidden2_units: architectureSpec.hidden2Units,
+      hidden2_activation: architectureSpec.hidden2Activation,
+      has_residual: architectureSpec.hasResidual,
+      spread_pips: architectureSpec.spreadPips,
+      inactivity_penalty: architectureSpec.inactivityPenalty,
+      entropy_beta: architectureSpec.entropyBeta,
+      total_episodes: architectureSpec.totalEpisodes || 400,
+    };
 
     const electron = (window as any).electronAPI;
     if (electron && typeof electron.startRealTraining === 'function') {
-      electron.startRealTraining({
-        symbol: architectureSpec.symbol,
-        timeframe: architectureSpec.timeframe,
-        bars_count: architectureSpec.barsCount,
-        strategy_preset: architectureSpec.strategyPreset,
-        hidden1_units: architectureSpec.hidden1Units,
-        hidden1_activation: architectureSpec.hidden1Activation,
-        has_dropout: architectureSpec.hasDropout,
-        dropout_rate: architectureSpec.dropoutRate,
-        has_layer_norm: architectureSpec.hasLayerNorm,
-        has_l2_decay: architectureSpec.hasL2Decay,
-        l2_decay_rate: architectureSpec.l2DecayRate,
-        hidden2_units: architectureSpec.hidden2Units,
-        hidden2_activation: architectureSpec.hidden2Activation,
-        has_residual: architectureSpec.hasResidual,
-        spread_pips: architectureSpec.spreadPips,
-        inactivity_penalty: architectureSpec.inactivityPenalty,
-        entropy_beta: architectureSpec.entropyBeta,
-        total_episodes: architectureSpec.totalEpisodes || 400,
-      });
+      electron.startRealTraining(payload);
+    } else {
+      // Trigger via Local Server API
+      fetch('/api/train/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      }).catch(() => {});
     }
   }, [architectureSpec]);
 
@@ -154,6 +184,8 @@ function AppContent() {
     const electron = (window as any).electronAPI;
     if (electron && typeof electron.stopRealTraining === 'function') {
       electron.stopRealTraining();
+    } else {
+      fetch('/api/train/stop', { method: 'POST' }).catch(() => {});
     }
   }, []);
 

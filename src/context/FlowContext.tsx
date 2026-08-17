@@ -145,7 +145,10 @@ export const FlowProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const syncArchitectureToEngine = useCallback((nodesList: Node[]) => {
     const spec = parseArchitecture(nodesList);
-    setArchitectureSpec(spec);
+    setArchitectureSpec((prev) => {
+      if (JSON.stringify(prev) === JSON.stringify(spec)) return prev;
+      return spec;
+    });
 
     // Synchronize parameters into the active deep RL simulation engine
     fxforgeEngine.updateConfig({
