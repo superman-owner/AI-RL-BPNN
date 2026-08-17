@@ -104,7 +104,7 @@ const INITIAL_NODES: Node[] = [
     type: 'nodeCard',
     position: { x: 750, y: 30 },
     data: {
-      nodeType: 'spatial_dropout',
+      nodeType: 'spatial_dropout_regularization',
       rate: 0.15,
       mode: 'Standard Dropout',
       execution: { status: 'passed', detail: 'Dropout Active: 0.15' },

@@ -36,12 +36,12 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
   const isLight = theme === 'light';
 
   const def = NODE_DEFS[data.nodeType] || {
-    group: 'stage1',
+    group: 'fc1',
     label: data.label || data.nodeType || 'Node',
     fields: [],
     hasInput: true,
     hasOutput: true,
-    decision: true,
+    decision: false,
   };
   const group = groupById[def.group] || { label: 'NODE', color: '#38bdf8' };
   const accent = group.color;
@@ -133,13 +133,14 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
           {/* Execution Status Badge: Only lit green when isConnected is true */}
           <span
             style={{
-              width: 7,
-              height: 7,
+              width: 5,
+              height: 5,
               borderRadius: '50%',
               background: isConnected && statusColor ? statusColor : (isLight ? '#d1d1d6' : '#3f3f46'),
-              boxShadow: isConnected && statusColor ? `0 0 6px ${statusColor}` : 'none',
+              boxShadow: isConnected && statusColor ? `0 0 4px ${statusColor}` : 'none',
               opacity: isConnected ? 1 : 0.4,
               flexShrink: 0,
+              marginRight: 2,
             }}
             title={isConnected ? (execution?.detail || 'Connected & Active') : 'Disconnected / Standby (Not Active)'}
           />
@@ -185,7 +186,7 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
       </div>
 
       {/* =======================================================
-          1. ขาเข้า IN (TARGET) - ครึ่งวงกลมฝั่งซ้าย ซ้อนอยู่ใต้ขอบ Node
+          1. ขาเข้า IN (TARGET) - Micro Docking Port ฝั่งซ้าย
           ======================================================= */}
       {def.hasInput && (
         <Handle
@@ -194,12 +195,14 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
           id="in"
           style={{
             left: 0,
-            width: 8,
-            height: 18,
-            borderRadius: '9px 0 0 9px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            width: 5,
+            height: 10,
+            borderRadius: '5px 0 0 5px',
             backgroundColor: accent,
             border: 'none',
-            boxShadow: `0 0 6px ${accent}80`,
+            boxShadow: `0 0 4px ${accent}60`,
             cursor: 'crosshair',
             zIndex: -1,
             ['--handle-color' as any]: accent,
@@ -208,7 +211,7 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
       )}
 
       {/* =======================================================
-          2. ขาออก OUT (SOURCE) - ครึ่งวงกลมฝั่งขวา ซ้อนอยู่ใต้ขอบ Node
+          2. ขาออก OUT (SOURCE) - Micro Docking Port ฝั่งขวา
           ======================================================= */}
       {def.hasOutput && !def.decision && (
         <Handle
@@ -217,12 +220,14 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
           id="out"
           style={{
             right: 0,
-            width: 8,
-            height: 18,
-            borderRadius: '0 9px 9px 0',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            width: 5,
+            height: 10,
+            borderRadius: '0 5px 5px 0',
             backgroundColor: accent,
             border: 'none',
-            boxShadow: `0 0 6px ${accent}80`,
+            boxShadow: `0 0 4px ${accent}60`,
             cursor: 'crosshair',
             zIndex: -1,
             ['--handle-color' as any]: accent,
@@ -231,44 +236,46 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
       )}
 
       {/* =======================================================
-          3. ขาออกแยก 2 ทาง (TRUE = เขียว / FALSE = แดง) ครึ่งวงกลมฝั่งขวา
+          3. ขาออกแยก 2 ทาง (TRUE = เขียว / FALSE = แดง) Micro Docking Ports
           ======================================================= */}
       {def.hasOutput && def.decision && (
         <>
-          {/* 🟢 ขาออก TRUE / PASS (ด้านขวาบน 35%) */}
+          {/* 🟢 ขาออก TRUE / PASS (ด้านขวาบน 30%) */}
           <Handle
             type="source"
             position={Position.Right}
             id="true"
             style={{
-              top: '35%',
+              top: '30%',
+              transform: 'translateY(-50%)',
               right: 0,
-              width: 8,
-              height: 18,
-              borderRadius: '0 9px 9px 0',
+              width: 5,
+              height: 9,
+              borderRadius: '0 5px 5px 0',
               backgroundColor: '#10b981',
               border: 'none',
-              boxShadow: '0 0 6px rgba(16, 185, 129, 0.5)',
+              boxShadow: '0 0 4px rgba(16, 185, 129, 0.5)',
               cursor: 'crosshair',
               zIndex: -1,
               ['--handle-color' as any]: '#10b981',
             }}
           />
 
-          {/* 🔴 ขาออก FALSE / FAIL (ด้านขวาล่าง 65%) */}
+          {/* 🔴 ขาออก FALSE / FAIL (ด้านขวาล่าง 70%) */}
           <Handle
             type="source"
             position={Position.Right}
             id="false"
             style={{
-              top: '65%',
+              top: '70%',
+              transform: 'translateY(-50%)',
               right: 0,
-              width: 8,
-              height: 18,
-              borderRadius: '0 9px 9px 0',
+              width: 5,
+              height: 9,
+              borderRadius: '0 5px 5px 0',
               backgroundColor: '#f43f5e',
               border: 'none',
-              boxShadow: '0 0 6px rgba(244, 63, 94, 0.5)',
+              boxShadow: '0 0 4px rgba(244, 63, 94, 0.5)',
               cursor: 'crosshair',
               zIndex: -1,
               ['--handle-color' as any]: '#f43f5e',
