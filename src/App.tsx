@@ -34,6 +34,11 @@ function AppContent() {
   const [isMT5DeployOpen, setIsMT5DeployOpen] = useState(false);
   const [cameraResetTrigger, setCameraResetTrigger] = useState(0);
 
+  // Ensure stale processes are killed on fresh page boot
+  useEffect(() => {
+    fetch('/api/train/stop', { method: 'POST' }).catch(() => {});
+  }, []);
+
   // Real-time PyTorch Backend Process Listeners (Pure Real Deep RL Engine via SSE / Electron IPC)
   useEffect(() => {
     const processStdout = (text: string) => {
@@ -42,6 +47,7 @@ function AppContent() {
 
       lines.forEach((line: string) => {
         if (line.includes('"type": "progress"')) {
+          if (rlStatus !== 'running') return; // Strict guard: never accept backend progress when stopped!
           try {
             const jsonStr = line.substring(line.indexOf('{'), line.lastIndexOf('}') + 1);
             const data = JSON.parse(jsonStr);

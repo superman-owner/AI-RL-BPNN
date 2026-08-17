@@ -168,7 +168,7 @@ export const TopNav: React.FC<TopNavProps> = ({
               <div className="w-[98px] inline-flex items-center gap-1 flex-shrink-0 whitespace-nowrap">
                 <span className="whitespace-nowrap">Win Rate:</span>
                 <strong className={`tabular-nums whitespace-nowrap ${isLight ? 'text-[#28cd41]' : 'text-[#30d158] drop-shadow-[0_0_6px_rgba(48,209,88,0.5)]'}`}>
-                  {rlStatus === 'stopped' && rlTelemetry.episodes === 0
+                  {rlStatus === 'stopped'
                     ? '--'
                     : `${typeof rlTelemetry.winRate === 'number' ? rlTelemetry.winRate.toFixed(1) : rlTelemetry.winRate}%`}
                 </strong>
@@ -177,7 +177,7 @@ export const TopNav: React.FC<TopNavProps> = ({
               <div className="w-[76px] inline-flex items-center gap-1 flex-shrink-0 whitespace-nowrap">
                 <span>Sharpe:</span>
                 <strong className={`tabular-nums ${isLight ? 'text-[#0071e3]' : 'text-[#00c7be] drop-shadow-[0_0_6px_rgba(0,199,190,0.5)]'}`}>
-                  {rlStatus === 'stopped' && rlTelemetry.episodes === 0
+                  {rlStatus === 'stopped'
                     ? '--'
                     : typeof rlTelemetry.annualizedSharpe === 'number'
                     ? rlTelemetry.annualizedSharpe.toFixed(2)
@@ -188,7 +188,7 @@ export const TopNav: React.FC<TopNavProps> = ({
               <div className="w-[118px] inline-flex items-center gap-1 flex-shrink-0 whitespace-nowrap">
                 <span>Reward:</span>
                 <strong className={`tabular-nums ${isLight ? 'text-[#d97706]' : 'text-[#ffd60a] drop-shadow-[0_0_6px_rgba(255,214,10,0.5)]'}`}>
-                  {rlStatus === 'stopped' && rlTelemetry.episodes === 0
+                  {rlStatus === 'stopped'
                     ? '--'
                     : typeof rlTelemetry.totalReward === 'number'
                     ? rlTelemetry.totalReward > 0

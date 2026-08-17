@@ -186,26 +186,29 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
 
   const currentTelemetry = rlTelemetry || fxforgeEngine.getTelemetry();
   const totalReturnPct =
-    ((currentTelemetry.currentEquity - currentTelemetry.initialCapital) / currentTelemetry.initialCapital) * 100;
-  const winRateVal = currentTelemetry.winRate;
-  const sharpeVal = currentTelemetry.annualizedSharpe;
-  const maxDdVal = currentTelemetry.maxDrawdown;
-  const sortinoVal = currentTelemetry.annualizedSortino;
-  const totalTradesVal = currentTelemetry.totalTrades;
-  const totalRewardVal = currentTelemetry.totalReward;
+    isRunning
+      ? ((currentTelemetry.currentEquity - currentTelemetry.initialCapital) / currentTelemetry.initialCapital) * 100
+      : 0.0;
+  const winRateVal = isRunning ? currentTelemetry.winRate : 0.0;
+  const sharpeVal = isRunning ? currentTelemetry.annualizedSharpe : 0.0;
+  const maxDdVal = isRunning ? currentTelemetry.maxDrawdown : 0.0;
+  const sortinoVal = isRunning ? currentTelemetry.annualizedSortino : 0.0;
+  const totalTradesVal = isRunning ? currentTelemetry.totalTrades : 0;
+  const totalRewardVal = isRunning ? currentTelemetry.totalReward : 0.0;
   const profitFactorVal =
-    currentTelemetry.losingTrades > 0
+    isRunning && currentTelemetry.losingTrades > 0
       ? ((currentTelemetry.winningTrades * 1.5) / currentTelemetry.losingTrades).toFixed(2)
-      : currentTelemetry.winningTrades > 0
+      : isRunning && currentTelemetry.winningTrades > 0
       ? '3.50'
-      : '1.00';
+      : '0.00';
 
-  const buyPct = latestStep?.actionProbs ? (latestStep.actionProbs[0] * 100).toFixed(1) : '0.0';
-  const holdPct = latestStep?.actionProbs ? (latestStep.actionProbs[1] * 100).toFixed(1) : '100.0';
-  const sellPct = latestStep?.actionProbs ? (latestStep.actionProbs[2] * 100).toFixed(1) : '0.0';
+  const buyPct = isRunning && latestStep?.actionProbs ? (latestStep.actionProbs[0] * 100).toFixed(1) : '0.0';
+  const holdPct = isRunning && latestStep?.actionProbs ? (latestStep.actionProbs[1] * 100).toFixed(1) : '0.0';
+  const sellPct = isRunning && latestStep?.actionProbs ? (latestStep.actionProbs[2] * 100).toFixed(1) : '0.0';
 
   const totalEpisodesTarget = architectureSpec?.totalEpisodes || 400;
-  const progressPct = ((currentTelemetry.episodes / totalEpisodesTarget) * 100).toFixed(1);
+  const currentEpisodesDisplay = isRunning ? currentTelemetry.episodes : 0;
+  const progressPct = isRunning ? ((currentEpisodesDisplay / totalEpisodesTarget) * 100).toFixed(1) : '0.0';
 
   return (
     <div
@@ -371,7 +374,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
             <div className="flex items-center gap-1 text-[11px] whitespace-nowrap">
               <span className={isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}>Episodes:</span>
               <strong className={`font-sans tabular-nums font-semibold ${isLight ? 'text-[#1d1d1f]' : 'text-white'}`}>
-                {currentTelemetry.episodes.toLocaleString()}
+                {currentEpisodesDisplay.toLocaleString()}
               </strong>
               <span className={`font-sans ${isLight ? 'text-black/30' : 'text-white/40'}`}>/</span>
               <span className={`font-sans tabular-nums ${isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}`}>
