@@ -1,4 +1,5 @@
-import React, { useRef, useEffect, useCallback } from 'react';
+import React, { useRef, useEffect, useCallback, useState } from 'react';
+import { Minus, Plus, RotateCcw, RotateCw } from 'lucide-react';
 import type { RLEnvironmentStep } from '../../services/fxforgeEngine';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -63,12 +64,21 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
   const synapsesRef = useRef<BPSynapse[]>([]);
   const particlesRef = useRef<SignalParticle[]>([]);
 
-  // Camera 3D Orbital Controls
+  // Camera 3D Orbital Controls (Auto-rotation OFF by default)
   const cameraRef = useRef({ rotX: 0.14, rotY: -0.22, zoom: 1.05, panX: 0, panY: 0 });
   const isDraggingRef = useRef(false);
   const dragStartRef = useRef({ x: 0, y: 0 });
   const isTrainingRef = useRef(isTraining);
   const latestStepRef = useRef<RLEnvironmentStep | null>(latestStep);
+
+  // Zoom & Auto-rotate States
+  const [zoomDisplay, setZoomDisplay] = useState(105);
+  const [autoRotate, setAutoRotate] = useState(false);
+  const autoRotateRef = useRef(false);
+
+  useEffect(() => {
+    autoRotateRef.current = autoRotate;
+  }, [autoRotate]);
 
   // Sync refs
   useEffect(() => {
@@ -79,12 +89,28 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
     latestStepRef.current = latestStep;
   }, [latestStep]);
 
+  // Camera Reset Handlers
+  const handleResetView = useCallback(() => {
+    cameraRef.current = { rotX: 0.14, rotY: -0.22, zoom: 1.05, panX: 0, panY: 0 };
+    setZoomDisplay(105);
+  }, []);
+
+  const handleZoomIn = useCallback(() => {
+    cameraRef.current.zoom = Math.min(3.0, Math.round((cameraRef.current.zoom + 0.15) * 100) / 100);
+    setZoomDisplay(Math.round(cameraRef.current.zoom * 100));
+  }, []);
+
+  const handleZoomOut = useCallback(() => {
+    cameraRef.current.zoom = Math.max(0.4, Math.round((cameraRef.current.zoom - 0.15) * 100) / 100);
+    setZoomDisplay(Math.round(cameraRef.current.zoom * 100));
+  }, []);
+
   // Reset Camera Trigger from TopNav
   useEffect(() => {
     if (cameraResetTrigger > 0) {
-      cameraRef.current = { rotX: 0.14, rotY: -0.22, zoom: 1.05, panX: 0, panY: 0 };
+      handleResetView();
     }
-  }, [cameraResetTrigger]);
+  }, [cameraResetTrigger, handleResetView]);
 
   // 1. Initialize Neural Network Geometry [6 -> 12 -> 8 -> 3]
   useEffect(() => {
@@ -351,8 +377,8 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
 
       // Camera Matrix Transformations
       const cam = cameraRef.current;
-      if (!isDraggingRef.current) {
-        cam.rotY += 0.0010; // Subtle Apple Keynote Auto-rotation
+      if (autoRotateRef.current && !isDraggingRef.current) {
+        cam.rotY += 0.0010; // Subtle Apple Keynote Auto-rotation when explicitly enabled
       }
 
       const cosX = Math.cos(cam.rotX);
@@ -649,7 +675,8 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
   };
 
   const handleWheel = (e: React.WheelEvent) => {
-    cameraRef.current.zoom = Math.max(0.6, Math.min(2.5, cameraRef.current.zoom - e.deltaY * 0.001));
+    cameraRef.current.zoom = Math.max(0.4, Math.min(3.0, cameraRef.current.zoom - e.deltaY * 0.001));
+    setZoomDisplay(Math.round(cameraRef.current.zoom * 100));
   };
 
   return (
@@ -675,7 +702,7 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
         </span>
       </div>
 
-      <div className="absolute top-4 right-4 z-10 hidden sm:flex items-center gap-1.5 text-[11px] font-mono pointer-events-none select-none">
+      <div className="absolute top-4 right-4 z-10 hidden sm:flex items-center gap-1.5 text-[11px] font-sans pointer-events-none select-none">
         <span className={`font-semibold ${isLight ? 'text-[#111827]' : 'text-white'}`}>Architecture:</span>
         <span className={isLight ? 'text-[#4b5563]' : 'text-[#86868b]'}>
           6 In ➔ 12 Dense ➔ 8 Dense ➔ 3 Action
@@ -694,9 +721,86 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
         className="w-full h-full cursor-grab active:cursor-grabbing block"
       />
 
-      {/*  Bottom Orbital Helper Hint */}
+      {/*  Bottom-Right Floating Camera & Zoom Controls */}
+      <div className="absolute bottom-4 right-4 z-20 flex items-center gap-1.5 p-1 rounded-xl backdrop-blur-xl shadow-lg border transition-colors select-none bg-white/85 dark:bg-[#121218]/85 border-black/10 dark:border-white/10">
+        {/* Zoom Out Button */}
+        <button
+          onClick={handleZoomOut}
+          title="Zoom Out (ย่อมุมมอง)"
+          className={`p-1.5 rounded-lg transition-colors cursor-pointer flex items-center justify-center ${
+            isLight
+              ? 'hover:bg-black/5 text-[#4b5563] hover:text-[#111827]'
+              : 'hover:bg-white/10 text-[#a1a1aa] hover:text-white'
+          }`}
+        >
+          <Minus size={13} />
+        </button>
+
+        {/* Zoom Percentage / Quick Reset */}
+        <button
+          onClick={handleResetView}
+          title="Reset Zoom to 105% (คลิกเพื่อรีเซ็ตขนาด)"
+          className={`px-2 py-1 rounded-lg text-[11.5px] font-sans font-semibold tabular-nums tracking-tight transition-colors cursor-pointer ${
+            isLight
+              ? 'hover:bg-black/5 text-[#111827]'
+              : 'hover:bg-white/10 text-white'
+          }`}
+        >
+          {zoomDisplay}%
+        </button>
+
+        {/* Zoom In Button */}
+        <button
+          onClick={handleZoomIn}
+          title="Zoom In (ขยายมุมมอง)"
+          className={`p-1.5 rounded-lg transition-colors cursor-pointer flex items-center justify-center ${
+            isLight
+              ? 'hover:bg-black/5 text-[#4b5563] hover:text-[#111827]'
+              : 'hover:bg-white/10 text-[#a1a1aa] hover:text-white'
+          }`}
+        >
+          <Plus size={13} />
+        </button>
+
+        {/* Divider */}
+        <div className={`w-[1px] h-3.5 mx-0.5 ${isLight ? 'bg-black/10' : 'bg-white/10'}`} />
+
+        {/* Reset View Button */}
+        <button
+          onClick={handleResetView}
+          title="Reset Camera View (รีเซ็ตมุมมองกล้อง)"
+          className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-sans font-semibold transition-colors cursor-pointer ${
+            isLight
+              ? 'hover:bg-black/5 text-[#4b5563] hover:text-[#111827]'
+              : 'hover:bg-white/10 text-[#a1a1aa] hover:text-white'
+          }`}
+        >
+          <RotateCcw size={12} />
+          <span>Reset</span>
+        </button>
+
+        {/* Divider */}
+        <div className={`w-[1px] h-3.5 mx-0.5 ${isLight ? 'bg-black/10' : 'bg-white/10'}`} />
+
+        {/* Auto-Rotate Toggle Button */}
+        <button
+          onClick={() => setAutoRotate((prev) => !prev)}
+          title={autoRotate ? 'Pause Auto-Rotation (หยุดหมุนอัตโนมัติ)' : 'Enable Auto-Rotation (เปิดหมุนอัตโนมัติ)'}
+          className={`p-1.5 rounded-lg transition-colors cursor-pointer flex items-center justify-center ${
+            autoRotate
+              ? 'bg-[#007aff]/15 text-[#007aff]'
+              : isLight
+              ? 'hover:bg-black/5 text-[#4b5563] hover:text-[#111827]'
+              : 'hover:bg-white/10 text-[#a1a1aa] hover:text-white'
+          }`}
+        >
+          <RotateCw size={13} className={autoRotate ? 'animate-spin' : ''} />
+        </button>
+      </div>
+
+      {/*  Bottom-Left Orbital Helper Hint */}
       <div
-        className={`absolute bottom-3 right-4 z-10 pointer-events-none text-[10.5px] font-medium tracking-tight select-none ${
+        className={`absolute bottom-4 left-4 z-10 pointer-events-none text-[10.5px] font-medium tracking-tight select-none ${
           isLight ? 'text-[#6b7280]' : 'text-[#71717a]'
         }`}
       >
