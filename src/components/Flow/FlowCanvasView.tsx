@@ -571,6 +571,87 @@ export const autoTunePipelineNodes = (presetName: string, currentNodes: Node[]):
           },
         };
 
+      case 'drawdown_guard_penalty':
+        return {
+          ...node,
+          data: {
+            ...currentData,
+            max_dd_limit: cfg.max_dd_limit,
+            dd_penalty_mult: cfg.dd_penalty_mult,
+            execution: {
+              status: 'passed',
+              detail: `Auto-tuned DD Guard: ${cfg.max_dd_limit}%`,
+            },
+          },
+        };
+
+      case 'dynamic_lot_sizer':
+        return {
+          ...node,
+          data: {
+            ...currentData,
+            sizing_mode: cfg.sizing_mode,
+            risk_per_trade_pct: cfg.risk_per_trade,
+            execution: {
+              status: 'passed',
+              detail: `Auto-tuned Sizer: ${cfg.sizing_mode} (${cfg.risk_per_trade}%)`,
+            },
+          },
+        };
+
+      case 'news_impact_filter':
+        return {
+          ...node,
+          data: {
+            ...currentData,
+            filter_high_impact: cfg.news_filter,
+            execution: {
+              status: 'passed',
+              detail: `Auto-tuned News Filter: ${cfg.news_filter ? 'Active' : 'Bypassed'}`,
+            },
+          },
+        };
+
+      case 'session_time_filter':
+        return {
+          ...node,
+          data: {
+            ...currentData,
+            active_session: cfg.active_session,
+            execution: {
+              status: 'passed',
+              detail: `Auto-tuned Session: ${cfg.active_session}`,
+            },
+          },
+        };
+
+      case 'trailing_stop_breakeven':
+        return {
+          ...node,
+          data: {
+            ...currentData,
+            breakeven_trigger_rr: cfg.be_trigger_rr,
+            trailing_step_atr: cfg.trailing_step_atr,
+            execution: {
+              status: 'passed',
+              detail: `Auto-tuned Breakeven: ${cfg.be_trigger_rr}R`,
+            },
+          },
+        };
+
+      case 'multi_timeframe_fusion':
+        return {
+          ...node,
+          data: {
+            ...currentData,
+            higher_tf: cfg.higher_tf,
+            execution: {
+              status: 'passed',
+              detail: `Auto-tuned MTF: ${cfg.higher_tf}`,
+            },
+          },
+        };
+
       default:
         return node;
     }

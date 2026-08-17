@@ -160,7 +160,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
   const { theme } = useTheme();
   const isLight = theme === 'light';
 
-  const [activeTab, setActiveTab] = useState<'equity' | 'loss' | 'features' | 'logs'>('equity');
+  const [activeTab, setActiveTab] = useState<'equity' | 'loss' | 'features' | 'stress' | 'logs'>('equity');
   const [isMinimized, setIsMinimized] = useState(true); // Default minimized so it never overlaps DAG canvas
   const isMaximized = false;
   const [rewardData, setRewardData] = useState(() => fxforgeEngine.getRewardHistory());
@@ -274,6 +274,24 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
             }`}
           >
             <span className="whitespace-nowrap">Signal Weight Matrix</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveTab('stress');
+              setIsMinimized(false);
+            }}
+            className={`h-full flex items-center text-xs transition-all cursor-pointer whitespace-nowrap flex-shrink-0 ${
+              activeTab === 'stress' && !isMinimized
+                ? isLight
+                  ? 'text-[#0071e3] font-bold'
+                  : 'text-[#007aff] font-bold drop-shadow-[0_0_8px_rgba(0,122,255,0.7)]'
+                : isLight
+                ? 'text-[#6e6e73] hover:text-[#1d1d1f] font-medium'
+                : 'text-white/50 hover:text-white font-medium'
+            }`}
+          >
+            <span className="whitespace-nowrap">Monte Carlo & Stress Test</span>
           </button>
 
           <button
@@ -825,6 +843,154 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                     <Bar dataKey="importance" fill="#ff9f0a" radius={[0, 6, 6, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
+              </div>
+            </div>
+          )}
+
+          {/* TAB: MONTE CARLO STRESS TEST & ROBUSTNESS (Pillar 6) */}
+          {activeTab === 'stress' && (
+            <div className="flex-1 flex gap-3 h-full min-h-0">
+              {/* Left Column: 4 Core Stress KPI Dials */}
+              <div
+                className={`w-[290px] h-full flex flex-col justify-between border flex-shrink-0 transition-all duration-200 ${
+                  isLight
+                    ? 'bg-white border-black/[0.08] shadow-[0_4px_20px_rgba(0,0,0,0.06)]'
+                    : 'bg-gradient-to-b from-[#14141d]/95 to-[#0c0c12]/95 border-white/[0.08] shadow-[0_10px_25px_rgba(0,0,0,0.6)]'
+                } rounded-2xl p-3`}
+              >
+                <div className="grid grid-cols-2 gap-2.5 h-full">
+                  {/* Ruin Probability */}
+                  <MiniRadialGauge
+                    label="P(Ruin)"
+                    value={`${currentTelemetry.ruinProbability.toFixed(1)}%`}
+                    sublabel={currentTelemetry.ruinProbability < 2.0 ? 'Tier-1 Safe' : 'Elevated Risk'}
+                    percentage={Math.min(100, currentTelemetry.ruinProbability * 10)}
+                    color={currentTelemetry.ruinProbability < 2.0 ? '#30d158' : '#ff453a'}
+                    glowColor={currentTelemetry.ruinProbability < 2.0 ? 'rgba(48, 209, 88, 0.6)' : 'rgba(255, 69, 58, 0.6)'}
+                    icon={<LucideIcons.ShieldCheck size={16} strokeWidth={2.5} />}
+                    isMaximized={isMaximized}
+                  />
+
+                  {/* 99th Percentile Worst-Case Drawdown */}
+                  <MiniRadialGauge
+                    label="Worst DD (99%)"
+                    value={`-${currentTelemetry.worstCaseDrawdown.toFixed(1)}%`}
+                    sublabel="Simulated Max"
+                    percentage={Math.min(100, (currentTelemetry.worstCaseDrawdown / 15.0) * 100)}
+                    color="#ffd60a"
+                    glowColor="rgba(255, 214, 10, 0.6)"
+                    icon={<LucideIcons.AlertTriangle size={16} strokeWidth={2.5} />}
+                    isMaximized={isMaximized}
+                  />
+
+                  {/* Out-of-Sample Efficiency */}
+                  <MiniRadialGauge
+                    label="OOS Sharpe"
+                    value={`${currentTelemetry.oosSharpe.toFixed(2)}x`}
+                    sublabel="Forward Quality"
+                    percentage={Math.min(100, (currentTelemetry.oosSharpe / 2.0) * 100)}
+                    color="#00c7be"
+                    glowColor="rgba(0, 199, 190, 0.6)"
+                    icon={<LucideIcons.CheckCircle2 size={16} strokeWidth={2.5} />}
+                    isMaximized={isMaximized}
+                  />
+
+                  {/* Dynamic Lot Monitor */}
+                  <MiniRadialGauge
+                    label="Dynamic Lot"
+                    value={`${currentTelemetry.currentLotSize.toFixed(2)}`}
+                    sublabel="ATR Sized"
+                    percentage={Math.min(100, (currentTelemetry.currentLotSize / 1.0) * 100)}
+                    color="#bf5af2"
+                    glowColor="rgba(191, 90, 242, 0.6)"
+                    icon={<LucideIcons.Layers size={16} strokeWidth={2.5} />}
+                    isMaximized={isMaximized}
+                  />
+                </div>
+              </div>
+
+              {/* Right Column: Live Institutional Defense Cockpit */}
+              <div
+                className={`flex-1 h-full min-h-0 border flex flex-col justify-between overflow-hidden p-4 rounded-2xl ${
+                  isLight
+                    ? 'bg-white border-black/[0.08] shadow-[0_4px_20px_rgba(0,0,0,0.06)]'
+                    : 'bg-gradient-to-b from-[#14141d]/95 to-[#0c0c12]/95 border-white/[0.08] shadow-[0_10px_25px_rgba(0,0,0,0.6)]'
+                }`}
+              >
+                <div className="flex items-center justify-between border-b pb-2.5 mb-3 border-black/[0.06] dark:border-white/[0.06]">
+                  <div>
+                    <span className={`text-xs font-bold block ${isLight ? 'text-[#1d1d1f]' : 'text-white'}`}>
+                      1,000-Path Monte Carlo Stress Test & Defense Status
+                    </span>
+                    <span className={`text-[10.5px] ${isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}`}>
+                      Bootstrap resampling 100-step future equity distribution & risk filters
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] font-semibold text-[#30d158] bg-[#30d158]/10 px-2.5 py-1 rounded-full border border-[#30d158]/20">
+                      Median PnL: +${currentTelemetry.monteCarloMedianPnL.toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+
+                {/* 4 Live Risk Guard Badges */}
+                <div className="grid grid-cols-4 gap-3 flex-1">
+                  {/* Badge 1: Drawdown Guard */}
+                  <div className={`p-3 rounded-xl border flex flex-col justify-between ${
+                    currentTelemetry.drawdownShieldActive
+                      ? 'bg-[#ff453a]/10 border-[#ff453a]/30 text-[#ff453a]'
+                      : isLight ? 'bg-black/[0.02] border-black/[0.06]' : 'bg-white/[0.03] border-white/[0.06]'
+                  }`}>
+                    <div className="flex items-center gap-2">
+                      <LucideIcons.ShieldAlert size={14} className={currentTelemetry.drawdownShieldActive ? 'text-[#ff453a]' : 'text-[#30d158]'} />
+                      <span className="text-[11px] font-bold">Drawdown Shield</span>
+                    </div>
+                    <span className={`text-[10px] ${isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}`}>
+                      {currentTelemetry.drawdownShieldActive ? 'Warning: Near 5% Limit' : 'Safe (< 5.0% Limit)'}
+                    </span>
+                  </div>
+
+                  {/* Badge 2: Economic News Blackout */}
+                  <div className={`p-3 rounded-xl border flex flex-col justify-between ${
+                    currentTelemetry.isNewsRestricted
+                      ? 'bg-[#ffd60a]/10 border-[#ffd60a]/30 text-[#ffd60a]'
+                      : isLight ? 'bg-black/[0.02] border-black/[0.06]' : 'bg-white/[0.03] border-white/[0.06]'
+                  }`}>
+                    <div className="flex items-center gap-2">
+                      <LucideIcons.Radio size={14} className={currentTelemetry.isNewsRestricted ? 'text-[#ffd60a]' : 'text-[#30d158]'} />
+                      <span className="text-[11px] font-bold">News Filter</span>
+                    </div>
+                    <span className={`text-[10px] ${isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}`}>
+                      {currentTelemetry.isNewsRestricted ? 'High-Impact Blackout (FLAT)' : 'Normal Trading Active'}
+                    </span>
+                  </div>
+
+                  {/* Badge 3: Active Market Session */}
+                  <div className={`p-3 rounded-xl border flex flex-col justify-between ${
+                    isLight ? 'bg-black/[0.02] border-black/[0.06]' : 'bg-white/[0.03] border-white/[0.06]'
+                  }`}>
+                    <div className="flex items-center gap-2">
+                      <LucideIcons.Clock size={14} className={currentTelemetry.isSessionActive ? 'text-[#30d158]' : 'text-[#86868b]'} />
+                      <span className="text-[11px] font-bold">Session Guard</span>
+                    </div>
+                    <span className={`text-[10px] ${isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}`}>
+                      {currentTelemetry.isSessionActive ? 'London / NY Overlap (Active)' : 'Off-Hours Standby'}
+                    </span>
+                  </div>
+
+                  {/* Badge 4: Webhook & Telegram */}
+                  <div className={`p-3 rounded-xl border flex flex-col justify-between ${
+                    isLight ? 'bg-black/[0.02] border-black/[0.06]' : 'bg-white/[0.03] border-white/[0.06]'
+                  }`}>
+                    <div className="flex items-center gap-2">
+                      <LucideIcons.Send size={14} className="text-[#0a84ff]" />
+                      <span className="text-[11px] font-bold">Telegram Alert</span>
+                    </div>
+                    <span className={`text-[10px] ${isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}`}>
+                      Instant Trade & DD Push Ready
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           )}

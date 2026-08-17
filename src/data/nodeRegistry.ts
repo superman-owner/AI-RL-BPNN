@@ -44,6 +44,10 @@ export interface PipelinePresetSettings {
   vol_window: number;
   sma_period: number;
   metric: string;
+  // MTF & Filters
+  higher_tf: string;
+  news_filter: boolean;
+  active_session: string;
   // Expansion
   units_fc1: string;
   activation_fc1: string;
@@ -61,6 +65,13 @@ export interface PipelinePresetSettings {
   spread_pip: number;
   idle_penalty: number;
   opp_cost_multiplier: string;
+  max_dd_limit: number;
+  dd_penalty_mult: number;
+  // Execution & Sizing
+  sizing_mode: string;
+  risk_per_trade: number;
+  be_trigger_rr: number;
+  trailing_step_atr: number;
   // Policy Head
   entropy_beta: number;
 }
@@ -72,6 +83,9 @@ export const STRATEGY_PRESET_CONFIGS: Record<string, PipelinePresetSettings> = {
     vol_window: 10,
     sma_period: 20,
     metric: 'ATR Normalized',
+    higher_tf: 'H4',
+    news_filter: true,
+    active_session: 'London & New York',
     units_fc1: '64',
     activation_fc1: 'LeakyReLU',
     dropout_rate: 0.15,
@@ -85,6 +99,12 @@ export const STRATEGY_PRESET_CONFIGS: Record<string, PipelinePresetSettings> = {
     spread_pip: 0.15,
     idle_penalty: -0.0005,
     opp_cost_multiplier: '0.50x',
+    max_dd_limit: 5.0,
+    dd_penalty_mult: 3.0,
+    sizing_mode: 'Risk % of Equity',
+    risk_per_trade: 1.0,
+    be_trigger_rr: 1.5,
+    trailing_step_atr: 1.2,
     entropy_beta: 0.08,
   },
   'Fibonacci Scale': {
@@ -93,6 +113,9 @@ export const STRATEGY_PRESET_CONFIGS: Record<string, PipelinePresetSettings> = {
     vol_window: 14,
     sma_period: 34,
     metric: 'ATR Normalized',
+    higher_tf: 'D1',
+    news_filter: true,
+    active_session: 'London & New York',
     units_fc1: '64',
     activation_fc1: 'LeakyReLU',
     dropout_rate: 0.15,
@@ -106,6 +129,12 @@ export const STRATEGY_PRESET_CONFIGS: Record<string, PipelinePresetSettings> = {
     spread_pip: 0.15,
     idle_penalty: -0.0004,
     opp_cost_multiplier: '0.50x',
+    max_dd_limit: 6.0,
+    dd_penalty_mult: 2.5,
+    sizing_mode: 'Risk % of Equity',
+    risk_per_trade: 0.8,
+    be_trigger_rr: 1.6,
+    trailing_step_atr: 1.5,
     entropy_beta: 0.08,
   },
   'Ultra-Fast Scalper': {
@@ -114,68 +143,65 @@ export const STRATEGY_PRESET_CONFIGS: Record<string, PipelinePresetSettings> = {
     vol_window: 5,
     sma_period: 10,
     metric: 'ATR Normalized',
+    higher_tf: 'M15',
+    news_filter: true,
+    active_session: 'London Only',
     units_fc1: '64',
     activation_fc1: 'LeakyReLU',
     dropout_rate: 0.05,
     dropout_mode: 'Standard Dropout',
     norm_type: 'LayerNorm',
-    l2_decay: '5e-5',
+    l2_decay: '1e-5',
     gradient_clip: 0.5,
     units_fc2: '32',
     activation_fc2: 'LeakyReLU',
     residual: false,
-    spread_pip: 0.10,
+    spread_pip: 0.08,
     idle_penalty: -0.0010,
-    opp_cost_multiplier: '0.80x',
-    entropy_beta: 0.04,
+    opp_cost_multiplier: '0.75x',
+    max_dd_limit: 3.5,
+    dd_penalty_mult: 5.0,
+    sizing_mode: 'ATR Volatility-Adjusted',
+    risk_per_trade: 0.5,
+    be_trigger_rr: 1.2,
+    trailing_step_atr: 0.8,
+    entropy_beta: 0.05,
   },
   'Macro Trend Follower': {
     timeframe: 'H4',
     bars_count: 5000,
     vol_window: 20,
     sma_period: 50,
-    metric: 'Standard Deviation %',
-    units_fc1: '128',
-    activation_fc1: 'GELU',
-    dropout_rate: 0.25,
-    dropout_mode: 'Standard Dropout',
-    norm_type: 'LayerNorm',
-    l2_decay: '5e-4',
-    gradient_clip: 2.0,
-    units_fc2: '32',
-    activation_fc2: 'GELU',
-    residual: true,
-    spread_pip: 0.20,
-    idle_penalty: -0.0002,
-    opp_cost_multiplier: '0.30x',
-    entropy_beta: 0.12,
-  },
-  'Custom Configuration': {
-    timeframe: 'M15',
-    bars_count: 10000,
-    vol_window: 10,
-    sma_period: 20,
     metric: 'ATR Normalized',
-    units_fc1: '64',
+    higher_tf: 'D1',
+    news_filter: false,
+    active_session: 'All Sessions',
+    units_fc1: '128',
     activation_fc1: 'LeakyReLU',
-    dropout_rate: 0.15,
+    dropout_rate: 0.20,
     dropout_mode: 'Standard Dropout',
     norm_type: 'LayerNorm',
-    l2_decay: '1e-4',
-    gradient_clip: 1.0,
-    units_fc2: '32',
+    l2_decay: '1e-3',
+    gradient_clip: 2.0,
+    units_fc2: '64',
     activation_fc2: 'LeakyReLU',
     residual: true,
-    spread_pip: 0.15,
-    idle_penalty: -0.0005,
-    opp_cost_multiplier: '0.50x',
-    entropy_beta: 0.08,
+    spread_pip: 0.25,
+    idle_penalty: -0.0001,
+    opp_cost_multiplier: '0.25x',
+    max_dd_limit: 8.0,
+    dd_penalty_mult: 2.0,
+    sizing_mode: 'Risk % of Equity',
+    risk_per_trade: 1.5,
+    be_trigger_rr: 2.0,
+    trailing_step_atr: 2.0,
+    entropy_beta: 0.10,
   },
 };
 
 export const NODE_DEFS: Record<string, NodeDef> = {
   // =========================================================================
-  // หมวด INPUT NODES (ดึงข้อมูลและเลือกกลยุทธ์)
+  // 1. หมวด INPUT & STATE NODES (ป้อนข้อมูลและตัวกรองตลาด)
   // =========================================================================
   strategy_preset_return: {
     group: 'input',
@@ -278,9 +304,61 @@ export const NODE_DEFS: Record<string, NodeDef> = {
     hasInput: false,
     hasOutput: true,
   },
+  multi_timeframe_fusion: {
+    group: 'input',
+    label: 'Multi-Timeframe Fusion',
+    fields: [
+      {
+        key: 'higher_tf',
+        label: 'Higher Timeframe',
+        default: 'H4',
+        type: 'select',
+        options: ['M30', 'H1', 'H4', 'D1', 'W1'],
+      },
+      {
+        key: 'trend_indicator',
+        label: 'Higher Trend Filter',
+        default: 'EMA 200 + SuperTrend',
+        type: 'select',
+        options: ['EMA 200 + SuperTrend', 'MACD Higher Trend', 'Multi-Fractal Trend'],
+      },
+      { key: 'confluence_weight', label: 'Confluence Weight %', default: 35, type: 'number' },
+    ],
+    hasInput: false,
+    hasOutput: true,
+  },
+  news_impact_filter: {
+    group: 'input',
+    label: 'News Impact Filter',
+    fields: [
+      { key: 'filter_high_impact', label: 'Filter High-Impact News', default: true, type: 'boolean' },
+      { key: 'blackout_mins_before', label: 'Blackout Mins Before', default: 15, type: 'number' },
+      { key: 'blackout_mins_after', label: 'Blackout Mins After', default: 30, type: 'number' },
+      { key: 'auto_close_on_red_news', label: 'Auto-Close on Red News', default: false, type: 'boolean' },
+    ],
+    hasInput: false,
+    hasOutput: true,
+  },
+  session_time_filter: {
+    group: 'input',
+    label: 'Session & Day Filter',
+    fields: [
+      {
+        key: 'active_session',
+        label: 'Active Market Session',
+        default: 'London & New York',
+        type: 'select',
+        options: ['London & New York', 'London Only', 'New York Only', 'Asian Session', 'All Sessions'],
+      },
+      { key: 'no_friday_weekend_gap', label: 'Close Before Friday Close', default: true, type: 'boolean' },
+      { key: 'friday_close_hour_gmt', label: 'Friday Exit Hour (GMT)', default: 21, type: 'number' },
+    ],
+    hasInput: false,
+    hasOutput: true,
+  },
 
   // =========================================================================
-  // หมวด HIDDEN LAYER 1 NODES (สกัดฟีเจอร์ย่อย)
+  // 2. หมวด HIDDEN LAYER 1 NODES (สกัดฟีเจอร์ย่อย)
   // =========================================================================
   fc1_dense_expansion: {
     group: 'fc1',
@@ -298,35 +376,44 @@ export const NODE_DEFS: Record<string, NodeDef> = {
         label: 'Activation Function',
         default: 'LeakyReLU',
         type: 'select',
-        options: ['LeakyReLU', 'GELU', 'ELU', 'ReLU', 'Mish'],
+        options: ['LeakyReLU', 'GELU', 'ReLU', 'Mish'],
       },
+      { key: 'bias', label: 'Learnable Bias', default: true, type: 'boolean' },
+    ],
+    hasInput: true,
+    hasOutput: true,
+  },
+  fc1_attention_weights: {
+    group: 'fc1',
+    label: 'Attention Feature Saliency',
+    fields: [
       {
-        key: 'weight_init',
-        label: 'Weight Initialization',
-        default: 'Kaiming Normal',
+        key: 'heads',
+        label: 'Attention Heads',
+        default: '4',
         type: 'select',
-        options: ['Kaiming Normal', 'Xavier Uniform', 'Orthogonal'],
+        options: ['2', '4', '8'],
       },
-      { key: 'use_bias', label: 'Use Bias', default: true, type: 'boolean' },
+      { key: 'temperature', label: 'Softmax Temperature', default: 1.0, type: 'number' },
     ],
     hasInput: true,
     hasOutput: true,
   },
 
   // =========================================================================
-  // หมวด ANTI-OVERFITTING & REGULARIZATION NODES (กันจำข้อสอบเก่า)
+  // 3. หมวด REGULARIZATION & NORM NODES (ป้องกัน Overfitting)
   // =========================================================================
-  spatial_dropout: {
+  spatial_dropout_regularization: {
     group: 'regularization',
-    label: 'Spatial Dropout',
+    label: 'Spatial Feature Dropout',
     fields: [
-      { key: 'rate', label: 'Dropout Rate', default: 0.15, type: 'number' },
+      { key: 'rate', label: 'Dropout Rate (0.0-0.5)', default: 0.15, type: 'number' },
       {
         key: 'mode',
         label: 'Dropout Mode',
         default: 'Standard Dropout',
         type: 'select',
-        options: ['Standard Dropout', 'Inverted Dropout'],
+        options: ['Standard Dropout', 'DropConnect', 'AlphaDropout'],
       },
     ],
     hasInput: true,
@@ -338,21 +425,12 @@ export const NODE_DEFS: Record<string, NodeDef> = {
     fields: [
       {
         key: 'norm_type',
-        label: 'Norm Type',
+        label: 'Normalization Type',
         default: 'LayerNorm',
         type: 'select',
-        options: ['LayerNorm', 'RMSNorm', 'None'],
+        options: ['LayerNorm', 'RMSNorm', 'BatchNorm1D'],
       },
-      { key: 'eps', label: 'Epsilon', default: '1e-5', type: 'string' },
-    ],
-    hasInput: true,
-    hasOutput: true,
-  },
-  l2_weight_decay: {
-    group: 'regularization',
-    label: 'L2 Weight Decay',
-    fields: [
-      { key: 'decay', label: 'Weight Decay', default: '1e-4', type: 'string' },
+      { key: 'epsilon', label: 'Epsilon Stability', default: '1e-5', type: 'string' },
     ],
     hasInput: true,
     hasOutput: true,
@@ -368,7 +446,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
   },
 
   // =========================================================================
-  // หมวด HIDDEN LAYER 2 NODES (สังเคราะห์ภาพรวมกลยุทธ์)
+  // 4. หมวด HIDDEN LAYER 2 NODES (สังเคราะห์ภาพรวมกลยุทธ์)
   // =========================================================================
   fc2_bottleneck_synthesizer: {
     group: 'fc2',
@@ -400,7 +478,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
   },
 
   // =========================================================================
-  // หมวด REWARD & SHAPING NODES (กฎเกณฑ์การเทรด)
+  // 5. หมวด REWARD & SHAPING NODES (กฎเกณฑ์และการคุม Drawdown)
   // =========================================================================
   friction_spread_cost: {
     group: 'reward',
@@ -422,9 +500,21 @@ export const NODE_DEFS: Record<string, NodeDef> = {
     hasInput: true,
     hasOutput: true,
   },
+  drawdown_guard_penalty: {
+    group: 'reward',
+    label: 'Drawdown Guard & Penalty',
+    fields: [
+      { key: 'max_dd_limit', label: 'Max Drawdown Limit %', default: 5.0, type: 'number' },
+      { key: 'daily_dd_limit', label: 'Daily Drawdown Limit %', default: 4.0, type: 'number' },
+      { key: 'dd_penalty_mult', label: 'Penalty Multiplier (x)', default: 3.0, type: 'number' },
+      { key: 'hard_stop_on_breach', label: 'Hard Stop on DD Breach', default: true, type: 'boolean' },
+    ],
+    hasInput: true,
+    hasOutput: true,
+  },
 
   // =========================================================================
-  // หมวด OUTPUT & DEPLOY NODES (เคาะออเดอร์และส่ง MT5)
+  // 6. หมวด OUTPUT & DEPLOY NODES (เคาะออเดอร์, Dynamic Lot, Trailing, Webhook)
   // =========================================================================
   fc3_policy_action_head: {
     group: 'output',
@@ -437,6 +527,56 @@ export const NODE_DEFS: Record<string, NodeDef> = {
         type: 'string',
       },
       { key: 'entropy_beta', label: 'Entropy Regularization Bonus', default: 0.08, type: 'number' },
+    ],
+    hasInput: true,
+    hasOutput: true,
+  },
+  dynamic_lot_sizer: {
+    group: 'output',
+    label: 'Dynamic Position Sizer',
+    fields: [
+      {
+        key: 'sizing_mode',
+        label: 'Sizing Algorithm',
+        default: 'Risk % of Equity',
+        type: 'select',
+        options: ['Risk % of Equity', 'ATR Volatility-Adjusted', 'Kelly Criterion', 'AI Confidence Scale'],
+      },
+      { key: 'risk_per_trade_pct', label: 'Risk % per Trade', default: 1.0, type: 'number' },
+      { key: 'min_lot', label: 'Minimum Lot', default: 0.01, type: 'number' },
+      { key: 'max_lot', label: 'Maximum Lot', default: 10.0, type: 'number' },
+      { key: 'atr_multiplier', label: 'ATR Multiplier', default: 1.5, type: 'number' },
+    ],
+    hasInput: true,
+    hasOutput: true,
+  },
+  trailing_stop_breakeven: {
+    group: 'output',
+    label: 'Trailing Stop & Breakeven',
+    fields: [
+      { key: 'breakeven_trigger_rr', label: 'Breakeven Trigger (R:R)', default: 1.5, type: 'number' },
+      { key: 'breakeven_lock_pips', label: 'Breakeven Lock Pips', default: 1.0, type: 'number' },
+      { key: 'trailing_step_atr', label: 'Trailing Step (x ATR)', default: 1.2, type: 'number' },
+      { key: 'partial_take_profit_pct', label: 'Partial TP (% Lot)', default: 50, type: 'number' },
+    ],
+    hasInput: true,
+    hasOutput: true,
+  },
+  telegram_webhook_alert: {
+    group: 'output',
+    label: 'Telegram & Webhook Alert',
+    fields: [
+      {
+        key: 'webhook_channel',
+        label: 'Notification Channel',
+        default: 'Telegram Bot',
+        type: 'select',
+        options: ['Telegram Bot', 'Discord Webhook', 'MQL5 Push Notification'],
+      },
+      { key: 'bot_token_or_url', label: 'Bot Token / Webhook URL', default: 'https://api.telegram.org/bot...', type: 'string' },
+      { key: 'notify_on_trade', label: 'Notify on New Trade', default: true, type: 'boolean' },
+      { key: 'notify_on_dd_alert', label: 'Notify on Drawdown Alert', default: true, type: 'boolean' },
+      { key: 'notify_daily_summary', label: 'Daily PnL Summary', default: true, type: 'boolean' },
     ],
     hasInput: true,
     hasOutput: true,
