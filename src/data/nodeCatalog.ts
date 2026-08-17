@@ -68,13 +68,15 @@ export const CATALOG_GROUPS: CatalogGroup[] = [
   },
   {
     id: 'execution',
-    name: '5. EXECUTION & DEPLOY',
+    name: '5. VALIDATION & DEPLOY',
     accentColor: '#30d158', // Green
     icon: 'Rocket',
     nodeIds: [
+      'monte_carlo_stress_test',
+      'walk_forward_robustness',
       'backtest_telemetry',
-      'mt5_live_bot',
       'dynamic_risk_manager',
+      'mt5_live_bot',
     ],
   },
 ];
@@ -318,7 +320,38 @@ export const NODE_CATALOG: TradingNodeConfig[] = [
     },
   },
 
-  // 5. EXECUTION & DEPLOY
+  // 5. VALIDATION & DEPLOY
+  {
+    id: 'monte_carlo_stress_test',
+    category: 'execution',
+    title: 'Monte Carlo Stress Test',
+    subtitle: '1,000-Path Resample & P(Ruin)',
+    icon: 'Activity',
+    inputs: [{ id: 'in_model', label: 'Policy Model', type: 'model' }],
+    outputs: [{ id: 'out_backtest', label: 'Stress Report', type: 'backtest' }],
+    params: {
+      numSimulations: 1000,
+      confidenceInterval: 95,
+      horizonSessions: 50,
+      maxDrawdownLimitPct: 5.0,
+      bootstrapMethod: 'StationaryBlockResample',
+    },
+  },
+  {
+    id: 'walk_forward_robustness',
+    category: 'execution',
+    title: 'Walk-Forward Robustness',
+    subtitle: 'OOS Sharpe & Overfit Guard',
+    icon: 'ShieldCheck',
+    inputs: [{ id: 'in_model', label: 'Candidate Model', type: 'model' }],
+    outputs: [{ id: 'out_model', label: 'Robust Policy', type: 'model' }],
+    params: {
+      oosWindowsCount: 5,
+      trainRatioPct: 70,
+      minOosSharpeRatio: 1.20,
+      parameterStabilityThresholdPct: 85,
+    },
+  },
   {
     id: 'backtest_telemetry',
     category: 'execution',
