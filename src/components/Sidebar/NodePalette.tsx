@@ -2,113 +2,251 @@ import React, { useState } from 'react';
 import { GROUPS, nodesByGroup } from '../../data/nodeRegistry';
 import { useTheme } from '../../context/ThemeContext';
 import {
-  SFSymbolChartBar,
-  SFSymbolSliders,
-  SFSymbolShield,
-  SFSymbolBrain,
-  SFSymbolBolt,
-  SFSymbolPaperplane,
-  SFSymbolChevronDown,
-  SFSymbolChevronRight,
-  SFSymbolPlus,
-  SFSymbolSearch,
-} from '../Common/AppleSFSymbols';
-import {
+  Search,
+  Sliders,
+  Brain,
+  Zap,
+  Layers,
   Settings,
+  Database,
+  SlidersHorizontal,
+  ShieldAlert,
+  FileCode,
   PanelLeftClose,
   PanelLeftOpen,
 } from 'lucide-react';
 
-const GROUP_ICONS: Record<string, React.ComponentType<{ size?: number; color?: string; style?: React.CSSProperties; className?: string }>> = {
-  input: SFSymbolChartBar,
-  fc1: SFSymbolSliders,
-  regularization: SFSymbolShield,
-  fc2: SFSymbolBrain,
-  reward: SFSymbolBolt,
-  output: SFSymbolPaperplane,
+//  Authentic Apple SF Symbol: chevron.down
+const SFSymbolChevronDown: React.FC<{ size?: number; className?: string }> = ({ size = 10, className = '' }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 12 12"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <path d="M2.5 4.5L6 8L9.5 4.5" />
+  </svg>
+);
+
+//  Authentic Apple SF Symbol: chevron.right
+const SFSymbolChevronRight: React.FC<{ size?: number; className?: string }> = ({ size = 10, className = '' }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 12 12"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <path d="M4.5 2.5L8 6L4.5 9.5" />
+  </svg>
+);
+
+//  Authentic Apple SF Symbol: plus
+const SFSymbolPlus: React.FC<{ size?: number; className?: string; style?: React.CSSProperties }> = ({
+  size = 11,
+  className = '',
+  style,
+}) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 12 12"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+    style={style}
+  >
+    <path d="M6 2V10M2 6H10" />
+  </svg>
+);
+
+const GROUP_ICONS: Record<
+  string,
+  React.ComponentType<{ size?: number; className?: string; color?: string; style?: React.CSSProperties }>
+> = {
+  input: Database,
+  fc1: SlidersHorizontal,
+  regularization: ShieldAlert,
+  fc2: Brain,
+  reward: Zap,
+  output: FileCode,
 };
 
 interface NodePaletteProps {
+  onOpenSettings?: () => void;
   isCollapsed?: boolean;
   onToggleCollapse?: () => void;
-  onOpenSettings?: () => void;
 }
 
 export const NodePalette: React.FC<NodePaletteProps> = ({
+  onOpenSettings,
   isCollapsed = false,
   onToggleCollapse,
-  onOpenSettings,
 }) => {
   const { theme } = useTheme();
   const isLight = theme === 'light';
 
-  const [search, setSearch] = useState('');
+  const [query, setQuery] = useState('');
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
-  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({
-    input: true,
-    fc1: true,
-    regularization: true,
-    fc2: true,
-    reward: true,
-    output: true,
-  });
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(GROUPS.map((g) => [g.id, true]))
+  );
 
-  const toggleGroup = (groupId: string) => {
-    setExpandedGroups((prev) => ({
-      ...prev,
-      [groupId]: !prev[groupId],
-    }));
+  const toggleGroup = (id: string) => {
+    setExpandedGroups((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  //  Pointer-Down Handlers for Drag-and-Drop Node onto Canvas
-  const handleItemPointerDown = (
-    e: React.PointerEvent<HTMLDivElement>,
-    nodeType: string,
-    label: string,
-    color?: string
-  ) => {
-    if (e.button !== 0) return; // Primary mouse button only
+  const q = query.toLowerCase().trim();
+
+  //  1. Slim Icon Rail Mode (Collapsed Sidebar like Reference Image)
+  if (isCollapsed) {
+    return (
+      <aside
+        onWheel={(e) => e.stopPropagation()}
+        style={{
+          width: '56px',
+          minWidth: '56px',
+          transition: 'width 0.22s cubic-bezier(0.16, 1, 0.3, 1)',
+        }}
+        className={`h-full flex flex-col items-center justify-between border-r select-none z-20 py-3 flex-shrink-0 transition-colors duration-200 ${
+          isLight ? 'bg-[#f5f5f7] border-black/[0.08] text-[#1d1d1f]' : 'bg-[#08080c] border-white/[0.08] text-[#c7c7cc]'
+        }`}
+      >
+        {/* Top: Expand Toggle Button & Search Quick-Action */}
+        <div className="flex flex-col items-center gap-2.5 w-full">
+          {onToggleCollapse && (
+            <button
+              onClick={onToggleCollapse}
+              title="Expand Sidebar (ขยายแถบข้าง)"
+              className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all cursor-pointer ${
+                isLight ? 'text-[#6e6e73] hover:text-[#1d1d1f] hover:bg-black/[0.05]' : 'text-[#86868b] hover:text-white hover:bg-white/[0.06]'
+              }`}
+            >
+              <PanelLeftOpen size={16} />
+            </button>
+          )}
+
+          {/* Quick Search Action */}
+          <button
+            onClick={onToggleCollapse}
+            title="Search parameters & modules"
+            className={`w-8 h-8 rounded-lg flex items-center justify-center border transition-all cursor-pointer ${
+              isLight
+                ? 'text-[#6e6e73] hover:text-[#1d1d1f] hover:bg-black/[0.05] border-black/[0.08]'
+                : 'text-[#86868b] hover:text-white hover:bg-white/[0.06] border-white/[0.06]'
+            }`}
+          >
+            <Search size={13} />
+          </button>
+        </div>
+
+        {/* Middle: Vertical Group Icons Rail */}
+        <div className="flex-1 w-full overflow-y-auto custom-scrollbar flex flex-col items-center gap-1.5 py-4 my-1">
+          {GROUPS.map((group) => {
+            const GroupIcon = GROUP_ICONS[group.id] || Layers;
+
+            return (
+              <div key={group.id} className="relative group w-full flex items-center justify-center">
+                <button
+                  onClick={() => {
+                    setExpandedGroups((prev) => ({ ...prev, [group.id]: true }));
+                    if (onToggleCollapse) onToggleCollapse();
+                  }}
+                  title={group.label}
+                  className={`w-9 h-8 rounded-md flex items-center justify-center transition-all cursor-pointer relative ${
+                    isLight ? 'hover:bg-black/[0.06]' : 'hover:bg-white/[0.08]'
+                  }`}
+                >
+                  <GroupIcon
+                    size={15}
+                    style={{ color: group.color }}
+                    className="transition-transform duration-150 group-hover:scale-115"
+                  />
+                </button>
+
+                {/* Apple macOS Floating Tooltip */}
+                <div
+                  className={`absolute left-[54px] px-2.5 py-1 rounded-md text-[11px] font-medium whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50 shadow-xl border ${
+                    isLight ? 'bg-white border-black/[0.12] text-[#1d1d1f]' : 'bg-[#161622] border-white/[0.12] text-white'
+                  }`}
+                >
+                  {group.label}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Bottom: Settings Button */}
+        <div className="w-full flex justify-center pt-2">
+          <button
+            onClick={onOpenSettings}
+            title="Settings"
+            className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors cursor-pointer ${
+              isLight ? 'text-[#6e6e73] hover:text-[#1d1d1f] hover:bg-black/[0.05]' : 'text-[#86868b] hover:text-white hover:bg-white/[0.06]'
+            }`}
+          >
+            <Settings size={15} />
+          </button>
+        </div>
+      </aside>
+    );
+  }
+
+  //  Pointer-based Drag Handler (100% Guaranteed Mac Closed Fist Cursor during entire drag)
+  const handleItemPointerDown = (e: React.PointerEvent, nodeType: string, label: string, color: string) => {
+    // Only handle primary left click (No right-click or middle-click)
+    if (e.button !== 0) return;
+
+    // Remove any orphaned drag ghosts from DOM
+    document.querySelectorAll('.fxforge-drag-ghost').forEach((el) => el.remove());
 
     const startX = e.clientX;
     const startY = e.clientY;
-    let ghost: HTMLElement | null = null;
     let isDragging = false;
+    let ghostEl: HTMLDivElement | null = null;
 
-    const createGhost = (x: number, y: number) => {
-      if (ghost) return;
-      const ghostEl = document.createElement('div');
-      ghost = ghostEl;
-      ghostEl.className = 'drag-ghost-apple';
+    //  Create High-Contrast Apple macOS Drag Preview Capsule Centered on Cursor
+    const createGhost = (clientX: number, clientY: number) => {
+      if (ghostEl) return;
+      ghostEl = document.createElement('div');
+      ghostEl.className = 'fxforge-drag-ghost';
       ghostEl.style.position = 'fixed';
+      ghostEl.style.top = '0px';
+      ghostEl.style.left = '0px';
       ghostEl.style.pointerEvents = 'none';
       ghostEl.style.zIndex = '9999999';
-      ghostEl.style.left = `${x}px`;
-      ghostEl.style.top = `${y}px`;
-      ghostEl.style.transform = 'translate(-50%, -50%)';
-      ghostEl.style.display = 'flex';
-      ghostEl.style.alignItems = 'center';
-      ghostEl.style.gap = '8px';
-      ghostEl.style.padding = '6px 14px';
-      ghostEl.style.borderRadius = '9999px';
+      ghostEl.style.padding = '6px 12px 6px 10px';
+      ghostEl.style.borderRadius = '18px';
+      ghostEl.style.backgroundColor = isLight ? 'rgba(255, 255, 255, 0.94)' : 'rgba(26, 26, 34, 0.94)';
+      ghostEl.style.backdropFilter = 'blur(24px)';
+      (ghostEl.style as any).webkitBackdropFilter = 'blur(24px)';
+      ghostEl.style.color = isLight ? '#1d1d1f' : '#f5f5f7';
+      ghostEl.style.border = isLight ? '1px solid rgba(0, 0, 0, 0.12)' : '1px solid rgba(255, 255, 255, 0.18)';
+      ghostEl.style.boxShadow = isLight
+        ? '0 14px 34px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.05)'
+        : '0 18px 44px rgba(0, 0, 0, 0.8), 0 0 1px rgba(255, 255, 255, 0.2)';
       ghostEl.style.fontFamily = 'var(--font-apple-text)';
       ghostEl.style.fontSize = '12px';
       ghostEl.style.fontWeight = '600';
       ghostEl.style.letterSpacing = '-0.01em';
-      ghostEl.style.backdropFilter = 'blur(20px)';
-      (ghostEl.style as any).WebkitBackdropFilter = 'blur(20px)';
-      ghostEl.style.cursor = 'var(--mac-cursor-grabbing)';
-
-      if (isLight) {
-        ghostEl.style.background = 'rgba(255, 255, 255, 0.95)';
-        ghostEl.style.color = '#1d1d1f';
-        ghostEl.style.border = '1px solid rgba(0, 0, 0, 0.12)';
-        ghostEl.style.boxShadow = '0 12px 28px rgba(0, 0, 0, 0.18), 0 0 1px rgba(0, 0, 0, 0.1)';
-      } else {
-        ghostEl.style.background = 'rgba(20, 20, 28, 0.95)';
-        ghostEl.style.color = '#ffffff';
-        ghostEl.style.border = '1px solid rgba(255, 255, 255, 0.2)';
-        ghostEl.style.boxShadow = '0 16px 36px rgba(0, 0, 0, 0.8), 0 0 12px rgba(10, 132, 255, 0.3)';
-      }
+      ghostEl.style.display = 'flex';
+      ghostEl.style.alignItems = 'center';
+      ghostEl.style.gap = '7px';
+      // 🎯 Exact Center Alignment: The grabbing hand sits precisely in the center of the Visual
+      ghostEl.style.transform = `translate3d(${clientX}px, ${clientY}px, 0) translate(-50%, -50%)`;
 
       // Color orb
       const dot = document.createElement('span');
@@ -124,16 +262,77 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
       const text = document.createElement('span');
       text.textContent = label;
       text.style.whiteSpace = 'nowrap';
+      text.style.marginRight = '2px';
       ghostEl.appendChild(text);
+
+      //  Authentic Apple SF-Symbol SVG Plus Badge (Pixel-Perfect Alignment)
+      const addBadge = document.createElement('div');
+      addBadge.style.width = '15px';
+      addBadge.style.height = '15px';
+      addBadge.style.minWidth = '15px';
+      addBadge.style.minHeight = '15px';
+      addBadge.style.borderRadius = '50%';
+      addBadge.style.background = isLight
+        ? 'linear-gradient(180deg, #34c759 0%, #28a745 100%)'
+        : 'linear-gradient(180deg, #30d158 0%, #248a3d 100%)';
+      addBadge.style.display = 'flex';
+      addBadge.style.alignItems = 'center';
+      addBadge.style.justifyContent = 'center';
+      addBadge.style.flexShrink = '0';
+      addBadge.style.border = isLight ? '0.5px solid rgba(0, 0, 0, 0.08)' : '0.5px solid rgba(255, 255, 255, 0.3)';
+      addBadge.style.boxShadow = isLight
+        ? '0 1.5px 4px rgba(52, 199, 89, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.4)'
+        : '0 2px 6px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.35)';
+      addBadge.innerHTML = `<svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"><line x1="5" y1="1.4" x2="5" y2="8.6"></line><line x1="1.4" y1="5" x2="8.6" y2="5"></line></svg>`;
+      ghostEl.appendChild(addBadge);
 
       document.body.appendChild(ghostEl);
     };
 
-    const handlePointerMove = (moveEvent: PointerEvent) => {
-      const dx = moveEvent.clientX - startX;
-      const dy = moveEvent.clientY - startY;
+    //  1-Second Hold Timer: Single click (< 1s) does NOT grab. Holding >= 1s triggers grabbing.
+    let holdTimer: ReturnType<typeof setTimeout> | null = setTimeout(() => {
+      document.documentElement.classList.add('is-dragging-node');
+      document.body.classList.add('is-dragging-node');
+      document.body.style.cursor = 'var(--mac-cursor-grabbing)';
+      createGhost(startX, startY);
+    }, 1000);
 
-      if (!isDragging && Math.sqrt(dx * dx + dy * dy) > 5) {
+    const cleanup = () => {
+      if (holdTimer) {
+        clearTimeout(holdTimer);
+        holdTimer = null;
+      }
+
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerup', onPointerUp);
+      window.removeEventListener('pointercancel', cleanup);
+      window.removeEventListener('mouseup', onPointerUp);
+      window.removeEventListener('blur', cleanup);
+
+      document.documentElement.classList.remove('is-dragging-node');
+      document.body.classList.remove('is-dragging-node');
+      document.body.style.cursor = '';
+
+      document.querySelectorAll('.fxforge-drag-ghost').forEach((el) => el.remove());
+      ghostEl = null;
+
+      window.dispatchEvent(new CustomEvent('fxforge-drag-hover', { detail: { isOver: false } }));
+    };
+
+    const onPointerMove = (moveEvent: PointerEvent) => {
+      // If mouse button is no longer held down, immediately abort & clean up
+      if (moveEvent.buttons === 0) {
+        cleanup();
+        return;
+      }
+
+      const dist = Math.hypot(moveEvent.clientX - startX, moveEvent.clientY - startY);
+      if (!isDragging && dist > 4) {
+        if (holdTimer) {
+          clearTimeout(holdTimer);
+          holdTimer = null;
+        }
+
         isDragging = true;
         document.documentElement.classList.add('is-dragging-node');
         document.body.classList.add('is-dragging-node');
@@ -141,210 +340,180 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
         createGhost(moveEvent.clientX, moveEvent.clientY);
       }
 
-      if (isDragging && ghost) {
-        ghost.style.left = `${moveEvent.clientX}px`;
-        ghost.style.top = `${moveEvent.clientY}px`;
+      if (ghostEl) {
+        // Keep Visual perfectly centered on the cursor
+        ghostEl.style.transform = `translate3d(${moveEvent.clientX}px, ${moveEvent.clientY}px, 0) translate(-50%, -50%)`;
+
+        const sidebarEl = document.querySelector('aside');
+        const sidebarRect = sidebarEl?.getBoundingClientRect();
+        const hasCrossedDivider = sidebarRect ? moveEvent.clientX > sidebarRect.right : moveEvent.clientX > 275;
+
+        const elUnder = document.elementFromPoint(moveEvent.clientX, moveEvent.clientY);
+        const isOverCanvas = hasCrossedDivider && Boolean(elUnder?.closest('.react-flow') || elUnder?.closest('main'));
+        window.dispatchEvent(new CustomEvent('fxforge-drag-hover', { detail: { isOver: isOverCanvas } }));
       }
     };
 
-    const handlePointerUp = (upEvent: PointerEvent) => {
-      window.removeEventListener('pointermove', handlePointerMove);
-      window.removeEventListener('pointerup', handlePointerUp);
-      document.documentElement.classList.remove('is-dragging-node');
-      document.body.classList.remove('is-dragging-node');
-      document.body.style.cursor = '';
+    const onPointerUp = (upEvent: MouseEvent | PointerEvent) => {
+      const wasDragging = isDragging;
+      const dropClientX = upEvent.clientX;
+      const dropClientY = upEvent.clientY;
 
-      if (ghost && ghost.parentNode) {
-        ghost.parentNode.removeChild(ghost);
-        ghost = null;
-      }
+      cleanup();
 
-      if (isDragging) {
-        // Dispatch custom event to let FlowCanvasView place the new node at drop point!
-        window.dispatchEvent(
-          new CustomEvent('fxforge-drag-drop-node', {
-            detail: {
-              nodeType,
-              label,
-              clientX: upEvent.clientX,
-              clientY: upEvent.clientY,
-            },
-          })
-        );
+      if (wasDragging) {
+        //  Strict Boundary Check: Must cross divider line into Canvas to allow Drop
+        const sidebarEl = document.querySelector('aside');
+        const sidebarRect = sidebarEl?.getBoundingClientRect();
+        const hasCrossedDivider = sidebarRect ? dropClientX > sidebarRect.right : dropClientX > 275;
+
+        if (hasCrossedDivider) {
+          window.dispatchEvent(
+            new CustomEvent('fxforge-drop-node', {
+              detail: {
+                nodeType,
+                clientX: dropClientX,
+                clientY: dropClientY,
+              },
+            })
+          );
+        }
       }
     };
 
-    window.addEventListener('pointermove', handlePointerMove);
-    window.addEventListener('pointerup', handlePointerUp);
+    window.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointerup', onPointerUp, { once: true });
+    window.addEventListener('pointercancel', cleanup, { once: true });
+    window.addEventListener('mouseup', onPointerUp, { once: true });
+    window.addEventListener('blur', cleanup, { once: true });
   };
 
-  const q = search.trim().toLowerCase();
-
-  // =========================================================================
-  //  SLIM COLLAPSED RAIL VIEW
-  // =========================================================================
-  if (isCollapsed) {
-    return (
-      <aside
-        style={{ width: '48px' }}
-        className={`h-full border-r flex flex-col items-center py-3.5 z-20 select-none flex-shrink-0 transition-all duration-200 ${
-          isLight
-            ? 'bg-white/80 border-black/[0.08] backdrop-blur-xl'
-            : 'vision-glass apple-specular border-white/[0.08]'
-        }`}
-      >
-        {/* Toggle Expand Button */}
-        <button
-          onClick={onToggleCollapse}
-          title="Expand Node Palette"
-          className={`p-2 rounded-lg transition-colors cursor-pointer mb-4 ${
-            isLight
-              ? 'text-black/60 hover:text-black hover:bg-black/5'
-              : 'text-white/60 hover:text-white hover:bg-white/10'
-          }`}
-        >
-          <PanelLeftOpen size={16} />
-        </button>
-
-        {/* Quick Group Icons */}
-        <div className="flex flex-col items-center gap-3.5 flex-1">
-          {GROUPS.map((group) => {
-            const GroupIcon = GROUP_ICONS[group.id] || SFSymbolSliders;
-            return (
-              <button
-                key={group.id}
-                onClick={() => {
-                  if (onToggleCollapse) onToggleCollapse();
-                }}
-                title={`Group: ${group.label}`}
-                className={`p-2.5 rounded-xl transition-all cursor-pointer ${
-                  isLight
-                    ? 'text-black/60 hover:text-black hover:bg-black/5'
-                    : 'text-white/60 hover:text-white hover:bg-white/10'
-                }`}
-              >
-                <GroupIcon size={15} style={{ color: group.color }} />
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Bottom Version Indicator */}
-        <div className="text-[10px] font-bold text-white/30 tracking-wider rotate-90 my-2 select-none">
-          NODES
-        </div>
-      </aside>
-    );
-  }
-
-  // =========================================================================
-  //  EXPANDED NODE PALETTE SIDEBAR
-  // =========================================================================
+  //  2. Full Expanded Sidebar Mode
   return (
     <aside
-      style={{ width: '256px' }}
-      className={`h-full border-r flex flex-col z-20 select-none flex-shrink-0 transition-all duration-200 relative ${
-        isLight
-          ? 'bg-[#fcfcfd]/90 border-black/[0.08] backdrop-blur-2xl text-[#1d1d1f]'
-          : 'vision-glass apple-specular border-white/[0.08] text-slate-200'
+      onWheel={(e) => e.stopPropagation()}
+      style={{
+        width: '275px',
+        minWidth: '275px',
+        fontFamily: 'var(--font-apple-text)',
+        transition: 'width 0.22s cubic-bezier(0.16, 1, 0.3, 1)',
+        WebkitFontSmoothing: 'antialiased',
+        MozOsxFontSmoothing: 'grayscale',
+        textRendering: 'geometricPrecision',
+      }}
+      className={`h-full flex flex-col flex-shrink-0 border-r select-none z-20 transition-colors duration-200 ${
+        isLight ? 'bg-[#f5f5f7] border-black/[0.08] text-[#111827]' : 'bg-[#08080c] border-white/[0.08] text-[#e5e7eb]'
       }`}
     >
-      {/* 🟢 1. HEADER: Title & Search */}
+      {/* 1.  Apple macOS Header & Spotlight Search */}
       <div
         style={{
-          paddingLeft: '14px',
-          paddingRight: '12px',
           paddingTop: '12px',
           paddingBottom: '10px',
+          paddingLeft: '14px',
+          paddingRight: '14px',
+          borderBottom: 'none',
+          backgroundColor: 'transparent',
+          flexShrink: 0,
         }}
-        className={`border-b flex items-center justify-between flex-shrink-0 ${
-          isLight ? 'border-black/[0.06]' : 'border-white/[0.06]'
-        }`}
       >
-        <div className="flex items-center gap-2">
-          <div
-            className={`w-6 h-6 rounded-lg flex items-center justify-center ${
-              isLight ? 'bg-[#0071e3]/10 text-[#0071e3]' : 'bg-[#0a84ff]/20 text-[#0a84ff]'
-            }`}
-          >
-            <SFSymbolSliders size={13} />
-          </div>
-          <div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '10px',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
+            <Sliders size={17} className={`transition-colors flex-shrink-0 ${isLight ? 'text-[#374151]' : 'text-[#a1a1aa]'}`} />
             <span
-              className={`text-[12.5px] font-bold tracking-tight block leading-tight ${
-                isLight ? 'text-[#1d1d1f]' : 'text-white'
-              }`}
+              style={{
+                fontSize: '14px',
+                fontWeight: 700,
+                color: isLight ? '#111827' : '#ffffff',
+                letterSpacing: '-0.015em',
+                whiteSpace: 'nowrap',
+              }}
             >
-              Node Palette
-            </span>
-            <span
-              className={`text-[10px] font-medium block leading-none ${
-                isLight ? 'text-[#6e6e73]' : 'text-white/45'
-              }`}
-            >
-              14 Registered Modules
+              RL Hyperparameters
             </span>
           </div>
+
+          {onToggleCollapse && (
+            <button
+              onClick={onToggleCollapse}
+              title="Collapse to Slim Rail (พับแถบข้าง)"
+              style={{
+                background: isLight ? 'rgba(0, 0, 0, 0.04)' : 'rgba(255, 255, 255, 0.06)',
+                border: 'none',
+                borderRadius: '6px',
+                color: isLight ? '#4b5563' : '#a1a1aa',
+                cursor: 'pointer',
+                padding: '4px 6px',
+                display: 'flex',
+                alignItems: 'center',
+                flexShrink: 0,
+                transition: 'all 0.15s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = isLight ? '#111827' : '#ffffff';
+                e.currentTarget.style.background = isLight ? 'rgba(0, 0, 0, 0.08)' : 'rgba(255, 255, 255, 0.12)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = isLight ? '#4b5563' : '#a1a1aa';
+                e.currentTarget.style.background = isLight ? 'rgba(0, 0, 0, 0.04)' : 'rgba(255, 255, 255, 0.06)';
+              }}
+            >
+              <PanelLeftClose size={15} />
+            </button>
+          )}
         </div>
 
-        <button
-          onClick={onToggleCollapse}
-          title="Collapse Sidebar"
-          className={`p-1.5 rounded-md transition-all cursor-pointer ${
-            isLight
-              ? 'text-black/60 hover:text-black hover:bg-black/5'
-              : 'text-white/60 hover:text-white hover:bg-white/10'
-          }`}
-        >
-          <PanelLeftClose size={15} />
-        </button>
+        {/*  macOS Spotlight-style Search Field (h-36px, High Contrast) */}
+        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', width: '100%' }}>
+          <Search
+            size={14}
+            style={{
+              position: 'absolute',
+              left: '11px',
+              color: isLight ? '#4b5563' : '#9ca3af',
+              pointerEvents: 'none',
+              zIndex: 10,
+            }}
+          />
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search..."
+            style={{
+              width: '100%',
+              height: '36px',
+              paddingLeft: '34px',
+              paddingRight: '12px',
+              backgroundColor: isLight ? '#ffffff' : 'rgba(255, 255, 255, 0.06)',
+              border: isLight ? '1px solid rgba(0, 0, 0, 0.14)' : '1px solid rgba(255, 255, 255, 0.12)',
+              borderRadius: '8px',
+              fontSize: '13px',
+              fontWeight: 500,
+              color: isLight ? '#111827' : '#ffffff',
+              outline: 'none',
+              boxSizing: 'border-box',
+              boxShadow: isLight ? '0 1px 2px rgba(0,0,0,0.04)' : 'none',
+            }}
+          />
+        </div>
       </div>
 
-      {/* 🟢 2. SEARCH BAR */}
+      {/* 2.  Apple Mac Mail / Finder Sidebar List */}
       <div
         style={{
           paddingLeft: '12px',
           paddingRight: '12px',
           paddingTop: '10px',
-          paddingBottom: '8px',
-        }}
-        className="flex-shrink-0"
-      >
-        <div className="relative w-full">
-          <SFSymbolSearch
-            size={12}
-            className={`absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none ${
-              isLight ? 'text-black/40' : 'text-white/40'
-            }`}
-          />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search nodes..."
-            style={{
-              fontFamily: 'var(--font-apple-text)',
-              paddingLeft: '28px',
-              paddingRight: '10px',
-            }}
-            className={`h-7 w-full text-[11.5px] rounded-lg focus:outline-none transition-all duration-150 ${
-              isLight
-                ? 'bg-black/[0.04] focus:bg-white focus:ring-2 focus:ring-[#0071e3]/20 border border-black/[0.08] text-[#1d1d1f] placeholder:text-black/40'
-                : 'bg-white/[0.06] focus:bg-white/[0.10] focus:ring-2 focus:ring-[#0a84ff]/25 border border-white/[0.08] text-white placeholder:text-white/40'
-            }`}
-          />
-        </div>
-      </div>
-
-      {/* 🟢 3. NODE GROUPS LIST */}
-      <div
-        style={{
-          paddingLeft: '12px',
-          paddingRight: '12px',
-          paddingTop: '6px',
           paddingBottom: '20px',
         }}
-        className="flex-1 min-h-0 overflow-y-auto custom-scrollbar space-y-4"
+        className="flex-1 min-h-0 overflow-y-auto custom-scrollbar space-y-6"
       >
         {GROUPS.map((group) => {
           const allNodes = nodesByGroup(group.id);
@@ -355,11 +524,11 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
           if (q && matchingNodes.length === 0) return null;
 
           const isExpanded = expandedGroups[group.id] || Boolean(q);
-          const GroupIcon = GROUP_ICONS[group.id] || SFSymbolSliders;
+          const GroupIcon = GROUP_ICONS[group.id] || Layers;
 
           return (
             <div key={group.id}>
-              {/* Section Header */}
+              {/*  Section Header (Clean Minimalist Header, Zero Border, Subtle Text Highlight on Hover) */}
               <div
                 onClick={() => toggleGroup(group.id)}
                 style={{
@@ -376,31 +545,50 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                 }`}
               >
                 <div className="flex items-center gap-2 min-w-0 flex-1">
+                  {/* SF Symbol on Main Header */}
                   <GroupIcon
                     size={14}
                     style={{ color: group.color }}
                     className="flex-shrink-0"
                   />
+
+                  {/* Section Label */}
                   <span
-                    className="text-[11px] font-bold uppercase tracking-wider truncate"
-                    style={{ letterSpacing: '0.04em' }}
+                    className="text-[11.5px] font-bold uppercase tracking-wider truncate"
+                    style={{ letterSpacing: '0.04em', lineHeight: '1.4' }}
                   >
                     {group.label}
                   </span>
                 </div>
 
-                <div className="flex items-center justify-center flex-shrink-0 opacity-60 group-hover:opacity-100 transition-opacity">
+                {/*  Fold / Open Arrow Indicator: Authentic Apple SF Symbol */}
+                <div
+                  style={{ width: '16px', height: '16px' }}
+                  className="flex items-center justify-center flex-shrink-0 opacity-60 group-hover:opacity-100 transition-opacity"
+                >
                   {isExpanded ? (
-                    <SFSymbolChevronDown size={9} />
+                    <SFSymbolChevronRight
+                      size={11}
+                    />
                   ) : (
-                    <SFSymbolChevronRight size={9} />
+                    <SFSymbolChevronDown
+                      size={11}
+                    />
                   )}
                 </div>
               </div>
 
-              {/* Child Nodes (Draggable onto canvas) */}
+              {/*  Child Items (Gray Text, White Card Highlight in Light, Electric Blue Highlight in Dark) */}
               {isExpanded && (
-                <div className="flex flex-col gap-1 mt-1 pl-1">
+                <div
+                  style={{
+                    paddingLeft: '0px',
+                    marginTop: '2px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '2px',
+                  }}
+                >
                   {matchingNodes.map((node) => {
                     const isNodeHovered = hoveredNode === node.type;
 
@@ -415,55 +603,57 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'space-between',
-                          minHeight: '28px',
-                          paddingLeft: '10px',
-                          paddingRight: '8px',
-                          paddingTop: '4px',
-                          paddingBottom: '4px',
-                          borderRadius: '6px',
+                          minHeight: '30px',
+                          paddingLeft: '14px',
+                          paddingRight: '6px',
+                          paddingTop: '5px',
+                          paddingBottom: '5px',
+                          borderRadius: '4px',
                           cursor: 'var(--mac-cursor-grab)',
                           userSelect: 'none',
-                          transition: 'all 0.15s ease',
+                          transition: 'color 0.15s ease',
+                          backgroundColor: 'transparent',
+                          boxShadow: 'none',
+                          border: 'none',
                           color: isNodeHovered
                             ? (isLight ? '#0071e3' : '#ffffff')
-                            : (isLight ? '#1d1d1f' : '#cbd5e1'),
+                            : (isLight ? '#111827' : '#9ca3af'),
                         }}
-                        className={`${
-                          isNodeHovered
-                            ? isLight
-                              ? 'bg-black/[0.04]'
-                              : 'bg-white/[0.08]'
-                            : 'hover:bg-white/[0.04]'
-                        }`}
                       >
-                        <div className="flex items-center gap-2 min-w-0 flex-1">
+                        {/* Left: Crisp Solid Bullet Point with Clearance */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
                           <span
                             style={{
                               width: '5px',
                               height: '5px',
                               borderRadius: '50%',
                               flexShrink: 0,
-                              backgroundColor: group.color,
-                              boxShadow: isNodeHovered ? `0 0 6px ${group.color}` : 'none',
+                              backgroundColor: isNodeHovered ? (isLight ? '#0071e3' : '#ffffff') : group.color,
+                              transition: 'background-color 0.15s ease',
                             }}
                           />
                           <span
                             style={{
-                              fontSize: '11.5px',
+                              fontSize: '12px',
                               fontWeight: isNodeHovered ? 600 : 500,
                               letterSpacing: '-0.01em',
                               whiteSpace: 'nowrap',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
+                              lineHeight: '1.45',
+                              paddingBottom: '1px',
+                              display: 'inline-block',
                             }}
                           >
                             {node.label}
                           </span>
                         </div>
 
-                        <div className="flex items-center justify-center flex-shrink-0">
+                        {/* Right: Authentic Apple SF Symbol Plus with exact 16x16 alignment box */}
+                        <div
+                          style={{ width: '16px', height: '16px' }}
+                          className="flex items-center justify-center flex-shrink-0"
+                        >
                           <SFSymbolPlus
-                            size={10}
+                            size={11}
                             style={{
                               opacity: isNodeHovered ? 1 : 0,
                               color: isLight ? '#0071e3' : '#ffffff',
@@ -481,7 +671,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
         })}
       </div>
 
-      {/* 🟢 4. FOOTER */}
+      {/* 3.  macOS Footer (High Contrast) */}
       <div
         style={{
           paddingTop: '10px',
@@ -489,6 +679,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
           paddingLeft: '14px',
           paddingRight: '14px',
           borderTop: isLight ? '1px solid rgba(0, 0, 0, 0.06)' : '1px solid rgba(255, 255, 255, 0.06)',
+          backgroundColor: 'transparent',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -498,16 +689,16 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
       >
         <button
           onClick={onOpenSettings}
-          title="Open Quant Settings"
-          className={`flex items-center gap-2 transition-colors cursor-pointer text-[12px] font-semibold ${
+          title="Open System & Quant Settings"
+          className={`flex items-center gap-2 transition-colors cursor-pointer text-[12.5px] font-semibold ${
             isLight ? 'hover:text-[#111827]' : 'hover:text-white'
           }`}
         >
-          <Settings size={13} />
+          <Settings size={14} />
           <span>Settings</span>
         </button>
-        <span className={`text-[11px] font-mono font-semibold ${isLight ? 'text-[#16a34a]' : 'text-[#30d158]'}`}>
-          v2.0 Quant
+        <span className={`text-[11.5px] font-sans font-semibold ${isLight ? 'text-[#16a34a]' : 'text-[#30d158]'}`}>
+          v2.0 Quant AI
         </span>
       </div>
     </aside>
