@@ -67,80 +67,105 @@ interface FlowContextType {
 
 const FlowContext = createContext<FlowContextType | null>(null);
 
+export function parseArchitecturePure(nodesList: Node[]): ArchitectureSpec {
+  let spec = { ...DEFAULT_ARCHITECTURE_SPEC };
+  if (!Array.isArray(nodesList)) return spec;
+
+  nodesList.forEach((node) => {
+    const type = node.data?.nodeType || node.type;
+    const d = (node.data || {}) as Record<string, any>;
+
+    switch (type) {
+      case 'strategy_preset_return':
+        if (d.symbol) spec.symbol = String(d.symbol);
+        if (d.timeframe) spec.timeframe = String(d.timeframe);
+        if (d.bars_count) spec.barsCount = Number(d.bars_count) || 10000;
+        if (d.preset) spec.strategyPreset = String(d.preset);
+        break;
+
+      case 'training_episodes_config':
+        if (d.target_episodes) {
+          const rawVal = String(d.target_episodes).replace(/,/g, '').trim();
+          spec.totalEpisodes = Number(rawVal) || 400;
+        }
+        break;
+
+      case 'fc1_dense_expansion':
+        if (d.units) spec.hidden1Units = Number(d.units) || 64;
+        if (d.activation) spec.hidden1Activation = String(d.activation);
+        break;
+
+      case 'spatial_dropout':
+        spec.hasDropout = d.executionMode !== 'off';
+        if (d.rate !== undefined) spec.dropoutRate = Number(d.rate) || 0.15;
+        break;
+
+      case 'layer_normalization':
+        spec.hasLayerNorm = d.executionMode !== 'off';
+        break;
+
+      case 'l2_weight_decay':
+        spec.hasL2Decay = d.executionMode !== 'off';
+        if (d.decay !== undefined) spec.l2DecayRate = Number(d.decay) || 0.0001;
+        break;
+
+      case 'fc2_bottleneck_synthesizer':
+        if (d.units) spec.hidden2Units = Number(d.units) || 32;
+        if (d.activation) spec.hidden2Activation = String(d.activation);
+        if (d.residual !== undefined) spec.hasResidual = Boolean(d.residual);
+        break;
+
+      case 'friction_spread_cost':
+        if (d.spread_pip !== undefined || d.spread_pips !== undefined) {
+          spec.spreadPips = Number(d.spread_pip ?? d.spread_pips) || 1.2;
+        }
+        break;
+
+      case 'anti_inactivity_reward':
+        if (d.idle_penalty !== undefined || d.inactivity_penalty !== undefined) {
+          spec.inactivityPenalty = Math.abs(Number(d.idle_penalty ?? d.inactivity_penalty)) || 0.0005;
+        }
+        break;
+
+      case 'fc3_policy_action_head':
+        if (d.entropy_beta !== undefined) spec.entropyBeta = Number(d.entropy_beta) || 0.08;
+        break;
+
+      default:
+        break;
+    }
+  });
+
+  return spec;
+}
+
 export const FlowProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [nodes, setNodes] = useState<Node[]>([]);
+  const [nodes, setNodes] = useState<Node[]>(() => {
+    try {
+      const saved = localStorage.getItem('fxforge_flow_nodes');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {}
+    return [];
+  });
   const [edges, setEdges] = useState<Edge[]>([]);
-  const [architectureSpec, setArchitectureSpec] = useState<ArchitectureSpec>(DEFAULT_ARCHITECTURE_SPEC);
+  const [architectureSpec, setArchitectureSpec] = useState<ArchitectureSpec>(() => {
+    try {
+      const saved = localStorage.getItem('fxforge_flow_nodes');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parseArchitecturePure(parsed);
+        }
+      }
+    } catch {}
+    return DEFAULT_ARCHITECTURE_SPEC;
+  });
 
   const parseArchitecture = useCallback((nodesList: Node[]): ArchitectureSpec => {
-    let spec = { ...DEFAULT_ARCHITECTURE_SPEC };
-
-    nodesList.forEach((node) => {
-      const type = node.data?.nodeType || node.type;
-      const d = (node.data || {}) as Record<string, any>;
-
-      switch (type) {
-        case 'strategy_preset_return':
-          if (d.symbol) spec.symbol = String(d.symbol);
-          if (d.timeframe) spec.timeframe = String(d.timeframe);
-          if (d.bars_count) spec.barsCount = Number(d.bars_count) || 10000;
-          if (d.preset) spec.strategyPreset = String(d.preset);
-          break;
-
-        case 'training_episodes_config':
-          if (d.target_episodes) {
-            const rawVal = String(d.target_episodes).replace(/,/g, '').trim();
-            spec.totalEpisodes = Number(rawVal) || 400;
-          }
-          break;
-
-        case 'fc1_dense_expansion':
-          if (d.units) spec.hidden1Units = Number(d.units) || 64;
-          if (d.activation) spec.hidden1Activation = String(d.activation);
-          break;
-
-        case 'spatial_dropout':
-          spec.hasDropout = d.executionMode !== 'off';
-          if (d.rate !== undefined) spec.dropoutRate = Number(d.rate) || 0.15;
-          break;
-
-        case 'layer_normalization':
-          spec.hasLayerNorm = d.executionMode !== 'off';
-          break;
-
-        case 'l2_weight_decay':
-          spec.hasL2Decay = d.executionMode !== 'off';
-          if (d.decay !== undefined) spec.l2DecayRate = Number(d.decay) || 0.0001;
-          break;
-
-        case 'fc2_bottleneck_synthesizer':
-          if (d.units) spec.hidden2Units = Number(d.units) || 32;
-          if (d.activation) spec.hidden2Activation = String(d.activation);
-          if (d.residual !== undefined) spec.hasResidual = Boolean(d.residual);
-          break;
-
-        case 'friction_spread_cost':
-          if (d.spread_pip !== undefined || d.spread_pips !== undefined) {
-            spec.spreadPips = Number(d.spread_pip ?? d.spread_pips) || 1.2;
-          }
-          break;
-
-        case 'anti_inactivity_reward':
-          if (d.idle_penalty !== undefined || d.inactivity_penalty !== undefined) {
-            spec.inactivityPenalty = Math.abs(Number(d.idle_penalty ?? d.inactivity_penalty)) || 0.0005;
-          }
-          break;
-
-        case 'fc3_policy_action_head':
-          if (d.entropy_beta !== undefined) spec.entropyBeta = Number(d.entropy_beta) || 0.08;
-          break;
-
-        default:
-          break;
-      }
-    });
-
-    return spec;
+    return parseArchitecturePure(nodesList);
   }, []);
 
   const syncArchitectureToEngine = useCallback((nodesList: Node[]) => {
