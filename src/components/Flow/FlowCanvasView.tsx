@@ -33,7 +33,7 @@ const INITIAL_NODES: Node[] = [
   {
     id: 'node-1',
     type: 'nodeCard',
-    position: { x: 50, y: 40 },
+    position: { x: 50, y: 30 },
     data: {
       nodeType: 'strategy_preset_return',
       preset: 'Standard Quant',
@@ -46,7 +46,7 @@ const INITIAL_NODES: Node[] = [
   {
     id: 'node-2',
     type: 'nodeCard',
-    position: { x: 50, y: 240 },
+    position: { x: 50, y: 220 },
     data: {
       nodeType: 'volatility_indicator',
       vol_window: 10,
@@ -58,21 +58,34 @@ const INITIAL_NODES: Node[] = [
   {
     id: 'node-3',
     type: 'nodeCard',
-    position: { x: 50, y: 440 },
+    position: { x: 50, y: 400 },
     data: {
       nodeType: 'position_feedback',
       encoding: 'Discrete',
       execution: { status: 'passed', detail: 'State Vector: 6 Dimensions' },
     },
   },
-
-  // ==========================================
-  // Column 2: Feature Expansion (x: 390)
-  // ==========================================
   {
     id: 'node-4',
     type: 'nodeCard',
-    position: { x: 390, y: 240 },
+    position: { x: 50, y: 560 },
+    data: {
+      nodeType: 'training_episodes_config',
+      target_episodes: '10,000',
+      batch_size: '64',
+      max_steps: 32,
+      checkpoint_interval: 1000,
+      execution: { status: 'passed', detail: '10k Episodes @ Batch 64' },
+    },
+  },
+
+  // ==========================================
+  // Column 2: Feature Expansion (x: 400)
+  // ==========================================
+  {
+    id: 'node-5',
+    type: 'nodeCard',
+    position: { x: 400, y: 280 },
     data: {
       nodeType: 'fc1_dense_expansion',
       units: '64',
@@ -84,12 +97,12 @@ const INITIAL_NODES: Node[] = [
   },
 
   // ==========================================
-  // Column 3: Regularization & Norm (x: 730)
+  // Column 3: Regularization & Norm (x: 750)
   // ==========================================
   {
-    id: 'node-5',
+    id: 'node-6',
     type: 'nodeCard',
-    position: { x: 730, y: 40 },
+    position: { x: 750, y: 30 },
     data: {
       nodeType: 'spatial_dropout',
       rate: 0.15,
@@ -98,9 +111,9 @@ const INITIAL_NODES: Node[] = [
     },
   },
   {
-    id: 'node-6',
+    id: 'node-7',
     type: 'nodeCard',
-    position: { x: 730, y: 240 },
+    position: { x: 750, y: 200 },
     data: {
       nodeType: 'layer_normalization',
       norm_type: 'LayerNorm',
@@ -109,23 +122,33 @@ const INITIAL_NODES: Node[] = [
     },
   },
   {
-    id: 'node-7',
+    id: 'node-8',
     type: 'nodeCard',
-    position: { x: 730, y: 440 },
+    position: { x: 750, y: 370 },
     data: {
       nodeType: 'l2_weight_decay',
       decay: '1e-4',
       execution: { status: 'passed', detail: 'Weight Decay: 0.0001' },
     },
   },
+  {
+    id: 'node-9',
+    type: 'nodeCard',
+    position: { x: 750, y: 540 },
+    data: {
+      nodeType: 'gradient_clipping',
+      max_norm: 1.0,
+      execution: { status: 'passed', detail: 'Max Gradient Norm: 1.0' },
+    },
+  },
 
   // ==========================================
-  // Column 4: Bottleneck Synthesis (x: 1070)
+  // Column 4: Bottleneck Synthesis (x: 1100)
   // ==========================================
   {
-    id: 'node-8',
+    id: 'node-10',
     type: 'nodeCard',
-    position: { x: 1070, y: 240 },
+    position: { x: 1100, y: 280 },
     data: {
       nodeType: 'fc2_bottleneck_synthesizer',
       units: '32',
@@ -136,12 +159,12 @@ const INITIAL_NODES: Node[] = [
   },
 
   // ==========================================
-  // Column 5: Reward Shaping (x: 1410)
+  // Column 5: Reward Shaping (x: 1450)
   // ==========================================
   {
-    id: 'node-9',
+    id: 'node-11',
     type: 'nodeCard',
-    position: { x: 1410, y: 130 },
+    position: { x: 1450, y: 180 },
     data: {
       nodeType: 'friction_spread_cost',
       spread_pip: 0.15,
@@ -150,9 +173,9 @@ const INITIAL_NODES: Node[] = [
     },
   },
   {
-    id: 'node-10',
+    id: 'node-12',
     type: 'nodeCard',
-    position: { x: 1410, y: 340 },
+    position: { x: 1450, y: 380 },
     data: {
       nodeType: 'anti_inactivity_reward',
       idle_penalty: -0.0005,
@@ -162,12 +185,12 @@ const INITIAL_NODES: Node[] = [
   },
 
   // ==========================================
-  // Column 6: Output & Deployment (x: 1750)
+  // Column 6: Output & Deployment (x: 1800)
   // ==========================================
   {
-    id: 'node-11',
+    id: 'node-13',
     type: 'nodeCard',
-    position: { x: 1750, y: 130 },
+    position: { x: 1800, y: 180 },
     data: {
       nodeType: 'fc3_policy_action_head',
       classes: '3',
@@ -176,9 +199,9 @@ const INITIAL_NODES: Node[] = [
     },
   },
   {
-    id: 'node-12',
+    id: 'node-14',
     type: 'nodeCard',
-    position: { x: 1750, y: 340 },
+    position: { x: 1800, y: 380 },
     data: {
       nodeType: 'onnx_mt5_compiler',
       target_folder: 'MQL5/Files/',
@@ -189,92 +212,90 @@ const INITIAL_NODES: Node[] = [
 ];
 
 const INITIAL_EDGES: Edge[] = [
-  // Inputs -> FC1 Expansion
+  // Inputs (Col 1) -> FC1 Expansion (Col 2)
   {
-    id: 'e1-4',
+    id: 'e1-5',
     source: 'node-1',
-    target: 'node-4',
+    target: 'node-5',
     type: 'smoothstep',
     animated: true,
     style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' },
   },
   {
-    id: 'e2-4',
+    id: 'e2-5',
     source: 'node-2',
-    target: 'node-4',
+    target: 'node-5',
     type: 'smoothstep',
     animated: true,
     style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' },
   },
   {
-    id: 'e3-4',
+    id: 'e3-5',
     source: 'node-3',
-    target: 'node-4',
+    target: 'node-5',
     type: 'smoothstep',
     animated: true,
     style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' },
   },
-
-  // FC1 Expansion -> Regularization & Norm
   {
     id: 'e4-5',
     source: 'node-4',
     target: 'node-5',
     type: 'smoothstep',
     animated: true,
-    style: { stroke: '#ff9f0a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,159,10,0.55))' },
+    style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' },
   },
+
+  // FC1 Expansion (Col 2) -> Regularization & Norm (Col 3)
   {
-    id: 'e4-6',
-    source: 'node-4',
+    id: 'e5-6',
+    source: 'node-5',
     target: 'node-6',
     type: 'smoothstep',
     animated: true,
     style: { stroke: '#ff9f0a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,159,10,0.55))' },
   },
   {
-    id: 'e4-7',
-    source: 'node-4',
+    id: 'e5-7',
+    source: 'node-5',
     target: 'node-7',
     type: 'smoothstep',
     animated: true,
     style: { stroke: '#ff9f0a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,159,10,0.55))' },
   },
-
-  // Regularization -> FC2 Bottleneck Synthesizer
   {
     id: 'e5-8',
     source: 'node-5',
     target: 'node-8',
     type: 'smoothstep',
     animated: true,
-    style: { stroke: '#30d158', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(48,209,88,0.55))' },
+    style: { stroke: '#ff9f0a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,159,10,0.55))' },
   },
   {
-    id: 'e6-8',
-    source: 'node-6',
-    target: 'node-8',
-    type: 'smoothstep',
-    animated: true,
-    style: { stroke: '#30d158', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(48,209,88,0.55))' },
-  },
-  {
-    id: 'e7-8',
-    source: 'node-7',
-    target: 'node-8',
-    type: 'smoothstep',
-    animated: true,
-    style: { stroke: '#30d158', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(48,209,88,0.55))' },
-  },
-
-  // FC2 Bottleneck -> Reward Shaping
-  {
-    id: 'e8-9',
-    source: 'node-8',
+    id: 'e5-9',
+    source: 'node-5',
     target: 'node-9',
     type: 'smoothstep',
     animated: true,
-    style: { stroke: '#bf5af2', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(191,90,242,0.55))' },
+    style: { stroke: '#ff9f0a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,159,10,0.55))' },
+  },
+
+  // Regularization & Norm (Col 3) -> FC2 Bottleneck Synthesis (Col 4)
+  {
+    id: 'e6-10',
+    source: 'node-6',
+    target: 'node-10',
+    type: 'smoothstep',
+    animated: true,
+    style: { stroke: '#30d158', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(48,209,88,0.55))' },
+  },
+  {
+    id: 'e7-10',
+    source: 'node-7',
+    target: 'node-10',
+    type: 'smoothstep',
+    animated: true,
+    style: { stroke: '#30d158', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(48,209,88,0.55))' },
   },
   {
     id: 'e8-10',
@@ -282,32 +303,58 @@ const INITIAL_EDGES: Edge[] = [
     target: 'node-10',
     type: 'smoothstep',
     animated: true,
-    style: { stroke: '#bf5af2', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(191,90,242,0.55))' },
+    style: { stroke: '#30d158', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(48,209,88,0.55))' },
   },
-
-  // Reward Shaping -> Policy Action Head
   {
-    id: 'e9-11',
+    id: 'e9-10',
     source: 'node-9',
-    target: 'node-11',
+    target: 'node-10',
     type: 'smoothstep',
     animated: true,
-    style: { stroke: '#ffd60a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,214,10,0.55))' },
+    style: { stroke: '#30d158', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(48,209,88,0.55))' },
   },
+
+  // FC2 Bottleneck (Col 4) -> Reward Shaping (Col 5)
   {
     id: 'e10-11',
     source: 'node-10',
     target: 'node-11',
     type: 'smoothstep',
     animated: true,
+    style: { stroke: '#bf5af2', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(191,90,242,0.55))' },
+  },
+  {
+    id: 'e10-12',
+    source: 'node-10',
+    target: 'node-12',
+    type: 'smoothstep',
+    animated: true,
+    style: { stroke: '#bf5af2', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(191,90,242,0.55))' },
+  },
+
+  // Reward Shaping (Col 5) -> Policy Action Head (Col 6)
+  {
+    id: 'e11-13',
+    source: 'node-11',
+    target: 'node-13',
+    type: 'smoothstep',
+    animated: true,
+    style: { stroke: '#ffd60a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,214,10,0.55))' },
+  },
+  {
+    id: 'e12-13',
+    source: 'node-12',
+    target: 'node-13',
+    type: 'smoothstep',
+    animated: true,
     style: { stroke: '#ffd60a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,214,10,0.55))' },
   },
 
-  // Policy Action Head -> ONNX MT5 Compiler
+  // Policy Action Head (Col 6) -> ONNX MT5 Compiler
   {
-    id: 'e11-12',
-    source: 'node-11',
-    target: 'node-12',
+    id: 'e13-14',
+    source: 'node-13',
+    target: 'node-14',
     type: 'smoothstep',
     animated: true,
     style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' },
@@ -330,15 +377,15 @@ const defaultEdgeOptions = {
   },
 };
 
-const LOCAL_STORAGE_KEY_NODES = 'fxforge_dag_nodes_v4';
-const LOCAL_STORAGE_KEY_EDGES = 'fxforge_dag_edges_v4';
+const LOCAL_STORAGE_KEY_NODES = 'fxforge_dag_nodes_v5';
+const LOCAL_STORAGE_KEY_EDGES = 'fxforge_dag_edges_v5';
 
 const getInitialNodes = (): Node[] => {
   try {
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY_NODES);
     if (saved) {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length >= 8) {
+      if (Array.isArray(parsed) && parsed.length >= 14) {
         return parsed;
       }
     }
@@ -353,7 +400,7 @@ const getInitialEdges = (): Edge[] => {
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY_EDGES);
     if (saved) {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) {
+      if (Array.isArray(parsed) && parsed.length >= 14) {
         return parsed;
       }
     }
