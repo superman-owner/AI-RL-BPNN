@@ -178,7 +178,7 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
       </div>
 
       {/* =======================================================
-          1. ขาเข้า IN (TARGET) - ขนาด 2 เท่า (16px) และเรืองแสงตรงสี
+          1. ขาเข้า IN (TARGET) - ครึ่งวงกลมฝั่งซ้าย ยื่นออกไปนอก Node
           ======================================================= */}
       {def.hasInput && (
         <Handle
@@ -186,9 +186,10 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
           position={Position.Left}
           id="in"
           style={{
-            width: 16,
-            height: 16,
-            borderRadius: '50%',
+            left: 0,
+            width: 8,
+            height: 18,
+            borderRadius: '9px 0 0 9px',
             backgroundColor: accent,
             border: 'none',
             boxShadow: `0 0 6px ${accent}80`,
@@ -199,7 +200,7 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
       )}
 
       {/* =======================================================
-          2. ขาออก OUT (SOURCE) - ขนาด 2 เท่า (16px) และเรืองแสงตรงสี
+          2. ขาออก OUT (SOURCE) - ครึ่งวงกลมฝั่งขวา ยื่นออกไปนอก Node
           ======================================================= */}
       {def.hasOutput && !def.decision && (
         <Handle
@@ -207,9 +208,10 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
           position={Position.Right}
           id="out"
           style={{
-            width: 16,
-            height: 16,
-            borderRadius: '50%',
+            right: 0,
+            width: 8,
+            height: 18,
+            borderRadius: '0 9px 9px 0',
             backgroundColor: accent,
             border: 'none',
             boxShadow: `0 0 6px ${accent}80`,
@@ -220,7 +222,7 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
       )}
 
       {/* =======================================================
-          3. ขาออกแยก 2 ทาง (TRUE = เขียว / FALSE = แดง) ขนาด 16px
+          3. ขาออกแยก 2 ทาง (TRUE = เขียว / FALSE = แดง) ครึ่งวงกลมฝั่งขวา
           ======================================================= */}
       {def.hasOutput && def.decision && (
         <>
@@ -231,9 +233,10 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
             id="true"
             style={{
               top: '35%',
-              width: 16,
-              height: 16,
-              borderRadius: '50%',
+              right: 0,
+              width: 8,
+              height: 18,
+              borderRadius: '0 9px 9px 0',
               backgroundColor: '#10b981',
               border: 'none',
               boxShadow: '0 0 6px rgba(16, 185, 129, 0.5)',
@@ -249,9 +252,10 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
             id="false"
             style={{
               top: '65%',
-              width: 16,
-              height: 16,
-              borderRadius: '50%',
+              right: 0,
+              width: 8,
+              height: 18,
+              borderRadius: '0 9px 9px 0',
               backgroundColor: '#f43f5e',
               border: 'none',
               boxShadow: '0 0 6px rgba(244, 63, 94, 0.5)',

@@ -215,45 +215,46 @@ svg:focus-visible,
   to { stroke-dashoffset: 0; }
 }
 
-/*  React Flow Magnetic Handles (Static Pixel-Locked Pins - 2x Enriched 16px Size) */
+/*  React Flow Magnetic Handles (Outward Semicircles - Zero Inset Overlap) */
 .react-flow__handle {
-  width: 16px !important;
-  height: 16px !important;
-  border-radius: 50% !important;
+  width: 8px !important;
+  height: 18px !important;
   border: none !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
-  z-index: 1 !important;
+  z-index: 10 !important;
   pointer-events: all !important;
   transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.18s ease, filter 0.18s ease !important;
 }
 
 .react-flow__handle:hover {
-  filter: brightness(1.2) !important;
+  filter: brightness(1.25) !important;
   box-shadow: 0 0 12px var(--handle-color, currentColor), 0 0 22px var(--handle-color, currentColor) !important;
 }
 
-/* Left Handle: Statically locked on left border */
+/* Left Handle: Outward Left Semicircle */
 .react-flow__handle-left,
 .react-flow__handle[data-handlepos="left"] {
   left: 0 !important;
-  transform: translate(-50%, -50%) !important;
+  border-radius: 9px 0 0 9px !important;
+  transform: translate(-100%, -50%) !important;
 }
 
 .react-flow__handle-left:hover,
 .react-flow__handle[data-handlepos="left"]:hover {
-  transform: translate(-50%, -50%) scale(1.15) !important;
+  transform: translate(-100%, -50%) scale(1.2) !important;
 }
 
-/* Right Handle: Statically locked on right border */
+/* Right Handle: Outward Right Semicircle */
 .react-flow__handle-right,
 .react-flow__handle[data-handlepos="right"] {
   right: 0 !important;
-  transform: translate(50%, -50%) !important;
+  border-radius: 0 9px 9px 0 !important;
+  transform: translate(100%, -50%) !important;
 }
 
 .react-flow__handle-right:hover,
 .react-flow__handle[data-handlepos="right"]:hover {
-  transform: translate(50%, -50%) scale(1.15) !important;
+  transform: translate(100%, -50%) scale(1.2) !important;
 }
 
 /*  Minimal Controls */
