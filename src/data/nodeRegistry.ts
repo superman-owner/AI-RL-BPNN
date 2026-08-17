@@ -43,7 +43,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
   // =========================================================================
   strategy_preset_return: {
     group: 'input',
-    label: 'Strategy Preset & Return Window Node',
+    label: 'Strategy Preset & Return Window',
     fields: [
       {
         key: 'preset',
@@ -79,7 +79,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
   },
   volatility_indicator: {
     group: 'input',
-    label: 'Volatility & Indicator Node',
+    label: 'Volatility & Indicator',
     fields: [
       { key: 'vol_window', label: 'Volatility Window', default: 10, type: 'number' },
       { key: 'sma_period', label: 'SMA Baseline Period', default: 20, type: 'number' },
@@ -96,7 +96,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
   },
   position_feedback: {
     group: 'input',
-    label: 'Position Feedback Node',
+    label: 'Position Feedback',
     fields: [
       {
         key: 'encoding',
@@ -111,7 +111,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
   },
   training_episodes_config: {
     group: 'input',
-    label: 'Training Episodes & Target Node',
+    label: 'Training Episodes & Target',
     fields: [
       {
         key: 'target_episodes',
@@ -149,7 +149,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
   // =========================================================================
   fc1_dense_expansion: {
     group: 'fc1',
-    label: 'Dense Feature Expansion Node',
+    label: 'Dense Feature Expansion',
     fields: [
       {
         key: 'units',
@@ -183,7 +183,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
   // =========================================================================
   spatial_dropout: {
     group: 'regularization',
-    label: 'Spatial Dropout Node',
+    label: 'Spatial Dropout',
     fields: [
       { key: 'rate', label: 'Dropout Rate', default: 0.15, type: 'number' },
       {
@@ -199,7 +199,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
   },
   layer_normalization: {
     group: 'regularization',
-    label: 'Layer Normalization Node',
+    label: 'Layer Normalization',
     fields: [
       {
         key: 'norm_type',
@@ -215,7 +215,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
   },
   l2_weight_decay: {
     group: 'regularization',
-    label: 'L2 Weight Decay Regularizer Node',
+    label: 'L2 Weight Decay Regularizer',
     fields: [
       { key: 'decay', label: 'Weight Decay', default: '1e-4', type: 'string' },
     ],
@@ -224,7 +224,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
   },
   gradient_clipping: {
     group: 'regularization',
-    label: 'Gradient Clipping Node',
+    label: 'Gradient Clipping',
     fields: [
       { key: 'max_norm', label: 'Max Gradient Norm', default: 1.0, type: 'number' },
     ],
@@ -237,7 +237,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
   // =========================================================================
   fc2_bottleneck_synthesizer: {
     group: 'fc2',
-    label: 'Strategy Bottleneck Synthesizer Node',
+    label: 'Strategy Bottleneck Synthesizer',
     fields: [
       {
         key: 'units',
@@ -270,7 +270,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
   // =========================================================================
   friction_spread_cost: {
     group: 'reward',
-    label: 'Friction Cost & Spread Node',
+    label: 'Friction Cost & Spread',
     fields: [
       { key: 'spread_pip', label: 'Spread', default: 0.15, type: 'number' },
       { key: 'commission', label: 'Commission', default: 0.00, type: 'number' },
@@ -280,7 +280,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
   },
   anti_inactivity_reward: {
     group: 'reward',
-    label: 'Anti-Inactivity & Opportunity Cost Node',
+    label: 'Anti-Inactivity & Opportunity Cost',
     fields: [
       { key: 'idle_penalty', label: 'Idle Penalty', default: -0.0005, type: 'number' },
       { key: 'opp_cost_multiplier', label: 'Opportunity Cost Multiplier', default: '0.50x', type: 'string' },
@@ -309,7 +309,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
   },
   onnx_mt5_compiler: {
     group: 'output',
-    label: '1-Click ONNX MT5 Compiler Node',
+    label: '1-Click ONNX MT5 Compiler',
     fields: [
       {
         key: 'export_mode',

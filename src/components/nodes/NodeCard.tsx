@@ -51,24 +51,26 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
   const executionMode = data.executionMode || 'on';
   const GroupIcon = GROUP_ICONS[def.group] || Layers;
 
+  const displayTitle = (def.label || '').replace(/\s+Node$/i, '');
+
   return (
     <div
       style={{
-        minWidth: 260,
-        maxWidth: 290,
+        minWidth: 240,
+        maxWidth: 270,
         position: 'relative',
         background: isLight ? '#ffffff' : '#14141a',
         opacity: executionMode === 'off' ? 0.55 : (isConnected ? 1 : 0.85),
         border: selected
           ? `1.5px solid ${accent}`
           : (isConnected
-            ? (isLight ? '1px solid rgba(0,0,0,0.12)' : '1px solid rgba(255,255,255,0.15)')
-            : (isLight ? '1px solid rgba(0,0,0,0.06)' : '1px solid rgba(255,255,255,0.08)')),
+            ? (isLight ? '1px solid rgba(0,0,0,0.1)' : '1px solid rgba(255,255,255,0.12)')
+            : (isLight ? '1px solid rgba(0,0,0,0.05)' : '1px solid rgba(255,255,255,0.06)')),
         borderRadius: '10px',
         boxShadow: selected
           ? (isLight ? `0 0 0 1px ${accent}, 0 8px 24px rgba(0,0,0,0.12)` : `0 0 0 1px ${accent}, 0 8px 24px rgba(0,0,0,0.6)`)
           : (isLight ? '0 4px 20px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04)' : '0 4px 16px rgba(0,0,0,0.45)'),
-        fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, -apple-system, sans-serif',
+        fontFamily: 'var(--font-apple-text)',
         WebkitFontSmoothing: 'antialiased',
         MozOsxFontSmoothing: 'grayscale',
         textRendering: 'optimizeLegibility',
@@ -82,58 +84,58 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: 8,
-            padding: '9px 12px 5px 12px',
+            gap: 7,
+            padding: '7px 10px 3px 10px',
             background: 'transparent',
             borderBottom: 'none',
             borderTopLeftRadius: '9px',
             borderTopRightRadius: '9px',
           }}
         >
-          <GroupIcon size={15} color={isConnected ? accent : (isLight ? '#475569' : '#94a3b8')} />
+          <GroupIcon size={14} color={isConnected ? accent : (isLight ? '#6e6e73' : '#86868b')} />
           <div style={{ flex: 1, minWidth: 0 }}>
             <div
               style={{
-                fontSize: 10,
-                fontWeight: 800,
-                letterSpacing: '0.06em',
-                color: isConnected ? accent : (isLight ? '#475569' : '#94a3b8'),
+                fontSize: 9.5,
+                fontWeight: 700,
+                letterSpacing: '0.04em',
+                color: isConnected ? accent : (isLight ? '#6e6e73' : '#86868b'),
                 textTransform: 'uppercase',
                 lineHeight: 1.2,
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
-                fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
+                fontFamily: 'var(--font-apple-text)',
               }}
             >
               {group.label}
             </div>
             <div
               style={{
-                fontSize: 13.5,
-                fontWeight: 700,
-                letterSpacing: '-0.015em',
-                color: isConnected ? (isLight ? '#0f172a' : '#ffffff') : (isLight ? '#334155' : '#e2e8f0'),
+                fontSize: 12.5,
+                fontWeight: 600,
+                letterSpacing: '-0.02em',
+                color: isConnected ? (isLight ? '#1d1d1f' : '#ffffff') : (isLight ? '#6e6e73' : '#a1a1aa'),
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 lineHeight: 1.25,
-                fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif',
+                fontFamily: 'var(--font-apple-text)',
               }}
             >
-              {def.label}
+              {displayTitle}
             </div>
           </div>
 
           {/* Execution Status Badge: Only lit green when isConnected is true */}
           <span
             style={{
-              width: 8,
-              height: 8,
+              width: 7,
+              height: 7,
               borderRadius: '50%',
-              background: isConnected && statusColor ? statusColor : (isLight ? '#cbd5e1' : '#475569'),
-              boxShadow: isConnected && statusColor ? `0 0 8px ${statusColor}` : 'none',
-              opacity: isConnected ? 1 : 0.5,
+              background: isConnected && statusColor ? statusColor : (isLight ? '#d1d1d6' : '#3f3f46'),
+              boxShadow: isConnected && statusColor ? `0 0 6px ${statusColor}` : 'none',
+              opacity: isConnected ? 1 : 0.4,
               flexShrink: 0,
             }}
             title={isConnected ? (execution?.detail || 'Connected & Active') : 'Disconnected / Standby (Not Active)'}
@@ -141,7 +143,7 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
         </div>
 
         {/* Node Body (พารามิเตอร์ย่อ) */}
-        <div style={{ padding: '4px 12px 9px 12px', display: 'flex', flexDirection: 'column', gap: 5 }}>
+        <div style={{ padding: '3px 10px 7px 10px', display: 'flex', flexDirection: 'column', gap: 4 }}>
         {def.fields.slice(0, 3).map((f) => {
           const val = data[f.key] ?? f.default;
           return (
@@ -152,22 +154,22 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 gap: 8,
-                fontSize: 11.5,
+                fontSize: 11,
                 letterSpacing: '-0.01em',
-                fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
+                fontFamily: 'var(--font-apple-text)',
               }}
             >
-              <span style={{ color: isLight ? '#475569' : '#cbd5e1', fontWeight: 500, flexShrink: 0 }}>{f.label}:</span>
+              <span style={{ color: isLight ? '#6e6e73' : '#86868b', fontWeight: 400, flexShrink: 0 }}>{f.label}:</span>
               <span
                 style={{
-                  color: isLight ? '#0f172a' : '#ffffff',
-                  fontWeight: 650,
+                  color: isLight ? '#1d1d1f' : '#f5f5f7',
+                  fontWeight: 500,
                   textAlign: 'right',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
-                  fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
-                  fontFeatureSettings: typeof val === 'number' ? '"tnum"' : 'normal',
+                  fontFamily: 'var(--font-apple-text)',
+                  fontFeatureSettings: typeof val === 'number' ? '"tnum" 1' : 'normal',
                   letterSpacing: '-0.01em',
                 }}
               >
