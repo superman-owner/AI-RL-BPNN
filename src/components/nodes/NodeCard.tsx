@@ -178,7 +178,7 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
       </div>
 
       {/* =======================================================
-          1. ขาเข้า IN (TARGET) - ครึ่งวงกลมฝั่งซ้าย ยื่นออกไปนอก Node
+          1. ขาเข้า IN (TARGET) - ครึ่งวงกลมฝั่งซ้าย ซ้อนอยู่ใต้ขอบ Node
           ======================================================= */}
       {def.hasInput && (
         <Handle
@@ -194,13 +194,14 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
             border: 'none',
             boxShadow: `0 0 6px ${accent}80`,
             cursor: 'crosshair',
+            zIndex: -1,
             ['--handle-color' as any]: accent,
           }}
         />
       )}
 
       {/* =======================================================
-          2. ขาออก OUT (SOURCE) - ครึ่งวงกลมฝั่งขวา ยื่นออกไปนอก Node
+          2. ขาออก OUT (SOURCE) - ครึ่งวงกลมฝั่งขวา ซ้อนอยู่ใต้ขอบ Node
           ======================================================= */}
       {def.hasOutput && !def.decision && (
         <Handle
@@ -216,6 +217,7 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
             border: 'none',
             boxShadow: `0 0 6px ${accent}80`,
             cursor: 'crosshair',
+            zIndex: -1,
             ['--handle-color' as any]: accent,
           }}
         />
@@ -241,6 +243,7 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
               border: 'none',
               boxShadow: '0 0 6px rgba(16, 185, 129, 0.5)',
               cursor: 'crosshair',
+              zIndex: -1,
               ['--handle-color' as any]: '#10b981',
             }}
           />
@@ -260,6 +263,7 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
               border: 'none',
               boxShadow: '0 0 6px rgba(244, 63, 94, 0.5)',
               cursor: 'crosshair',
+              zIndex: -1,
               ['--handle-color' as any]: '#f43f5e',
             }}
           />
