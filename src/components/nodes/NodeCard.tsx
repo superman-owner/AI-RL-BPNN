@@ -175,7 +175,7 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
       </div>
 
       {/* =======================================================
-          1. ขาเข้า IN (TARGET) - อยู่ฝั่งซ้ายกึ่งกลาง (Left 50%)
+          1. ขาเข้า IN (TARGET) - ขนาด 2 เท่า (16px) และเรืองแสงตรงสี
           ======================================================= */}
       {def.hasInput && (
         <Handle
@@ -183,19 +183,20 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
           position={Position.Left}
           id="in"
           style={{
-            left: -6,                           // ยื่นออกไปนอกขอบกล่อง 6px
-            width: 9,                           // ขนาดกว้าง 9px
-            height: 9,                          // ขนาดสูง 9px
-            borderRadius: '50%',                // วงกลมมน
-            background: accent,                 // 🟢 สีเต็มจุดเชื่อม ชัดเจน สว่างสดใส
-            border: '2px solid #ffffff',        // 🟢 ขอบขาวสว่าง คมชัด
+            width: 16,
+            height: 16,
+            borderRadius: '50%',
+            backgroundColor: accent,
+            border: isLight ? '2px solid #ffffff' : '2px solid #000000',
+            boxShadow: `0 0 6px ${accent}80`,
             cursor: 'crosshair',
+            ['--handle-color' as any]: accent,
           }}
         />
       )}
 
       {/* =======================================================
-          2. ขาออก OUT (SOURCE) - แบบทางออกเดียว อยู่ฝั่งขวากึ่งกลาง
+          2. ขาออก OUT (SOURCE) - ขนาด 2 เท่า (16px) และเรืองแสงตรงสี
           ======================================================= */}
       {def.hasOutput && !def.decision && (
         <Handle
@@ -203,19 +204,20 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
           position={Position.Right}
           id="out"
           style={{
-            right: -6,                          // ยื่นออกไปนอกขอบขวา 6px
-            width: 9,
-            height: 9,
+            width: 16,
+            height: 16,
             borderRadius: '50%',
-            background: accent,                 // 🟢 สีเต็มจุดเชื่อม
-            border: '2px solid #ffffff',        // 🟢 ขอบขาวสว่างเรืองแสง
+            backgroundColor: accent,
+            border: isLight ? '2px solid #ffffff' : '2px solid #000000',
+            boxShadow: `0 0 6px ${accent}80`,
             cursor: 'crosshair',
+            ['--handle-color' as any]: accent,
           }}
         />
       )}
 
       {/* =======================================================
-          3. หรือ ขาออกแยก 2 ทาง (TRUE = เขียว / FALSE = แดง)
+          3. ขาออกแยก 2 ทาง (TRUE = เขียว / FALSE = แดง) ขนาด 16px
           ======================================================= */}
       {def.hasOutput && def.decision && (
         <>
@@ -226,13 +228,14 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
             id="true"
             style={{
               top: '35%',
-              right: -6,
-              width: 9,
-              height: 9,
+              width: 16,
+              height: 16,
               borderRadius: '50%',
-              background: '#10b981',              // 🟢 สีเขียวมรกต (Emerald Green)
-              border: '2px solid #ffffff',
+              backgroundColor: '#10b981',
+              border: isLight ? '2px solid #ffffff' : '2px solid #000000',
+              boxShadow: '0 0 6px rgba(16, 185, 129, 0.5)',
               cursor: 'crosshair',
+              ['--handle-color' as any]: '#10b981',
             }}
           />
 
@@ -243,13 +246,14 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
             id="false"
             style={{
               top: '65%',
-              right: -6,
-              width: 9,
-              height: 9,
+              width: 16,
+              height: 16,
               borderRadius: '50%',
-              background: '#f43f5e',              // 🔴 สีแดงกุหลาบ (Rose Red)
-              border: '2px solid #ffffff',
+              backgroundColor: '#f43f5e',
+              border: isLight ? '2px solid #ffffff' : '2px solid #000000',
+              boxShadow: '0 0 6px rgba(244, 63, 94, 0.5)',
               cursor: 'crosshair',
+              ['--handle-color' as any]: '#f43f5e',
             }}
           />
         </>
