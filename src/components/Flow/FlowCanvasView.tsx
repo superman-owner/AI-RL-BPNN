@@ -40,8 +40,7 @@ const INITIAL_NODES: Node[] = [
       timeframe: 'M15',
       symbol: 'XAUUSD',
       bars_count: 10000,
-      training_episodes: 400,
-      execution: { status: 'passed', detail: 'Strategy Feed: XAUUSD M15 (400 Ep)' },
+      execution: { status: 'passed', detail: 'Strategy Feed: XAUUSD M15' },
     },
   },
   {
@@ -359,8 +358,8 @@ const defaultEdgeOptions = {
   },
 };
 
-const LOCAL_STORAGE_KEY_NODES = 'fxforge_dag_nodes_v8';
-const LOCAL_STORAGE_KEY_EDGES = 'fxforge_dag_edges_v8';
+const LOCAL_STORAGE_KEY_NODES = 'fxforge_dag_nodes_v9';
+const LOCAL_STORAGE_KEY_EDGES = 'fxforge_dag_edges_v9';
 
 const getInitialNodes = (): Node[] => {
   try {
@@ -1531,42 +1530,6 @@ const FlowContent: React.FC = () => {
 
         if (targetType === 'strategy_preset_return' && newPreset && STRATEGY_PRESET_CONFIGS[newPreset]) {
           updated = autoTunePipelineNodes(newPreset, updated);
-        }
-
-        // 🌟 Sync Training Episodes across Node 1.1 and Node 1.7
-        const newEpisodes = typeof keyOrObj === 'object' ? keyOrObj.training_episodes : (keyOrObj === 'training_episodes' ? value : undefined);
-        if (newEpisodes !== undefined) {
-          updated = updated.map((n) => {
-            if ((n.data?.nodeType || n.type) === 'training_episodes_config') {
-              return {
-                ...n,
-                data: {
-                  ...n.data,
-                  target_episodes: String(newEpisodes),
-                  execution: { status: 'passed', detail: `${newEpisodes} Episodes @ Batch 64` },
-                },
-              };
-            }
-            return n;
-          });
-        }
-
-        const newTargetEp = typeof keyOrObj === 'object' ? keyOrObj.target_episodes : (keyOrObj === 'target_episodes' ? value : undefined);
-        if (newTargetEp !== undefined) {
-          const numEp = Number(String(newTargetEp).replace(/,/g, '')) || 400;
-          updated = updated.map((n) => {
-            if ((n.data?.nodeType || n.type) === 'strategy_preset_return') {
-              return {
-                ...n,
-                data: {
-                  ...n.data,
-                  training_episodes: numEp,
-                  execution: { status: 'passed', detail: `Strategy Feed: ${n.data?.symbol || 'XAUUSD'} ${n.data?.timeframe || 'M15'} (${numEp} Ep)` },
-                },
-              };
-            }
-            return n;
-          });
         }
 
         syncArchitectureToEngine(updated);

@@ -234,12 +234,6 @@ export const NODE_DEFS: Record<string, NodeDef> = {
         default: 10000,
         type: 'number',
       },
-      {
-        key: 'training_episodes',
-        label: 'Training Episodes',
-        default: 400,
-        type: 'number',
-      },
     ],
     hasInput: false,
     hasOutput: true,
