@@ -977,19 +977,19 @@ const FlowContent: React.FC = () => {
   // ==========================================
   // 8. การ INSPECT (เปิดแผงลอยปรับพารามิเตอร์)
   // ==========================================
-  // 🎯 คำนวณจุดเกิดข้างๆ Node
+  // 🎯 คำนวณจุดเกิดข้างขวาของ Node ห่าง 10px ไม่ทับบน Node
   const openInspectorForNode = useCallback((node: Node, index = 0) => {
-    // กว้างของ Node ปกติประมาณ 210px -> วางเยื้องขวา 230px
-    const spawnX = node.position.x + 230 + (index * 14);
+    const nodeWidth = (node.measured?.width as number) || (typeof node.width === 'number' ? node.width : 270);
+    const spawnX = node.position.x + nodeWidth + 10 + (index * 14);
     const spawnY = node.position.y + (index * 14);
 
     setInspectors((prev) => {
       const exists = prev.find((item) => item.nodeId === node.id);
       if (exists) {
-        // ถ้าเปิดอยู่แล้ว ให้เลื่อนมาโฟกัสที่ตำแหน่งข้าง Node
+        // ถ้าเปิดอยู่แล้ว ให้เลื่อนมาโฟกัสที่ตำแหน่งข้างขวาของ Node
         return prev.map((item) => (item.nodeId === node.id ? { ...item, x: spawnX, y: spawnY } : item));
       }
-      // ถ้ายังไม่เปิด ให้เพิ่มหน้าต่างใหม่ ณ จุดเกิดข้าง Node
+      // ถ้ายังไม่เปิด ให้เพิ่มหน้าต่างใหม่ ณ จุดเกิดข้างขวาของ Node
       return [...prev, { nodeId: node.id, x: spawnX, y: spawnY }];
     });
   }, []);
