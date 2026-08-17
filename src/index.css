@@ -478,7 +478,7 @@ input[type='number'] {
   cursor: var(--mac-cursor-grabbing) !important;
   z-index: 9999 !important;
   opacity: 1 !important;
-  filter: drop-shadow(0 14px 32px rgba(0, 113, 227, 0.5)) drop-shadow(0 0 16px rgba(0, 113, 227, 0.35)) !important;
+  filter: none !important;
 }
 
 .react-flow__node.dragging * {
