@@ -1860,7 +1860,7 @@ const FlowContent: React.FC<{ isTraining?: boolean }> = ({ isTraining = false })
       }}
       className={`w-full h-full relative overflow-hidden transition-colors duration-200 ${
         isLight ? 'bg-[#f5f5f7]' : 'bg-[#040407]'
-      }`}
+      } ${isTraining ? 'is-training-locked' : ''}`}
       onMouseMove={onMouseMove}
       onDragLeave={onDragLeave}
       onContextMenu={(e) => e.preventDefault()}
@@ -1972,28 +1972,6 @@ const FlowContent: React.FC<{ isTraining?: boolean }> = ({ isTraining = false })
           }}
         />
       </ReactFlow>
-
-      {/* 🔒 Training Lock Badge (Center Top) */}
-      {isTraining && (
-        <div
-          style={{
-            position: 'absolute',
-            top: 14,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            zIndex: 30,
-            pointerEvents: 'none',
-          }}
-          className={`px-3.5 py-1.5 rounded-full flex items-center gap-2 text-[11.5px] font-semibold select-none shadow-lg backdrop-blur-xl border transition-all ${
-            isLight
-              ? 'bg-amber-500/10 border-amber-500/30 text-amber-900 shadow-amber-500/5'
-              : 'bg-[#1a1608]/90 border-amber-400/30 text-amber-300 shadow-black/60'
-          }`}
-        >
-          <LucideIcons.Lock size={12} className="text-amber-400 animate-pulse flex-shrink-0" />
-          <span>Pipeline Locked · Training in Progress</span>
-        </div>
-      )}
 
       {/* Real-time Status Indicator (Top-Left, Clean Typography, Zero Capsule Frame) */}
       <div className="absolute top-4 left-5 z-10 flex items-center gap-2 select-none pointer-events-none">

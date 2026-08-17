@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { AnalyticsDrawer } from './components/BottomPanel/AnalyticsDrawer';
 import { TopNav } from './components/Header/TopNav';
 import { MT5DeployModal } from './components/Modals/MT5DeployModal';
@@ -26,6 +26,11 @@ function AppContent() {
 
   // RL Live Telemetry & Control State (START, PAUSE, STOP) - Default strictly 'stopped' (Standby)
   const [rlStatus, setRlStatus] = useState<'running' | 'paused' | 'stopped'>('stopped');
+  const rlStatusRef = useRef(rlStatus);
+  useEffect(() => {
+    rlStatusRef.current = rlStatus;
+  }, [rlStatus]);
+
   const [rlTelemetry, setRlTelemetry] = useState<QuantTelemetry>(() => {
     fxforgeEngine.reset();
     return fxforgeEngine.getTelemetry();
@@ -47,7 +52,7 @@ function AppContent() {
 
       lines.forEach((line: string) => {
         if (line.includes('"type": "progress"')) {
-          if (rlStatus !== 'running') return; // Strict guard: never accept backend progress when stopped!
+          if (rlStatusRef.current !== 'running') return; // Read live ref so events are never dropped!
           try {
             const jsonStr = line.substring(line.indexOf('{'), line.lastIndexOf('}') + 1);
             const data = JSON.parse(jsonStr);
