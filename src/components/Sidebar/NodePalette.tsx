@@ -349,7 +349,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
         const hasCrossedDivider = sidebarRect ? moveEvent.clientX > sidebarRect.right : moveEvent.clientX > 275;
 
         const elUnder = document.elementFromPoint(moveEvent.clientX, moveEvent.clientY);
-        const isOverCanvas = hasCrossedDivider && Boolean(elUnder?.closest('.react-flow'));
+        const isOverCanvas = hasCrossedDivider && Boolean(elUnder?.closest('.react-flow') || elUnder?.closest('main'));
         window.dispatchEvent(new CustomEvent('fxforge-drag-hover', { detail: { isOver: isOverCanvas } }));
       }
     };
@@ -368,19 +368,15 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
         const hasCrossedDivider = sidebarRect ? dropClientX > sidebarRect.right : dropClientX > 275;
 
         if (hasCrossedDivider) {
-          const elUnder = document.elementFromPoint(dropClientX, dropClientY);
-          const flowEl = elUnder?.closest('.react-flow');
-          if (flowEl) {
-            window.dispatchEvent(
-              new CustomEvent('fxforge-drop-node', {
-                detail: {
-                  nodeType,
-                  clientX: dropClientX,
-                  clientY: dropClientY,
-                },
-              })
-            );
-          }
+          window.dispatchEvent(
+            new CustomEvent('fxforge-drop-node', {
+              detail: {
+                nodeType,
+                clientX: dropClientX,
+                clientY: dropClientY,
+              },
+            })
+          );
         }
       }
     };

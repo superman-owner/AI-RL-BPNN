@@ -642,16 +642,22 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
     };
   }, [spawnSignals]);
 
-  // Mouse Drag / Camera Rotation Handlers
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (e.button === 2) {
-      e.preventDefault();
+  // Reliable Pointer Drag / Camera Orbit Handlers with Pointer Capture
+  const handlePointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    if (e.button === 2) return;
+    const canvas = canvasRef.current;
+    if (canvas) {
+      try {
+        canvas.setPointerCapture(e.pointerId);
+      } catch {
+        // fallback
+      }
     }
     isDraggingRef.current = true;
     dragStartRef.current = { x: e.clientX, y: e.clientY };
   };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handlePointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
     if (!isDraggingRef.current) return;
     const dx = e.clientX - dragStartRef.current.x;
     const dy = e.clientY - dragStartRef.current.y;
@@ -661,7 +667,17 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
     cameraRef.current.rotX = Math.max(-0.8, Math.min(0.8, cameraRef.current.rotX + dy * 0.006));
   };
 
-  const handleMouseUp = () => {
+  const handlePointerUp = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      try {
+        if (canvas.hasPointerCapture(e.pointerId)) {
+          canvas.releasePointerCapture(e.pointerId);
+        }
+      } catch {
+        // fallback
+      }
+    }
     isDraggingRef.current = false;
   };
 
@@ -703,12 +719,13 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
       {/* 3D Canvas */}
       <canvas
         ref={canvasRef}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerUp}
         onWheel={handleWheel}
         onContextMenu={(e) => e.preventDefault()}
+        style={{ touchAction: 'none' }}
         className="w-full h-full cursor-grab active:cursor-grabbing block"
       />
 

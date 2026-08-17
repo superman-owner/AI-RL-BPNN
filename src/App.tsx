@@ -43,6 +43,17 @@ function AppContent() {
     return () => clearInterval(interval);
   }, [rlStatus]);
 
+  // Auto-switch to Studio Flow DAG view when dropping a node from Sidebar
+  useEffect(() => {
+    const handleDropOnCanvas = () => {
+      if (activeView !== 'studio') {
+        setActiveView('studio');
+      }
+    };
+    window.addEventListener('fxforge-drop-node', handleDropOnCanvas);
+    return () => window.removeEventListener('fxforge-drop-node', handleDropOnCanvas);
+  }, [activeView]);
+
   const handleStartRL = useCallback(() => {
     setRlStatus('running');
     setLogs((prev) => [...prev, `[RL ENGINE] Deep RL Training session started.`]);
