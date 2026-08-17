@@ -52,7 +52,7 @@ function pythonTrainingPlugin() {
               }
 
               const scriptPath = path.join(process.cwd(), 'train_fxforge_rl.py');
-              pythonProc = spawn('python', [scriptPath, '--config', configPath], {
+              pythonProc = spawn('python', ['-u', scriptPath, '--config', configPath], {
                 cwd: process.cwd(),
                 env: process.env,
               });

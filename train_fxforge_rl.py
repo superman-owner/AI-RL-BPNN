@@ -473,7 +473,7 @@ def main():
 
         if ep % 5 == 0 or ep == 1 or ep == episodes:
             elapsed = time.time() - start_time
-            print(f"Episode {ep:03d}/{episodes} | Loss: {total_loss.item():.4f} | Reward: {sum(rewards):+6.2f} R | WinRate: {win_rate:5.1f}% | Sharpe: {sharpe:4.2f} | PnL: {cum_ret:+6.2f}% | Elapsed: {elapsed:.1f}s")
+            print(f"Episode {ep:03d}/{episodes} | Loss: {total_loss.item():.4f} | Reward: {sum(rewards):+6.2f} R | WinRate: {win_rate:5.1f}% | Sharpe: {sharpe:4.2f} | PnL: {cum_ret:+6.2f}% | Elapsed: {elapsed:.1f}s", flush=True)
             
             # Emit structured JSON event line for UI IPC Listeners
             progress_payload = {
@@ -487,12 +487,11 @@ def main():
                 "cum_return": round(cum_ret, 2),
                 "trades": total_t
             }
-            # Flush stdout for real-time IPC piping
-            sys.stdout.flush()
+            print(json.dumps(progress_payload), flush=True)
 
     # Export Model
     export_standalone_onnx_to_mt5(model, state_dim=6, export_name="rl_trading_model.onnx")
-    print(f"\n[DONE] Dynamic Training & 1-Click MT5 Deployment Completed Successfully!")
+    print(f"\n[DONE] Dynamic Training & 1-Click MT5 Deployment Completed Successfully!", flush=True)
 
 if __name__ == "__main__":
     main()
