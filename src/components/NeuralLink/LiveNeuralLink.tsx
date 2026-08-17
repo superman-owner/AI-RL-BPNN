@@ -712,9 +712,9 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
         className="w-full h-full cursor-grab active:cursor-grabbing block"
       />
 
-      {/*  Apple Maps Style Vertical Viewport Controller (Matches User Reference Image) */}
+      {/*  Apple Maps Style Vertical Viewport Controller (Positioned at Bottom-Left, Same as Node Canvas Controls) */}
       <div
-        className={`absolute bottom-5 right-5 z-20 flex flex-col items-center p-1 rounded-2xl backdrop-blur-2xl shadow-xl border select-none transition-colors ${
+        className={`absolute bottom-4 left-4 z-20 flex flex-col items-center p-1 rounded-2xl backdrop-blur-2xl shadow-xl border select-none transition-colors ${
           isLight
             ? 'bg-white/80 border-black/10 text-[#4b5563]'
             : 'bg-[#18181f]/80 border-white/10 text-[#a1a1aa]'
@@ -763,9 +763,9 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
         </button>
       </div>
 
-      {/*  Bottom-Left Orbital Helper Hint */}
+      {/*  Bottom-Right Orbital Helper Hint (Repositioned to Right) */}
       <div
-        className={`absolute bottom-4 left-4 z-10 pointer-events-none text-[10.5px] font-medium tracking-tight select-none ${
+        className={`absolute bottom-4 right-4 z-10 pointer-events-none text-[10.5px] font-medium tracking-tight select-none ${
           isLight ? 'text-[#6b7280]' : 'text-[#71717a]'
         }`}
       >
