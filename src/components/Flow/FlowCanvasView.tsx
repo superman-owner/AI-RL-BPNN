@@ -198,6 +198,39 @@ const defaultEdgeOptions = {
   },
 };
 
+const LOCAL_STORAGE_KEY_NODES = 'fxforge_dag_nodes_v1';
+const LOCAL_STORAGE_KEY_EDGES = 'fxforge_dag_edges_v1';
+
+const getInitialNodes = (): Node[] => {
+  try {
+    const saved = localStorage.getItem(LOCAL_STORAGE_KEY_NODES);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch {
+    // fallback to initial default nodes
+  }
+  return INITIAL_NODES;
+};
+
+const getInitialEdges = (): Edge[] => {
+  try {
+    const saved = localStorage.getItem(LOCAL_STORAGE_KEY_EDGES);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch {
+    // fallback to initial default edges
+  }
+  return INITIAL_EDGES;
+};
+
 interface ContextMenuState {
   x: number;
   y: number;
@@ -803,14 +836,28 @@ const FlowContent: React.FC = () => {
   const isLight = theme === 'light';
   const { syncArchitectureToEngine } = useFlow();
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(INITIAL_NODES);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(INITIAL_EDGES);
+  const [nodes, setNodes, onNodesChange] = useNodesState(getInitialNodes());
+  const [edges, setEdges, onEdgesChange] = useEdgesState(getInitialEdges());
   const { screenToFlowPosition } = useReactFlow();
 
   // Sync initial DAG architecture with RL Engine and 3D BPNN Visualizer on mount
   useEffect(() => {
     syncArchitectureToEngine(nodes);
   }, []);
+
+  // Persistent auto-save nodes to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem(LOCAL_STORAGE_KEY_NODES, JSON.stringify(nodes));
+    } catch {}
+  }, [nodes]);
+
+  // Persistent auto-save edges to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem(LOCAL_STORAGE_KEY_EDGES, JSON.stringify(edges));
+    } catch {}
+  }, [edges]);
 
   // Floating Context Menu & Inspector States
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);

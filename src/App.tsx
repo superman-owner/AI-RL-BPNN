@@ -106,15 +106,16 @@ function AppContent() {
             theme === 'light' ? 'bg-[#f5f5f7]' : 'bg-[#040407]'
           }`}
         >
-          {activeView === 'studio' ? (
+          <div className={`w-full h-full ${activeView === 'studio' ? 'block' : 'hidden'}`}>
             <FlowCanvasView />
-          ) : (
+          </div>
+          <div className={`w-full h-full ${activeView === 'bpnn' ? 'block' : 'hidden'}`}>
             <LiveNeuralLink
               isTraining={rlStatus === 'running'}
               latestStep={rlLatestStep}
               cameraResetTrigger={cameraResetTrigger}
             />
-          )}
+          </div>
         </main>
       </div>
 
