@@ -108,11 +108,6 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
     setExpandedGroups((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const toggleAll = () => {
-    const allExpanded = Object.values(expandedGroups).every(Boolean);
-    setExpandedGroups(Object.fromEntries(GROUPS.map((g) => [g.id, !allExpanded])));
-  };
-
   const q = query.toLowerCase().trim();
 
   //  1. Slim Icon Rail Mode (Collapsed Sidebar like Reference Image)
@@ -351,7 +346,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
 
         const sidebarEl = document.querySelector('aside');
         const sidebarRect = sidebarEl?.getBoundingClientRect();
-        const hasCrossedDivider = sidebarRect ? moveEvent.clientX > sidebarRect.right : moveEvent.clientX > 260;
+        const hasCrossedDivider = sidebarRect ? moveEvent.clientX > sidebarRect.right : moveEvent.clientX > 275;
 
         const elUnder = document.elementFromPoint(moveEvent.clientX, moveEvent.clientY);
         const isOverCanvas = hasCrossedDivider && Boolean(elUnder?.closest('.react-flow'));
@@ -370,7 +365,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
         //  Strict Boundary Check: Must cross divider line into Canvas to allow Drop
         const sidebarEl = document.querySelector('aside');
         const sidebarRect = sidebarEl?.getBoundingClientRect();
-        const hasCrossedDivider = sidebarRect ? dropClientX > sidebarRect.right : dropClientX > 260;
+        const hasCrossedDivider = sidebarRect ? dropClientX > sidebarRect.right : dropClientX > 275;
 
         if (hasCrossedDivider) {
           const elUnder = document.elementFromPoint(dropClientX, dropClientY);
@@ -402,8 +397,8 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
     <aside
       onWheel={(e) => e.stopPropagation()}
       style={{
-        width: '260px',
-        minWidth: '260px',
+        width: '275px',
+        minWidth: '275px',
         fontFamily: 'var(--font-apple-text)',
         transition: 'width 0.22s cubic-bezier(0.16, 1, 0.3, 1)',
         WebkitFontSmoothing: 'antialiased',
@@ -434,7 +429,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
             marginBottom: '10px',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
             <Sliders size={17} className={`transition-colors flex-shrink-0 ${isLight ? 'text-[#374151]' : 'text-[#a1a1aa]'}`} />
             <span
               style={{
@@ -449,20 +444,21 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
             </span>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+          {onToggleCollapse && (
             <button
-              onClick={toggleAll}
+              onClick={onToggleCollapse}
+              title="Collapse to Slim Rail (พับแถบข้าง)"
               style={{
-                fontSize: '12px',
-                fontWeight: 600,
-                color: isLight ? '#4b5563' : '#a1a1aa',
                 background: isLight ? 'rgba(0, 0, 0, 0.04)' : 'rgba(255, 255, 255, 0.06)',
                 border: 'none',
                 borderRadius: '6px',
+                color: isLight ? '#4b5563' : '#a1a1aa',
                 cursor: 'pointer',
-                padding: '3px 8px',
+                padding: '4px 6px',
+                display: 'flex',
+                alignItems: 'center',
+                flexShrink: 0,
                 transition: 'all 0.15s ease',
-                whiteSpace: 'nowrap',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.color = isLight ? '#111827' : '#ffffff';
@@ -473,37 +469,9 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                 e.currentTarget.style.background = isLight ? 'rgba(0, 0, 0, 0.04)' : 'rgba(255, 255, 255, 0.06)';
               }}
             >
-              {Object.values(expandedGroups).every(Boolean) ? 'Collapse' : 'Expand'}
+              <PanelLeftClose size={15} />
             </button>
-
-            {onToggleCollapse && (
-              <button
-                onClick={onToggleCollapse}
-                title="Collapse to Slim Rail (พับแถบข้าง)"
-                style={{
-                  background: isLight ? 'rgba(0, 0, 0, 0.04)' : 'rgba(255, 255, 255, 0.06)',
-                  border: 'none',
-                  borderRadius: '6px',
-                  color: isLight ? '#4b5563' : '#a1a1aa',
-                  cursor: 'pointer',
-                  padding: '4px 6px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  transition: 'all 0.15s ease',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.color = isLight ? '#111827' : '#ffffff';
-                  e.currentTarget.style.background = isLight ? 'rgba(0, 0, 0, 0.08)' : 'rgba(255, 255, 255, 0.12)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.color = isLight ? '#4b5563' : '#a1a1aa';
-                  e.currentTarget.style.background = isLight ? 'rgba(0, 0, 0, 0.04)' : 'rgba(255, 255, 255, 0.06)';
-                }}
-              >
-                <PanelLeftClose size={15} />
-              </button>
-            )}
-          </div>
+          )}
         </div>
 
         {/*  macOS Spotlight-style Search Field (h-36px, High Contrast) */}
@@ -544,8 +512,8 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
       {/* 2.  Apple Mac Mail / Finder Sidebar List */}
       <div
         style={{
-          paddingLeft: '14px',
-          paddingRight: '14px',
+          paddingLeft: '12px',
+          paddingRight: '12px',
           paddingTop: '10px',
           paddingBottom: '20px',
         }}
@@ -567,8 +535,14 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
               {/*  Section Header (Clean Minimalist Header, Zero Border, Subtle Text Highlight on Hover) */}
               <div
                 onClick={() => toggleGroup(group.id)}
-                style={{ cursor: 'var(--mac-cursor-default)' }}
-                className={`group py-1 px-1 rounded-md flex items-center justify-between select-none transition-colors duration-150 ${
+                style={{
+                  cursor: 'var(--mac-cursor-default)',
+                  paddingLeft: '4px',
+                  paddingRight: '6px',
+                  paddingTop: '5px',
+                  paddingBottom: '5px',
+                }}
+                className={`group rounded-md flex items-center justify-between select-none transition-colors duration-150 ${
                   isLight
                     ? 'hover:text-[#0071e3] text-[#111827]'
                     : 'hover:text-white text-[#9ca3af]'
@@ -577,22 +551,25 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                 <div className="flex items-center gap-2 min-w-0 flex-1">
                   {/* SF Symbol on Main Header */}
                   <GroupIcon
-                    size={15}
+                    size={14}
                     style={{ color: group.color }}
                     className="flex-shrink-0"
                   />
 
                   {/* Section Label */}
                   <span
-                    className="text-[12px] font-bold uppercase tracking-wider truncate"
-                    style={{ letterSpacing: '0.03em' }}
+                    className="text-[11.5px] font-bold uppercase tracking-wider truncate"
+                    style={{ letterSpacing: '0.04em' }}
                   >
                     {group.label}
                   </span>
                 </div>
 
                 {/*  Fold / Open Arrow Indicator: Authentic Apple SF Symbol */}
-                <div className="flex items-center justify-center flex-shrink-0 ml-1.5 opacity-60 group-hover:opacity-100 transition-opacity">
+                <div
+                  style={{ width: '16px', height: '16px' }}
+                  className="flex items-center justify-center flex-shrink-0 opacity-60 group-hover:opacity-100 transition-opacity"
+                >
                   {isExpanded ? (
                     <SFSymbolChevronRight
                       size={11}
@@ -609,11 +586,11 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
               {isExpanded && (
                 <div
                   style={{
-                    paddingLeft: '4px',
-                    marginTop: '3px',
+                    paddingLeft: '0px',
+                    marginTop: '2px',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '2px',
+                    gap: '1px',
                   }}
                 >
                   {matchingNodes.map((node) => {
@@ -630,11 +607,11 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'space-between',
-                          minHeight: '30px',
+                          minHeight: '28px',
                           paddingLeft: '14px',
-                          paddingRight: '12px',
-                          paddingTop: '5px',
-                          paddingBottom: '5px',
+                          paddingRight: '6px',
+                          paddingTop: '4px',
+                          paddingBottom: '4px',
                           borderRadius: '4px',
                           cursor: 'var(--mac-cursor-grab)',
                           userSelect: 'none',
@@ -647,12 +624,12 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                             : (isLight ? '#111827' : '#9ca3af'),
                         }}
                       >
-                        {/* Left: Crisp Solid Bullet Point with 14px Clearance */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '9px', minWidth: 0, flex: 1 }}>
+                        {/* Left: Crisp Solid Bullet Point with Clearance */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
                           <span
                             style={{
-                              width: '5.5px',
-                              height: '5.5px',
+                              width: '5px',
+                              height: '5px',
                               borderRadius: '50%',
                               flexShrink: 0,
                               backgroundColor: isNodeHovered ? (isLight ? '#0071e3' : '#ffffff') : group.color,
@@ -661,12 +638,12 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                           />
                           <span
                             style={{
-                              fontSize: '12.5px',
+                              fontSize: '12px',
                               fontWeight: isNodeHovered ? 600 : 500,
                               letterSpacing: '-0.01em',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
                               whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              textOverflow: 'clip',
                               lineHeight: '1.2',
                             }}
                           >
@@ -674,17 +651,20 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                           </span>
                         </div>
 
-                        {/* Right: Authentic Apple SF Symbol Plus */}
-                        <SFSymbolPlus
-                          size={11}
-                          style={{
-                            flexShrink: 0,
-                            marginLeft: '6px',
-                            opacity: isNodeHovered ? 1 : 0,
-                            color: isLight ? '#0071e3' : '#ffffff',
-                            transition: 'opacity 0.15s ease',
-                          }}
-                        />
+                        {/* Right: Authentic Apple SF Symbol Plus with exact 16x16 alignment box */}
+                        <div
+                          style={{ width: '16px', height: '16px' }}
+                          className="flex items-center justify-center flex-shrink-0"
+                        >
+                          <SFSymbolPlus
+                            size={11}
+                            style={{
+                              opacity: isNodeHovered ? 1 : 0,
+                              color: isLight ? '#0071e3' : '#ffffff',
+                              transition: 'opacity 0.15s ease',
+                            }}
+                          />
+                        </div>
                       </div>
                     );
                   })}

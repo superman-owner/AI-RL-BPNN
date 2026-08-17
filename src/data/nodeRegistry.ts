@@ -43,7 +43,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
   // =========================================================================
   strategy_preset_return: {
     group: 'input',
-    label: 'Strategy Preset & Return Window',
+    label: 'Strategy & Return Window',
     fields: [
       {
         key: 'preset',
@@ -215,7 +215,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
   },
   l2_weight_decay: {
     group: 'regularization',
-    label: 'L2 Weight Decay Regularizer',
+    label: 'L2 Weight Decay',
     fields: [
       { key: 'decay', label: 'Weight Decay', default: '1e-4', type: 'string' },
     ],
@@ -237,7 +237,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
   // =========================================================================
   fc2_bottleneck_synthesizer: {
     group: 'fc2',
-    label: 'Strategy Bottleneck Synthesizer',
+    label: 'Strategy Synthesizer',
     fields: [
       {
         key: 'units',
@@ -280,7 +280,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
   },
   anti_inactivity_reward: {
     group: 'reward',
-    label: 'Anti-Inactivity & Opportunity Cost',
+    label: 'Inactivity & Opp Cost',
     fields: [
       { key: 'idle_penalty', label: 'Idle Penalty', default: -0.0005, type: 'number' },
       { key: 'opp_cost_multiplier', label: 'Opportunity Cost Multiplier', default: '0.50x', type: 'string' },
@@ -294,7 +294,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
   // =========================================================================
   fc3_policy_action_head: {
     group: 'output',
-    label: 'Policy Softmax Action Head',
+    label: 'Policy Action Head',
     fields: [
       {
         key: 'classes',
@@ -309,7 +309,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
   },
   onnx_mt5_compiler: {
     group: 'output',
-    label: '1-Click ONNX MT5 Compiler',
+    label: 'ONNX MT5 Compiler',
     fields: [
       {
         key: 'export_mode',
