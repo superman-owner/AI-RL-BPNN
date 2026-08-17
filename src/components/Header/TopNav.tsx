@@ -134,25 +134,26 @@ export const TopNav: React.FC<TopNavProps> = ({
               </button>
             )}
 
-            {/* STOP Button */}
+            {/* STOP Button (Active/Red only when running/paused; Dimmed/Disabled when stopped) */}
             <button
               id="btn-stop-rl"
               onClick={onStopRL}
-              className={`w-[56px] inline-flex items-center gap-1.5 text-xs font-bold transition-all cursor-pointer flex-shrink-0 whitespace-nowrap select-none ${
-                rlStatus === 'stopped'
+              disabled={rlStatus === 'stopped'}
+              className={`w-[56px] inline-flex items-center gap-1.5 text-xs font-bold transition-all flex-shrink-0 whitespace-nowrap select-none ${
+                rlStatus !== 'stopped'
                   ? isLight
-                    ? 'text-[#d70015]'
-                    : 'text-[#ff453a] drop-shadow-[0_0_8px_rgba(255,69,58,0.85)]'
+                    ? 'text-[#d70015] hover:text-[#b40010] cursor-pointer active:scale-95'
+                    : 'text-[#ff453a] hover:text-[#ff6961] drop-shadow-[0_0_8px_rgba(255,69,58,0.85)] cursor-pointer active:scale-95'
                   : isLight
-                  ? 'text-[#8e8e93] hover:text-[#d70015]'
-                  : 'text-white/40 hover:text-[#ff453a]'
+                  ? 'text-black/30 cursor-not-allowed opacity-50'
+                  : 'text-white/25 cursor-not-allowed opacity-40'
               }`}
-              title="Stop & Reset Simulation"
+              title={rlStatus === 'stopped' ? 'Simulation Stopped (Standby)' : 'Stop & Reset Simulation'}
             >
               <LucideIcons.Square
                 size={11}
                 className={`flex-shrink-0 ${
-                  rlStatus === 'stopped' ? (isLight ? 'fill-[#d70015]' : 'fill-[#ff453a]') : ''
+                  rlStatus !== 'stopped' ? (isLight ? 'fill-[#d70015]' : 'fill-[#ff453a]') : ''
                 }`}
               />
               <span>STOP</span>
