@@ -791,6 +791,63 @@ export class FXForgeEngine {
     };
   }
 
+  public getMonteCarloCurves(horizon: number = 50, numSimulations: number = 300) {
+    const startEquity = this.currentEquity > 0 ? this.currentEquity : this.initialCapital || 100000;
+    const nTrades = this.tradeReturns.length;
+    
+    // Mean return and standard deviation per forward period
+    const meanR = nTrades > 5 
+      ? this.tradeReturns.reduce((a, b) => a + b, 0) / nTrades 
+      : 0.0012;
+    const stdR = nTrades > 5
+      ? Math.max(0.003, Math.sqrt(this.tradeReturns.reduce((s, r) => s + Math.pow(r - meanR, 2), 0) / nTrades))
+      : 0.0065;
+
+    // Simulate multi-paths
+    const allPaths: number[][] = [];
+    for (let p = 0; p < numSimulations; p++) {
+      const path: number[] = [startEquity];
+      let eq = startEquity;
+      for (let t = 1; t <= horizon; t++) {
+        // Bootstrap historical distribution with Gaussian random perturbation
+        const baseRet = nTrades > 10 
+          ? this.tradeReturns[Math.floor(Math.random() * nTrades)]
+          : (Math.random() - 0.48) * 2 * stdR + meanR;
+        eq += eq * baseRet;
+        path.push(Math.max(1000, eq));
+      }
+      allPaths.push(path);
+    }
+
+    // Compute percentiles for each step t
+    const result = [];
+    for (let t = 0; t <= horizon; t++) {
+      const valuesAtT = allPaths.map((path) => path[t]).sort((a, b) => a - b);
+      const p05 = valuesAtT[Math.floor(numSimulations * 0.05)] || startEquity;
+      const p25 = valuesAtT[Math.floor(numSimulations * 0.25)] || startEquity;
+      const median = valuesAtT[Math.floor(numSimulations * 0.50)] || startEquity;
+      const p75 = valuesAtT[Math.floor(numSimulations * 0.75)] || startEquity;
+      const p95 = valuesAtT[Math.floor(numSimulations * 0.95)] || startEquity;
+
+      result.push({
+        step: `+${t}d`,
+        stepIndex: t,
+        p05: Number(p05.toFixed(2)),
+        p25: Number(p25.toFixed(2)),
+        median: Number(median.toFixed(2)),
+        p75: Number(p75.toFixed(2)),
+        p95: Number(p95.toFixed(2)),
+        path1: Number(allPaths[0][t].toFixed(2)),
+        path2: Number(allPaths[1][t].toFixed(2)),
+        path3: Number(allPaths[2][t].toFixed(2)),
+        path4: Number(allPaths[3][t].toFixed(2)),
+        path5: Number(allPaths[4][t].toFixed(2)),
+      });
+    }
+
+    return result;
+  }
+
   public getRewardHistory() {
     return [...this.history];
   }

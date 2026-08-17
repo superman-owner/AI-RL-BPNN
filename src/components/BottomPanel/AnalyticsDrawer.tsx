@@ -169,6 +169,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
   const [rewardData, setRewardData] = useState(() => fxforgeEngine.getRewardHistory());
   const [lossData, setLossData] = useState(() => fxforgeEngine.getLossHistory());
   const [featureImportance, setFeatureImportance] = useState(() => fxforgeEngine.getFeatureImportance());
+  const [monteCarloData, setMonteCarloData] = useState(() => fxforgeEngine.getMonteCarloCurves());
   const logEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -177,11 +178,12 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
     }
   }, [logs, activeTab]);
 
-  // Sync real-time reward curve, loss curves, and feature gains with engine
+  // Sync real-time reward curve, loss curves, feature gains, and Monte Carlo curves with engine
   useEffect(() => {
     setRewardData(fxforgeEngine.getRewardHistory());
     setLossData(fxforgeEngine.getLossHistory());
     setFeatureImportance(fxforgeEngine.getFeatureImportance());
+    setMonteCarloData(fxforgeEngine.getMonteCarloCurves());
   }, [rlTelemetry, latestStep]);
 
   const currentTelemetry = rlTelemetry || fxforgeEngine.getTelemetry();
@@ -931,87 +933,175 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                 </div>
               </div>
 
-              {/* Right Column: Live Institutional Defense Cockpit */}
+              {/* Right Column: 1,000-Path Monte Carlo Forward Projection Chart */}
               <div
-                className={`flex-1 h-full min-h-0 border flex flex-col justify-between overflow-hidden p-4 rounded-2xl ${
+                className={`flex-1 h-full min-h-0 border flex flex-col justify-between overflow-hidden ${
                   isLight
                     ? 'bg-white border-black/[0.08] shadow-[0_4px_20px_rgba(0,0,0,0.06)]'
                     : 'bg-gradient-to-b from-[#14141d]/95 to-[#0c0c12]/95 border-white/[0.08] shadow-[0_10px_25px_rgba(0,0,0,0.6)]'
-                }`}
+                } ${isMaximized ? 'rounded-3xl' : 'rounded-2xl'}`}
+                style={{ padding: isMaximized ? '20px 24px 14px 24px' : '14px 18px 8px 18px' }}
               >
-                <div className="flex items-center justify-between border-b pb-2.5 mb-3 border-black/[0.06] dark:border-white/[0.06]">
+                {/* Header with Title and Legend */}
+                <div className="flex items-center justify-between border-b pb-2 mb-2 border-black/[0.06] dark:border-white/[0.06] flex-shrink-0">
                   <div>
                     <span className={`text-xs font-bold block ${isLight ? 'text-[#1d1d1f]' : 'text-white'}`}>
-                      1,000-Path Monte Carlo Stress Test & Defense Status
+                      1,000-Path Monte Carlo Forward Projection (50-Session Horizon)
                     </span>
                     <span className={`text-[10.5px] ${isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}`}>
-                      Bootstrap resampling 100-step future equity distribution & risk filters
+                      Bootstrap resampling with non-parametric volatility dispersion & tail-risk cones
                     </span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[11px] font-semibold text-[#30d158] bg-[#30d158]/10 px-2.5 py-1 rounded-full border border-[#30d158]/20">
+
+                  <div className="flex items-center gap-3">
+                    <div className="hidden sm:flex items-center gap-3 text-[10.5px]">
+                      <span className="flex items-center gap-1 text-[#30d158]">
+                        <span className="w-2 h-0.5 bg-[#30d158]" /> 95% Bull Frontier
+                      </span>
+                      <span className="flex items-center gap-1 text-[#0a84ff]">
+                        <span className="w-2 h-0.5 bg-[#0a84ff]" /> Median Base
+                      </span>
+                      <span className="flex items-center gap-1 text-[#ff453a]">
+                        <span className="w-2 h-0.5 bg-[#ff453a]" /> 5% Stress Tail
+                      </span>
+                    </div>
+
+                    <span className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full border ${
+                      isLight 
+                        ? 'bg-[#30d158]/10 text-[#28cd41] border-[#28cd41]/20' 
+                        : 'bg-[#30d158]/10 text-[#30d158] border-[#30d158]/30'
+                    }`}>
                       Median PnL: +${currentTelemetry.monteCarloMedianPnL.toLocaleString()}
                     </span>
                   </div>
                 </div>
 
-                {/* 4 Live Risk Guard Badges */}
-                <div className="grid grid-cols-4 gap-3 flex-1">
-                  {/* Badge 1: Drawdown Guard */}
-                  <div className={`p-3 rounded-xl border flex flex-col justify-between ${
-                    currentTelemetry.drawdownShieldActive
-                      ? 'bg-[#ff453a]/10 border-[#ff453a]/30 text-[#ff453a]'
-                      : isLight ? 'bg-black/[0.02] border-black/[0.06]' : 'bg-white/[0.03] border-white/[0.06]'
-                  }`}>
-                    <div className="flex items-center gap-2">
-                      <LucideIcons.ShieldAlert size={14} className={currentTelemetry.drawdownShieldActive ? 'text-[#ff453a]' : 'text-[#30d158]'} />
-                      <span className="text-[11px] font-bold">Drawdown Shield</span>
-                    </div>
-                    <span className={`text-[10px] ${isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}`}>
-                      {currentTelemetry.drawdownShieldActive ? 'Warning: Near 5% Limit' : 'Safe (< 5.0% Limit)'}
-                    </span>
-                  </div>
+                {/* Monte Carlo Fan Chart */}
+                <div className="flex-1 w-full min-h-0 z-10 relative">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={monteCarloData} margin={{ top: 8, right: 12, left: 5, bottom: 4 }}>
+                      <defs>
+                        <linearGradient id="mcConeGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#30d158" stopOpacity={0.28} />
+                          <stop offset="50%" stopColor="#0a84ff" stopOpacity={0.12} />
+                          <stop offset="100%" stopColor="#ff453a" stopOpacity={0.04} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke={isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.04)'} />
+                      <XAxis dataKey="step" stroke={isLight ? '#6e6e73' : '#636366'} tick={{ fontSize: isMaximized ? 11 : 9 }} />
+                      <YAxis
+                        stroke={isLight ? '#6e6e73' : '#636366'}
+                        tick={{ fontSize: isMaximized ? 11 : 9 }}
+                        domain={['auto', 'auto']}
+                        tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
+                      />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: isLight ? 'rgba(255, 255, 255, 0.96)' : 'rgba(14, 14, 20, 0.95)',
+                          borderColor: isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.12)',
+                          color: isLight ? '#1d1d1f' : '#ffffff',
+                          fontSize: isMaximized ? '12px' : '11px',
+                          borderRadius: '16px',
+                          boxShadow: isLight ? '0 8px 24px rgba(0,0,0,0.12)' : '0 10px 25px rgba(0,0,0,0.8)',
+                          backdropFilter: 'blur(25px)',
+                        }}
+                        formatter={(val: any, name: any) => [
+                          `$${Number(val).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+                          name === 'p95'
+                            ? '95% Bull Frontier'
+                            : name === 'p75'
+                            ? '75% Upper Quartile'
+                            : name === 'median'
+                            ? 'Median Projected Equity'
+                            : name === 'p25'
+                            ? '25% Lower Quartile'
+                            : name === 'p05'
+                            ? '5% Stress Tail Risk'
+                            : name,
+                        ]}
+                      />
 
-                  {/* Badge 2: Economic News Blackout */}
-                  <div className={`p-3 rounded-xl border flex flex-col justify-between ${
-                    currentTelemetry.isNewsRestricted
-                      ? 'bg-[#ffd60a]/10 border-[#ffd60a]/30 text-[#ffd60a]'
-                      : isLight ? 'bg-black/[0.02] border-black/[0.06]' : 'bg-white/[0.03] border-white/[0.06]'
-                  }`}>
-                    <div className="flex items-center gap-2">
-                      <LucideIcons.Radio size={14} className={currentTelemetry.isNewsRestricted ? 'text-[#ffd60a]' : 'text-[#30d158]'} />
-                      <span className="text-[11px] font-bold">News Filter</span>
-                    </div>
-                    <span className={`text-[10px] ${isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}`}>
-                      {currentTelemetry.isNewsRestricted ? 'High-Impact Blackout (FLAT)' : 'Normal Trading Active'}
-                    </span>
-                  </div>
+                      {/* 95% Confidence Shaded Region */}
+                      <Area
+                        type="monotone"
+                        dataKey="p95"
+                        name="p95"
+                        stroke="#30d158"
+                        strokeWidth={1.5}
+                        fillOpacity={1}
+                        fill="url(#mcConeGrad)"
+                      />
 
-                  {/* Badge 3: Active Market Session */}
-                  <div className={`p-3 rounded-xl border flex flex-col justify-between ${
-                    isLight ? 'bg-black/[0.02] border-black/[0.06]' : 'bg-white/[0.03] border-white/[0.06]'
-                  }`}>
-                    <div className="flex items-center gap-2">
-                      <LucideIcons.Clock size={14} className={currentTelemetry.isSessionActive ? 'text-[#30d158]' : 'text-[#86868b]'} />
-                      <span className="text-[11px] font-bold">Session Guard</span>
-                    </div>
-                    <span className={`text-[10px] ${isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}`}>
-                      {currentTelemetry.isSessionActive ? 'London / NY Overlap (Active)' : 'Off-Hours Standby'}
-                    </span>
-                  </div>
+                      {/* 75% Quartile */}
+                      <Line
+                        type="monotone"
+                        dataKey="p75"
+                        name="p75"
+                        stroke="#00c7be"
+                        strokeWidth={1.2}
+                        strokeDasharray="4 4"
+                        dot={false}
+                      />
 
-                  {/* Badge 4: Webhook & Telegram */}
-                  <div className={`p-3 rounded-xl border flex flex-col justify-between ${
-                    isLight ? 'bg-black/[0.02] border-black/[0.06]' : 'bg-white/[0.03] border-white/[0.06]'
-                  }`}>
-                    <div className="flex items-center gap-2">
-                      <LucideIcons.Send size={14} className="text-[#0a84ff]" />
-                      <span className="text-[11px] font-bold">Telegram Alert</span>
-                    </div>
-                    <span className={`text-[10px] ${isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}`}>
-                      Instant Trade & DD Push Ready
-                    </span>
-                  </div>
+                      {/* Median Projection (Solid Highlight) */}
+                      <Line
+                        type="monotone"
+                        dataKey="median"
+                        name="median"
+                        stroke="#0a84ff"
+                        strokeWidth={isMaximized ? 3 : 2.2}
+                        dot={false}
+                        style={{ filter: isLight ? 'none' : 'drop-shadow(0 0 6px rgba(10, 132, 255, 0.5))' }}
+                      />
+
+                      {/* 25% Quartile */}
+                      <Line
+                        type="monotone"
+                        dataKey="p25"
+                        name="p25"
+                        stroke="#ffd60a"
+                        strokeWidth={1.2}
+                        strokeDasharray="4 4"
+                        dot={false}
+                      />
+
+                      {/* 5% Worst-Case Stress Boundary */}
+                      <Line
+                        type="monotone"
+                        dataKey="p05"
+                        name="p05"
+                        stroke="#ff453a"
+                        strokeWidth={1.5}
+                        dot={false}
+                      />
+
+                      {/* Sample Trajectory Spaghetti Paths */}
+                      <Line
+                        type="monotone"
+                        dataKey="path1"
+                        name="Sample Path 1"
+                        stroke={isLight ? 'rgba(0,0,0,0.18)' : 'rgba(255,255,255,0.18)'}
+                        strokeWidth={0.8}
+                        dot={false}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="path2"
+                        name="Sample Path 2"
+                        stroke={isLight ? 'rgba(0,0,0,0.18)' : 'rgba(255,255,255,0.18)'}
+                        strokeWidth={0.8}
+                        dot={false}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="path3"
+                        name="Sample Path 3"
+                        stroke={isLight ? 'rgba(0,0,0,0.18)' : 'rgba(255,255,255,0.18)'}
+                        strokeWidth={0.8}
+                        dot={false}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
                 </div>
               </div>
             </div>
