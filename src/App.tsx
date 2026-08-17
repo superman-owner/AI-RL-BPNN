@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { AnalyticsDrawer } from './components/BottomPanel/AnalyticsDrawer';
 import { TopNav } from './components/Header/TopNav';
 import { MT5DeployModal } from './components/Modals/MT5DeployModal';
@@ -34,11 +34,17 @@ function AppContent() {
   const [isMT5DeployOpen, setIsMT5DeployOpen] = useState(false);
   const [cameraResetTrigger, setCameraResetTrigger] = useState(0);
 
-  // Real-time In-App Deep RL Engine Loop
+  const isBackendRunningRef = useRef(false);
+
+  // Real-time In-App Deep RL Engine Loop (Yields to PyTorch backend when real process is active)
   useEffect(() => {
-    if (rlStatus !== 'running') return;
+    if (rlStatus !== 'running') {
+      isBackendRunningRef.current = false;
+      return;
+    }
 
     const interval = setInterval(() => {
+      if (isBackendRunningRef.current) return;
       const stepResult = fxforgeEngine.step();
       const telem = fxforgeEngine.getTelemetry();
       setRlTelemetry(telem);
@@ -59,15 +65,10 @@ function AppContent() {
           try {
             const jsonStr = line.substring(line.indexOf('{'), line.lastIndexOf('}') + 1);
             const data = JSON.parse(jsonStr);
-            setRlTelemetry((prev) => ({
-              ...prev,
-              episodes: data.episode,
-              reward: data.reward,
-              winRate: data.win_rate,
-              sharpe: data.sharpe,
-              totalTrades: data.trades,
-              netPnL: data.cum_return,
-            }));
+            isBackendRunningRef.current = true;
+            const { telemetry, step } = fxforgeEngine.recordPyTorchProgress(data);
+            setRlTelemetry(telemetry);
+            setRlLatestStep(step);
           } catch (e) {}
         }
       });
