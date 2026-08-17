@@ -459,17 +459,30 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
           tgt.layerIdx === 3 && currentStep !== null && currentStep.action === tgt.neuronIdx;
 
         if (syn.isResidual) {
-          // 💜 Glowing Violet Arc for Residual Skip Connection
-          ctx.strokeStyle = currentIsLight ? 'rgba(175, 82, 222, 0.85)' : 'rgba(191, 90, 242, 0.90)';
-          ctx.lineWidth = 1.6 * avgScale;
-          ctx.setLineDash([4, 4]);
+          // 💜 Sleek Optical Residual Conduit (Continuous Photonic Glass Fiber Arc - Seamlessly Blends with Apple Theme)
+          const arcLift = 20 * avgScale;
+          const midX = (p1.px + p2.px) / 2;
+          const midY = (p1.py + p2.py) / 2 - arcLift;
+
+          // Outer soft ambient glow
+          ctx.strokeStyle = currentIsLight
+            ? 'rgba(175, 82, 222, 0.25)'
+            : 'rgba(191, 90, 242, 0.32)';
+          ctx.lineWidth = 1.8 * avgScale;
           ctx.beginPath();
           ctx.moveTo(p1.px, p1.py);
-          const midX = (p1.px + p2.px) / 2;
-          const midY = (p1.py + p2.py) / 2 - 25 * avgScale;
           ctx.quadraticCurveTo(midX, midY, p2.px, p2.py);
           ctx.stroke();
-          ctx.setLineDash([]);
+
+          // Inner crisp luminous filament core
+          ctx.strokeStyle = currentIsLight
+            ? 'rgba(168, 85, 247, 0.65)'
+            : 'rgba(216, 180, 254, 0.75)';
+          ctx.lineWidth = 0.9 * avgScale;
+          ctx.beginPath();
+          ctx.moveTo(p1.px, p1.py);
+          ctx.quadraticCurveTo(midX, midY, p2.px, p2.py);
+          ctx.stroke();
         } else if (isLeadingToChosenAction) {
           // Vibrantly illuminated active decision path
           const actionColor =
