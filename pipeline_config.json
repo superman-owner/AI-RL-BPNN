@@ -1,0 +1,20 @@
+{
+  "symbol": "XAUUSD",
+  "timeframe": "M15",
+  "bars_count": 10000,
+  "strategy_preset": "Standard Quant",
+  "hidden1_units": 64,
+  "hidden1_activation": "LeakyReLU",
+  "has_dropout": true,
+  "dropout_rate": 0.15,
+  "has_layer_norm": true,
+  "has_l2_decay": true,
+  "l2_decay_rate": 0.0001,
+  "hidden2_units": 32,
+  "hidden2_activation": "LeakyReLU",
+  "has_residual": true,
+  "spread_pips": 0.15,
+  "inactivity_penalty": 0.0005,
+  "entropy_beta": 0.08,
+  "total_episodes": 10000
+}
