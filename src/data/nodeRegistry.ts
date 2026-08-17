@@ -109,6 +109,40 @@ export const NODE_DEFS: Record<string, NodeDef> = {
     hasInput: false,
     hasOutput: true,
   },
+  training_episodes_config: {
+    group: 'input',
+    label: 'Training Episodes & Target Node',
+    fields: [
+      {
+        key: 'target_episodes',
+        label: 'Target Episodes',
+        default: '10,000',
+        type: 'select',
+        options: ['2,000', '5,000', '10,000', '20,000', '50,000', '100,000'],
+      },
+      {
+        key: 'batch_size',
+        label: 'Batch Size',
+        default: '64',
+        type: 'select',
+        options: ['32', '64', '128', '256'],
+      },
+      {
+        key: 'max_steps',
+        label: 'Max Episode Steps',
+        default: 32,
+        type: 'number',
+      },
+      {
+        key: 'checkpoint_interval',
+        label: 'Save Checkpoint (Ep)',
+        default: 1000,
+        type: 'number',
+      },
+    ],
+    hasInput: false,
+    hasOutput: true,
+  },
 
   // =========================================================================
   // หมวด HIDDEN LAYER 1 NODES (สกัดฟีเจอร์ย่อย)

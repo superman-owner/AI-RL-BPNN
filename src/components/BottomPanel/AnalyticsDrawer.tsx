@@ -202,10 +202,11 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
   const holdPct = latestStep?.actionProbs ? (latestStep.actionProbs[1] * 100).toFixed(1) : '80.6';
   const sellPct = latestStep?.actionProbs ? (latestStep.actionProbs[2] * 100).toFixed(1) : '2.3';
 
+  const targetEpisodesFromConfig = fxforgeEngine.getConfig().targetEpisodes || 10000;
   const totalEpisodesTarget =
-    currentTelemetry.episodes > 10000
-      ? Math.ceil(currentTelemetry.episodes / 10000) * 10000
-      : 10000;
+    currentTelemetry.episodes > targetEpisodesFromConfig
+      ? Math.ceil(currentTelemetry.episodes / targetEpisodesFromConfig) * targetEpisodesFromConfig
+      : targetEpisodesFromConfig;
   const progressPct = ((currentTelemetry.episodes / totalEpisodesTarget) * 100).toFixed(1);
 
   return (
