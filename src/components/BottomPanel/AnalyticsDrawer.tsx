@@ -663,67 +663,79 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                 </div>
 
                 {/* RL Reward Area Chart */}
-                <div className="flex-1 w-full min-h-0 z-10">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={rewardData} margin={{ top: 8, right: 10, left: -10, bottom: 6 }}>
-                      <defs>
-                        <linearGradient id="hudEquityGrad" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#30d158" stopOpacity={0.45} />
-                          <stop offset="50%" stopColor="#30d158" stopOpacity={0.12} />
-                          <stop offset="95%" stopColor="#30d158" stopOpacity={0} />
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke={isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.04)'} />
-                      <XAxis dataKey="episode" stroke={isLight ? '#6e6e73' : '#636366'} tick={{ fontSize: isMaximized ? 11 : 9 }} />
-                      <YAxis stroke={isLight ? '#6e6e73' : '#636366'} tick={{ fontSize: isMaximized ? 11 : 9 }} domain={['auto', 'auto']} />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: isLight ? 'rgba(255, 255, 255, 0.96)' : 'rgba(14, 14, 20, 0.95)',
-                          borderColor: isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.12)',
-                          color: isLight ? '#1d1d1f' : '#ffffff',
-                          fontSize: isMaximized ? '12px' : '11px',
-                          borderRadius: '16px',
-                          boxShadow: isLight ? '0 8px 24px rgba(0,0,0,0.12)' : '0 10px 25px rgba(0,0,0,0.8)',
-                          backdropFilter: 'blur(25px)',
-                        }}
-                        formatter={(val: any, name: any) => [
-                          `${Number(val) > 0 ? '+' : ''}${Number(val).toFixed(2)} R`,
-                          name === 'cumulativeReward'
-                            ? 'Cum Reward'
-                            : name === 'rewardMa10'
-                            ? '10-Ep MA'
-                            : 'Market Return',
-                        ]}
-                      />
-                      <Area
-                        type="monotone"
-                        dataKey="cumulativeReward"
-                        name="cumulativeReward"
-                        stroke="#30d158"
-                        strokeWidth={isMaximized ? 3 : 2}
-                        fillOpacity={1}
-                        fill="url(#hudEquityGrad)"
-                        style={{ filter: isLight ? 'none' : 'drop-shadow(0 0 8px rgba(48, 209, 88, 0.35))' }}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="rewardMa10"
-                        name="rewardMa10"
-                        stroke="#00c7be"
-                        strokeWidth={1.8}
-                        dot={false}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="marketBaseline"
-                        name="marketBaseline"
-                        stroke={isLight ? '#8e8e93' : '#636366'}
-                        strokeWidth={1.5}
-                        strokeDasharray="4 4"
-                        dot={false}
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
+                <div className="flex-1 w-full min-h-0 z-10 relative">
+                  {rewardData.length === 0 ? (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center gap-2 select-none">
+                      <div className={`text-xs font-semibold ${isLight ? 'text-black/50' : 'text-white/50'}`}>
+                        ⚡ Simulation Standby · Baseline Cleared
+                      </div>
+                      <div className={`text-[11px] ${isLight ? 'text-black/35' : 'text-white/30'}`}>
+                        Click <span className={`font-bold ${isLight ? 'text-[#28cd41]' : 'text-[#30d158]'}`}>START</span> in the top navigation to begin live Deep RL training.
+                      </div>
+                    </div>
+                  ) : (
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={rewardData} margin={{ top: 8, right: 10, left: -10, bottom: 6 }}>
+                        <defs>
+                          <linearGradient id="hudEquityGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#30d158" stopOpacity={0.45} />
+                            <stop offset="50%" stopColor="#30d158" stopOpacity={0.12} />
+                            <stop offset="95%" stopColor="#30d158" stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" stroke={isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.04)'} />
+                        <XAxis dataKey="episode" stroke={isLight ? '#6e6e73' : '#636366'} tick={{ fontSize: isMaximized ? 11 : 9 }} />
+                        <YAxis stroke={isLight ? '#6e6e73' : '#636366'} tick={{ fontSize: isMaximized ? 11 : 9 }} domain={['auto', 'auto']} />
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: isLight ? 'rgba(255, 255, 255, 0.96)' : 'rgba(14, 14, 20, 0.95)',
+                            borderColor: isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.12)',
+                            color: isLight ? '#1d1d1f' : '#ffffff',
+                            fontSize: isMaximized ? '12px' : '11px',
+                            borderRadius: '16px',
+                            boxShadow: isLight ? '0 8px 24px rgba(0,0,0,0.12)' : '0 10px 25px rgba(0,0,0,0.8)',
+                            backdropFilter: 'blur(25px)',
+                          }}
+                          formatter={(val: any, name: any) => [
+                            `${Number(val) > 0 ? '+' : ''}${Number(val).toFixed(2)} R`,
+                            name === 'cumulativeReward'
+                              ? 'Cum Reward'
+                              : name === 'rewardMa10'
+                              ? '10-Ep MA'
+                              : 'Market Return',
+                          ]}
+                        />
+                        <Area
+                          type="monotone"
+                          dataKey="cumulativeReward"
+                          name="cumulativeReward"
+                          stroke="#30d158"
+                          strokeWidth={isMaximized ? 3 : 2}
+                          fillOpacity={1}
+                          fill="url(#hudEquityGrad)"
+                          style={{ filter: isLight ? 'none' : 'drop-shadow(0 0 8px rgba(48, 209, 88, 0.35))' }}
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="rewardMa10"
+                          name="rewardMa10"
+                          stroke="#00c7be"
+                          strokeWidth={isMaximized ? 2.5 : 1.8}
+                          strokeDasharray="4 4"
+                          dot={false}
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="marketReturn"
+                          name="marketReturn"
+                          stroke={isLight ? '#8e8e93' : '#636366'}
+                          strokeWidth={1.2}
+                          strokeDasharray="3 3"
+                          dot={false}
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  )}
                 </div>
               </div>
             </div>

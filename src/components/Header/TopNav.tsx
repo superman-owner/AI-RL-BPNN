@@ -168,14 +168,18 @@ export const TopNav: React.FC<TopNavProps> = ({
               <div className="w-[98px] inline-flex items-center gap-1 flex-shrink-0 whitespace-nowrap">
                 <span className="whitespace-nowrap">Win Rate:</span>
                 <strong className={`tabular-nums whitespace-nowrap ${isLight ? 'text-[#28cd41]' : 'text-[#30d158] drop-shadow-[0_0_6px_rgba(48,209,88,0.5)]'}`}>
-                  {typeof rlTelemetry.winRate === 'number' ? rlTelemetry.winRate.toFixed(1) : rlTelemetry.winRate}%
+                  {rlStatus === 'stopped' && rlTelemetry.episodes === 0
+                    ? '--'
+                    : `${typeof rlTelemetry.winRate === 'number' ? rlTelemetry.winRate.toFixed(1) : rlTelemetry.winRate}%`}
                 </strong>
               </div>
 
               <div className="w-[76px] inline-flex items-center gap-1 flex-shrink-0 whitespace-nowrap">
                 <span>Sharpe:</span>
                 <strong className={`tabular-nums ${isLight ? 'text-[#0071e3]' : 'text-[#00c7be] drop-shadow-[0_0_6px_rgba(0,199,190,0.5)]'}`}>
-                  {typeof rlTelemetry.annualizedSharpe === 'number'
+                  {rlStatus === 'stopped' && rlTelemetry.episodes === 0
+                    ? '--'
+                    : typeof rlTelemetry.annualizedSharpe === 'number'
                     ? rlTelemetry.annualizedSharpe.toFixed(2)
                     : rlTelemetry.annualizedSharpe}
                 </strong>
@@ -184,7 +188,9 @@ export const TopNav: React.FC<TopNavProps> = ({
               <div className="w-[118px] inline-flex items-center gap-1 flex-shrink-0 whitespace-nowrap">
                 <span>Reward:</span>
                 <strong className={`tabular-nums ${isLight ? 'text-[#d97706]' : 'text-[#ffd60a] drop-shadow-[0_0_6px_rgba(255,214,10,0.5)]'}`}>
-                  {typeof rlTelemetry.totalReward === 'number'
+                  {rlStatus === 'stopped' && rlTelemetry.episodes === 0
+                    ? '--'
+                    : typeof rlTelemetry.totalReward === 'number'
                     ? rlTelemetry.totalReward > 0
                       ? `+${rlTelemetry.totalReward.toFixed(4)}`
                       : rlTelemetry.totalReward.toFixed(4)
@@ -196,7 +202,7 @@ export const TopNav: React.FC<TopNavProps> = ({
 
           {/* Action Probability Indicator: Locked 96px Fixed Width, Zero wrap */}
           <div className="w-[96px] inline-flex items-center gap-1.5 text-xs font-bold tabular-nums flex-shrink-0 whitespace-nowrap">
-            {rlLatestStep && (
+            {rlLatestStep && rlStatus !== 'stopped' ? (
               <>
                 <span
                   className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${
@@ -223,6 +229,10 @@ export const TopNav: React.FC<TopNavProps> = ({
                     : 'HOLD'}
                 </span>
               </>
+            ) : (
+              <span className={`text-[11px] font-semibold tracking-wider ${isLight ? 'text-black/35' : 'text-white/35'}`}>
+                STANDBY
+              </span>
             )}
           </div>
 
