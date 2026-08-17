@@ -1229,6 +1229,43 @@ const FlowContent: React.FC = () => {
     return () => window.removeEventListener('fxforge-load-blueprint', handleLoadBlueprint);
   }, [setNodes, setEdges, syncArchitectureToEngine]);
 
+  //  Listen to drag-and-drop node from Sidebar onto Canvas
+  useEffect(() => {
+    const handleDragDropNode = (e: any) => {
+      const { nodeType, label, clientX, clientY } = e.detail || {};
+      if (!nodeType) return;
+
+      const flowPosition = screenToFlowPosition({ x: clientX, y: clientY });
+      const def = NODE_DEFS[nodeType];
+      const initialData: Record<string, any> = {
+        nodeType,
+        label: label || def?.label || 'Node',
+      };
+
+      if (def?.fields) {
+        def.fields.forEach((f) => {
+          initialData[f.key] = f.default;
+        });
+      }
+
+      const newNode: Node = {
+        id: `node-${Date.now()}`,
+        type: 'nodeCard',
+        position: flowPosition,
+        data: initialData,
+      };
+
+      setNodes((nds) => {
+        const updated = [...nds, newNode];
+        syncArchitectureToEngine(updated);
+        return updated;
+      });
+    };
+
+    window.addEventListener('fxforge-drag-drop-node', handleDragDropNode);
+    return () => window.removeEventListener('fxforge-drag-drop-node', handleDragDropNode);
+  }, [screenToFlowPosition, setNodes, syncArchitectureToEngine]);
+
   // Floating Context Menu & Inspector States
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
   const [inspectors, setInspectors] = useState<InspectorState[]>([]);
