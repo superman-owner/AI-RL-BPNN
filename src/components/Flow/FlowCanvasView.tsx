@@ -27,10 +27,13 @@ const nodeTypes = {
 };
 
 const INITIAL_NODES: Node[] = [
+  // ==========================================
+  // Column 1: Input & Strategy (x: 50)
+  // ==========================================
   {
     id: 'node-1',
     type: 'nodeCard',
-    position: { x: 50, y: 50 },
+    position: { x: 50, y: 40 },
     data: {
       nodeType: 'strategy_preset_return',
       preset: 'Standard Quant',
@@ -55,7 +58,21 @@ const INITIAL_NODES: Node[] = [
   {
     id: 'node-3',
     type: 'nodeCard',
-    position: { x: 400, y: 145 },
+    position: { x: 50, y: 440 },
+    data: {
+      nodeType: 'position_feedback',
+      encoding: 'Discrete',
+      execution: { status: 'passed', detail: 'State Vector: 6 Dimensions' },
+    },
+  },
+
+  // ==========================================
+  // Column 2: Feature Expansion (x: 390)
+  // ==========================================
+  {
+    id: 'node-4',
+    type: 'nodeCard',
+    position: { x: 390, y: 240 },
     data: {
       nodeType: 'fc1_dense_expansion',
       units: '64',
@@ -65,10 +82,14 @@ const INITIAL_NODES: Node[] = [
       execution: { status: 'passed', detail: 'FC1 Linear Expansion: 6 to 64' },
     },
   },
+
+  // ==========================================
+  // Column 3: Regularization & Norm (x: 730)
+  // ==========================================
   {
-    id: 'node-4',
+    id: 'node-5',
     type: 'nodeCard',
-    position: { x: 740, y: 145 },
+    position: { x: 730, y: 40 },
     data: {
       nodeType: 'spatial_dropout',
       rate: 0.15,
@@ -77,9 +98,34 @@ const INITIAL_NODES: Node[] = [
     },
   },
   {
-    id: 'node-5',
+    id: 'node-6',
     type: 'nodeCard',
-    position: { x: 1080, y: 145 },
+    position: { x: 730, y: 240 },
+    data: {
+      nodeType: 'layer_normalization',
+      norm_type: 'LayerNorm',
+      eps: '1e-5',
+      execution: { status: 'passed', detail: 'Normalized Variance: 1.0' },
+    },
+  },
+  {
+    id: 'node-7',
+    type: 'nodeCard',
+    position: { x: 730, y: 440 },
+    data: {
+      nodeType: 'l2_weight_decay',
+      decay: '1e-4',
+      execution: { status: 'passed', detail: 'Weight Decay: 0.0001' },
+    },
+  },
+
+  // ==========================================
+  // Column 4: Bottleneck Synthesis (x: 1070)
+  // ==========================================
+  {
+    id: 'node-8',
+    type: 'nodeCard',
+    position: { x: 1070, y: 240 },
     data: {
       nodeType: 'fc2_bottleneck_synthesizer',
       units: '32',
@@ -88,10 +134,14 @@ const INITIAL_NODES: Node[] = [
       execution: { status: 'passed', detail: 'FC2 Bottleneck: 64 to 32' },
     },
   },
+
+  // ==========================================
+  // Column 5: Reward Shaping (x: 1410)
+  // ==========================================
   {
-    id: 'node-6',
+    id: 'node-9',
     type: 'nodeCard',
-    position: { x: 400, y: 350 },
+    position: { x: 1410, y: 130 },
     data: {
       nodeType: 'friction_spread_cost',
       spread_pip: 0.15,
@@ -100,9 +150,24 @@ const INITIAL_NODES: Node[] = [
     },
   },
   {
-    id: 'node-7',
+    id: 'node-10',
     type: 'nodeCard',
-    position: { x: 740, y: 350 },
+    position: { x: 1410, y: 340 },
+    data: {
+      nodeType: 'anti_inactivity_reward',
+      idle_penalty: -0.0005,
+      opp_cost_multiplier: '0.50x',
+      execution: { status: 'passed', detail: 'Inactivity Penalty Active' },
+    },
+  },
+
+  // ==========================================
+  // Column 6: Output & Deployment (x: 1750)
+  // ==========================================
+  {
+    id: 'node-11',
+    type: 'nodeCard',
+    position: { x: 1750, y: 130 },
     data: {
       nodeType: 'fc3_policy_action_head',
       classes: '3',
@@ -111,9 +176,9 @@ const INITIAL_NODES: Node[] = [
     },
   },
   {
-    id: 'node-8',
+    id: 'node-12',
     type: 'nodeCard',
-    position: { x: 1080, y: 350 },
+    position: { x: 1750, y: 340 },
     data: {
       nodeType: 'onnx_mt5_compiler',
       target_folder: 'MQL5/Files/',
@@ -124,18 +189,19 @@ const INITIAL_NODES: Node[] = [
 ];
 
 const INITIAL_EDGES: Edge[] = [
+  // Inputs -> FC1 Expansion
   {
-    id: 'e1-3',
+    id: 'e1-4',
     source: 'node-1',
-    target: 'node-3',
+    target: 'node-4',
     type: 'smoothstep',
     animated: true,
     style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' },
   },
   {
-    id: 'e2-3',
+    id: 'e2-4',
     source: 'node-2',
-    target: 'node-3',
+    target: 'node-4',
     type: 'smoothstep',
     animated: true,
     style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' },
@@ -146,36 +212,102 @@ const INITIAL_EDGES: Edge[] = [
     target: 'node-4',
     type: 'smoothstep',
     animated: true,
-    style: { stroke: '#30d158', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(48,209,88,0.55))' },
+    style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' },
   },
+
+  // FC1 Expansion -> Regularization & Norm
   {
     id: 'e4-5',
     source: 'node-4',
     target: 'node-5',
     type: 'smoothstep',
     animated: true,
-    style: { stroke: '#bf5af2', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(191,90,242,0.55))' },
+    style: { stroke: '#ff9f0a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,159,10,0.55))' },
   },
   {
-    id: 'e5-6',
-    source: 'node-5',
+    id: 'e4-6',
+    source: 'node-4',
     target: 'node-6',
     type: 'smoothstep',
     animated: true,
-    style: { stroke: '#ffd60a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,214,10,0.55))' },
+    style: { stroke: '#ff9f0a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,159,10,0.55))' },
   },
   {
-    id: 'e6-7',
-    source: 'node-6',
+    id: 'e4-7',
+    source: 'node-4',
     target: 'node-7',
     type: 'smoothstep',
     animated: true,
-    style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' },
+    style: { stroke: '#ff9f0a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,159,10,0.55))' },
+  },
+
+  // Regularization -> FC2 Bottleneck Synthesizer
+  {
+    id: 'e5-8',
+    source: 'node-5',
+    target: 'node-8',
+    type: 'smoothstep',
+    animated: true,
+    style: { stroke: '#30d158', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(48,209,88,0.55))' },
+  },
+  {
+    id: 'e6-8',
+    source: 'node-6',
+    target: 'node-8',
+    type: 'smoothstep',
+    animated: true,
+    style: { stroke: '#30d158', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(48,209,88,0.55))' },
   },
   {
     id: 'e7-8',
     source: 'node-7',
     target: 'node-8',
+    type: 'smoothstep',
+    animated: true,
+    style: { stroke: '#30d158', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(48,209,88,0.55))' },
+  },
+
+  // FC2 Bottleneck -> Reward Shaping
+  {
+    id: 'e8-9',
+    source: 'node-8',
+    target: 'node-9',
+    type: 'smoothstep',
+    animated: true,
+    style: { stroke: '#bf5af2', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(191,90,242,0.55))' },
+  },
+  {
+    id: 'e8-10',
+    source: 'node-8',
+    target: 'node-10',
+    type: 'smoothstep',
+    animated: true,
+    style: { stroke: '#bf5af2', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(191,90,242,0.55))' },
+  },
+
+  // Reward Shaping -> Policy Action Head
+  {
+    id: 'e9-11',
+    source: 'node-9',
+    target: 'node-11',
+    type: 'smoothstep',
+    animated: true,
+    style: { stroke: '#ffd60a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,214,10,0.55))' },
+  },
+  {
+    id: 'e10-11',
+    source: 'node-10',
+    target: 'node-11',
+    type: 'smoothstep',
+    animated: true,
+    style: { stroke: '#ffd60a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,214,10,0.55))' },
+  },
+
+  // Policy Action Head -> ONNX MT5 Compiler
+  {
+    id: 'e11-12',
+    source: 'node-11',
+    target: 'node-12',
     type: 'smoothstep',
     animated: true,
     style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' },
@@ -188,25 +320,25 @@ const INITIAL_EDGES: Edge[] = [
 const defaultEdgeOptions = {
   type: 'smoothstep', // 🟢 เส้นตรงหักมุมฉากแบบมุมมน
   animated: true,     // 🟢 แอนิเมชันจุดไฟวิ่งบนเส้น
-  interactionWidth: 20, // 🟢 ขอบจับสัมผัสสำหรับการคลิกและคลิกขวาตัดสาย
   style: {
-    stroke: '#0a84ff', // สีเส้นเริ่มต้น
-    strokeWidth: 2,    // ความหนาของเส้น 2px
+    stroke: '#0a84ff',
+    strokeWidth: 2,
+    filter: 'drop-shadow(0 0 6px rgba(10, 132, 255, 0.45))',
   },
   pathOptions: {
     borderRadius: 16,  // 🟢 รัศมีความโค้งมนของมุมเลี้ยว (16px กำลังสวย สบายตา)
   },
 };
 
-const LOCAL_STORAGE_KEY_NODES = 'fxforge_dag_nodes_v1';
-const LOCAL_STORAGE_KEY_EDGES = 'fxforge_dag_edges_v1';
+const LOCAL_STORAGE_KEY_NODES = 'fxforge_dag_nodes_v4';
+const LOCAL_STORAGE_KEY_EDGES = 'fxforge_dag_edges_v4';
 
 const getInitialNodes = (): Node[] => {
   try {
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY_NODES);
     if (saved) {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) {
+      if (Array.isArray(parsed) && parsed.length >= 8) {
         return parsed;
       }
     }
@@ -229,6 +361,173 @@ const getInitialEdges = (): Edge[] => {
     // fallback to initial default edges
   }
   return INITIAL_EDGES;
+};
+
+export const autoTunePipelineNodes = (presetName: string, currentNodes: Node[]): Node[] => {
+  const cfg = STRATEGY_PRESET_CONFIGS[presetName];
+  if (!cfg) return currentNodes;
+
+  return currentNodes.map((node) => {
+    const type = node.data?.nodeType || node.type;
+    const currentData = (node.data || {}) as Record<string, any>;
+
+    switch (type) {
+      case 'strategy_preset_return':
+        return {
+          ...node,
+          data: {
+            ...currentData,
+            preset: presetName,
+            timeframe: cfg.timeframe,
+            bars_count: cfg.bars_count,
+            execution: {
+              status: 'passed',
+              detail: `Auto-tuned: ${currentData.symbol || 'XAUUSD'} ${cfg.timeframe} (${cfg.bars_count.toLocaleString()} bars)`,
+            },
+          },
+        };
+
+      case 'volatility_indicator':
+        return {
+          ...node,
+          data: {
+            ...currentData,
+            vol_window: cfg.vol_window,
+            sma_period: cfg.sma_period,
+            metric: cfg.metric,
+            execution: {
+              status: 'passed',
+              detail: `Auto-tuned: Win ${cfg.vol_window} / SMA ${cfg.sma_period}`,
+            },
+          },
+        };
+
+      case 'fc1_dense_expansion':
+        return {
+          ...node,
+          data: {
+            ...currentData,
+            units: cfg.units_fc1,
+            activation: cfg.activation_fc1,
+            execution: {
+              status: 'passed',
+              detail: `Auto-tuned: 6 to ${cfg.units_fc1} (${cfg.activation_fc1})`,
+            },
+          },
+        };
+
+      case 'spatial_dropout':
+        return {
+          ...node,
+          data: {
+            ...currentData,
+            rate: cfg.dropout_rate,
+            mode: cfg.dropout_mode,
+            execution: {
+              status: 'passed',
+              detail: `Auto-tuned Rate: ${cfg.dropout_rate}`,
+            },
+          },
+        };
+
+      case 'layer_normalization':
+        return {
+          ...node,
+          data: {
+            ...currentData,
+            norm_type: cfg.norm_type,
+            execution: {
+              status: 'passed',
+              detail: `Auto-tuned: ${cfg.norm_type}`,
+            },
+          },
+        };
+
+      case 'l2_weight_decay':
+        return {
+          ...node,
+          data: {
+            ...currentData,
+            decay: cfg.l2_decay,
+            execution: {
+              status: 'passed',
+              detail: `Auto-tuned Decay: ${cfg.l2_decay}`,
+            },
+          },
+        };
+
+      case 'gradient_clipping':
+        return {
+          ...node,
+          data: {
+            ...currentData,
+            max_norm: cfg.gradient_clip,
+            execution: {
+              status: 'passed',
+              detail: `Auto-tuned Max Norm: ${cfg.gradient_clip}`,
+            },
+          },
+        };
+
+      case 'fc2_bottleneck_synthesizer':
+        return {
+          ...node,
+          data: {
+            ...currentData,
+            units: cfg.units_fc2,
+            activation: cfg.activation_fc2,
+            residual: cfg.residual,
+            execution: {
+              status: 'passed',
+              detail: `Auto-tuned: ${cfg.units_fc2} (${cfg.activation_fc2}${cfg.residual ? ' + Res' : ''})`,
+            },
+          },
+        };
+
+      case 'friction_spread_cost':
+        return {
+          ...node,
+          data: {
+            ...currentData,
+            spread_pip: cfg.spread_pip,
+            execution: {
+              status: 'passed',
+              detail: `Auto-tuned Spread: ${cfg.spread_pip} pips`,
+            },
+          },
+        };
+
+      case 'anti_inactivity_reward':
+        return {
+          ...node,
+          data: {
+            ...currentData,
+            idle_penalty: cfg.idle_penalty,
+            opp_cost_multiplier: cfg.opp_cost_multiplier,
+            execution: {
+              status: 'passed',
+              detail: `Auto-tuned Idle: ${cfg.idle_penalty}`,
+            },
+          },
+        };
+
+      case 'fc3_policy_action_head':
+        return {
+          ...node,
+          data: {
+            ...currentData,
+            entropy_beta: cfg.entropy_beta,
+            execution: {
+              status: 'passed',
+              detail: `Auto-tuned Entropy Beta: ${cfg.entropy_beta}`,
+            },
+          },
+        };
+
+      default:
+        return node;
+    }
+  });
 };
 
 interface ContextMenuState {
@@ -1083,7 +1382,7 @@ const FlowContent: React.FC = () => {
   const updateNodeData = useCallback(
     (nodeId: string, keyOrObj: string | Record<string, any>, value?: any) => {
       setNodes((nds) => {
-        const updated = nds.map((n) => {
+        let updated = nds.map((n) => {
           if (n.id === nodeId) {
             const updates = typeof keyOrObj === 'object' ? keyOrObj : { [keyOrObj]: value };
             return {
@@ -1096,6 +1395,16 @@ const FlowContent: React.FC = () => {
           }
           return n;
         });
+
+        // 🌟 Smart Pipeline Auto-Tune: When user selects/updates Preset, auto-tune all DAG nodes!
+        const targetNode = nds.find((n) => n.id === nodeId);
+        const targetType = targetNode?.data?.nodeType || targetNode?.type;
+        const newPreset = typeof keyOrObj === 'object' ? keyOrObj.preset : (keyOrObj === 'preset' ? value : undefined);
+
+        if (targetType === 'strategy_preset_return' && newPreset && STRATEGY_PRESET_CONFIGS[newPreset]) {
+          updated = autoTunePipelineNodes(newPreset, updated);
+        }
+
         syncArchitectureToEngine(updated);
         return updated;
       });

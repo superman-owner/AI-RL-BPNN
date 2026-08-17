@@ -111,11 +111,15 @@ export const FlowProvider: React.FC<{ children: React.ReactNode }> = ({ children
           break;
 
         case 'friction_spread_cost':
-          if (d.spread_pips !== undefined) spec.spreadPips = Number(d.spread_pips) || 1.2;
+          if (d.spread_pip !== undefined || d.spread_pips !== undefined) {
+            spec.spreadPips = Number(d.spread_pip ?? d.spread_pips) || 1.2;
+          }
           break;
 
         case 'anti_inactivity_reward':
-          if (d.inactivity_penalty !== undefined) spec.inactivityPenalty = Number(d.inactivity_penalty) || 0.0005;
+          if (d.idle_penalty !== undefined || d.inactivity_penalty !== undefined) {
+            spec.inactivityPenalty = Math.abs(Number(d.idle_penalty ?? d.inactivity_penalty)) || 0.0005;
+          }
           break;
 
         case 'fc3_policy_action_head':

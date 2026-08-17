@@ -37,12 +37,140 @@ export const GROUPS: NodeGroup[] = [
   { id: 'output', label: 'Output & Deployment', color: '#0a84ff' },
 ];
 
-export const STRATEGY_PRESET_CONFIGS: Record<string, { timeframe: string; bars_count: number }> = {
-  'Standard Quant': { timeframe: 'M15', bars_count: 10000 },
-  'Fibonacci Scale': { timeframe: 'M30', bars_count: 15000 },
-  'Ultra-Fast Scalper': { timeframe: 'M1', bars_count: 50000 },
-  'Macro Trend Follower': { timeframe: 'H4', bars_count: 5000 },
-  'Custom Configuration': { timeframe: 'M15', bars_count: 10000 },
+export interface PipelinePresetSettings {
+  timeframe: string;
+  bars_count: number;
+  // Volatility
+  vol_window: number;
+  sma_period: number;
+  metric: string;
+  // Expansion
+  units_fc1: string;
+  activation_fc1: string;
+  // Regularization
+  dropout_rate: number;
+  dropout_mode: string;
+  norm_type: string;
+  l2_decay: string;
+  gradient_clip: number;
+  // Bottleneck
+  units_fc2: string;
+  activation_fc2: string;
+  residual: boolean;
+  // Reward
+  spread_pip: number;
+  idle_penalty: number;
+  opp_cost_multiplier: string;
+  // Policy Head
+  entropy_beta: number;
+}
+
+export const STRATEGY_PRESET_CONFIGS: Record<string, PipelinePresetSettings> = {
+  'Standard Quant': {
+    timeframe: 'M15',
+    bars_count: 10000,
+    vol_window: 10,
+    sma_period: 20,
+    metric: 'ATR Normalized',
+    units_fc1: '64',
+    activation_fc1: 'LeakyReLU',
+    dropout_rate: 0.15,
+    dropout_mode: 'Standard Dropout',
+    norm_type: 'LayerNorm',
+    l2_decay: '1e-4',
+    gradient_clip: 1.0,
+    units_fc2: '32',
+    activation_fc2: 'LeakyReLU',
+    residual: true,
+    spread_pip: 0.15,
+    idle_penalty: -0.0005,
+    opp_cost_multiplier: '0.50x',
+    entropy_beta: 0.08,
+  },
+  'Fibonacci Scale': {
+    timeframe: 'M30',
+    bars_count: 15000,
+    vol_window: 14,
+    sma_period: 34,
+    metric: 'ATR Normalized',
+    units_fc1: '64',
+    activation_fc1: 'LeakyReLU',
+    dropout_rate: 0.15,
+    dropout_mode: 'Standard Dropout',
+    norm_type: 'LayerNorm',
+    l2_decay: '1e-4',
+    gradient_clip: 1.0,
+    units_fc2: '32',
+    activation_fc2: 'LeakyReLU',
+    residual: true,
+    spread_pip: 0.15,
+    idle_penalty: -0.0004,
+    opp_cost_multiplier: '0.50x',
+    entropy_beta: 0.08,
+  },
+  'Ultra-Fast Scalper': {
+    timeframe: 'M1',
+    bars_count: 50000,
+    vol_window: 5,
+    sma_period: 10,
+    metric: 'ATR Normalized',
+    units_fc1: '64',
+    activation_fc1: 'LeakyReLU',
+    dropout_rate: 0.05,
+    dropout_mode: 'Standard Dropout',
+    norm_type: 'LayerNorm',
+    l2_decay: '5e-5',
+    gradient_clip: 0.5,
+    units_fc2: '32',
+    activation_fc2: 'LeakyReLU',
+    residual: false,
+    spread_pip: 0.10,
+    idle_penalty: -0.0010,
+    opp_cost_multiplier: '0.80x',
+    entropy_beta: 0.04,
+  },
+  'Macro Trend Follower': {
+    timeframe: 'H4',
+    bars_count: 5000,
+    vol_window: 20,
+    sma_period: 50,
+    metric: 'Standard Deviation %',
+    units_fc1: '128',
+    activation_fc1: 'GELU',
+    dropout_rate: 0.25,
+    dropout_mode: 'Standard Dropout',
+    norm_type: 'LayerNorm',
+    l2_decay: '5e-4',
+    gradient_clip: 2.0,
+    units_fc2: '32',
+    activation_fc2: 'GELU',
+    residual: true,
+    spread_pip: 0.20,
+    idle_penalty: -0.0002,
+    opp_cost_multiplier: '0.30x',
+    entropy_beta: 0.12,
+  },
+  'Custom Configuration': {
+    timeframe: 'M15',
+    bars_count: 10000,
+    vol_window: 10,
+    sma_period: 20,
+    metric: 'ATR Normalized',
+    units_fc1: '64',
+    activation_fc1: 'LeakyReLU',
+    dropout_rate: 0.15,
+    dropout_mode: 'Standard Dropout',
+    norm_type: 'LayerNorm',
+    l2_decay: '1e-4',
+    gradient_clip: 1.0,
+    units_fc2: '32',
+    activation_fc2: 'LeakyReLU',
+    residual: true,
+    spread_pip: 0.15,
+    idle_penalty: -0.0005,
+    opp_cost_multiplier: '0.50x',
+    entropy_beta: 0.08,
+  },
 };
 
 export const NODE_DEFS: Record<string, NodeDef> = {
