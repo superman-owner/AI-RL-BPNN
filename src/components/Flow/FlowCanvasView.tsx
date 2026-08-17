@@ -29,7 +29,7 @@ const INITIAL_NODES: Node[] = [
   {
     id: 'node-1',
     type: 'nodeCard',
-    position: { x: 40, y: 80 },
+    position: { x: 50, y: 50 },
     data: {
       nodeType: 'strategy_preset_return',
       preset: 'Standard Quant',
@@ -42,7 +42,7 @@ const INITIAL_NODES: Node[] = [
   {
     id: 'node-2',
     type: 'nodeCard',
-    position: { x: 40, y: 280 },
+    position: { x: 50, y: 240 },
     data: {
       nodeType: 'volatility_indicator',
       vol_window: 10,
@@ -54,7 +54,7 @@ const INITIAL_NODES: Node[] = [
   {
     id: 'node-3',
     type: 'nodeCard',
-    position: { x: 380, y: 160 },
+    position: { x: 400, y: 145 },
     data: {
       nodeType: 'fc1_dense_expansion',
       units: '64',
@@ -67,7 +67,7 @@ const INITIAL_NODES: Node[] = [
   {
     id: 'node-4',
     type: 'nodeCard',
-    position: { x: 680, y: 160 },
+    position: { x: 740, y: 145 },
     data: {
       nodeType: 'spatial_dropout',
       rate: 0.15,
@@ -78,7 +78,7 @@ const INITIAL_NODES: Node[] = [
   {
     id: 'node-5',
     type: 'nodeCard',
-    position: { x: 980, y: 160 },
+    position: { x: 1080, y: 145 },
     data: {
       nodeType: 'fc2_bottleneck_synthesizer',
       units: '32',
@@ -90,7 +90,7 @@ const INITIAL_NODES: Node[] = [
   {
     id: 'node-6',
     type: 'nodeCard',
-    position: { x: 1280, y: 160 },
+    position: { x: 400, y: 350 },
     data: {
       nodeType: 'friction_spread_cost',
       spread_pip: 0.15,
@@ -101,7 +101,7 @@ const INITIAL_NODES: Node[] = [
   {
     id: 'node-7',
     type: 'nodeCard',
-    position: { x: 1580, y: 160 },
+    position: { x: 740, y: 350 },
     data: {
       nodeType: 'fc3_policy_action_head',
       classes: '3',
@@ -112,7 +112,7 @@ const INITIAL_NODES: Node[] = [
   {
     id: 'node-8',
     type: 'nodeCard',
-    position: { x: 1880, y: 160 },
+    position: { x: 1080, y: 350 },
     data: {
       nodeType: 'onnx_mt5_compiler',
       export_mode: 'TorchScript Standalone',
@@ -1343,10 +1343,10 @@ const FlowContent: React.FC = () => {
         selectionOnDrag={true}
         selectionMode={SelectionMode.Partial}
         panOnDrag={[1, 2]}
-        minZoom={0.3}
-        maxZoom={1.6}
+        minZoom={0.4}
+        maxZoom={1.8}
         fitView
-        fitViewOptions={{ padding: 0.15 }}
+        fitViewOptions={{ padding: 0.18, minZoom: 0.9, maxZoom: 1.15 }}
         proOptions={{ hideAttribution: true }}
       >
         <Background

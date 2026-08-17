@@ -435,6 +435,18 @@ input[type='number'] {
   -moz-appearance: textfield;
 }
 
+/*  Ultra-Sharp Canvas Text Rendering on 1080p Standard DPI Monitors */
+.react-flow__node {
+  -webkit-font-smoothing: subpixel-antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  text-rendering: optimizeLegibility !important;
+  transform: translateZ(0);
+}
+
+.react-flow__node * {
+  text-rendering: optimizeLegibility !important;
+}
+
 /*  Official Apple macOS Cursors for ReactFlow */
 /*  Official Apple macOS 2-Cursor System for ReactFlow */
 .react-flow__pane,
