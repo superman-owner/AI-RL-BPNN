@@ -24,9 +24,12 @@ function AppContent() {
   // Logs State
   const [logs, setLogs] = useState<string[]>(INITIAL_LOGS);
 
-  // RL Live Telemetry & Control State (START, PAUSE, STOP)
-  const [rlStatus, setRlStatus] = useState<'running' | 'paused' | 'stopped'>('running');
-  const [rlTelemetry, setRlTelemetry] = useState<QuantTelemetry>(() => fxforgeEngine.getTelemetry());
+  // RL Live Telemetry & Control State (START, PAUSE, STOP) - Default strictly 'stopped' (Standby)
+  const [rlStatus, setRlStatus] = useState<'running' | 'paused' | 'stopped'>('stopped');
+  const [rlTelemetry, setRlTelemetry] = useState<QuantTelemetry>(() => {
+    fxforgeEngine.reset();
+    return fxforgeEngine.getTelemetry();
+  });
   const [rlLatestStep, setRlLatestStep] = useState<RLEnvironmentStep | null>(null);
   const [isMT5DeployOpen, setIsMT5DeployOpen] = useState(false);
   const [cameraResetTrigger, setCameraResetTrigger] = useState(0);

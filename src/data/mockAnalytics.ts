@@ -213,14 +213,7 @@ export const INITIAL_MT5_LOGS: MT5LogItem[] = [
 ];
 
 export const INITIAL_LOGS: string[] = [
-  '[SYSTEM] FXFORGE AI Core Engine v2.0 initialized.',
-  '[CUDA] Device detected: NVIDIA GeForce RTX (Driver 555.85, CUDA 12.4)',
-  '[IPC] Connected to Local Python Execution Server (127.0.0.1:8765)',
-  '[DAG] Graph parsed: 7 nodes, 9 sockets verified without circular dependencies.',
-  '[DATA] Binance OHLCV: 50,000 candles loaded in 342ms. Zero missing timestamps.',
-  '[FEAT] Calculating Technical Indicators & Fractional Diff (d=0.45)...',
-  '[LABEL] Triple Barrier: 42% Long, 39% Short, 19% Neutral (Horizontal Barrier 24 bars).',
-  '[TRAIN] Deep RL Policy (PPO): 6D State Vector -> 3 Actions. Best Sharpe: 2.84',
-  '[BACKTEST] MT5 ONNX Execution simulated: Sharpe=2.84, MDD=-9.2%, Profit Factor=2.18',
-  '[READY] Strategy Ready for MT5 ONNX / Live Trading deployment.',
+  '[SYSTEM] FXFORGE LAB Engine Standby (Idle Baseline).',
+  '[PIPELINE] Node Pipeline architecture loaded and verified.',
+  '[READY] Ready to train. Click "START" on the top navigation bar to begin Deep RL Training.',
 ];

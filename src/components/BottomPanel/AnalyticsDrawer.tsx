@@ -197,9 +197,9 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
       ? '3.50'
       : '1.00';
 
-  const buyPct = latestStep?.actionProbs ? (latestStep.actionProbs[0] * 100).toFixed(1) : '17.1';
-  const holdPct = latestStep?.actionProbs ? (latestStep.actionProbs[1] * 100).toFixed(1) : '80.6';
-  const sellPct = latestStep?.actionProbs ? (latestStep.actionProbs[2] * 100).toFixed(1) : '2.3';
+  const buyPct = latestStep?.actionProbs ? (latestStep.actionProbs[0] * 100).toFixed(1) : '0.0';
+  const holdPct = latestStep?.actionProbs ? (latestStep.actionProbs[1] * 100).toFixed(1) : '100.0';
+  const sellPct = latestStep?.actionProbs ? (latestStep.actionProbs[2] * 100).toFixed(1) : '0.0';
 
   const targetEpisodesFromConfig = fxforgeEngine.getConfig().targetEpisodes || 10000;
   const totalEpisodesTarget =
