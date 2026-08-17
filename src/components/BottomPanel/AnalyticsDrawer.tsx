@@ -318,7 +318,9 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
         </div>
 
         {/* Right HUD Controls */}
-        <div className="flex items-center gap-4 flex-shrink-0 min-w-max ml-6">
+        <div className="flex items-center gap-3.5 flex-shrink-0 min-w-max ml-6">
+          <div className={`hidden lg:block h-3.5 w-[1px] flex-shrink-0 ${isLight ? 'bg-black/10' : 'bg-white/15'}`} />
+
           {/* Policy Probabilities Indicator (Fixed Width, Precision Locked Positions) */}
           <div
             className={`hidden lg:flex items-center gap-1 text-xs font-medium select-none whitespace-nowrap w-[240px] flex-shrink-0 ${
