@@ -1205,6 +1205,24 @@ const FlowContent: React.FC = () => {
     } catch {}
   }, [edges]);
 
+  //  Listen to blueprint load events from Strategy Vault Sidebar
+  useEffect(() => {
+    const handleLoadBlueprint = (e: any) => {
+      if (e.detail?.nodes && e.detail?.edges) {
+        setNodes(e.detail.nodes);
+        setEdges(e.detail.edges);
+        syncArchitectureToEngine(e.detail.nodes);
+        try {
+          localStorage.setItem(LOCAL_STORAGE_KEY_NODES, JSON.stringify(e.detail.nodes));
+          localStorage.setItem(LOCAL_STORAGE_KEY_EDGES, JSON.stringify(e.detail.edges));
+        } catch {}
+      }
+    };
+
+    window.addEventListener('fxforge-load-blueprint', handleLoadBlueprint);
+    return () => window.removeEventListener('fxforge-load-blueprint', handleLoadBlueprint);
+  }, [setNodes, setEdges, syncArchitectureToEngine]);
+
   // Floating Context Menu & Inspector States
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
   const [inspectors, setInspectors] = useState<InspectorState[]>([]);
