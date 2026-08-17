@@ -317,41 +317,41 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
 
         {/* Right HUD Controls */}
         <div className="flex items-center gap-4 flex-shrink-0 min-w-max ml-6">
-          {/* Policy Probabilities Indicator */}
+          {/* Policy Probabilities Indicator (Fixed Width, Precision Locked Positions) */}
           <div
-            className={`hidden lg:flex items-center gap-1.5 text-xs font-medium select-none whitespace-nowrap ${
+            className={`hidden lg:flex items-center gap-1 text-xs font-medium select-none whitespace-nowrap w-[240px] flex-shrink-0 ${
               isLight ? 'text-[#0071e3]' : 'text-[#0a84ff]'
             }`}
           >
-            <span className={isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}>Policy:</span>
-            <span>
-              BUY <span className="font-sans tabular-nums font-semibold">{buyPct}%</span>
+            <span className={`w-[40px] flex-shrink-0 ${isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}`}>Policy:</span>
+            <span className="inline-flex items-center">
+              BUY <span className="font-sans tabular-nums font-semibold inline-block w-[38px] text-right ml-0.5">{buyPct}%</span>
             </span>
-            <span className={isLight ? 'text-black/20' : 'text-white/30'}>·</span>
-            <span>
-              HOLD <span className="font-sans tabular-nums font-semibold">{holdPct}%</span>
+            <span className={`px-0.5 ${isLight ? 'text-black/20' : 'text-white/30'}`}>·</span>
+            <span className="inline-flex items-center">
+              HOLD <span className="font-sans tabular-nums font-semibold inline-block w-[38px] text-right ml-0.5">{holdPct}%</span>
             </span>
-            <span className={isLight ? 'text-black/20' : 'text-white/30'}>·</span>
-            <span>
-              SELL <span className="font-sans tabular-nums font-semibold">{sellPct}%</span>
+            <span className={`px-0.5 ${isLight ? 'text-black/20' : 'text-white/30'}`}>·</span>
+            <span className="inline-flex items-center">
+              SELL <span className="font-sans tabular-nums font-semibold inline-block w-[38px] text-right ml-0.5">{sellPct}%</span>
             </span>
           </div>
 
           <div className={`hidden lg:block h-3.5 w-[1px] flex-shrink-0 ${isLight ? 'bg-black/10' : 'bg-white/10'}`} />
 
-          {/* Pure Frameless Training Progress HUD */}
-          <div className="hidden sm:flex items-center gap-2.5 text-xs select-none">
-            <div className="flex items-center gap-1.5 text-[11px] font-medium whitespace-nowrap">
+          {/* Pure Frameless Training Progress HUD (Fixed Width, Zero Horizontal Shifting) */}
+          <div className="hidden sm:flex items-center gap-2 text-xs select-none flex-shrink-0">
+            <div className="flex items-center gap-1.5 text-[11px] font-medium whitespace-nowrap flex-shrink-0">
               <span
-                className={`w-1.5 h-1.5 rounded-full ${
+                className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${
                   isRunning ? (isLight ? 'bg-[#28cd41] shadow-[0_0_6px_#28cd41] animate-pulse' : 'bg-[#30d158] shadow-[0_0_6px_#30d158] animate-pulse') : 'bg-[#ffd60a]'
                 }`}
               />
-              <span className={isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}>Training Progress:</span>
+              <span className={`whitespace-nowrap ${isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}`}>Training Progress:</span>
             </div>
 
             {/* Frameless Sleek Progress Track */}
-            <div className={`w-24 h-1 rounded-full overflow-hidden relative ${isLight ? 'bg-black/10' : 'bg-white/10'}`}>
+            <div className={`w-20 h-1 rounded-full overflow-hidden relative flex-shrink-0 ${isLight ? 'bg-black/10' : 'bg-white/10'}`}>
               <div
                 className="h-full bg-gradient-to-r from-[#007aff] via-[#30d158] to-[#00c7be] rounded-full transition-all duration-300"
                 style={{
@@ -362,22 +362,23 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
             </div>
 
             <strong
-              className={`text-[11px] font-sans tabular-nums font-semibold whitespace-nowrap ${
+              className={`text-[11px] font-sans tabular-nums font-semibold inline-block w-[38px] text-right whitespace-nowrap flex-shrink-0 ${
                 isLight ? 'text-[#28cd41]' : 'text-[#30d158] drop-shadow-[0_0_6px_rgba(48,209,88,0.4)]'
               }`}
             >
               {progressPct}%
             </strong>
 
-            <span className={isLight ? 'text-black/20' : 'text-white/30'}>·</span>
+            <span className={`flex-shrink-0 ${isLight ? 'text-black/20' : 'text-white/30'}`}>·</span>
 
-            <div className="flex items-center gap-1 text-[11px] whitespace-nowrap">
-              <span className={isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}>Episodes:</span>
-              <strong className={`font-sans tabular-nums font-semibold ${isLight ? 'text-[#1d1d1f]' : 'text-white'}`}>
+            {/* Episodes (Fixed digits layout with tabular-nums so width never changes) */}
+            <div className="flex items-center gap-1 text-[11px] whitespace-nowrap flex-shrink-0">
+              <span className={`flex-shrink-0 ${isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}`}>Episodes:</span>
+              <strong className={`font-sans tabular-nums font-semibold inline-block min-w-[42px] text-right ${isLight ? 'text-[#1d1d1f]' : 'text-white'}`}>
                 {currentEpisodesDisplay.toLocaleString()}
               </strong>
               <span className={`font-sans ${isLight ? 'text-black/30' : 'text-white/40'}`}>/</span>
-              <span className={`font-sans tabular-nums ${isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}`}>
+              <span className={`font-sans tabular-nums inline-block min-w-[42px] text-left ${isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}`}>
                 {totalEpisodesTarget.toLocaleString()}
               </span>
             </div>
