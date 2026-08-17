@@ -52,10 +52,13 @@ export const TopNav: React.FC<TopNavProps> = ({
             FXFORGE <span className={isLight ? 'text-[#0071e3]' : 'text-[#007aff]'}>LAB</span>
           </span>
         </div>
-
-        {/*  Vertical Divider Barrier after Brand (14px clean spacing) */}
-        <div className={`h-4 w-[1px] flex-shrink-0 mx-3.5 ${isLight ? 'bg-black/15' : 'bg-white/15'}`} />
       </div>
+
+      {/*  Vertical Divider Barrier with guaranteed 16px margins on both sides */}
+      <div
+        style={{ marginLeft: '16px', marginRight: '16px' }}
+        className={`h-4 w-[1px] flex-shrink-0 ${isLight ? 'bg-black/15' : 'bg-white/15'}`}
+      />
 
       {/* Main Suite (Shifted to the Right: 'Connected' & Theme Toggle end exactly 20px from right edge) */}
       <div className="flex items-center gap-4 flex-shrink-0 ml-auto">
