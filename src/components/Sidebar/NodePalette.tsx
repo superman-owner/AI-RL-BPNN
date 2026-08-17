@@ -489,7 +489,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search parameters & modules..."
+            placeholder="Search..."
             style={{
               width: '100%',
               height: '36px',
