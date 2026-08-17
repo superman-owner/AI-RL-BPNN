@@ -263,9 +263,8 @@ export const NODE_DEFS: Record<string, NodeDef> = {
       {
         key: 'residual',
         label: 'Residual Connection',
-        default: 'Enable',
-        type: 'select',
-        options: ['Enable', 'Disable'],
+        default: true,
+        type: 'boolean',
       },
     ],
     hasInput: true,
@@ -322,8 +321,7 @@ export const NODE_DEFS: Record<string, NodeDef> = {
         key: 'export_mode',
         label: 'Export Mode',
         default: 'TorchScript Standalone',
-        type: 'select',
-        options: ['TorchScript Standalone'],
+        type: 'string',
       },
       {
         key: 'target_folder',

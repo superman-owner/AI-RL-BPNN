@@ -83,7 +83,7 @@ const INITIAL_NODES: Node[] = [
       nodeType: 'fc2_bottleneck_synthesizer',
       units: '32',
       activation: 'LeakyReLU',
-      residual: 'Enable',
+      residual: true,
       execution: { status: 'passed', detail: 'FC2 Bottleneck: 64 to 32' },
     },
   },
@@ -284,24 +284,36 @@ const InspectorTextField: React.FC<{
       onToggleOpen?.(false);
     };
 
-    const handleScroll = () => onToggleOpen?.(false);
+    const handleScrollOrZoom = () => onToggleOpen?.(false);
     window.addEventListener('pointerdown', handleOutsidePointerDown, { capture: true });
     window.addEventListener('mousedown', handleOutsidePointerDown, { capture: true });
-    window.addEventListener('scroll', handleScroll, true);
+    window.addEventListener('scroll', handleScrollOrZoom, true);
+    window.addEventListener('wheel', handleScrollOrZoom, { passive: true });
     return () => {
       window.removeEventListener('pointerdown', handleOutsidePointerDown, { capture: true });
       window.removeEventListener('mousedown', handleOutsidePointerDown, { capture: true });
-      window.removeEventListener('scroll', handleScroll, true);
+      window.removeEventListener('scroll', handleScrollOrZoom, true);
+      window.removeEventListener('wheel', handleScrollOrZoom);
     };
   }, [isOpen, onToggleOpen]);
 
-  //  Frameless Apple Settings Toggle Switch (with explicit 10px spacing)
+  //  Frameless Apple Settings Toggle Switch (Aligned with standard 10px field text)
   if (isBoolean) {
     const isChecked = Boolean(value ?? defaultValue);
     return (
       <div
-        className="flex items-center justify-between py-1.5 px-0.5 nodrag nopan select-none"
-        style={{ pointerEvents: 'all', marginTop: '2px', marginBottom: '2px' }}
+        className="flex items-center justify-between nodrag nopan select-none"
+        style={{
+          pointerEvents: 'all',
+          height: '28px',
+          paddingLeft: '10px',
+          paddingRight: '8px',
+          borderRadius: '6px',
+          backgroundColor: isLight ? '#f0f0f2' : 'rgba(255, 255, 255, 0.05)',
+          border: isLight ? '1px solid rgba(0, 0, 0, 0.08)' : '1px solid rgba(255, 255, 255, 0.10)',
+          marginTop: '1px',
+          marginBottom: '1px',
+        }}
         onPointerDown={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
       >
@@ -577,6 +589,35 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
 
   const [activeDropdownKey, setActiveDropdownKey] = useState<string | null>(null);
 
+  // 📝 Local Draft State: Parameters only apply to Node Card upon clicking "Update"
+  const [draftData, setDraftData] = useState<Record<string, any>>(() => ({ ...(node.data || {}) }));
+
+  useEffect(() => {
+    setDraftData({ ...(node.data || {}) });
+  }, [node.id, node.data]);
+
+  const handleFieldChange = useCallback((key: string, newVal: any) => {
+    if (key === 'preset' && STRATEGY_PRESET_CONFIGS[String(newVal)]) {
+      const presetData = STRATEGY_PRESET_CONFIGS[String(newVal)];
+      setDraftData((prev) => ({
+        ...prev,
+        preset: newVal,
+        timeframe: presetData.timeframe,
+        bars_count: presetData.bars_count,
+      }));
+    } else {
+      setDraftData((prev) => ({
+        ...prev,
+        [key]: newVal,
+      }));
+    }
+  }, []);
+
+  const handleCommitUpdate = useCallback(() => {
+    updateNodeData(node.id, draftData);
+    onClose();
+  }, [node.id, draftData, updateNodeData, onClose]);
+
   const nodeType = node.data?.nodeType as string;
   const def = NODE_DEFS[nodeType];
   const group = GROUPS.find((g) => g.id === def?.group) || { label: 'Node', color: '#007aff' };
@@ -690,7 +731,7 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
         onMouseDown={(e) => e.stopPropagation()}
       >
         {def?.fields.map((f) => {
-          const val = (node.data?.[f.key] ?? f.default) as string | number | boolean;
+          const val = (draftData?.[f.key] ?? f.default) as string | number | boolean;
           return (
             <InspectorTextField
               key={f.key}
@@ -699,18 +740,7 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
               defaultValue={f.default}
               type={f.type}
               options={f.options}
-              onChange={(newVal) => {
-                if (f.key === 'preset' && STRATEGY_PRESET_CONFIGS[String(newVal)]) {
-                  const presetData = STRATEGY_PRESET_CONFIGS[String(newVal)];
-                  updateNodeData(node.id, {
-                    preset: newVal,
-                    timeframe: presetData.timeframe,
-                    bars_count: presetData.bars_count,
-                  });
-                } else {
-                  updateNodeData(node.id, f.key, newVal);
-                }
-              }}
+              onChange={(newVal) => handleFieldChange(f.key, newVal)}
               isOpen={activeDropdownKey === f.key}
               onToggleOpen={(open) => setActiveDropdownKey(open ? f.key : null)}
             />
@@ -737,7 +767,7 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
           type="button"
           onClick={(e) => {
             e.stopPropagation();
-            onClose();
+            handleCommitUpdate();
           }}
           onPointerDown={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
@@ -819,11 +849,15 @@ const FlowContent: React.FC = () => {
 
   // Get currently selected nodes helper
   const selectedNodes = useCallback((specificNodeId: string | null = null) => {
+    const allSelected = nodesRef.current.filter((n) => n.selected);
     if (specificNodeId) {
-      const node = nodesRef.current.find((n) => n.id === specificNodeId);
-      return node ? [node] : [];
+      const specific = nodesRef.current.find((n) => n.id === specificNodeId);
+      if (specific && specific.selected && allSelected.length > 0) {
+        return allSelected;
+      }
+      return specific ? [specific] : allSelected;
     }
-    return nodesRef.current.filter((n) => n.selected);
+    return allSelected;
   }, []);
 
   // ==========================================
@@ -1058,12 +1092,26 @@ const FlowContent: React.FC = () => {
   }, []);
 
   // ==========================================
-  // 9. Right-Click Context Menus
+  // 9. Right-Click Context Menus & Multi-Selection
   // ==========================================
+  const onSelectionChange = useCallback(({ nodes: selectedNodesList }: { nodes: Node[] }) => {
+    const selectedIds = new Set(selectedNodesList.map((n) => n.id));
+    setNodes((nds) =>
+      nds.map((n) => {
+        const isSelected = selectedIds.has(n.id);
+        if (n.selected !== isSelected) {
+          return { ...n, selected: isSelected };
+        }
+        return n;
+      })
+    );
+  }, [setNodes]);
+
   const onNodeContextMenu = useCallback(
     (event: React.MouseEvent, node: Node) => {
       event.preventDefault();
-      // Select clicked node if not already selected
+      // If right-clicked node is NOT in the selection, select only this node.
+      // If it IS in the selection, keep the entire multi-selection intact!
       if (!node.selected) {
         setNodes((nds) => nds.map((n) => ({ ...n, selected: n.id === node.id })));
       }
@@ -1318,6 +1366,7 @@ const FlowContent: React.FC = () => {
           document.documentElement.classList.remove('is-dragging-node');
           document.body.classList.remove('is-dragging-node');
         }}
+        onSelectionChange={onSelectionChange}
         onSelectionStart={() => {
           document.documentElement.classList.add('is-selecting-canvas');
           document.body.classList.add('is-selecting-canvas');
@@ -1452,8 +1501,8 @@ const FlowContent: React.FC = () => {
               {/* Duplicate */}
               <button
                 onClick={() => {
-                  const target = nodes.filter((n) => n.id === contextMenu.targetNodeId);
-                  duplicateNodes(target.length ? target : null);
+                  const targets = selectedNodes(contextMenu.targetNodeId);
+                  duplicateNodes(targets.length ? targets : null);
                   setContextMenu(null);
                 }}
                 className={`group w-full px-2 py-1.5 rounded-none bg-transparent hover:bg-transparent flex items-center justify-between transition-colors text-left ${
@@ -1477,8 +1526,8 @@ const FlowContent: React.FC = () => {
               {/* Copy (Matching Paste with Blue Icon and White/Blue Typography) */}
               <button
                 onClick={() => {
-                  const target = nodes.filter((n) => n.id === contextMenu.targetNodeId);
-                  copyNodes(target.length ? target : null);
+                  const targets = selectedNodes(contextMenu.targetNodeId);
+                  copyNodes(targets.length ? targets : null);
                   setContextMenu(null);
                 }}
                 className={`group w-full px-2 py-1.5 rounded-none bg-transparent hover:bg-transparent flex items-center justify-between transition-colors text-left ${
@@ -1505,8 +1554,8 @@ const FlowContent: React.FC = () => {
               {/* Cut (Matching Paste with Blue Icon and White/Blue Typography) */}
               <button
                 onClick={() => {
-                  const target = nodes.filter((n) => n.id === contextMenu.targetNodeId);
-                  cutNodes(target.length ? target : null);
+                  const targets = selectedNodes(contextMenu.targetNodeId);
+                  cutNodes(targets.length ? targets : null);
                   setContextMenu(null);
                 }}
                 className={`group w-full px-2 py-1.5 rounded-none bg-transparent hover:bg-transparent flex items-center justify-between transition-colors text-left ${
@@ -1585,8 +1634,8 @@ const FlowContent: React.FC = () => {
               {/* Disconnect */}
               <button
                 onClick={() => {
-                  const target = nodes.filter((n) => n.id === contextMenu.targetNodeId);
-                  disconnectNodes(target.length ? target : null);
+                  const targets = selectedNodes(contextMenu.targetNodeId);
+                  disconnectNodes(targets.length ? targets : null);
                   setContextMenu(null);
                 }}
                 className={`group w-full px-2 py-1.5 rounded-none bg-transparent hover:bg-transparent flex items-center justify-between transition-colors text-left ${
@@ -1610,8 +1659,8 @@ const FlowContent: React.FC = () => {
               {/* Delete */}
               <button
                 onClick={() => {
-                  const target = nodes.filter((n) => n.id === contextMenu.targetNodeId);
-                  deleteNodes(target.length ? target : null);
+                  const targets = selectedNodes(contextMenu.targetNodeId);
+                  deleteNodes(targets.length ? targets : null);
                   setContextMenu(null);
                 }}
                 className={`group w-full px-2 py-1.5 rounded-none bg-transparent hover:bg-transparent flex items-center justify-between transition-colors text-left ${

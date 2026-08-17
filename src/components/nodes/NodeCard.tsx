@@ -68,7 +68,9 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
             : (isLight ? '1px solid rgba(0,0,0,0.05)' : '1px solid rgba(255,255,255,0.06)')),
         borderRadius: '10px',
         boxShadow: selected
-          ? (isLight ? `0 0 0 1px ${accent}, 0 8px 24px rgba(0,0,0,0.12)` : `0 0 0 1px ${accent}, 0 8px 24px rgba(0,0,0,0.6)`)
+          ? (isLight
+              ? `0 0 0 1.5px ${accent}, 0 0 18px ${accent}66, 0 8px 24px rgba(0,0,0,0.12)`
+              : `0 0 0 1.5px ${accent}, 0 0 24px ${accent}88, 0 8px 28px rgba(0,0,0,0.75)`)
           : (isLight ? '0 4px 20px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04)' : '0 4px 16px rgba(0,0,0,0.45)'),
         fontFamily: 'var(--font-apple-text)',
         WebkitFontSmoothing: 'antialiased',
