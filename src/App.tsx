@@ -9,10 +9,11 @@ import { INITIAL_LOGS } from './data/mockAnalytics';
 import { fxforgeEngine } from './services/fxforgeEngine';
 import type { QuantTelemetry, RLEnvironmentStep } from './services/fxforgeEngine';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
-import { FlowProvider } from './context/FlowContext';
+import { FlowProvider, useFlow } from './context/FlowContext';
 
 function AppContent() {
   const { theme } = useTheme();
+  const { architectureSpec } = useFlow();
 
   // Dual View Mode: 'studio' (Flow DAG) vs 'bpnn' (Live 3D BPNN)
   const [activeView, setActiveView] = useState<'studio' | 'bpnn'>('studio');
@@ -30,7 +31,7 @@ function AppContent() {
   const [isMT5DeployOpen, setIsMT5DeployOpen] = useState(false);
   const [cameraResetTrigger, setCameraResetTrigger] = useState(0);
 
-  // Real-time Deep RL Simulation Loop
+  // Real-time In-App Deep RL Engine Loop
   useEffect(() => {
     if (rlStatus !== 'running') return;
 
@@ -43,6 +44,52 @@ function AppContent() {
 
     return () => clearInterval(interval);
   }, [rlStatus]);
+
+  // Real-time PyTorch Backend Process Listeners (via Electron IPC)
+  useEffect(() => {
+    const electron = (window as any).electronAPI;
+    if (!electron) return;
+
+    const unsubOut = electron.on('training-stdout', (text: string) => {
+      const lines = text.split('\n').filter((l: string) => l.trim().length > 0);
+      setLogs((prev) => [...prev.slice(-150), ...lines]);
+
+      lines.forEach((line: string) => {
+        if (line.includes('"type": "progress"')) {
+          try {
+            const jsonStr = line.substring(line.indexOf('{'), line.lastIndexOf('}') + 1);
+            const data = JSON.parse(jsonStr);
+            setRlTelemetry((prev) => ({
+              ...prev,
+              episodes: data.episode,
+              reward: data.reward,
+              winRate: data.win_rate,
+              sharpe: data.sharpe,
+              totalTrades: data.trades,
+              netPnL: data.cum_return,
+            }));
+          } catch (e) {}
+        }
+      });
+    });
+
+    const unsubErr = electron.on('training-stderr', (text: string) => {
+      setLogs((prev) => [...prev.slice(-150), `[PYTORCH] ${text.trim()}`]);
+    });
+
+    const unsubDone = electron.on('training-finished', ({ code }: { code: number }) => {
+      setLogs((prev) => [
+        ...prev,
+        `[PYTORCH] ✅ Real Training completed (Code: ${code}). Single-file ONNX model exported to MT5.`,
+      ]);
+    });
+
+    return () => {
+      if (typeof unsubOut === 'function') unsubOut();
+      if (typeof unsubErr === 'function') unsubErr();
+      if (typeof unsubDone === 'function') unsubDone();
+    };
+  }, []);
 
   // Auto-switch to Studio Flow DAG view when dropping a node from Sidebar
   useEffect(() => {
@@ -57,8 +104,37 @@ function AppContent() {
 
   const handleStartRL = useCallback(() => {
     setRlStatus('running');
-    setLogs((prev) => [...prev, `[RL ENGINE] Deep RL Training session started.`]);
-  }, []);
+    setLogs((prev) => [
+      ...prev,
+      `[NODE PIPELINE] Applying Node Config: ${architectureSpec.strategyPreset} (${architectureSpec.symbol} ${architectureSpec.timeframe})`,
+      `[NODE PIPELINE] Layers: 6 -> ${architectureSpec.hidden1Units} (${architectureSpec.hidden1Activation}) -> Dropout(${architectureSpec.dropoutRate}) -> ${architectureSpec.hidden2Units} -> 3 Actions`,
+      `[RL ENGINE] Launching Real PyTorch Training Engine...`,
+    ]);
+
+    const electron = (window as any).electronAPI;
+    if (electron && typeof electron.startRealTraining === 'function') {
+      electron.startRealTraining({
+        symbol: architectureSpec.symbol,
+        timeframe: architectureSpec.timeframe,
+        bars_count: architectureSpec.barsCount,
+        strategy_preset: architectureSpec.strategyPreset,
+        hidden1_units: architectureSpec.hidden1Units,
+        hidden1_activation: architectureSpec.hidden1Activation,
+        has_dropout: architectureSpec.hasDropout,
+        dropout_rate: architectureSpec.dropoutRate,
+        has_layer_norm: architectureSpec.hasLayerNorm,
+        has_l2_decay: architectureSpec.hasL2Decay,
+        l2_decay_rate: architectureSpec.l2DecayRate,
+        hidden2_units: architectureSpec.hidden2Units,
+        hidden2_activation: architectureSpec.hidden2Activation,
+        has_residual: architectureSpec.hasResidual,
+        spread_pips: architectureSpec.spreadPips,
+        inactivity_penalty: architectureSpec.inactivityPenalty,
+        entropy_beta: architectureSpec.entropyBeta,
+        total_episodes: 100,
+      });
+    }
+  }, [architectureSpec]);
 
   const handlePauseRL = useCallback(() => {
     setRlStatus('paused');
@@ -70,7 +146,12 @@ function AppContent() {
     fxforgeEngine.reset();
     setRlTelemetry(fxforgeEngine.getTelemetry());
     setRlLatestStep(null);
-    setLogs((prev) => [...prev, `[RL ENGINE] Simulation reset to initial state.`]);
+    setLogs((prev) => [...prev, `[RL ENGINE] Training stopped and reset to baseline.`]);
+
+    const electron = (window as any).electronAPI;
+    if (electron && typeof electron.stopRealTraining === 'function') {
+      electron.stopRealTraining();
+    }
   }, []);
 
   return (
