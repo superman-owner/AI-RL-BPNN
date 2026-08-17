@@ -53,8 +53,8 @@ export const TopNav: React.FC<TopNavProps> = ({
           </span>
         </div>
 
-        {/*  Vertical Divider Barrier after Brand */}
-        <div className={`h-4 w-[1px] flex-shrink-0 ml-1 ${isLight ? 'bg-black/15' : 'bg-white/15'}`} />
+        {/*  Vertical Divider Barrier after Brand (14px clean spacing) */}
+        <div className={`h-4 w-[1px] flex-shrink-0 mx-3.5 ${isLight ? 'bg-black/15' : 'bg-white/15'}`} />
       </div>
 
       {/* Main Suite (Shifted to the Right: 'Connected' & Theme Toggle end exactly 20px from right edge) */}
