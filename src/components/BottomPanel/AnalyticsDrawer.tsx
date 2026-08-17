@@ -219,7 +219,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
         className={`h-10 flex items-center justify-between select-none flex-shrink-0 transition-all duration-200 ${
           isLight ? 'bg-[#f5f5f7]' : 'bg-[#07070b]'
         }`}
-        style={{ paddingLeft: '10px', paddingRight: '24px' }}
+        style={{ paddingLeft: '14px', paddingRight: '24px' }}
       >
         <div className="flex items-center gap-6 h-full">
           <button
