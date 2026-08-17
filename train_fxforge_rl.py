@@ -138,9 +138,65 @@ class DynamicFXForgeActorCritic(nn.Module):
 # =========================================================================
 class MarketDataLoader:
     @staticmethod
+    def fetch_yahoo_finance(ticker: str = "GC=F", interval: str = "15m", range_period: str = "60d") -> pd.DataFrame:
+        """Fetches real institutional historical candles from Yahoo Finance API"""
+        try:
+            url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?interval={interval}&range={range_period}"
+            headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+            resp = requests.get(url, headers=headers, timeout=6)
+            if resp.status_code == 200:
+                data = resp.json()
+                result = data.get("chart", {}).get("result", [{}])[0]
+                timestamps = result.get("timestamp", [])
+                quotes = result.get("indicators", {}).get("quote", [{}])[0]
+                
+                opens = quotes.get("open", [])
+                highs = quotes.get("high", [])
+                lows = quotes.get("low", [])
+                closes = quotes.get("close", [])
+                volumes = quotes.get("volume", [])
+                
+                df = pd.DataFrame({
+                    "open": opens, "high": highs, "low": lows, "close": closes, "volume": volumes
+                }, index=pd.to_datetime(timestamps, unit="s"))
+                df.dropna(inplace=True)
+                if len(df) > 500:
+                    print(f"[FXFORGE DATA] Successfully fetched {len(df):,} real live bars from Yahoo Finance ({ticker}).")
+                    return df
+        except Exception as e:
+            print(f"[FXFORGE DATA] Yahoo Finance fetch warning: {e}")
+        return None
+
+    @staticmethod
+    def fetch_binance_klines(symbol: str = "BTCUSDT", interval: str = "15m", limit: int = 1000) -> pd.DataFrame:
+        """Fetches real institutional spot candles from Binance public API"""
+        try:
+            url = f"https://api.binance.com/api/v3/klines?symbol={symbol}&interval={interval}&limit={limit}"
+            resp = requests.get(url, timeout=5)
+            if resp.status_code == 200:
+                raw = resp.json()
+                df = pd.DataFrame(raw, columns=[
+                    "open_time", "open", "high", "low", "close", "volume",
+                    "close_time", "qav", "trades", "tb_base", "tb_quote", "ignore"
+                ])
+                df["open"] = df["open"].astype(float)
+                df["high"] = df["high"].astype(float)
+                df["low"] = df["low"].astype(float)
+                df["close"] = df["close"].astype(float)
+                df["volume"] = df["volume"].astype(float)
+                if len(df) > 200:
+                    print(f"[FXFORGE DATA] Successfully fetched {len(df):,} real live bars from Binance API ({symbol}).")
+                    return df[["open", "high", "low", "close", "volume"]]
+        except Exception as e:
+            print(f"[FXFORGE DATA] Binance API fetch warning: {e}")
+        return None
+
+    @staticmethod
     def load_or_generate_data(symbol: str = "XAUUSD", timeframe: str = "M15", bars: int = 10000) -> pd.DataFrame:
-        """Attempts to pull real MT5 rates; fallbacks to stochastic institutional series"""
+        """Attempts to pull real market data (MT5 / Yahoo Finance / Binance); fallbacks to stochastic series"""
         df = None
+        
+        # 1. Try MetaTrader 5 if terminal is active
         if MT5_AVAILABLE and mt5.initialize():
             try:
                 tf_map = {
@@ -159,7 +215,20 @@ class MarketDataLoader:
             finally:
                 mt5.shutdown()
 
+        # 2. Try Live Real Market APIs (Yahoo Finance for Gold/Forex, Binance for Crypto)
         if df is None:
+            clean_sym = symbol.upper().replace("/", "").replace("-", "").replace("_", "")
+            if "XAU" in clean_sym or "GOLD" in clean_sym:
+                df = MarketDataLoader.fetch_yahoo_finance(ticker="GC=F", interval="15m", range_period="60d")
+            elif "EUR" in clean_sym:
+                df = MarketDataLoader.fetch_yahoo_finance(ticker="EURUSD=X", interval="15m", range_period="60d")
+            elif "BTC" in clean_sym:
+                df = MarketDataLoader.fetch_binance_klines(symbol="BTCUSDT", interval="15m", limit=1000)
+            elif "ETH" in clean_sym:
+                df = MarketDataLoader.fetch_binance_klines(symbol="ETHUSDT", interval="15m", limit=1000)
+
+        # 3. High-Fidelity Stochastic Synthesis fallback
+        if df is None or len(df) < 200:
             print(f"[FXFORGE DATA] Synthesizing {bars:,} stochastic bars ({symbol} {timeframe}) with Geometric Brownian Motion & Volatility Clusters...")
             np.random.seed(1337)
             dt = 1.0 / 252.0
@@ -173,7 +242,7 @@ class MarketDataLoader:
             volume = np.random.randint(100, 3500, bars)
             
             df = pd.DataFrame({
-                'open': open_p, 'high': high, 'low': low, 'close': close, 'tick_volume': volume
+                'open': open_p, 'high': high, 'low': low, 'close': close, 'volume': volume
             })
             
         return df
@@ -486,6 +555,9 @@ def main():
             "trades": total_t
         }
         print(json.dumps(progress_payload), flush=True)
+
+        # Interactive Pacing for smooth UI animation & real-time telemetry observation
+        time.sleep(0.025)
 
     # Export Model
     export_standalone_onnx_to_mt5(model, state_dim=6, export_name="rl_trading_model.onnx")
