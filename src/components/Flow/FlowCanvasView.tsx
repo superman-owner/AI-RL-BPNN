@@ -1533,14 +1533,20 @@ const FlowContent: React.FC = () => {
                   disconnectNodes(target.length ? target : null);
                   setContextMenu(null);
                 }}
-                className="w-full px-2 py-1.5 rounded-none bg-transparent hover:bg-transparent flex items-center justify-between transition-colors text-left text-[#ff9f0a] hover:text-[#ff9f0a] [filter:hover:drop-shadow(0_0_6px_rgba(255,159,10,0.5))]"
+                className={`group w-full px-2 py-1.5 rounded-none bg-transparent hover:bg-transparent flex items-center justify-between transition-colors text-left ${
+                  isLight
+                    ? 'text-[#111827] hover:text-[#ff9f0a]'
+                    : 'text-white/90 hover:text-[#ff9f0a]'
+                }`}
                 style={{ cursor: 'var(--mac-cursor-default)' }}
               >
                 <span className="flex items-center gap-2 text-[12px] font-medium">
-                  <LucideIcons.Unlink size={13.5} className="text-[#ff9f0a] flex-shrink-0" />
-                  <span>Disconnect Edges</span>
+                  <LucideIcons.Unlink size={13.5} className="text-[#ff9f0a] flex-shrink-0 group-hover:drop-shadow-[0_0_6px_rgba(255,159,10,0.6)]" />
+                  <span className="group-hover:drop-shadow-[0_0_6px_rgba(255,159,10,0.6)]">Disconnect Edges</span>
                 </span>
-                <span className={`text-[11px] font-mono pl-3 flex-shrink-0 ${isLight ? 'text-[#ff9f0a]/60' : 'text-[#ff9f0a]/60'}`}>
+                <span className={`text-[11px] font-mono pl-3 flex-shrink-0 transition-colors ${
+                  isLight ? 'text-black/40 group-hover:text-[#ff9f0a]' : 'text-white/40 group-hover:text-[#ff9f0a]'
+                }`}>
                   Ctrl+K
                 </span>
               </button>
@@ -1552,14 +1558,20 @@ const FlowContent: React.FC = () => {
                   deleteNodes(target.length ? target : null);
                   setContextMenu(null);
                 }}
-                className="w-full px-2 py-1.5 rounded-none bg-transparent hover:bg-transparent flex items-center justify-between transition-colors text-left text-[#ff453a] hover:text-[#ff453a] [filter:hover:drop-shadow(0_0_6px_rgba(255,69,58,0.5))]"
+                className={`group w-full px-2 py-1.5 rounded-none bg-transparent hover:bg-transparent flex items-center justify-between transition-colors text-left ${
+                  isLight
+                    ? 'text-[#111827] hover:text-[#ff453a]'
+                    : 'text-white/90 hover:text-[#ff453a]'
+                }`}
                 style={{ cursor: 'var(--mac-cursor-default)' }}
               >
                 <span className="flex items-center gap-2 text-[12px] font-medium">
-                  <LucideIcons.Trash2 size={13.5} className="text-[#ff453a] flex-shrink-0" />
-                  <span>Delete</span>
+                  <LucideIcons.Trash2 size={13.5} className="text-[#ff453a] flex-shrink-0 group-hover:drop-shadow-[0_0_6px_rgba(255,69,58,0.6)]" />
+                  <span className="group-hover:drop-shadow-[0_0_6px_rgba(255,69,58,0.6)]">Delete</span>
                 </span>
-                <span className={`text-[11px] font-mono pl-3 flex-shrink-0 ${isLight ? 'text-[#ff453a]/60' : 'text-[#ff453a]/60'}`}>
+                <span className={`text-[11px] font-mono pl-3 flex-shrink-0 transition-colors ${
+                  isLight ? 'text-black/40 group-hover:text-[#ff453a]' : 'text-white/40 group-hover:text-[#ff453a]'
+                }`}>
                   Del
                 </span>
               </button>
