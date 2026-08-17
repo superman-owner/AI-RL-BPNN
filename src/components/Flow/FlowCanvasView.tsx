@@ -1363,13 +1363,32 @@ const FlowContent: React.FC = () => {
           showInteractive={false}
         />
         <MiniMap
-          nodeColor={isLight ? '#0071e3' : '#0a84ff'}
-          maskColor={isLight ? 'rgba(245, 245, 247, 0.75)' : 'rgba(4, 4, 7, 0.8)'}
-          className={
-            isLight
-              ? 'bg-white/80 border border-black/[0.08] rounded-xl shadow-lg'
-              : 'bg-[#0f0f18]/80 border border-white/[0.08] rounded-xl shadow-xl'
-          }
+          nodeColor={(n) => {
+            const nodeType = n.data?.nodeType as string;
+            const def = NODE_DEFS[nodeType];
+            const group = GROUPS.find((g) => g.id === def?.group);
+            return group?.color || (isLight ? '#0071e3' : '#0a84ff');
+          }}
+          nodeStrokeColor={isLight ? 'rgba(0, 0, 0, 0.12)' : 'rgba(255, 255, 255, 0.2)'}
+          nodeStrokeWidth={1}
+          nodeBorderRadius={5}
+          maskColor={isLight ? 'rgba(240, 240, 245, 0.65)' : 'rgba(8, 8, 14, 0.72)'}
+          maskStrokeColor={isLight ? '#0071e3' : '#0a84ff'}
+          maskStrokeWidth={1.5}
+          pannable={true}
+          zoomable={true}
+          style={{
+            width: 175,
+            height: 110,
+            borderRadius: '14px',
+            backgroundColor: isLight ? 'rgba(255, 255, 255, 0.85)' : 'rgba(16, 16, 24, 0.85)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            boxShadow: isLight
+              ? '0 12px 30px rgba(0, 0, 0, 0.08), 0 1px 0 rgba(255, 255, 255, 0.9) inset'
+              : '0 16px 36px rgba(0, 0, 0, 0.55), 0 1px 0 rgba(255, 255, 255, 0.1) inset',
+            border: isLight ? '1px solid rgba(0, 0, 0, 0.08)' : '1px solid rgba(255, 255, 255, 0.10)',
+          }}
         />
       </ReactFlow>
 
