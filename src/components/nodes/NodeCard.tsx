@@ -74,70 +74,72 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
         transition: 'border 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease, background 0.15s ease',
       }}
     >
-      {/* Node Header (Reduced height, perfectly fitted single line) */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 7,
-          padding: '7px 10px',
-          background: isLight ? 'rgba(0,0,0,0.02)' : 'rgba(255,255,255,0.025)',
-          borderBottom: isLight ? '1px solid rgba(0,0,0,0.06)' : '1px solid rgba(255,255,255,0.07)',
-          borderTopLeftRadius: '9px',
-          borderTopRightRadius: '9px',
-        }}
-      >
-        <GroupIcon size={14} color={isConnected ? accent : (isLight ? '#6e6e73' : '#86868b')} />
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div
-            style={{
-              fontSize: 9,
-              fontWeight: 700,
-              letterSpacing: '0.06em',
-              color: isConnected ? accent : (isLight ? '#6e6e73' : '#86868b'),
-              textTransform: 'uppercase',
-              lineHeight: 1.2,
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
-            }}
-          >
-            {group.label}
+      {/* Content Container (Layered above handles with zIndex 2) */}
+      <div style={{ position: 'relative', zIndex: 2 }}>
+        {/* Node Header (Clean Minimalist, Zero Divider Line) */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 7,
+            padding: '8px 10px 4px 10px',
+            background: 'transparent',
+            borderBottom: 'none',
+            borderTopLeftRadius: '9px',
+            borderTopRightRadius: '9px',
+          }}
+        >
+          <GroupIcon size={14} color={isConnected ? accent : (isLight ? '#6e6e73' : '#86868b')} />
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div
+              style={{
+                fontSize: 9,
+                fontWeight: 700,
+                letterSpacing: '0.06em',
+                color: isConnected ? accent : (isLight ? '#6e6e73' : '#86868b'),
+                textTransform: 'uppercase',
+                lineHeight: 1.2,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
+              }}
+            >
+              {group.label}
+            </div>
+            <div
+              style={{
+                fontSize: 12,
+                fontWeight: 600,
+                letterSpacing: '-0.015em',
+                color: isConnected ? (isLight ? '#1d1d1f' : '#ffffff') : (isLight ? '#6e6e73' : '#a1a1aa'),
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                lineHeight: 1.25,
+                fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif',
+              }}
+            >
+              {def.label}
+            </div>
           </div>
-          <div
+
+          {/* Execution Status Badge: Only lit green when isConnected is true */}
+          <span
             style={{
-              fontSize: 12,
-              fontWeight: 600,
-              letterSpacing: '-0.015em',
-              color: isConnected ? (isLight ? '#1d1d1f' : '#ffffff') : (isLight ? '#6e6e73' : '#a1a1aa'),
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              lineHeight: 1.25,
-              fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif',
+              width: 7,
+              height: 7,
+              borderRadius: '50%',
+              background: isConnected && statusColor ? statusColor : (isLight ? '#d1d1d6' : '#3f3f46'),
+              boxShadow: isConnected && statusColor ? `0 0 6px ${statusColor}` : 'none',
+              opacity: isConnected ? 1 : 0.4,
             }}
-          >
-            {def.label}
-          </div>
+            title={isConnected ? (execution?.detail || 'Connected & Active') : 'Disconnected / Standby (Not Active)'}
+          />
         </div>
 
-        {/* Execution Status Badge: Only lit green when isConnected is true */}
-        <span
-          style={{
-            width: 7,
-            height: 7,
-            borderRadius: '50%',
-            background: isConnected && statusColor ? statusColor : (isLight ? '#d1d1d6' : '#3f3f46'),
-            boxShadow: isConnected && statusColor ? `0 0 6px ${statusColor}` : 'none',
-            opacity: isConnected ? 1 : 0.4,
-          }}
-          title={isConnected ? (execution?.detail || 'Connected & Active') : 'Disconnected / Standby (Not Active)'}
-        />
-      </div>
-
-      {/* Node Body (พารามิเตอร์ย่อ - ลดความสูงลง 5px) */}
-      <div style={{ padding: '5px 10px', display: 'flex', flexDirection: 'column', gap: 4 }}>
+        {/* Node Body (พารามิเตอร์ย่อ) */}
+        <div style={{ padding: '4px 10px 8px 10px', display: 'flex', flexDirection: 'column', gap: 4 }}>
         {def.fields.slice(0, 3).map((f) => {
           const val = data[f.key] ?? f.default;
           return (
@@ -172,6 +174,7 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
             </div>
           );
         })}
+        </div>
       </div>
 
       {/* =======================================================
