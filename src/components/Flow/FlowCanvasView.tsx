@@ -822,9 +822,10 @@ const InspectorTextField: React.FC<{
                 maxHeight: '180px',
                 overflowY: 'auto',
               }}
-              className="custom-scrollbar nodrag nopan select-none"
+              className="custom-scrollbar nodrag nopan nowheel select-none"
               onPointerDown={(e) => e.stopPropagation()}
               onMouseDown={(e) => e.stopPropagation()}
+              onWheel={(e) => e.stopPropagation()}
             >
               {selectOptions.map((opt) => {
                 const isSelected = opt === (strVal || selectOptions[0]);
@@ -1062,12 +1063,13 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
         MozOsxFontSmoothing: 'grayscale',
         textRendering: 'geometricPrecision',
       }}
-      className={`border rounded-2xl text-xs select-none nodrag nopan pointer-events-auto transition-colors duration-150 ${
+      className={`border rounded-2xl text-xs select-none nodrag nopan nowheel pointer-events-auto transition-colors duration-150 ${
         isLight ? 'border-black/[0.12] text-[#1d1d1f]' : 'border-white/[0.12] text-slate-200'
       }`}
       onPointerDown={(e) => e.stopPropagation()}
       onMouseDown={(e) => e.stopPropagation()}
       onClick={(e) => e.stopPropagation()}
+      onWheel={(e) => e.stopPropagation()}
     >
       {/* 🟢 DRAGGABLE HEADER BAR */}
       <div
@@ -1876,6 +1878,7 @@ const FlowContent: React.FC = () => {
         maxZoom={1.8}
         fitView
         fitViewOptions={{ padding: 0.18, minZoom: 0.9, maxZoom: 1.15 }}
+        noWheelClassName="nowheel"
         proOptions={{ hideAttribution: true }}
       >
         <Background

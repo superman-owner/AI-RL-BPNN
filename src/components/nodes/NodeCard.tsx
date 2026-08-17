@@ -55,6 +55,10 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
 
   return (
     <div
+      className="nowheel"
+      onWheel={(e) => {
+        e.stopPropagation();
+      }}
       style={{
         minWidth: 240,
         maxWidth: 270,
