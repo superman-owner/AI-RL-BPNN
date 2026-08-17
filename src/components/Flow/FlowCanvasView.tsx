@@ -20,6 +20,7 @@ import NodeCard from '../nodes/NodeCard';
 import { NODE_DEFS, GROUPS, STRATEGY_PRESET_CONFIGS } from '../../data/nodeRegistry';
 import * as LucideIcons from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
+import { useFlow } from '../../context/FlowContext';
 
 const nodeTypes = {
   nodeCard: NodeCard,
@@ -800,10 +801,16 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
 const FlowContent: React.FC = () => {
   const { theme } = useTheme();
   const isLight = theme === 'light';
+  const { syncArchitectureToEngine } = useFlow();
 
   const [nodes, setNodes, onNodesChange] = useNodesState(INITIAL_NODES);
   const [edges, setEdges, onEdgesChange] = useEdgesState(INITIAL_EDGES);
   const { screenToFlowPosition } = useReactFlow();
+
+  // Sync initial DAG architecture with RL Engine and 3D BPNN Visualizer on mount
+  useEffect(() => {
+    syncArchitectureToEngine(nodes);
+  }, []);
 
   // Floating Context Menu & Inspector States
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
@@ -899,11 +906,15 @@ const FlowContent: React.FC = () => {
       if (!targets.length) return;
       const targetIds = new Set(targets.map((n) => n.id));
 
-      setNodes((nds) => nds.filter((n) => !targetIds.has(n.id)));
+      setNodes((nds) => {
+        const updated = nds.filter((n) => !targetIds.has(n.id));
+        syncArchitectureToEngine(updated);
+        return updated;
+      });
       setEdges((eds) => eds.filter((e) => !targetIds.has(e.source) && !targetIds.has(e.target)));
       setInspectors((ins) => ins.filter((i) => !targetIds.has(i.nodeId)));
     },
-    [selectedNodes, setEdges, setNodes]
+    [selectedNodes, setEdges, setNodes, syncArchitectureToEngine]
   );
 
   // ==========================================
@@ -1024,8 +1035,8 @@ const FlowContent: React.FC = () => {
 
   const updateNodeData = useCallback(
     (nodeId: string, keyOrObj: string | Record<string, any>, value?: any) => {
-      setNodes((nds) =>
-        nds.map((n) => {
+      setNodes((nds) => {
+        const updated = nds.map((n) => {
           if (n.id === nodeId) {
             const updates = typeof keyOrObj === 'object' ? keyOrObj : { [keyOrObj]: value };
             return {
@@ -1037,10 +1048,12 @@ const FlowContent: React.FC = () => {
             };
           }
           return n;
-        })
-      );
+        });
+        syncArchitectureToEngine(updated);
+        return updated;
+      });
     },
-    [setNodes]
+    [setNodes, syncArchitectureToEngine]
   );
 
   // 🖱️ Event เมื่อดับเบิลคลิกที่ Node

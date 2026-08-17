@@ -13,10 +13,6 @@ import {
   Tooltip,
   CartesianGrid,
 } from 'recharts';
-import {
-  generateLossData,
-  FEATURE_IMPORTANCE,
-} from '../../data/mockAnalytics';
 import type { QuantTelemetry, RLEnvironmentStep } from '../../services/fxforgeEngine';
 import { fxforgeEngine } from '../../services/fxforgeEngine';
 import { useTheme } from '../../context/ThemeContext';
@@ -168,7 +164,8 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
   const [isMinimized, setIsMinimized] = useState(true); // Default minimized so it never overlaps DAG canvas
   const isMaximized = false;
   const [rewardData, setRewardData] = useState(() => fxforgeEngine.getRewardHistory());
-  const [lossData] = useState(generateLossData());
+  const [lossData, setLossData] = useState(() => fxforgeEngine.getLossHistory());
+  const [featureImportance, setFeatureImportance] = useState(() => fxforgeEngine.getFeatureImportance());
   const logEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -177,9 +174,11 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
     }
   }, [logs, activeTab]);
 
-  // Sync real-time reward curve with BPNN & engine
+  // Sync real-time reward curve, loss curves, and feature gains with engine
   useEffect(() => {
     setRewardData(fxforgeEngine.getRewardHistory());
+    setLossData(fxforgeEngine.getLossHistory());
+    setFeatureImportance(fxforgeEngine.getFeatureImportance());
   }, [rlTelemetry, latestStep]);
 
   const currentTelemetry = rlTelemetry || fxforgeEngine.getTelemetry();
@@ -800,7 +799,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
               <div className="flex-1 w-full min-h-0">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
-                    data={FEATURE_IMPORTANCE}
+                    data={featureImportance}
                     layout="vertical"
                     margin={{ top: 8, right: 20, left: 60, bottom: 6 }}
                   >

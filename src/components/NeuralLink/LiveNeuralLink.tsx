@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useCallback, useState } from 'react';
 import { Plus, Minus, Scan } from 'lucide-react';
 import type { RLEnvironmentStep } from '../../services/fxforgeEngine';
 import { useTheme } from '../../context/ThemeContext';
+import { useFlow } from '../../context/FlowContext';
 
 interface BPNeuron {
   id: string;
@@ -23,6 +24,7 @@ interface BPSynapse {
   targetLayer: number;
   targetIdx: number;
   weight: number;
+  isResidual?: boolean;
 }
 
 interface SignalParticle {
@@ -51,6 +53,7 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
 }) => {
   const { theme } = useTheme();
   const isLight = theme === 'light';
+  const { architectureSpec } = useFlow();
   const themeRef = useRef(theme);
 
   useEffect(() => {
@@ -106,14 +109,21 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
     }
   }, [cameraResetTrigger, handleResetView]);
 
-  // 1. Initialize Neural Network Geometry [6 -> 12 -> 8 -> 3]
+  // 1. Initialize Neural Network Geometry dynamically based on DAG Architecture
   useEffect(() => {
-    const layerSizes = [6, 12, 8, 3];
+    const h1VisualCount = Math.max(6, Math.min(16, Math.round(architectureSpec.hidden1Units / 5)));
+    const h2VisualCount = Math.max(4, Math.min(12, Math.round(architectureSpec.hidden2Units / 4)));
+    const layerSizes = [
+      architectureSpec.inputLabels.length, // 6
+      h1VisualCount,                      // ~12
+      h2VisualCount,                      // ~8
+      architectureSpec.outputClasses.length // 3
+    ];
     const neurons: BPNeuron[] = [];
     const synapses: BPSynapse[] = [];
 
-    const inputLabels = ['Ret (5d)', 'Ret (10d)', 'Ret (20d)', 'Vol (10d)', 'Dist SMA', 'Position'];
-    const outputLabels = ['BUY', 'HOLD', 'SELL'];
+    const inputLabels = architectureSpec.inputLabels;
+    const outputLabels = architectureSpec.outputClasses;
 
     const layerSpacingX = 240;
     const originX = -((layerSizes.length - 1) * layerSpacingX) / 2;
@@ -132,13 +142,16 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
         let subLabel = '';
         if (l === 0) {
           label = inputLabels[i] || `In_${i}`;
-          subLabel = 'State';
+          subLabel = 'State Vector';
+        } else if (l === 1) {
+          label = `h1_${i}`;
+          subLabel = `${architectureSpec.hidden1Units}D (${architectureSpec.hidden1Activation})`;
+        } else if (l === 2) {
+          label = `h2_${i}`;
+          subLabel = `${architectureSpec.hidden2Units}D (${architectureSpec.hidden2Activation})`;
         } else if (l === layerSizes.length - 1) {
           label = outputLabels[i] || `Act_${i}`;
-          subLabel = 'Action';
-        } else {
-          label = `h_${l}_${i}`;
-          subLabel = 'Hidden';
+          subLabel = 'Policy Action';
         }
 
         neurons.push({
@@ -170,75 +183,106 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
             targetLayer: l + 1,
             targetIdx: j,
             weight: (Math.random() * 2 - 1) * 0.85,
+            isResidual: false,
           });
         }
       }
     }
 
+    // Add Dynamic Residual Skip Synapses from Layer 1 -> Layer 2 if enabled
+    if (architectureSpec.hasResidual) {
+      const l1Count = layerSizes[1];
+      const l2Count = layerSizes[2];
+      for (let i = 0; i < l1Count; i += 2) {
+        const j = Math.min(l2Count - 1, Math.floor((i / l1Count) * l2Count));
+        synapses.push({
+          id: `res_syn_1_${i}_${j}`,
+          sourceLayer: 1,
+          sourceIdx: i,
+          targetLayer: 2,
+          targetIdx: j,
+          weight: 0.85,
+          isResidual: true,
+        });
+      }
+    }
+
     neuronsRef.current = neurons;
     synapsesRef.current = synapses;
-  }, []);
+  }, [architectureSpec]);
 
-  // 2. Real-time Activation Update from Global Latest Step (Syncing with Topbar)
+  // 2. Real-time Activation Update from Global Latest Step (Syncing with Topbar and Real Forward Pass)
   useEffect(() => {
     if (!latestStep) return;
     const neurons = neuronsRef.current;
-    if (neurons.length > 0) {
-      // State inputs
-      const n0 = neurons.find((n) => n.layerIdx === 0 && n.neuronIdx === 0);
-      const n1 = neurons.find((n) => n.layerIdx === 0 && n.neuronIdx === 1);
-      const n2 = neurons.find((n) => n.layerIdx === 0 && n.neuronIdx === 2);
-      const n3 = neurons.find((n) => n.layerIdx === 0 && n.neuronIdx === 3);
-      const n4 = neurons.find((n) => n.layerIdx === 0 && n.neuronIdx === 4);
-      const n5 = neurons.find((n) => n.layerIdx === 0 && n.neuronIdx === 5);
+    if (neurons.length === 0) return;
 
-      if (n0) n0.activation = Math.min(1, Math.abs(latestStep.state.ret5) / 2);
-      if (n1) n1.activation = Math.min(1, Math.abs(latestStep.state.ret10) / 3);
-      if (n2) n2.activation = Math.min(1, Math.abs(latestStep.state.ret20) / 4);
-      if (n3) n3.activation = Math.min(1, latestStep.state.volat10 / 1.5);
-      if (n4) n4.activation = Math.min(1, Math.abs(latestStep.state.distSma20) / 2);
-      if (n5) n5.activation = (latestStep.state.pos + 1) / 2;
+    // State inputs (Layer 0)
+    const stateVals = [
+      Math.min(1, Math.abs(latestStep.state.ret5) / 2),
+      Math.min(1, Math.abs(latestStep.state.ret10) / 3),
+      Math.min(1, Math.abs(latestStep.state.ret20) / 4),
+      Math.min(1, latestStep.state.volat10 / 1.5),
+      Math.min(1, Math.abs(latestStep.state.distSma20) / 2),
+      (latestStep.state.pos + 1) / 2,
+    ];
 
-      // Action outputs (Softmax Probabilities)
-      const out0 = neurons.find((n) => n.layerIdx === 3 && n.neuronIdx === 0);
-      const out1 = neurons.find((n) => n.layerIdx === 3 && n.neuronIdx === 1);
-      const out2 = neurons.find((n) => n.layerIdx === 3 && n.neuronIdx === 2);
+    neurons.filter((n) => n.layerIdx === 0).forEach((n, idx) => {
+      n.activation = stateVals[idx] ?? 0.3;
+    });
 
-      if (out0) out0.activation = latestStep.actionProbs[0]; // BUY
-      if (out1) out1.activation = latestStep.actionProbs[1]; // HOLD
-      if (out2) out2.activation = latestStep.actionProbs[2]; // SELL
-
-      // Trigger synchronized photonic pulse on active action node
-      const chosenNeuron = neurons.find((n) => n.layerIdx === 3 && n.neuronIdx === latestStep.action);
-      if (chosenNeuron) {
-        chosenNeuron.pulse = 1.0;
-
-        // Convergence signal pulses towards selected action
-        const hiddenLayer = neurons.filter((n) => n.layerIdx === 2);
-        const actionColor =
-          latestStep.action === 0
-            ? 'rgba(40, 205, 65, 0.95)'
-            : latestStep.action === 1
-            ? 'rgba(255, 159, 10, 0.95)'
-            : 'rgba(255, 59, 48, 0.95)';
-
-        hiddenLayer.forEach((hn) => {
-          if (Math.random() < 0.6) {
-            particlesRef.current.push({
-              id: `sig_sync_${Date.now()}_${hn.id}_${Math.random()}`,
-              sourceX: hn.x,
-              sourceY: hn.y,
-              sourceZ: hn.z,
-              targetX: chosenNeuron.x,
-              targetY: chosenNeuron.y,
-              targetZ: chosenNeuron.z,
-              progress: 0,
-              speed: 0.045 + Math.random() * 0.02,
-              color: actionColor,
-            });
-          }
-        });
+    // Hidden Layer 1 Activations with Dropout
+    const h1Neurons = neurons.filter((n) => n.layerIdx === 1);
+    h1Neurons.forEach((n, idx) => {
+      const isDropped = latestStep.dropoutMask?.[idx % (latestStep.dropoutMask.length || 1)] || false;
+      if (isDropped) {
+        n.activation = 0;
+      } else {
+        const actVal = latestStep.hidden1Activations?.[idx % (latestStep.hidden1Activations.length || 1)];
+        n.activation = actVal !== undefined ? Math.min(1, Math.max(0.05, Math.abs(actVal))) : Math.random() * 0.5 + 0.2;
       }
+    });
+
+    // Hidden Layer 2 Activations
+    const h2Neurons = neurons.filter((n) => n.layerIdx === 2);
+    h2Neurons.forEach((n, idx) => {
+      const actVal = latestStep.hidden2Activations?.[idx % (latestStep.hidden2Activations.length || 1)];
+      n.activation = actVal !== undefined ? Math.min(1, Math.max(0.05, Math.abs(actVal))) : Math.random() * 0.5 + 0.2;
+    });
+
+    // Action outputs (Softmax Probabilities)
+    const outNeurons = neurons.filter((n) => n.layerIdx === 3);
+    outNeurons.forEach((n, idx) => {
+      n.activation = latestStep.actionProbs[idx] ?? 0.33;
+    });
+
+    // Trigger synchronized photonic pulse on active action node
+    const chosenNeuron = outNeurons.find((n) => n.neuronIdx === latestStep.action);
+    if (chosenNeuron) {
+      chosenNeuron.pulse = 1.0;
+      const actionColor =
+        latestStep.action === 0
+          ? 'rgba(40, 205, 65, 0.95)'
+          : latestStep.action === 1
+          ? 'rgba(255, 159, 10, 0.95)'
+          : 'rgba(255, 59, 48, 0.95)';
+
+      h2Neurons.forEach((hn) => {
+        if (Math.random() < 0.6) {
+          particlesRef.current.push({
+            id: `sig_sync_${Date.now()}_${hn.id}_${Math.random()}`,
+            sourceX: hn.x,
+            sourceY: hn.y,
+            sourceZ: hn.z,
+            targetX: chosenNeuron.x,
+            targetY: chosenNeuron.y,
+            targetZ: chosenNeuron.z,
+            progress: 0,
+            speed: 0.045 + Math.random() * 0.02,
+            color: actionColor,
+          });
+        }
+      });
     }
   }, [latestStep]);
 
@@ -414,7 +458,19 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
         const isLeadingToChosenAction =
           tgt.layerIdx === 3 && currentStep !== null && currentStep.action === tgt.neuronIdx;
 
-        if (isLeadingToChosenAction) {
+        if (syn.isResidual) {
+          // 💜 Glowing Violet Arc for Residual Skip Connection
+          ctx.strokeStyle = currentIsLight ? 'rgba(175, 82, 222, 0.85)' : 'rgba(191, 90, 242, 0.90)';
+          ctx.lineWidth = 1.6 * avgScale;
+          ctx.setLineDash([4, 4]);
+          ctx.beginPath();
+          ctx.moveTo(p1.px, p1.py);
+          const midX = (p1.px + p2.px) / 2;
+          const midY = (p1.py + p2.py) / 2 - 25 * avgScale;
+          ctx.quadraticCurveTo(midX, midY, p2.px, p2.py);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        } else if (isLeadingToChosenAction) {
           // Vibrantly illuminated active decision path
           const actionColor =
             currentStep.action === 0

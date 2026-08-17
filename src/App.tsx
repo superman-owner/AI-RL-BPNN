@@ -9,6 +9,7 @@ import { INITIAL_LOGS } from './data/mockAnalytics';
 import { fxforgeEngine } from './services/fxforgeEngine';
 import type { QuantTelemetry, RLEnvironmentStep } from './services/fxforgeEngine';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
+import { FlowProvider } from './context/FlowContext';
 
 function AppContent() {
   const { theme } = useTheme();
@@ -137,7 +138,9 @@ function AppContent() {
 export function App() {
   return (
     <ThemeProvider>
-      <AppContent />
+      <FlowProvider>
+        <AppContent />
+      </FlowProvider>
     </ThemeProvider>
   );
 }
