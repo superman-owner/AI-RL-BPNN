@@ -106,6 +106,7 @@ export const TopNav: React.FC<TopNavProps> = ({
             {/* Combined START / PAUSE Button (Shared Same Position) */}
             {rlStatus === 'running' ? (
               <button
+                id="btn-pause-rl"
                 onClick={onPauseRL}
                 className={`w-[66px] inline-flex items-center gap-1.5 text-xs font-bold transition-all cursor-pointer flex-shrink-0 whitespace-nowrap select-none ${
                   isLight
@@ -119,6 +120,7 @@ export const TopNav: React.FC<TopNavProps> = ({
               </button>
             ) : (
               <button
+                id="btn-start-rl"
                 onClick={onStartRL}
                 className={`w-[66px] inline-flex items-center gap-1.5 text-xs font-bold transition-all cursor-pointer flex-shrink-0 whitespace-nowrap select-none ${
                   isLight
@@ -134,6 +136,7 @@ export const TopNav: React.FC<TopNavProps> = ({
 
             {/* STOP Button */}
             <button
+              id="btn-stop-rl"
               onClick={onStopRL}
               className={`w-[56px] inline-flex items-center gap-1.5 text-xs font-bold transition-all cursor-pointer flex-shrink-0 whitespace-nowrap select-none ${
                 rlStatus === 'stopped'

@@ -127,6 +127,7 @@ function AppContent() {
   }, [activeView]);
 
   const handleStartRL = useCallback(() => {
+    console.log('[DEBUG-RL] handleStartRL invoked! Changing rlStatus to running.');
     setRlStatus('running');
     setLogs((prev) => [
       ...prev,

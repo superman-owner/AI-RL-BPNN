@@ -119,6 +119,20 @@ function pythonTrainingPlugin() {
 
 export default defineConfig({
   base: './',
+  server: {
+    watch: {
+      ignored: [
+        '**/pipeline_config.json',
+        '**/rl_trading_model.onnx',
+        '**/*.log',
+        '**/*.onnx',
+        '**/diagnose_*.mjs',
+        '**/test_*.mjs',
+        '**/.git/**',
+        '**/dist/**',
+      ],
+    },
+  },
   plugins: [
     react(),
     tailwindcss(),
