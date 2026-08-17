@@ -85,13 +85,18 @@ export const FlowProvider: React.FC<{ children: React.ReactNode }> = ({ children
           if (d.timeframe) spec.timeframe = String(d.timeframe);
           if (d.bars_count) spec.barsCount = Number(d.bars_count) || 10000;
           if (d.preset) spec.strategyPreset = String(d.preset);
-          if (d.training_episodes) spec.totalEpisodes = Number(d.training_episodes) || 400;
+          if (d.training_episodes !== undefined && d.training_episodes !== null && d.training_episodes !== '') {
+            spec.totalEpisodes = Number(d.training_episodes) || 400;
+          }
           break;
 
         case 'training_episodes_config':
           if (d.target_episodes) {
             const rawVal = String(d.target_episodes).replace(/,/g, '').trim();
-            spec.totalEpisodes = Number(rawVal) || 400;
+            const stratNode = nodesList.find((n) => (n.data?.nodeType || n.type) === 'strategy_preset_return');
+            if (stratNode?.data?.training_episodes === undefined || stratNode?.data?.training_episodes === null) {
+              spec.totalEpisodes = Number(rawVal) || 400;
+            }
           }
           break;
 
@@ -152,6 +157,7 @@ export const FlowProvider: React.FC<{ children: React.ReactNode }> = ({ children
     fxforgeEngine.updateConfig({
       symbol: spec.symbol,
       primaryTimeframe: spec.timeframe,
+      targetEpisodes: spec.totalEpisodes,
       spreadPips: spec.spreadPips,
       inactivityPenalty: spec.inactivityPenalty,
       entropyCoef: spec.entropyBeta,
