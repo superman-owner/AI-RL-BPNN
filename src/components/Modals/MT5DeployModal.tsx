@@ -68,13 +68,11 @@ export const MT5DeployModal: React.FC<MT5DeployModalProps> = ({ isOpen, onClose 
         >
           <div className="flex items-center gap-3">
             <div
-              className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                isLight
-                  ? 'bg-[#34c759]/15 text-[#28cd41]'
-                  : 'bg-[#30d158]/15 text-[#30d158]'
+              className={`flex items-center justify-center flex-shrink-0 ${
+                isLight ? 'text-[#28cd41]' : 'text-[#30d158]'
               }`}
             >
-              <LucideIcons.Rocket size={18} />
+              <LucideIcons.Rocket size={20} />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -113,36 +111,36 @@ export const MT5DeployModal: React.FC<MT5DeployModalProps> = ({ isOpen, onClose 
           <button
             onClick={onClose}
             style={{ cursor: 'var(--mac-cursor-pointer)' }}
-            className={`p-1.5 rounded-lg transition-colors ${
+            className={`p-1 transition-colors ${
               isLight
-                ? 'text-[#6b7280] hover:text-[#111827] hover:bg-black/[0.06]'
-                : 'text-[#86868b] hover:text-white hover:bg-white/[0.08]'
+                ? 'text-[#6b7280] hover:text-[#111827]'
+                : 'text-[#86868b] hover:text-white'
             }`}
           >
-            <LucideIcons.X size={17} />
+            <LucideIcons.X size={18} />
           </button>
         </div>
 
-        {/* 2. Tab Navigation & Actions Bar with generous 12px 20px padding */}
+        {/* 2. Tab Navigation & Actions Bar with generous 12px 20px padding (Zero Background Capsule Pills) */}
         <div
           style={{ padding: '10px 20px' }}
           className={`flex items-center justify-between border-b flex-shrink-0 ${
             isLight ? 'bg-[#f5f5f7] border-black/[0.06]' : 'bg-[#0b0b12] border-white/[0.06]'
           }`}
         >
-          {/* Segmented Tab Control (Clean Apple Hover & Active State, Zero Heavy Capsule) */}
-          <div className="flex items-center gap-2">
+          {/* Segmented Tab Control (Pure Text Hover Style, Exactly Like Main TopNav) */}
+          <div className="flex items-center gap-4">
             <button
               onClick={() => setActiveTab('python')}
               style={{ cursor: 'var(--mac-cursor-pointer)' }}
-              className={`px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5 transition-all ${
+              className={`text-xs flex items-center gap-1.5 transition-all select-none ${
                 activeTab === 'python'
                   ? isLight
-                    ? 'text-[#0071e3] font-bold bg-[#0071e3]/10'
-                    : 'text-[#0a84ff] font-bold bg-[#0a84ff]/15'
+                    ? 'text-[#0071e3] font-bold drop-shadow-[0_0_6px_rgba(0,113,227,0.35)]'
+                    : 'text-[#0a84ff] font-bold drop-shadow-[0_0_8px_rgba(10,132,255,0.7)]'
                   : isLight
-                  ? 'text-[#4b5563] font-medium hover:text-[#111827] hover:bg-black/[0.05]'
-                  : 'text-[#9ca3af] font-medium hover:text-white hover:bg-white/[0.06]'
+                  ? 'text-[#6e6e73] font-medium hover:text-[#111827]'
+                  : 'text-white/50 font-medium hover:text-white'
               }`}
             >
               <LucideIcons.FileCode size={13} />
@@ -152,14 +150,14 @@ export const MT5DeployModal: React.FC<MT5DeployModalProps> = ({ isOpen, onClose 
             <button
               onClick={() => setActiveTab('mql5')}
               style={{ cursor: 'var(--mac-cursor-pointer)' }}
-              className={`px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5 transition-all ${
+              className={`text-xs flex items-center gap-1.5 transition-all select-none ${
                 activeTab === 'mql5'
                   ? isLight
-                    ? 'text-[#0071e3] font-bold bg-[#0071e3]/10'
-                    : 'text-[#0a84ff] font-bold bg-[#0a84ff]/15'
+                    ? 'text-[#0071e3] font-bold drop-shadow-[0_0_6px_rgba(0,113,227,0.35)]'
+                    : 'text-[#0a84ff] font-bold drop-shadow-[0_0_8px_rgba(10,132,255,0.7)]'
                   : isLight
-                  ? 'text-[#4b5563] font-medium hover:text-[#111827] hover:bg-black/[0.05]'
-                  : 'text-[#9ca3af] font-medium hover:text-white hover:bg-white/[0.06]'
+                  ? 'text-[#6e6e73] font-medium hover:text-[#111827]'
+                  : 'text-white/50 font-medium hover:text-white'
               }`}
             >
               <LucideIcons.Cpu size={13} />
@@ -167,19 +165,19 @@ export const MT5DeployModal: React.FC<MT5DeployModalProps> = ({ isOpen, onClose 
             </button>
           </div>
 
-          {/* Quick Action Buttons (Apple Hover Style, Zero Solid Capsule) */}
-          <div className="flex items-center gap-2">
+          {/* Quick Action Buttons (Pure Text Hover Style, Zero Capsule Outline) */}
+          <div className="flex items-center gap-3.5">
             <button
               onClick={handleCopy}
               style={{ cursor: 'var(--mac-cursor-pointer)' }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${
+              className={`text-xs font-medium flex items-center gap-1.5 transition-colors select-none ${
                 copied
                   ? isLight
-                    ? 'text-[#28cd41] bg-[#34c759]/15'
-                    : 'text-[#30d158] bg-[#30d158]/15'
+                    ? 'text-[#28cd41] font-bold'
+                    : 'text-[#30d158] font-bold'
                   : isLight
-                  ? 'text-[#4b5563] hover:text-[#111827] hover:bg-black/[0.05]'
-                  : 'text-[#9ca3af] hover:text-white hover:bg-white/[0.08]'
+                  ? 'text-[#6e6e73] hover:text-[#111827]'
+                  : 'text-white/60 hover:text-white'
               }`}
             >
               {copied ? <LucideIcons.Check size={13} /> : <LucideIcons.Copy size={13} />}
@@ -189,10 +187,10 @@ export const MT5DeployModal: React.FC<MT5DeployModalProps> = ({ isOpen, onClose 
             <button
               onClick={handleDownload}
               style={{ cursor: 'var(--mac-cursor-pointer)' }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${
+              className={`text-xs font-semibold flex items-center gap-1.5 transition-colors select-none ${
                 isLight
-                  ? 'text-[#0071e3] hover:text-[#0077ed] hover:bg-[#0071e3]/10'
-                  : 'text-[#0a84ff] hover:text-[#409cff] hover:bg-[#0a84ff]/15'
+                  ? 'text-[#0071e3] hover:text-[#0077ed]'
+                  : 'text-[#0a84ff] hover:text-[#409cff]'
               }`}
             >
               <LucideIcons.Download size={13} />
@@ -243,10 +241,10 @@ export const MT5DeployModal: React.FC<MT5DeployModalProps> = ({ isOpen, onClose 
             <button
               onClick={onClose}
               style={{ cursor: 'var(--mac-cursor-pointer)' }}
-              className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`text-xs font-semibold transition-colors cursor-pointer ${
                 isLight
-                  ? 'text-[#4b5563] hover:text-[#111827] hover:bg-black/[0.06]'
-                  : 'text-[#9ca3af] hover:text-white hover:bg-white/[0.10]'
+                  ? 'text-[#6e6e73] hover:text-[#111827]'
+                  : 'text-white/60 hover:text-white'
               }`}
             >
               Close
