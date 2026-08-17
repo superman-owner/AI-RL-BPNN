@@ -186,7 +186,7 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
       </div>
 
       {/* =======================================================
-          1. ขาเข้า IN (TARGET) - Micro Docking Port ฝั่งซ้าย
+          1. ขาเข้า IN (TARGET) - Micro Docking Port ฝั่งซ้าย (ลดขนาดลง 50%)
           ======================================================= */}
       {def.hasInput && (
         <Handle
@@ -197,9 +197,9 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
             left: 0,
             top: '50%',
             transform: 'translateY(-50%)',
-            width: 5,
-            height: 10,
-            borderRadius: '5px 0 0 5px',
+            width: 4,
+            height: 9,
+            borderRadius: '4.5px 0 0 4.5px',
             backgroundColor: accent,
             border: 'none',
             boxShadow: `0 0 4px ${accent}60`,
@@ -211,7 +211,7 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
       )}
 
       {/* =======================================================
-          2. ขาออก OUT (SOURCE) - Micro Docking Port ฝั่งขวา
+          2. ขาออก OUT (SOURCE) - Micro Docking Port ฝั่งขวา (ลดขนาดลง 50%)
           ======================================================= */}
       {def.hasOutput && !def.decision && (
         <Handle
@@ -222,9 +222,9 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
             right: 0,
             top: '50%',
             transform: 'translateY(-50%)',
-            width: 5,
-            height: 10,
-            borderRadius: '0 5px 5px 0',
+            width: 4,
+            height: 9,
+            borderRadius: '0 4.5px 4.5px 0',
             backgroundColor: accent,
             border: 'none',
             boxShadow: `0 0 4px ${accent}60`,
@@ -249,9 +249,9 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
               top: '30%',
               transform: 'translateY(-50%)',
               right: 0,
-              width: 5,
-              height: 9,
-              borderRadius: '0 5px 5px 0',
+              width: 4,
+              height: 8,
+              borderRadius: '0 4px 4px 0',
               backgroundColor: '#10b981',
               border: 'none',
               boxShadow: '0 0 4px rgba(16, 185, 129, 0.5)',
@@ -270,9 +270,9 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
               top: '70%',
               transform: 'translateY(-50%)',
               right: 0,
-              width: 5,
-              height: 9,
-              borderRadius: '0 5px 5px 0',
+              width: 4,
+              height: 8,
+              borderRadius: '0 4px 4px 0',
               backgroundColor: '#f43f5e',
               border: 'none',
               boxShadow: '0 0 4px rgba(244, 63, 94, 0.5)',

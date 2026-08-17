@@ -33,7 +33,7 @@ const INITIAL_NODES: Node[] = [
   {
     id: 'node-1',
     type: 'nodeCard',
-    position: { x: 50, y: 30 },
+    position: { x: 50, y: 20 },
     data: {
       nodeType: 'strategy_preset_return',
       preset: 'Standard Quant',
@@ -46,7 +46,7 @@ const INITIAL_NODES: Node[] = [
   {
     id: 'node-2',
     type: 'nodeCard',
-    position: { x: 50, y: 220 },
+    position: { x: 50, y: 180 },
     data: {
       nodeType: 'volatility_indicator',
       vol_window: 10,
@@ -58,17 +58,54 @@ const INITIAL_NODES: Node[] = [
   {
     id: 'node-3',
     type: 'nodeCard',
-    position: { x: 50, y: 400 },
+    position: { x: 50, y: 340 },
     data: {
       nodeType: 'position_feedback',
       encoding: 'Discrete',
-      execution: { status: 'passed', detail: 'State Vector: 6 Dimensions' },
+      execution: { status: 'passed', detail: 'State Vector: 8 Dimensions' },
     },
   },
   {
     id: 'node-4',
     type: 'nodeCard',
-    position: { x: 50, y: 560 },
+    position: { x: 50, y: 500 },
+    data: {
+      nodeType: 'multi_timeframe_fusion',
+      higher_tf: 'H4',
+      trend_indicator: 'EMA 200 + SuperTrend',
+      confluence_weight: 35,
+      execution: { status: 'passed', detail: 'MTF Trend H4 Confluence' },
+    },
+  },
+  {
+    id: 'node-5',
+    type: 'nodeCard',
+    position: { x: 50, y: 660 },
+    data: {
+      nodeType: 'news_impact_filter',
+      filter_high_impact: true,
+      blackout_mins_before: 15,
+      blackout_mins_after: 30,
+      auto_close_on_red_news: false,
+      execution: { status: 'passed', detail: 'News Blackout Filter Active' },
+    },
+  },
+  {
+    id: 'node-6',
+    type: 'nodeCard',
+    position: { x: 50, y: 820 },
+    data: {
+      nodeType: 'session_time_filter',
+      active_session: 'London & New York',
+      no_friday_weekend_gap: true,
+      friday_close_hour_gmt: 21,
+      execution: { status: 'passed', detail: 'London & NY Session Filter' },
+    },
+  },
+  {
+    id: 'node-7',
+    type: 'nodeCard',
+    position: { x: 50, y: 980 },
     data: {
       nodeType: 'training_episodes_config',
       target_episodes: '10,000',
@@ -80,29 +117,39 @@ const INITIAL_NODES: Node[] = [
   },
 
   // ==========================================
-  // Column 2: Feature Expansion (x: 400)
+  // Column 2: Feature Expansion (x: 410)
   // ==========================================
   {
-    id: 'node-5',
+    id: 'node-8',
     type: 'nodeCard',
-    position: { x: 400, y: 280 },
+    position: { x: 410, y: 400 },
     data: {
       nodeType: 'fc1_dense_expansion',
       units: '64',
       activation: 'LeakyReLU',
-      weight_init: 'Kaiming Normal',
-      use_bias: true,
-      execution: { status: 'passed', detail: 'FC1 Linear Expansion: 6 to 64' },
+      bias: true,
+      execution: { status: 'passed', detail: 'FC1 Linear Expansion: 8 to 64' },
+    },
+  },
+  {
+    id: 'node-9',
+    type: 'nodeCard',
+    position: { x: 410, y: 600 },
+    data: {
+      nodeType: 'fc1_attention_weights',
+      heads: '4',
+      temperature: 1.0,
+      execution: { status: 'passed', detail: 'Multi-Head Attention Saliency' },
     },
   },
 
   // ==========================================
-  // Column 3: Regularization & Norm (x: 750)
+  // Column 3: Regularization & Norm (x: 770)
   // ==========================================
   {
-    id: 'node-6',
+    id: 'node-10',
     type: 'nodeCard',
-    position: { x: 750, y: 30 },
+    position: { x: 770, y: 280 },
     data: {
       nodeType: 'spatial_dropout_regularization',
       rate: 0.15,
@@ -111,30 +158,20 @@ const INITIAL_NODES: Node[] = [
     },
   },
   {
-    id: 'node-7',
+    id: 'node-11',
     type: 'nodeCard',
-    position: { x: 750, y: 200 },
+    position: { x: 770, y: 480 },
     data: {
       nodeType: 'layer_normalization',
       norm_type: 'LayerNorm',
-      eps: '1e-5',
+      epsilon: '1e-5',
       execution: { status: 'passed', detail: 'Normalized Variance: 1.0' },
     },
   },
   {
-    id: 'node-8',
+    id: 'node-12',
     type: 'nodeCard',
-    position: { x: 750, y: 370 },
-    data: {
-      nodeType: 'l2_weight_decay',
-      decay: '1e-4',
-      execution: { status: 'passed', detail: 'Weight Decay: 0.0001' },
-    },
-  },
-  {
-    id: 'node-9',
-    type: 'nodeCard',
-    position: { x: 750, y: 540 },
+    position: { x: 770, y: 680 },
     data: {
       nodeType: 'gradient_clipping',
       max_norm: 1.0,
@@ -143,28 +180,28 @@ const INITIAL_NODES: Node[] = [
   },
 
   // ==========================================
-  // Column 4: Bottleneck Synthesis (x: 1100)
+  // Column 4: Bottleneck Synthesis (x: 1130)
   // ==========================================
   {
-    id: 'node-10',
+    id: 'node-13',
     type: 'nodeCard',
-    position: { x: 1100, y: 280 },
+    position: { x: 1130, y: 480 },
     data: {
       nodeType: 'fc2_bottleneck_synthesizer',
       units: '32',
       activation: 'LeakyReLU',
       residual: true,
-      execution: { status: 'passed', detail: 'FC2 Bottleneck: 64 to 32' },
+      execution: { status: 'passed', detail: 'FC2 Bottleneck: 64 to 32 (Res)' },
     },
   },
 
   // ==========================================
-  // Column 5: Reward Shaping (x: 1450)
+  // Column 5: Reward Formulation & Capital Defense (x: 1490)
   // ==========================================
   {
-    id: 'node-11',
+    id: 'node-14',
     type: 'nodeCard',
-    position: { x: 1450, y: 180 },
+    position: { x: 1490, y: 280 },
     data: {
       nodeType: 'friction_spread_cost',
       spread_pip: 0.15,
@@ -173,9 +210,9 @@ const INITIAL_NODES: Node[] = [
     },
   },
   {
-    id: 'node-12',
+    id: 'node-15',
     type: 'nodeCard',
-    position: { x: 1450, y: 380 },
+    position: { x: 1490, y: 480 },
     data: {
       nodeType: 'anti_inactivity_reward',
       idle_penalty: -0.0005,
@@ -183,14 +220,27 @@ const INITIAL_NODES: Node[] = [
       execution: { status: 'passed', detail: 'Inactivity Penalty Active' },
     },
   },
+  {
+    id: 'node-16',
+    type: 'nodeCard',
+    position: { x: 1490, y: 680 },
+    data: {
+      nodeType: 'drawdown_guard_penalty',
+      max_dd_limit: 5.0,
+      daily_dd_limit: 4.0,
+      dd_penalty_mult: 3.0,
+      hard_stop_on_breach: true,
+      execution: { status: 'passed', detail: 'Drawdown Defense: Max 5.0%' },
+    },
+  },
 
   // ==========================================
-  // Column 6: Output & Deployment (x: 1800)
+  // Column 6: Output & Deployment (x: 1850)
   // ==========================================
   {
-    id: 'node-13',
+    id: 'node-17',
     type: 'nodeCard',
-    position: { x: 1800, y: 180 },
+    position: { x: 1850, y: 120 },
     data: {
       nodeType: 'fc3_policy_action_head',
       classes: '3',
@@ -199,9 +249,50 @@ const INITIAL_NODES: Node[] = [
     },
   },
   {
-    id: 'node-14',
+    id: 'node-18',
     type: 'nodeCard',
-    position: { x: 1800, y: 380 },
+    position: { x: 1850, y: 320 },
+    data: {
+      nodeType: 'dynamic_lot_sizer',
+      sizing_mode: 'Risk % of Equity',
+      risk_per_trade_pct: 1.0,
+      min_lot: 0.01,
+      max_lot: 10.0,
+      atr_multiplier: 1.5,
+      execution: { status: 'passed', detail: 'Dynamic Lot: 1% Equity Risk' },
+    },
+  },
+  {
+    id: 'node-19',
+    type: 'nodeCard',
+    position: { x: 1850, y: 520 },
+    data: {
+      nodeType: 'trailing_stop_breakeven',
+      breakeven_trigger_rr: 1.5,
+      breakeven_lock_pips: 1.0,
+      trailing_step_atr: 1.2,
+      partial_take_profit_pct: 50,
+      execution: { status: 'passed', detail: 'Breakeven @ 1.5R, Trail 1.2 ATR' },
+    },
+  },
+  {
+    id: 'node-20',
+    type: 'nodeCard',
+    position: { x: 1850, y: 720 },
+    data: {
+      nodeType: 'telegram_webhook_alert',
+      webhook_channel: 'Telegram Bot',
+      bot_token_or_url: 'https://api.telegram.org/bot...',
+      notify_on_trade: true,
+      notify_on_dd_alert: true,
+      notify_daily_summary: true,
+      execution: { status: 'passed', detail: 'Telegram & Webhook Alert Ready' },
+    },
+  },
+  {
+    id: 'node-21',
+    type: 'nodeCard',
+    position: { x: 1850, y: 920 },
     data: {
       nodeType: 'onnx_mt5_compiler',
       target_folder: 'MQL5/Files/',
@@ -212,153 +303,43 @@ const INITIAL_NODES: Node[] = [
 ];
 
 const INITIAL_EDGES: Edge[] = [
-  // Inputs (Col 1) -> FC1 Expansion (Col 2)
-  {
-    id: 'e1-5',
-    source: 'node-1',
-    target: 'node-5',
-    type: 'smoothstep',
-    animated: true,
-    style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' },
-  },
-  {
-    id: 'e2-5',
-    source: 'node-2',
-    target: 'node-5',
-    type: 'smoothstep',
-    animated: true,
-    style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' },
-  },
-  {
-    id: 'e3-5',
-    source: 'node-3',
-    target: 'node-5',
-    type: 'smoothstep',
-    animated: true,
-    style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' },
-  },
-  {
-    id: 'e4-5',
-    source: 'node-4',
-    target: 'node-5',
-    type: 'smoothstep',
-    animated: true,
-    style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' },
-  },
+  // 1. Column 1 (Inputs 1-7) -> Column 2 (FC1 Dense node-8 & Attention node-9)
+  { id: 'e1-8', source: 'node-1', target: 'node-8', type: 'smoothstep', animated: true, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
+  { id: 'e2-8', source: 'node-2', target: 'node-8', type: 'smoothstep', animated: true, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
+  { id: 'e3-8', source: 'node-3', target: 'node-8', type: 'smoothstep', animated: true, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
+  { id: 'e4-8', source: 'node-4', target: 'node-8', type: 'smoothstep', animated: true, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
+  { id: 'e5-8', source: 'node-5', target: 'node-8', type: 'smoothstep', animated: true, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
+  { id: 'e6-8', source: 'node-6', target: 'node-8', type: 'smoothstep', animated: true, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
+  { id: 'e7-8', source: 'node-7', target: 'node-8', type: 'smoothstep', animated: true, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
+  { id: 'e2-9', source: 'node-2', target: 'node-9', type: 'smoothstep', animated: true, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
+  { id: 'e4-9', source: 'node-4', target: 'node-9', type: 'smoothstep', animated: true, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
 
-  // FC1 Expansion (Col 2) -> Regularization & Norm (Col 3)
-  {
-    id: 'e5-6',
-    source: 'node-5',
-    target: 'node-6',
-    type: 'smoothstep',
-    animated: true,
-    style: { stroke: '#ff9f0a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,159,10,0.55))' },
-  },
-  {
-    id: 'e5-7',
-    source: 'node-5',
-    target: 'node-7',
-    type: 'smoothstep',
-    animated: true,
-    style: { stroke: '#ff9f0a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,159,10,0.55))' },
-  },
-  {
-    id: 'e5-8',
-    source: 'node-5',
-    target: 'node-8',
-    type: 'smoothstep',
-    animated: true,
-    style: { stroke: '#ff9f0a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,159,10,0.55))' },
-  },
-  {
-    id: 'e5-9',
-    source: 'node-5',
-    target: 'node-9',
-    type: 'smoothstep',
-    animated: true,
-    style: { stroke: '#ff9f0a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,159,10,0.55))' },
-  },
+  // 2. Column 2 (FC1 nodes 8, 9) -> Column 3 (Regularization nodes 10, 11, 12)
+  { id: 'e8-10', source: 'node-8', target: 'node-10', type: 'smoothstep', animated: true, style: { stroke: '#ff9f0a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,159,10,0.55))' } },
+  { id: 'e8-11', source: 'node-8', target: 'node-11', type: 'smoothstep', animated: true, style: { stroke: '#ff9f0a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,159,10,0.55))' } },
+  { id: 'e8-12', source: 'node-8', target: 'node-12', type: 'smoothstep', animated: true, style: { stroke: '#ff9f0a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,159,10,0.55))' } },
+  { id: 'e9-11', source: 'node-9', target: 'node-11', type: 'smoothstep', animated: true, style: { stroke: '#ff9f0a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,159,10,0.55))' } },
 
-  // Regularization & Norm (Col 3) -> FC2 Bottleneck Synthesis (Col 4)
-  {
-    id: 'e6-10',
-    source: 'node-6',
-    target: 'node-10',
-    type: 'smoothstep',
-    animated: true,
-    style: { stroke: '#30d158', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(48,209,88,0.55))' },
-  },
-  {
-    id: 'e7-10',
-    source: 'node-7',
-    target: 'node-10',
-    type: 'smoothstep',
-    animated: true,
-    style: { stroke: '#30d158', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(48,209,88,0.55))' },
-  },
-  {
-    id: 'e8-10',
-    source: 'node-8',
-    target: 'node-10',
-    type: 'smoothstep',
-    animated: true,
-    style: { stroke: '#30d158', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(48,209,88,0.55))' },
-  },
-  {
-    id: 'e9-10',
-    source: 'node-9',
-    target: 'node-10',
-    type: 'smoothstep',
-    animated: true,
-    style: { stroke: '#30d158', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(48,209,88,0.55))' },
-  },
+  // 3. Column 3 (Regularization nodes 10, 11, 12) -> Column 4 (FC2 Bottleneck node-13)
+  { id: 'e10-13', source: 'node-10', target: 'node-13', type: 'smoothstep', animated: true, style: { stroke: '#30d158', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(48,209,88,0.55))' } },
+  { id: 'e11-13', source: 'node-11', target: 'node-13', type: 'smoothstep', animated: true, style: { stroke: '#30d158', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(48,209,88,0.55))' } },
+  { id: 'e12-13', source: 'node-12', target: 'node-13', type: 'smoothstep', animated: true, style: { stroke: '#30d158', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(48,209,88,0.55))' } },
 
-  // FC2 Bottleneck (Col 4) -> Reward Shaping (Col 5)
-  {
-    id: 'e10-11',
-    source: 'node-10',
-    target: 'node-11',
-    type: 'smoothstep',
-    animated: true,
-    style: { stroke: '#bf5af2', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(191,90,242,0.55))' },
-  },
-  {
-    id: 'e10-12',
-    source: 'node-10',
-    target: 'node-12',
-    type: 'smoothstep',
-    animated: true,
-    style: { stroke: '#bf5af2', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(191,90,242,0.55))' },
-  },
+  // 4. Column 4 (FC2 Bottleneck node-13) -> Column 5 (Reward nodes 14, 15, 16)
+  { id: 'e13-14', source: 'node-13', target: 'node-14', type: 'smoothstep', animated: true, style: { stroke: '#bf5af2', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(191,90,242,0.55))' } },
+  { id: 'e13-15', source: 'node-13', target: 'node-15', type: 'smoothstep', animated: true, style: { stroke: '#bf5af2', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(191,90,242,0.55))' } },
+  { id: 'e13-16', source: 'node-13', target: 'node-16', type: 'smoothstep', animated: true, style: { stroke: '#bf5af2', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(191,90,242,0.55))' } },
 
-  // Reward Shaping (Col 5) -> Policy Action Head (Col 6)
-  {
-    id: 'e11-13',
-    source: 'node-11',
-    target: 'node-13',
-    type: 'smoothstep',
-    animated: true,
-    style: { stroke: '#ffd60a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,214,10,0.55))' },
-  },
-  {
-    id: 'e12-13',
-    source: 'node-12',
-    target: 'node-13',
-    type: 'smoothstep',
-    animated: true,
-    style: { stroke: '#ffd60a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,214,10,0.55))' },
-  },
+  // 5. Column 5 (Reward nodes 14, 15, 16) -> Column 6 (FC3 Policy Head node-17)
+  { id: 'e14-17', source: 'node-14', target: 'node-17', type: 'smoothstep', animated: true, style: { stroke: '#ffd60a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,214,10,0.55))' } },
+  { id: 'e15-17', source: 'node-15', target: 'node-17', type: 'smoothstep', animated: true, style: { stroke: '#ffd60a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,214,10,0.55))' } },
+  { id: 'e16-17', source: 'node-16', target: 'node-17', type: 'smoothstep', animated: true, style: { stroke: '#ffd60a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,214,10,0.55))' } },
 
-  // Policy Action Head (Col 6) -> ONNX MT5 Compiler
-  {
-    id: 'e13-14',
-    source: 'node-13',
-    target: 'node-14',
-    type: 'smoothstep',
-    animated: true,
-    style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' },
-  },
+  // 6. Column 6 (FC3 Policy Head node-17) -> Execution & Deployment (nodes 18, 19, 20, 21)
+  { id: 'e17-18', source: 'node-17', target: 'node-18', type: 'smoothstep', animated: true, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
+  { id: 'e17-19', source: 'node-17', target: 'node-19', type: 'smoothstep', animated: true, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
+  { id: 'e17-20', source: 'node-17', target: 'node-20', type: 'smoothstep', animated: true, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
+  { id: 'e17-21', source: 'node-17', target: 'node-21', type: 'smoothstep', animated: true, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
 ];
 
 // ==========================================
@@ -377,20 +358,20 @@ const defaultEdgeOptions = {
   },
 };
 
-const LOCAL_STORAGE_KEY_NODES = 'fxforge_dag_nodes_v5';
-const LOCAL_STORAGE_KEY_EDGES = 'fxforge_dag_edges_v5';
+const LOCAL_STORAGE_KEY_NODES = 'fxforge_dag_nodes_v7';
+const LOCAL_STORAGE_KEY_EDGES = 'fxforge_dag_edges_v7';
 
 const getInitialNodes = (): Node[] => {
   try {
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY_NODES);
     if (saved) {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length >= 14) {
+      if (Array.isArray(parsed) && parsed.length >= 21) {
         return parsed;
       }
     }
-  } catch {
-    // fallback to initial default nodes
+  } catch (e) {
+    console.error('Failed to load saved DAG nodes from local storage:', e);
   }
   return INITIAL_NODES;
 };
@@ -400,12 +381,12 @@ const getInitialEdges = (): Edge[] => {
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY_EDGES);
     if (saved) {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length >= 14) {
+      if (Array.isArray(parsed) && parsed.length >= 20) {
         return parsed;
       }
     }
-  } catch {
-    // fallback to initial default edges
+  } catch (e) {
+    console.error('Failed to load saved DAG edges from local storage:', e);
   }
   return INITIAL_EDGES;
 };
