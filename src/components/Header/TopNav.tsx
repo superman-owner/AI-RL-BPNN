@@ -33,14 +33,14 @@ export const TopNav: React.FC<TopNavProps> = ({
   return (
     <header
       style={{ paddingLeft: '16px', paddingRight: '20px' }}
-      className={`h-12 w-full border-b flex items-center justify-between z-30 select-none overflow-x-auto no-scrollbar transition-colors duration-200 ${
+      className={`h-12 w-full border-b flex items-center justify-between z-30 select-none overflow-x-auto overflow-y-hidden transition-colors duration-200 ${
         isLight
           ? 'bg-white/85 border-black/[0.08] text-[#1d1d1f] shadow-sm backdrop-blur-xl'
           : 'vision-glass apple-specular border-white/[0.08] text-slate-200'
       }`}
     >
       {/* Left: macOS Traffic Lights + Brand */}
-      <div className="flex items-center gap-4 flex-shrink-0">
+      <div className="flex items-center gap-4 flex-shrink-0 min-w-max">
         <div className="flex items-center gap-1.5 pr-2">
           <div className="w-3 h-3 rounded-full bg-[#ff5f56] border border-[#e0443e]/50 cursor-pointer hover:opacity-80 transition-opacity" />
           <div className="w-3 h-3 rounded-full bg-[#ffbd2e] border border-[#dea123]/50 cursor-pointer hover:opacity-80 transition-opacity" />

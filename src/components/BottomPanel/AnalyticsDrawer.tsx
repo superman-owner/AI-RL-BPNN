@@ -215,20 +215,20 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
         isLight ? 'border-black/[0.08] bg-[#f5f5f7]' : 'border-white/[0.08] bg-[#07070b]'
       } ${isMinimized ? 'h-10' : isMaximized ? 'h-[590px]' : 'h-[365px]'}`}
     >
-      {/*  Top Segmented HUD Navigation Bar */}
+      {/*  Top Segmented HUD Navigation Bar with Horizontal Scrollbar Protection */}
       <div
-        className={`h-10 flex items-center justify-between select-none flex-shrink-0 transition-all duration-200 ${
+        className={`h-10 flex items-center justify-between select-none flex-shrink-0 transition-all duration-200 overflow-x-auto overflow-y-hidden ${
           isLight ? 'bg-[#f5f5f7]' : 'bg-[#07070b]'
         }`}
         style={{ paddingLeft: '14px', paddingRight: '24px' }}
       >
-        <div className="flex items-center gap-6 h-full">
+        <div className="flex items-center gap-6 h-full flex-shrink-0 min-w-max">
           <button
             onClick={() => {
               setActiveTab('equity');
               setIsMinimized(false);
             }}
-            className={`h-full flex items-center text-xs transition-all cursor-pointer ${
+            className={`h-full flex items-center text-xs transition-all cursor-pointer whitespace-nowrap flex-shrink-0 ${
               activeTab === 'equity' && !isMinimized
                 ? isLight
                   ? 'text-[#0071e3] font-bold'
@@ -238,7 +238,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                 : 'text-white/50 hover:text-white font-medium'
             }`}
           >
-            <span>RL Reward Curve & Telemetry</span>
+            <span className="whitespace-nowrap">RL Reward Curve & Telemetry</span>
           </button>
 
           <button
@@ -246,7 +246,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
               setActiveTab('loss');
               setIsMinimized(false);
             }}
-            className={`h-full flex items-center text-xs transition-all cursor-pointer ${
+            className={`h-full flex items-center text-xs transition-all cursor-pointer whitespace-nowrap flex-shrink-0 ${
               activeTab === 'loss' && !isMinimized
                 ? isLight
                   ? 'text-[#0071e3] font-bold'
@@ -256,7 +256,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                 : 'text-white/50 hover:text-white font-medium'
             }`}
           >
-            <span>Model Convergence</span>
+            <span className="whitespace-nowrap">Model Convergence</span>
           </button>
 
           <button
@@ -264,7 +264,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
               setActiveTab('features');
               setIsMinimized(false);
             }}
-            className={`h-full flex items-center text-xs transition-all cursor-pointer ${
+            className={`h-full flex items-center text-xs transition-all cursor-pointer whitespace-nowrap flex-shrink-0 ${
               activeTab === 'features' && !isMinimized
                 ? isLight
                   ? 'text-[#0071e3] font-bold'
@@ -274,7 +274,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                 : 'text-white/50 hover:text-white font-medium'
             }`}
           >
-            <span>Signal Weight Matrix</span>
+            <span className="whitespace-nowrap">Signal Weight Matrix</span>
           </button>
 
           <button
@@ -282,7 +282,7 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
               setActiveTab('logs');
               setIsMinimized(false);
             }}
-            className={`h-full flex items-center text-xs transition-all cursor-pointer ${
+            className={`h-full flex items-center text-xs transition-all cursor-pointer whitespace-nowrap flex-shrink-0 ${
               activeTab === 'logs' && !isMinimized
                 ? isLight
                   ? 'text-[#0071e3] font-bold'
@@ -292,12 +292,12 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                 : 'text-white/50 hover:text-white font-medium'
             }`}
           >
-            <span>MT5 Experts Journal ({logs.length})</span>
+            <span className="whitespace-nowrap">MT5 Experts Journal ({logs.length})</span>
           </button>
         </div>
 
         {/* Right HUD Controls */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 flex-shrink-0 min-w-max ml-6">
           {/* Policy Probabilities Indicator */}
           <div
             className={`hidden lg:flex items-center gap-1.5 text-xs font-medium select-none whitespace-nowrap ${
