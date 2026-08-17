@@ -101,7 +101,7 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
                 letterSpacing: '0.04em',
                 color: isConnected ? accent : (isLight ? '#6e6e73' : '#86868b'),
                 textTransform: 'uppercase',
-                lineHeight: 1.2,
+                lineHeight: 1.35,
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
@@ -119,7 +119,8 @@ export default function NodeCard({ data, selected }: { data: any; selected?: boo
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
-                lineHeight: 1.25,
+                lineHeight: 1.4,
+                paddingBottom: '1px',
                 fontFamily: 'var(--font-apple-text)',
               }}
             >

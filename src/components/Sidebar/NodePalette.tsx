@@ -559,7 +559,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                   {/* Section Label */}
                   <span
                     className="text-[11.5px] font-bold uppercase tracking-wider truncate"
-                    style={{ letterSpacing: '0.04em' }}
+                    style={{ letterSpacing: '0.04em', lineHeight: '1.4' }}
                   >
                     {group.label}
                   </span>
@@ -590,7 +590,7 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                     marginTop: '2px',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '1px',
+                    gap: '2px',
                   }}
                 >
                   {matchingNodes.map((node) => {
@@ -607,11 +607,11 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'space-between',
-                          minHeight: '28px',
+                          minHeight: '30px',
                           paddingLeft: '14px',
                           paddingRight: '6px',
-                          paddingTop: '4px',
-                          paddingBottom: '4px',
+                          paddingTop: '5px',
+                          paddingBottom: '5px',
                           borderRadius: '4px',
                           cursor: 'var(--mac-cursor-grab)',
                           userSelect: 'none',
@@ -642,9 +642,9 @@ export const NodePalette: React.FC<NodePaletteProps> = ({
                               fontWeight: isNodeHovered ? 600 : 500,
                               letterSpacing: '-0.01em',
                               whiteSpace: 'nowrap',
-                              overflow: 'hidden',
-                              textOverflow: 'clip',
-                              lineHeight: '1.2',
+                              lineHeight: '1.45',
+                              paddingBottom: '1px',
+                              display: 'inline-block',
                             }}
                           >
                             {node.label}
