@@ -53,15 +53,16 @@ export const MT5DeployModal: React.FC<MT5DeployModalProps> = ({ isOpen, onClose 
             ? '0 24px 70px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.1)'
             : '0 30px 80px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.12)',
         }}
-        className={`w-[780px] max-w-[94vw] h-[640px] max-h-[88vh] rounded-2xl flex flex-col overflow-hidden transition-colors ${
+        className={`w-[800px] max-w-[94vw] h-[640px] max-h-[88vh] rounded-2xl flex flex-col overflow-hidden transition-colors ${
           isLight
             ? 'bg-[#ffffff]/98 backdrop-blur-3xl text-[#1d1d1f]'
             : 'bg-[#12121a]/98 backdrop-blur-3xl text-white'
         }`}
       >
-        {/* 1. Header (Locked flex-shrink-0) */}
+        {/* 1. Header (Locked flex-shrink-0) with generous 16px 20px padding */}
         <div
-          className={`px-5 py-4 flex items-center justify-between border-b flex-shrink-0 ${
+          style={{ padding: '16px 20px' }}
+          className={`flex items-center justify-between border-b flex-shrink-0 ${
             isLight ? 'border-black/[0.08]' : 'border-white/[0.08]'
           }`}
         >
@@ -69,8 +70,8 @@ export const MT5DeployModal: React.FC<MT5DeployModalProps> = ({ isOpen, onClose 
             <div
               className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${
                 isLight
-                  ? 'bg-[#34c759]/15 border border-[#34c759]/30 text-[#28cd41]'
-                  : 'bg-[#30d158]/15 border border-[#30d158]/30 text-[#30d158]'
+                  ? 'bg-[#34c759]/15 text-[#28cd41]'
+                  : 'bg-[#30d158]/15 text-[#30d158]'
               }`}
             >
               <LucideIcons.Rocket size={18} />
@@ -78,28 +79,33 @@ export const MT5DeployModal: React.FC<MT5DeployModalProps> = ({ isOpen, onClose 
             <div>
               <div className="flex items-center gap-2">
                 <h3
-                  className={`text-[14px] font-semibold tracking-tight ${
+                  className={`text-[14.5px] font-bold tracking-tight ${
                     isLight ? 'text-[#111827]' : 'text-white'
                   }`}
                 >
                   MT5 Zero-Latency ONNX Deploy Package
                 </h3>
-                <span
-                  className={`px-2 py-0.5 rounded-md text-[10px] font-bold tracking-wide uppercase ${
-                    isLight
-                      ? 'bg-[#34c759]/15 text-[#28cd41] border border-[#34c759]/25'
-                      : 'bg-[#30d158]/15 text-[#30d158] border border-[#30d158]/30'
-                  }`}
-                >
-                  Ready
-                </span>
+                <div className="flex items-center gap-1.5 ml-1">
+                  <span
+                    className={`w-2 h-2 rounded-full ${
+                      isLight ? 'bg-[#34c759]' : 'bg-[#30d158]'
+                    } animate-pulse`}
+                  />
+                  <span
+                    className={`text-[11.5px] font-semibold ${
+                      isLight ? 'text-[#28cd41]' : 'text-[#30d158]'
+                    }`}
+                  >
+                    Ready
+                  </span>
+                </div>
               </div>
               <p
-                className={`text-[11.5px] mt-0.5 ${
+                className={`text-[12px] mt-0.5 ${
                   isLight ? 'text-[#6b7280]' : 'text-[#86868b]'
                 }`}
               >
-                Opset 14 Static Tensor Shape <code className="font-mono">[1, 6] float32</code> ➔ <code className="font-mono">[1, 3] float32</code>
+                Opset 14 Static Tensor Shape <code className="font-sans font-semibold text-[11.5px]">[1, 6] float32</code> ➔ <code className="font-sans font-semibold text-[11.5px]">[1, 3] float32</code>
               </p>
             </div>
           </div>
@@ -117,87 +123,89 @@ export const MT5DeployModal: React.FC<MT5DeployModalProps> = ({ isOpen, onClose 
           </button>
         </div>
 
-        {/* 2. Tab Navigation & Actions Bar (Locked flex-shrink-0) */}
+        {/* 2. Tab Navigation & Actions Bar with generous 12px 20px padding */}
         <div
-          className={`px-5 py-2.5 flex items-center justify-between border-b flex-shrink-0 ${
+          style={{ padding: '10px 20px' }}
+          className={`flex items-center justify-between border-b flex-shrink-0 ${
             isLight ? 'bg-[#f5f5f7] border-black/[0.06]' : 'bg-[#0b0b12] border-white/[0.06]'
           }`}
         >
-          {/* Segmented Tab Control */}
-          <div className="flex items-center gap-1.5">
+          {/* Segmented Tab Control (Clean Apple Hover & Active State, Zero Heavy Capsule) */}
+          <div className="flex items-center gap-2">
             <button
               onClick={() => setActiveTab('python')}
               style={{ cursor: 'var(--mac-cursor-pointer)' }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5 transition-all ${
                 activeTab === 'python'
                   ? isLight
-                    ? 'bg-[#0071e3] text-white shadow-sm'
-                    : 'bg-[#0071e3] text-white shadow-sm'
+                    ? 'text-[#0071e3] font-bold bg-[#0071e3]/10'
+                    : 'text-[#0a84ff] font-bold bg-[#0a84ff]/15'
                   : isLight
-                  ? 'text-[#4b5563] hover:text-[#111827] hover:bg-black/[0.05]'
-                  : 'text-[#9ca3af] hover:text-white hover:bg-white/[0.06]'
+                  ? 'text-[#4b5563] font-medium hover:text-[#111827] hover:bg-black/[0.05]'
+                  : 'text-[#9ca3af] font-medium hover:text-white hover:bg-white/[0.06]'
               }`}
             >
               <LucideIcons.FileCode size={13} />
-              1. PyTorch Exporter (.py)
+              <span>1. PyTorch Exporter (.py)</span>
             </button>
 
             <button
               onClick={() => setActiveTab('mql5')}
               style={{ cursor: 'var(--mac-cursor-pointer)' }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5 transition-all ${
                 activeTab === 'mql5'
                   ? isLight
-                    ? 'bg-[#0071e3] text-white shadow-sm'
-                    : 'bg-[#0071e3] text-white shadow-sm'
+                    ? 'text-[#0071e3] font-bold bg-[#0071e3]/10'
+                    : 'text-[#0a84ff] font-bold bg-[#0a84ff]/15'
                   : isLight
-                  ? 'text-[#4b5563] hover:text-[#111827] hover:bg-black/[0.05]'
-                  : 'text-[#9ca3af] hover:text-white hover:bg-white/[0.06]'
+                  ? 'text-[#4b5563] font-medium hover:text-[#111827] hover:bg-black/[0.05]'
+                  : 'text-[#9ca3af] font-medium hover:text-white hover:bg-white/[0.06]'
               }`}
             >
               <LucideIcons.Cpu size={13} />
-              2. MetaTrader 5 EA (.mq5)
+              <span>2. MetaTrader 5 EA (.mq5)</span>
             </button>
           </div>
 
-          {/* Quick Action Buttons */}
+          {/* Quick Action Buttons (Apple Hover Style, Zero Solid Capsule) */}
           <div className="flex items-center gap-2">
             <button
               onClick={handleCopy}
               style={{ cursor: 'var(--mac-cursor-pointer)' }}
-              className={`px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${
                 copied
                   ? isLight
-                    ? 'bg-[#34c759]/15 text-[#28cd41] border border-[#34c759]/30'
-                    : 'bg-[#30d158]/15 text-[#30d158] border border-[#30d158]/30'
+                    ? 'text-[#28cd41] bg-[#34c759]/15'
+                    : 'text-[#30d158] bg-[#30d158]/15'
                   : isLight
-                  ? 'bg-white text-[#111827] border border-black/[0.12] hover:bg-black/[0.04]'
-                  : 'bg-white/[0.08] text-white border border-white/[0.10] hover:bg-white/[0.14]'
+                  ? 'text-[#4b5563] hover:text-[#111827] hover:bg-black/[0.05]'
+                  : 'text-[#9ca3af] hover:text-white hover:bg-white/[0.08]'
               }`}
             >
               {copied ? <LucideIcons.Check size={13} /> : <LucideIcons.Copy size={13} />}
-              {copied ? 'Copied!' : 'Copy Code'}
+              <span>{copied ? 'Copied!' : 'Copy Code'}</span>
             </button>
 
             <button
               onClick={handleDownload}
               style={{ cursor: 'var(--mac-cursor-pointer)' }}
-              className={`px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${
                 isLight
-                  ? 'bg-[#0071e3] text-white hover:bg-[#0077ed]'
-                  : 'bg-[#0071e3] text-white hover:bg-[#0077ed]'
+                  ? 'text-[#0071e3] hover:text-[#0077ed] hover:bg-[#0071e3]/10'
+                  : 'text-[#0a84ff] hover:text-[#409cff] hover:bg-[#0a84ff]/15'
               }`}
             >
               <LucideIcons.Download size={13} />
-              Download
+              <span>Download</span>
             </button>
           </div>
         </div>
 
-        {/* 3. Code Viewport (Strictly flex-1 min-h-0 with custom scrolling - No overflow / "ตกขอบ") */}
-        <div className="flex-1 min-h-0 p-4 overflow-hidden flex flex-col">
+        {/* 3. Code Viewport with Generous 16px 20px padding (Never touches edges) */}
+        <div style={{ padding: '16px 20px' }} className="flex-1 min-h-0 overflow-hidden flex flex-col">
           <pre
-            className={`w-full h-full p-4 rounded-xl text-[11.5px] font-mono overflow-auto custom-scrollbar leading-relaxed border select-text transition-colors ${
+            style={{ padding: '18px 22px', margin: 0 }}
+            className={`w-full h-full rounded-xl text-[12px] font-mono overflow-auto custom-scrollbar leading-relaxed border select-text transition-colors ${
               isLight
                 ? 'bg-[#f5f5f7] border-black/[0.08] text-[#1f2937]'
                 : 'bg-[#08080c] border-white/[0.08] text-[#e5e7eb]'
@@ -207,9 +215,10 @@ export const MT5DeployModal: React.FC<MT5DeployModalProps> = ({ isOpen, onClose 
           </pre>
         </div>
 
-        {/* 4. Footer (Locked flex-shrink-0 - Always Visible) */}
+        {/* 4. Footer (Locked flex-shrink-0) with generous 14px 20px padding */}
         <div
-          className={`px-5 py-3 border-t flex items-center justify-between flex-shrink-0 ${
+          style={{ padding: '14px 20px' }}
+          className={`border-t flex items-center justify-between flex-shrink-0 ${
             isLight
               ? 'bg-[#fafafa] border-black/[0.08]'
               : 'bg-[#101017] border-white/[0.08]'
@@ -222,7 +231,7 @@ export const MT5DeployModal: React.FC<MT5DeployModalProps> = ({ isOpen, onClose 
               }`}
             />
             <span
-              className={`text-[11.5px] font-medium ${
+              className={`text-[12px] font-medium ${
                 isLight ? 'text-[#6b7280]' : 'text-[#86868b]'
               }`}
             >
@@ -234,10 +243,10 @@ export const MT5DeployModal: React.FC<MT5DeployModalProps> = ({ isOpen, onClose 
             <button
               onClick={onClose}
               style={{ cursor: 'var(--mac-cursor-pointer)' }}
-              className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+              className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                 isLight
-                  ? 'bg-black/[0.07] hover:bg-black/[0.12] text-[#111827]'
-                  : 'bg-white/[0.10] hover:bg-white/[0.16] text-white'
+                  ? 'text-[#4b5563] hover:text-[#111827] hover:bg-black/[0.06]'
+                  : 'text-[#9ca3af] hover:text-white hover:bg-white/[0.10]'
               }`}
             >
               Close
