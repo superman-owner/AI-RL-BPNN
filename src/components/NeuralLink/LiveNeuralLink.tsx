@@ -781,7 +781,7 @@ export const LiveNeuralLink: React.FC<LiveNeuralLinkProps> = ({
       <div className="absolute top-4 right-4 z-10 hidden sm:flex items-center gap-1.5 text-[11px] font-sans pointer-events-none select-none">
         <span className={`font-semibold ${isLight ? 'text-[#111827]' : 'text-white'}`}>Architecture:</span>
         <span className={isLight ? 'text-[#4b5563]' : 'text-[#86868b]'}>
-          6 In ➔ 12 Dense ➔ 8 Dense ➔ 3 Action
+          6 In → 12 Dense → 8 Dense → 3 Action
         </span>
       </div>
 

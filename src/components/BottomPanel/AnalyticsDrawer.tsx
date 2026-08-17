@@ -669,11 +669,12 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
                 <div className="flex-1 w-full min-h-0 z-10 relative">
                   {rewardData.length === 0 ? (
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-center gap-2 select-none">
-                      <div className={`text-xs font-semibold ${isLight ? 'text-black/50' : 'text-white/50'}`}>
-                        ⚡ Simulation Standby · Baseline Cleared
+                      <div className={`text-xs font-medium flex items-center justify-center gap-2 ${isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}`}>
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#30d158]/80 animate-pulse" />
+                        <span className="tracking-tight">Simulation Standby · Baseline Cleared</span>
                       </div>
-                      <div className={`text-[11px] ${isLight ? 'text-black/35' : 'text-white/30'}`}>
-                        Click <span className={`font-bold ${isLight ? 'text-[#28cd41]' : 'text-[#30d158]'}`}>START</span> in the top navigation to begin live Deep RL training.
+                      <div className={`text-[11px] ${isLight ? 'text-black/40' : 'text-white/35'}`}>
+                        Click <span className={`font-semibold ${isLight ? 'text-[#28cd41]' : 'text-[#30d158]'}`}>START</span> in the top navigation to begin live Deep RL training.
                       </div>
                     </div>
                   ) : (
@@ -757,9 +758,15 @@ export const AnalyticsDrawer: React.FC<AnalyticsDrawerProps> = ({
               <div className={`flex items-center justify-between px-1 mb-2 text-xs flex-shrink-0 ${isLight ? 'text-[#6e6e73]' : 'text-[#86868b]'}`}>
                 <span className={`font-bold ${isLight ? 'text-[#1d1d1f]' : 'text-white'}`}>Loss & Validation AUC Telemetry</span>
                 <div className="flex items-center gap-4 text-xs">
-                  <span className="text-[#00c7be]">● Train Loss</span>
-                  <span className="text-[#af52de]">● Val Loss</span>
-                  <span className="text-[#ff9f0a]">● Val AUC</span>
+                  <span className="flex items-center gap-1.5 text-[#00c7be]">
+                    <span className="w-2 h-2 rounded-full bg-[#00c7be]" /> Train Loss
+                  </span>
+                  <span className="flex items-center gap-1.5 text-[#af52de]">
+                    <span className="w-2 h-2 rounded-full bg-[#af52de]" /> Val Loss
+                  </span>
+                  <span className="flex items-center gap-1.5 text-[#ff9f0a]">
+                    <span className="w-2 h-2 rounded-full bg-[#ff9f0a]" /> Val AUC
+                  </span>
                 </div>
               </div>
 
