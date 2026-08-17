@@ -37,6 +37,14 @@ export const GROUPS: NodeGroup[] = [
   { id: 'output', label: 'Output & Deployment', color: '#0a84ff' },
 ];
 
+export const STRATEGY_PRESET_CONFIGS: Record<string, { timeframe: string; bars_count: number }> = {
+  'Standard Quant': { timeframe: 'M15', bars_count: 10000 },
+  'Fibonacci Scale': { timeframe: 'M30', bars_count: 15000 },
+  'Ultra-Fast Scalper': { timeframe: 'M1', bars_count: 50000 },
+  'Macro Trend Follower': { timeframe: 'H4', bars_count: 5000 },
+  'Custom Configuration': { timeframe: 'M15', bars_count: 10000 },
+};
+
 export const NODE_DEFS: Record<string, NodeDef> = {
   // =========================================================================
   // หมวด INPUT NODES (ดึงข้อมูลและเลือกกลยุทธ์)
@@ -69,9 +77,8 @@ export const NODE_DEFS: Record<string, NodeDef> = {
       {
         key: 'bars_count',
         label: 'Bars Count',
-        default: '10,000',
-        type: 'select',
-        options: ['5,000', '10,000', '20,000', '50,000'],
+        default: 10000,
+        type: 'number',
       },
     ],
     hasInput: false,

@@ -17,7 +17,7 @@ import {
 import '@xyflow/react/dist/style.css';
 import type { Connection, Edge, Node } from '@xyflow/react';
 import NodeCard from '../nodes/NodeCard';
-import { NODE_DEFS, GROUPS } from '../../data/nodeRegistry';
+import { NODE_DEFS, GROUPS, STRATEGY_PRESET_CONFIGS } from '../../data/nodeRegistry';
 import * as LucideIcons from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -35,7 +35,7 @@ const INITIAL_NODES: Node[] = [
       preset: 'Standard Quant',
       timeframe: 'M15',
       symbol: 'XAUUSD',
-      bars_count: '10,000',
+      bars_count: 10000,
       execution: { status: 'passed', detail: 'Strategy Feed: XAUUSD M15' },
     },
   },
@@ -494,7 +494,7 @@ interface FloatingInspectorProps {
   onPositionChange: (pos: { x: number; y: number }) => void;
   onClose: () => void;
   toLocal: (clientX: number, clientY: number) => { x: number; y: number };
-  updateNodeData: (nodeId: string, key: string, value: any) => void;
+  updateNodeData: (nodeId: string, keyOrObj: string | Record<string, any>, value?: any) => void;
   deleteNode: () => void;
 }
 
@@ -699,7 +699,18 @@ const FloatingInspector = React.memo<FloatingInspectorProps>(({
               defaultValue={f.default}
               type={f.type}
               options={f.options}
-              onChange={(newVal) => updateNodeData(node.id, f.key, newVal)}
+              onChange={(newVal) => {
+                if (f.key === 'preset' && STRATEGY_PRESET_CONFIGS[String(newVal)]) {
+                  const presetData = STRATEGY_PRESET_CONFIGS[String(newVal)];
+                  updateNodeData(node.id, {
+                    preset: newVal,
+                    timeframe: presetData.timeframe,
+                    bars_count: presetData.bars_count,
+                  });
+                } else {
+                  updateNodeData(node.id, f.key, newVal);
+                }
+              }}
               isOpen={activeDropdownKey === f.key}
               onToggleOpen={(open) => setActiveDropdownKey(open ? f.key : null)}
             />
@@ -1005,15 +1016,16 @@ const FlowContent: React.FC = () => {
   }, []);
 
   const updateNodeData = useCallback(
-    (nodeId: string, key: string, value: any) => {
+    (nodeId: string, keyOrObj: string | Record<string, any>, value?: any) => {
       setNodes((nds) =>
         nds.map((n) => {
           if (n.id === nodeId) {
+            const updates = typeof keyOrObj === 'object' ? keyOrObj : { [keyOrObj]: value };
             return {
               ...n,
               data: {
                 ...n.data,
-                [key]: value,
+                ...updates,
               },
             };
           }
