@@ -304,57 +304,57 @@ const INITIAL_NODES: Node[] = [
 
 const INITIAL_EDGES: Edge[] = [
   // 1. Column 1 (Inputs 1-7) -> Column 2 (FC1 Dense node-8 & Attention node-9)
-  { id: 'e1-8', source: 'node-1', target: 'node-8', type: 'smoothstep', animated: true, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
-  { id: 'e2-8', source: 'node-2', target: 'node-8', type: 'smoothstep', animated: true, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
-  { id: 'e3-8', source: 'node-3', target: 'node-8', type: 'smoothstep', animated: true, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
-  { id: 'e4-8', source: 'node-4', target: 'node-8', type: 'smoothstep', animated: true, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
-  { id: 'e5-8', source: 'node-5', target: 'node-8', type: 'smoothstep', animated: true, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
-  { id: 'e6-8', source: 'node-6', target: 'node-8', type: 'smoothstep', animated: true, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
-  { id: 'e7-8', source: 'node-7', target: 'node-8', type: 'smoothstep', animated: true, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
-  { id: 'e2-9', source: 'node-2', target: 'node-9', type: 'smoothstep', animated: true, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
-  { id: 'e4-9', source: 'node-4', target: 'node-9', type: 'smoothstep', animated: true, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
+  { id: 'e1-8', source: 'node-1', target: 'node-8', type: 'smoothstep', animated: false, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
+  { id: 'e2-8', source: 'node-2', target: 'node-8', type: 'smoothstep', animated: false, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
+  { id: 'e3-8', source: 'node-3', target: 'node-8', type: 'smoothstep', animated: false, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
+  { id: 'e4-8', source: 'node-4', target: 'node-8', type: 'smoothstep', animated: false, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
+  { id: 'e5-8', source: 'node-5', target: 'node-8', type: 'smoothstep', animated: false, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
+  { id: 'e6-8', source: 'node-6', target: 'node-8', type: 'smoothstep', animated: false, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
+  { id: 'e7-8', source: 'node-7', target: 'node-8', type: 'smoothstep', animated: false, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
+  { id: 'e2-9', source: 'node-2', target: 'node-9', type: 'smoothstep', animated: false, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
+  { id: 'e4-9', source: 'node-4', target: 'node-9', type: 'smoothstep', animated: false, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
 
   // 2. Column 2 (FC1 nodes 8, 9) -> Column 3 (Regularization nodes 10, 11, 12)
-  { id: 'e8-10', source: 'node-8', target: 'node-10', type: 'smoothstep', animated: true, style: { stroke: '#ff9f0a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,159,10,0.55))' } },
-  { id: 'e8-11', source: 'node-8', target: 'node-11', type: 'smoothstep', animated: true, style: { stroke: '#ff9f0a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,159,10,0.55))' } },
-  { id: 'e8-12', source: 'node-8', target: 'node-12', type: 'smoothstep', animated: true, style: { stroke: '#ff9f0a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,159,10,0.55))' } },
-  { id: 'e9-11', source: 'node-9', target: 'node-11', type: 'smoothstep', animated: true, style: { stroke: '#ff9f0a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,159,10,0.55))' } },
+  { id: 'e8-10', source: 'node-8', target: 'node-10', type: 'smoothstep', animated: false, style: { stroke: '#ff9f0a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,159,10,0.55))' } },
+  { id: 'e8-11', source: 'node-8', target: 'node-11', type: 'smoothstep', animated: false, style: { stroke: '#ff9f0a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,159,10,0.55))' } },
+  { id: 'e8-12', source: 'node-8', target: 'node-12', type: 'smoothstep', animated: false, style: { stroke: '#ff9f0a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,159,10,0.55))' } },
+  { id: 'e9-11', source: 'node-9', target: 'node-11', type: 'smoothstep', animated: false, style: { stroke: '#ff9f0a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,159,10,0.55))' } },
 
   // 3. Column 3 (Regularization nodes 10, 11, 12) -> Column 4 (FC2 Bottleneck node-13)
-  { id: 'e10-13', source: 'node-10', target: 'node-13', type: 'smoothstep', animated: true, style: { stroke: '#30d158', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(48,209,88,0.55))' } },
-  { id: 'e11-13', source: 'node-11', target: 'node-13', type: 'smoothstep', animated: true, style: { stroke: '#30d158', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(48,209,88,0.55))' } },
-  { id: 'e12-13', source: 'node-12', target: 'node-13', type: 'smoothstep', animated: true, style: { stroke: '#30d158', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(48,209,88,0.55))' } },
+  { id: 'e10-13', source: 'node-10', target: 'node-13', type: 'smoothstep', animated: false, style: { stroke: '#30d158', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(48,209,88,0.55))' } },
+  { id: 'e11-13', source: 'node-11', target: 'node-13', type: 'smoothstep', animated: false, style: { stroke: '#30d158', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(48,209,88,0.55))' } },
+  { id: 'e12-13', source: 'node-12', target: 'node-13', type: 'smoothstep', animated: false, style: { stroke: '#30d158', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(48,209,88,0.55))' } },
 
   // 4. Column 4 (FC2 Bottleneck node-13) -> Column 5 (Reward nodes 14, 15, 16)
-  { id: 'e13-14', source: 'node-13', target: 'node-14', type: 'smoothstep', animated: true, style: { stroke: '#bf5af2', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(191,90,242,0.55))' } },
-  { id: 'e13-15', source: 'node-13', target: 'node-15', type: 'smoothstep', animated: true, style: { stroke: '#bf5af2', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(191,90,242,0.55))' } },
-  { id: 'e13-16', source: 'node-13', target: 'node-16', type: 'smoothstep', animated: true, style: { stroke: '#bf5af2', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(191,90,242,0.55))' } },
+  { id: 'e13-14', source: 'node-13', target: 'node-14', type: 'smoothstep', animated: false, style: { stroke: '#bf5af2', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(191,90,242,0.55))' } },
+  { id: 'e13-15', source: 'node-13', target: 'node-15', type: 'smoothstep', animated: false, style: { stroke: '#bf5af2', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(191,90,242,0.55))' } },
+  { id: 'e13-16', source: 'node-13', target: 'node-16', type: 'smoothstep', animated: false, style: { stroke: '#bf5af2', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(191,90,242,0.55))' } },
 
   // 5. Column 5 (Reward nodes 14, 15, 16) -> Column 6 (FC3 Policy Head node-17)
-  { id: 'e14-17', source: 'node-14', target: 'node-17', type: 'smoothstep', animated: true, style: { stroke: '#ffd60a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,214,10,0.55))' } },
-  { id: 'e15-17', source: 'node-15', target: 'node-17', type: 'smoothstep', animated: true, style: { stroke: '#ffd60a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,214,10,0.55))' } },
-  { id: 'e16-17', source: 'node-16', target: 'node-17', type: 'smoothstep', animated: true, style: { stroke: '#ffd60a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,214,10,0.55))' } },
+  { id: 'e14-17', source: 'node-14', target: 'node-17', type: 'smoothstep', animated: false, style: { stroke: '#ffd60a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,214,10,0.55))' } },
+  { id: 'e15-17', source: 'node-15', target: 'node-17', type: 'smoothstep', animated: false, style: { stroke: '#ffd60a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,214,10,0.55))' } },
+  { id: 'e16-17', source: 'node-16', target: 'node-17', type: 'smoothstep', animated: false, style: { stroke: '#ffd60a', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(255,214,10,0.55))' } },
 
   // 6. Column 6 (FC3 Policy Head node-17) -> Execution & Deployment (nodes 18, 19, 20, 21)
-  { id: 'e17-18', source: 'node-17', target: 'node-18', type: 'smoothstep', animated: true, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
-  { id: 'e17-19', source: 'node-17', target: 'node-19', type: 'smoothstep', animated: true, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
-  { id: 'e17-20', source: 'node-17', target: 'node-20', type: 'smoothstep', animated: true, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
-  { id: 'e17-21', source: 'node-17', target: 'node-21', type: 'smoothstep', animated: true, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
+  { id: 'e17-18', source: 'node-17', target: 'node-18', type: 'smoothstep', animated: false, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
+  { id: 'e17-19', source: 'node-17', target: 'node-19', type: 'smoothstep', animated: false, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
+  { id: 'e17-20', source: 'node-17', target: 'node-20', type: 'smoothstep', animated: false, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
+  { id: 'e17-21', source: 'node-17', target: 'node-21', type: 'smoothstep', animated: false, style: { stroke: '#0a84ff', strokeWidth: 2, filter: 'drop-shadow(0 0 6px rgba(10,132,255,0.55))' } },
 ];
 
 // ==========================================
-// 1. กำหนดค่าเริ่มต้นของทุกเส้นเป็น "smoothstep" แบบไม่มีหัวลูกศร
+// 1. กำหนดค่าเริ่มต้นของทุกเส้นเป็น "smoothstep" แบบไม่มีหัวลูกศร (Static เมื่อ Standby)
 // ==========================================
 const defaultEdgeOptions = {
-  type: 'smoothstep', // 🟢 เส้นตรงหักมุมฉากแบบมุมมน
-  animated: true,     // 🟢 แอนิเมชันจุดไฟวิ่งบนเส้น
+  type: 'smoothstep',
+  animated: false,
   style: {
     stroke: '#0a84ff',
     strokeWidth: 2,
     filter: 'drop-shadow(0 0 6px rgba(10, 132, 255, 0.45))',
   },
   pathOptions: {
-    borderRadius: 16,  // 🟢 รัศมีความโค้งมนของมุมเลี้ยว (16px กำลังสวย สบายตา)
+    borderRadius: 16,
   },
 };
 
@@ -1840,6 +1840,14 @@ const FlowContent: React.FC<{ isTraining?: boolean }> = ({ isTraining = false })
     return nodes.filter((n) => connectedNodeIds.has(n.id)).length;
   }, [nodes, connectedNodeIds]);
 
+  // Only animate edges when RL training is actively running! When stopped/standby, edges are completely STATIC and STILL!
+  const renderedEdges = useMemo(() => {
+    return edges.map((e) => ({
+      ...e,
+      animated: isTraining,
+    }));
+  }, [edges, isTraining]);
+
   return (
     <div
       style={{
@@ -1859,7 +1867,7 @@ const FlowContent: React.FC<{ isTraining?: boolean }> = ({ isTraining = false })
     >
       <ReactFlow
         nodes={augmentedNodes}
-        edges={edges}
+        edges={renderedEdges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
